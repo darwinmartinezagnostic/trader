@@ -1,0 +1,9 @@
+.no-link-logo{
+	text-decoration: none !important;
+	color: #99c00f; 
+}
+
+.no-link-logo:hover, .no-link-logo:visited{
+	text-decoration: none !important;
+	color: #99c00f; 
+}

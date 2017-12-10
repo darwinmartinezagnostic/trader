@@ -1,0 +1,219 @@
+<template name="layoutTemplate">
+  {{> topBar}}
+
+  {{> yield}}
+
+  {{> footer}}
+</template>
+
+
+<head>
+  <title>Robot Trader</title>
+</head>
+
+<body>
+  <h1>Trader</h1>
+	<br><br>
+</body>
+
+<template name="home">
+  <button id="EjecGlob">Ejecución Global</button>
+  <button id="ListMon">Listar Monedas</button>
+  <button id="VerSaldo">Ver Saldo de Monedas</button>
+  <button id="ListSimb">Ver Simbolos de Tradeo</button>
+  <button id="LibOrd">Ver Libro de Ordenes</button>
+  <button id="ListTradAct">Lista de Tradeos Actuales</button>
+  <button id="ConsultTrans">Transacciones Consultadas</button>
+  <button id="RetFond">Retiro de Fondos</button>
+  <button id="ConsultRetFond">Consultar Fondos Retirados</button>
+  <button id="CanclRetFond">Cancela Retiro de Fondos</button>
+  <button id="ConsultCartDep">Consulta Carteras de Deposito</button>
+  <button id="CreaCartDep">Crea Carteras de Deposito</button>
+  <button id="TransfSaldTradeo">Transferir Fondos</button>
+  <button id="ConsultarOrdenesAbiertas">Transferir Fondos</button>
+
+  <!-- -->
+</template>
+
+
+
+<template name="EjecucionGlobal"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+<template name="ListaMonedas"> 
+
+	{{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+  	{{/each}}
+    <b>_______________________________________</b>
+	<br><br>
+	<button id="back">Volver</button>
+</template>
+
+
+<template name="SaldoActualMonedas"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{available}}<br> 
+      <b>Saldo reservado: </b>{{reserved}}<br> 
+      <b>Símbolo Intercambio: </b>{{symbol}}<br> 
+      <b>Paso: </b>{{step}}<br> 
+      <b>Lote: </b>{{lot}}<br> 
+      <b>Moneda: </b>{{currency}}<br>
+      <b>Commodity: </b>{{commodity}}<br> 
+      <b>Tasa de liquidez: </b>{{takeLiquidityRate}}<br> 
+      <b>Proporción de liquidez: </b>{{provideLiquidityRate}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+<template name="ListaSimbolos"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+<template name="LibroDeOrdenes"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+<template name="ListaTradeoActual"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+
+<template name="ConsultarTransaciones"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+<template name="RetiroFondos"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+<template name="ConsultaRetiroFondos"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+<template name="CancelaRetiroFondos"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+<template name="ConsultaCarterasDeposito"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+<template name="CrearCarterasDeposito"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+<template name="TransferirfondosReservaTradeo"> 
+
+  {{#each datos}}
+      <b>_______________________________________</b>
+      <br>
+      <b>Saldo disponible: </b>{{id}}<br> 
+      <b>Saldo reservado: </b>{{fullName}}<br> 
+    {{/each}}
+    <b>_______________________________________</b>
+  <br><br>
+  <button id="back">Volver</button>
+</template>
+
+
+<!--                    -->
+
+
