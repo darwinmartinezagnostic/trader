@@ -681,9 +681,6 @@ Meteor.methods({
 
 
 	'Prueba':function(){
-		
-		
-
 
 		try
 			{
@@ -697,23 +694,36 @@ Meteor.methods({
 				Ejecucion_Trader.insert({fecha: new Date(), id : nuevo_id_ejecucion, descripcion : ['Error: ']+[err.code]+[', Mensaje: ']+[err.message]+[', Descrición: ']+[err.description]});
 			}
 
-
-
 		for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
 			var moneda_saldo =  Monedas_Saldo[CMS];
 
-			console.log(" Valor de moneda_saldo: ", moneda_saldo);
-			console.log(" ID: ": moneda_saldo._id);
-			console.log(" moneda: ": moneda_saldo.moneda);
-			console.log(" nombre_moneda: ": moneda_saldo.nombre_moneda);
-			console.log(" saldo.tradeo.activo: ": moneda_saldo.saldo.tradeo.activo);
-			console.log(" saldo.tradeo.reserva: ": moneda_saldo.saldo.tradeo.reserva);
-			console.log(" saldo.cuenta.activo: ": moneda_saldo.saldo.cuenta.activo);
-			console.log(" saldo.cuenta.reserva: ": moneda_saldo.saldo.cuenta.reserva);
+            var tipoCambio = Meteor.call('TipoCambioDisponileCompra',moneda_saldo.moneda)
+
+            console.log("Lista de cambios disponibles para la moneda "+moneda_saldo.moneda+" son: "+tipoCambio)
+
+			/*ACA SE HARA LA LLAMADA PARA EVALUAR EL ALZA O BAJA DE LOS TIPOS DE CAMBIOS DISPONIBLES*/
 		};
 	},
 
+	'TipoCambioDisponileCompra':function(SIMBOLO){
 
+        var monedasCambiables = Simbolos.find({moneda_base:SIMBOLO}).fetch();
+		var set = new Set();
+
+        for(mc in monedasCambiables)
+        {
+        	set.add(monedasCambiables[mc].moneda_cotizacion);
+		}
+
+		return Array.from(set)
+
+	},
+
+    'EvaluarTendencias':function(TiposCambio){
+
+		//ESTA FUNCION EVALUA LAS TENDENCIAS DE LOS TIPOS DE CAMBIO DISPONIBLES
+
+    },
 
 	'ListaTradeoActual':function(SIMBOLO, VALOR_EJEC){
 		
@@ -943,8 +953,8 @@ Meteor.methods({
 
 
 	'EjecucionGlobal':function(){
-		Meteor.call("Encabezado");
-		/*
+		//Meteor.call("Encabezado");
+/*
 		if ( debug_activo === 1) {
 			nuevo_id_ejecucion = Meteor.call('CalculaIdEjecucion');
 			Ejecucion_Trader.insert({fecha: new Date(), id:nuevo_id_ejecucion ,descripcion:'Verificando tendencia de los Símbolos'});
@@ -954,7 +964,7 @@ Meteor.methods({
 		Meteor.call("ListaMonedas");
 		Meteor.call("SaldoActualMonedas");
 		Meteor.call("ListaSimbolos", 2);
-		*/
+*/
 		//Meteor.call("ListaTradeoActual",VALOR);
 
 		Meteor.call("Prueba");		
@@ -968,7 +978,7 @@ Meteor.methods({
 		//Meteor.call("nuevaOrden");
 		//Meteor.call("putOrden");
 		//Meteor.call("borrarOrden");
-		Meteor.call("FinEjecucion");
+		//Meteor.call("FinEjecucion");
 	}
 	
 });
