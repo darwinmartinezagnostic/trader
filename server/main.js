@@ -1,4 +1,6 @@
 import { Meteor } from 'meteor/meteor';
+//var moment = require('moment-timezone');
+moment().tz('America/Caracas').format();
 
 const autoriza_conexion = Conexion_api.findOne({ casa_cambio : 'hitbtc'}, {_id:0});
 const API_HITBTC2 = autoriza_conexion.api.url;
@@ -36,43 +38,39 @@ const cant_transacciones = 3;
 const cant_t_min_atras = 300;
 // ACTIVACION DE GUARDADO DEBUG DEL CÓDIGO EN DB
 const debug_activo = 1;
+const Job_activo = 0;
 
 
 //**************************************************
-Meteor.startup(() => {
-    // code to run on server at startup
-
-});
-
 
 Meteor.methods({
 
-    'GuardarEjecucionTrader':function (MENSAJE) {
+    'GuardarLogEjecucionTrader':function (MENSAJE) {
         var nuevo_id_ejecucion = Meteor.call('CalculaIdEjecucion');
-        Ejecucion_Trader.insert({fecha: new Date(), id : nuevo_id_ejecucion ,descripcion : MENSAJE});
-        //console.log( MENSAJE);
-        //console.log(' ');
+        LogEjecucionTrader.insert({fecha: new Date(), id : nuevo_id_ejecucion ,descripcion : MENSAJE});
+        console.log( MENSAJE);
+        console.log(' ');
     },
 
     'Encabezado':function(){
-        fecha = new Date();
-        Meteor.call("GuardarEjecucionTrader", 'INICIANDO EJECUCIÓN');
+        fecha = moment (new Date());
+        Meteor.call("GuardarLogEjecucionTrader", 'INICIANDO EJECUCIÓN');
         console.log('############################################');
         console.log('  ********* INICIANDO EJECUCIÓN ********* ');
         console.log('############################################');
-        console.log('        ',fecha);
+        console.log('        ',fecha._d);
         console.log('############################################');
         console.log(' ');
     },
 
     'FinEjecucion':function(){
-        fecha = new Date();
-        Meteor.call("GuardarEjecucionTrader", 'FIN DE EJECUCIÓN');
+        fecha = moment (new Date());
+        Meteor.call("GuardarLogEjecucionTrader", 'FIN DE EJECUCIÓN');
         console.log(' ');
         console.log('############################################');
         console.log('    ********* FIN DE EJECUCIÓN ********* ');
         console.log('############################################');
-        console.log('        ',fecha);
+        console.log('        ',fecha._d);
         console.log('############################################');
     },
 
@@ -145,42 +143,42 @@ Meteor.methods({
 
         if ( F_ERROR === 1 ) {
             if ( ERROR === "Conexion_api_fallida" ) {
-                Meteor.call('GuardarEjecucionTrader', ['ERROR: Se registró Error consultando el API: Conexion_api_fallida']);
-                Meteor.call('GuardarEjecucionTrader', 'URL enviada a HitBTC no se puede resolver por http:// o https://');
+                Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: Conexion_api_fallida']);
+                Meteor.call('GuardarLogEjecucionTrader', 'URL enviada a HitBTC no se puede resolver por http:// o https://');
             }
             else {
                 switch (ERROR.response.data.error.code) {
                     case 500:
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Error Interno del servidor'] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Error Interno del servidor'] + [', Descripción: '] + [ERROR.response.data.error.description]);
                         break;
                     case 504:
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Tiempo de espera sobrepasado'] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Tiempo de espera sobrepasado'] + [', Descripción: '] + [ERROR.response.data.error.description]);
                         break;
                     case 503:
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Servicio Inhabilitado'] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Servicio Inhabilitado'] + [', Descripción: '] + [ERROR.response.data.error.description]);
                         break;
                     case 2001:
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Tipo de cambio no encontrado'] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Tipo de cambio no encontrado'] + [', Descripción: '] + [ERROR.response.data.error.description]);
                         break;
                     case 1001:
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Autorizacion requerida'] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Autorizacion requerida'] + [', Descripción: '] + [ERROR.response.data.error.description]);
                         break;
                     case 1002:
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Autorizacion fallida'] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Autorizacion fallida'] + [', Descripción: '] + [ERROR.response.data.error.description]);
                         break;
                     case 2001:
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Error de validacion '] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Error de validacion '] + [', Descripción: '] + [ERROR.response.data.error.description]);
                         break;
                     case 10001:
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
-                        Meteor.call('GuardarEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Fondos Insuficientes '] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
+                        Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Fondos Insuficientes '] + [', Descripción: '] + [ERROR.response.data.error.description]);
                         break;
                 };
             };
@@ -230,7 +228,7 @@ Meteor.methods({
 
         if ( debug_activo === 1) {
             
-            Meteor.call("GuardarEjecucionTrader", 'Verificando las monedas que tienen saldo para tradear');
+            Meteor.call("GuardarLogEjecucionTrader", 'Verificando las monedas que tienen saldo para tradear');
             console.log('############################################');
             console.log(' ');
             console.log(' Verificando las monedas que tienen saldo');
@@ -519,7 +517,6 @@ Meteor.methods({
         else{
             console.log("Ordenes Activas: ", OrdeneAbiertas)
         }
-
     },
 
     'RetiroFondos':function(){ //Withdraw crypro
@@ -534,7 +531,6 @@ Meteor.methods({
         console.log('############################################');
         console.log(' Realiza consulta de transacción retiro de los fondos en proceso');
         console.log(' ');
-
     },
 
     'CancelaRetiroFondos':function(){   //Rollback withdraw crypro
@@ -614,7 +610,6 @@ Meteor.methods({
             Meteor.call("ValidaError", error, 1)
         };
     },
-
     
     'CrearNuevaOrder':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO){  //POST
 
@@ -654,7 +649,7 @@ Meteor.methods({
     'ConsultaTraderGuardados':function(TIPO_CAMBIO){
 
         if ( debug_activo === 1) {
-            Meteor.call("GuardarEjecucionTrader", [' ConsultaTraderGuardados consultando el último ID de Transaccion guardado del tipo_cambio: ']+[TIPO_CAMBIO]);
+            Meteor.call("GuardarLogEjecucionTrader", [' ConsultaTraderGuardados consultando el último ID de Transaccion guardado del tipo_cambio: ']+[TIPO_CAMBIO]);
             //console.log(' Estoy en ConsultaTraderGuardados consultando el último ID de Transaccion guardado del tipo_cambio: ', TIPO_CAMBIO);
         };
 
@@ -662,13 +657,13 @@ Meteor.methods({
 
         if (OperacionesCompraVenta.find({tipo_cambio:TIPO_CAMBIO}, {}).count() === 0){
             if ( debug_activo === 1) {
-                Meteor.call("GuardarEjecucionTrader", ['No hay datos en base de datos local de este tipo_cambio: ']+[TIPO_CAMBIO]);
+                Meteor.call("GuardarLogEjecucionTrader", ['No hay datos en base de datos local de este tipo_cambio: ']+[TIPO_CAMBIO]);
                 console.log('No hay datos en base de datos local de este tipo_cambio: ', TIPO_CAMBIO);
             };
         }
         else {
             if ( debug_activo === 1) {
-                Meteor.call("GuardarEjecucionTrader", ['Se encontraron datos guardados para este tipo_cambio: ']+[TIPO_CAMBIO]+[' Verificando...']);
+                Meteor.call("GuardarLogEjecucionTrader", ['Se encontraron datos guardados para este tipo_cambio: ']+[TIPO_CAMBIO]+[' Verificando...']);
             };
             var VAL_TIPO_CAMBIO = OperacionesCompraVenta.aggregate( [{$match: {tipo_cambio:TIPO_CAMBIO}}, {$group: {_id: "$tipo_cambio", max_id : { $max: "$id_hitbtc"}} }]);
 
@@ -683,7 +678,7 @@ Meteor.methods({
 
 
                 if ( v_INT_VAL_TIPO_CAMBIO._id === undefined ) {
-                    Meteor.call("GuardarEjecucionTrader", ['ID de Transaccion No pudo ser recuperado: ']+[v_INT_VAL_TIPO_CAMBIO.max_id]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['ID de Transaccion No pudo ser recuperado: ']+[v_INT_VAL_TIPO_CAMBIO.max_id]);
                     if ( debug_activo === 1) {
                         console.log(' ID de Transaccion No pudo ser recuperado: ', v_INT_VAL_TIPO_CAMBIO.max_id );
                     };
@@ -691,7 +686,7 @@ Meteor.methods({
                 }
                 else {
                     if ( debug_activo === 1) {
-                        Meteor.call("GuardarEjecucionTrader", ['ID de Transaccion recuperado con exito: ']+[v_INT_VAL_TIPO_CAMBIO.max_id]);
+                        Meteor.call("GuardarLogEjecucionTrader", ['ID de Transaccion recuperado con exito: ']+[v_INT_VAL_TIPO_CAMBIO.max_id]);
                     };
                     return v_INT_VAL_TIPO_CAMBIO.max_id;
                 };
@@ -701,12 +696,7 @@ Meteor.methods({
 
     },
 
-	'Prueba':function(){
-
-            
-	},
-
-    'TipoCambioDisponibleCompra':function(){
+    'TipoCambioDisponibleCompra':function(VALOR, TIPO_MUESTREO){
 
         try
             {
@@ -728,52 +718,28 @@ Meteor.methods({
                 Meteor.call("ValidaError", error, 2);
             };
 
-            var tiposCambios = new Set();
+            //var TiposDeCambios = new Set()
 
-            for(mc in monedasCambiables){
+            switch(VALOR){
+                case 1:
+                    // HACE UNA CONSULTA GENREAL DE LOS TIPO_CAMBIO EXISTENTES CON SALDO PARA INVERTIR
+                    var set = new Set();
+                    for(mc in monedasCambiables){
+                        set.add(monedasCambiables[mc]._id);
+                    }
+                    return Array.from(set);
+                    break;
+                case 2:
+                    for(mc in monedasCambiables){
 
-               Meteor.call('ListaTradeoActual', monedasCambiables[mc]._id, 2);
+                       Meteor.call('ListaTradeoActual', monedasCambiables[mc]._id, 2);
 
-               Meteor.call('EvaluarTendencias',monedasCambiables[mc]._id);
+                       Meteor.call('EvaluarTendencias',monedasCambiables[mc]._id, TIPO_MUESTREO);
 
+                    }
+                    break;
             }
         };
-    },
-
-    'EvaluarTendencias':function(TIPOCAMBIO){
-
-
-        // Formula de deprecación
-        // TENDENCIA = ((valor actual - valor anterior) / valor anterior) * 100
-        // Si es positivo la moneda base se está depreciando y la moneda en cotizacion se está apreciando
-        // Si es negativa la moneda base de está apreciando y la moneda en cotizacion se está apreciando
-        // Cuando se está evaluando la moneda a comprar si el resultado es + esa moneda esta en alza sino está a la baja
-        // Cuando se está evaluando la moneda invertida si el resultado es + esa moneda esta en baja sino está a la alza
-
-
-        try{
-            var TransProcesar = OperacionesCompraVenta.find({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{ id_hitbtc : 1, precio : 1, _id: 0 }).fetch();
-        }
-        catch (error){
-
-        }
-        
-        var RegAnt = TransProcesar[0]
-        var RegAct = TransProcesar[1]
-
-        var ValPrecAnt = RegAnt.precio
-        var ValPrecAct = RegAct.precio
-
-        console.log("Valor de RegAnt", ValPrecAnt);
-        console.log("Valor de RegAct", ValPrecAct);
-
-        ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
-
-        console.log("Valor de ProcenApDp", ProcenApDp);
-
-        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ tendencia : ProcenApDp, activo : "S" }}, {"multi" : true,"upsert" : true});
-        OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
-
     },
 
     'ListaTradeoActual':function(TIPO_CAMBIO, VALOR_EJEC){
@@ -784,7 +750,7 @@ Meteor.methods({
 
         //consultamos el último id_transaccion de este Símbolo
         if ( debug_activo === 1) {
-            Meteor.call("GuardarEjecucionTrader", ['"ListaTradeoActual" consultando último id_transaccio del tipo_cambio: ']+[TIPO_CAMBIO]);
+            Meteor.call("GuardarLogEjecucionTrader", ['"ListaTradeoActual" consultando último id_transaccio del tipo_cambio: ']+[TIPO_CAMBIO]);
         };
 
         var Val_trad = (Meteor.call('ConsultaTraderGuardados', TIPO_CAMBIO));
@@ -803,7 +769,7 @@ Meteor.methods({
             };
             Val_trad_simbolo= Val_trad_simbolo+1;
             console.log('valor de Val_trad_simbolo: ', Val_trad_simbolo);
-            var url_tradeos_parcial= ['&sort=ASC&by=id&from=']+[Val_trad_simbolo]+['&format_numbers=number'];
+            var url_tradeos_parcial= ['&sort=ASC&by=id&from=']+[Val_trad_simbolo]+['&limit=1&format_numbers=number'];
         };
 
         var url_tradeos_completa = [publico]+['trades/']+[TIPO_CAMBIO]+['?']+[url_tradeos_parcial];        
@@ -816,13 +782,9 @@ Meteor.methods({
             var v_trad = trad_mon[i];
             var url_comision = [comisiones]+['/']+[TIPO_CAMBIO];
 
-            try{
-                var comision = Meteor.call("ConexionGet", url_comision);
-                var v_comision = (comision.data);
-            }
-                catch (error){
-                Meteor.call("ValidaError", error, 1)
-            };
+            
+            var comision = Meteor.call("ConexionGet", url_comision);
+            var v_comision = (comision.data);
 
 
 
@@ -840,7 +802,7 @@ Meteor.methods({
                         console.log(' No hay Valores asociados a este Tipo de Cambio ',TIPO_CAMBIO);
                         console.log('############################################');
 
-                        Meteor.call("GuardarEjecucionTrader", ['No hay Valores asociados a este Tipo de Cambio: ']+[TIPO_CAMBIO]);
+                        Meteor.call("GuardarLogEjecucionTrader", ['No hay Valores asociados a este Tipo de Cambio: ']+[TIPO_CAMBIO]);
                     }
                     else {
                         console.log(' LINEA DE TIEMPO: ',v_trad.timestamp);
@@ -879,7 +841,7 @@ Meteor.methods({
                         console.log(' No hay Valores asociados a este Tipo de Cambio ',TIPO_CAMBIO);
                         console.log('############################################');
 
-                        Meteor.call("GuardarEjecucionTrader", ['No hay Valores asociados a este Tipo de Cambio: ']+[TIPO_CAMBIO]);
+                        Meteor.call("GuardarLogEjecucionTrader", ['No hay Valores asociados a este Tipo de Cambio: ']+[TIPO_CAMBIO]);
                     }
                     else {
                         
@@ -914,7 +876,7 @@ Meteor.methods({
                                     var v_tipo_operacion_ant = 'VENTA';
                                     break;
                                 default:
-                                    Meteor.call("GuardarEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_TradAntDat.side]);
+                                    Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_TradAntDat.side]);
                                     console.log(' NUEVO TIPO OPERACIÓN DETECTADO: ',v_TradAntDat.side);
                             }
                             console.log(' ');
@@ -936,12 +898,12 @@ Meteor.methods({
                                     var v_tipo_operacion = 'VENTA';
                                     break;
                                 default:
-                                    Meteor.call("GuardarEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_trad.side]);
+                                    Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_trad.side]);
                                     console.log(' NUEVO TIPO OPERACIÓN DETECTADO: ',v_trad.side);
                             }
 
-                            OperacionesCompraVenta.insert({ id_hitbtc: v_TradAntDat.id, fecha : v_TradAntDat.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_TradAntDat.price, tipo_operacion : v_tipo_operacion_ant, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false, periodo7 : false } });
-                            OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false, periodo7 : false } });
+                            OperacionesCompraVenta.insert({ id_hitbtc: v_TradAntDat.id, fecha : v_TradAntDat.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_TradAntDat.price, tipo_operacion : v_tipo_operacion_ant, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
+                            OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                         }
                         else {
 
@@ -960,12 +922,12 @@ Meteor.methods({
                                     var v_tipo_operacion = 'VENTA';
                                     break;
                                 default:
-                                    Meteor.call("GuardarEjecucionTrader", ['Nuevo tipo de operacion detectado en la función "ListaTradeoActual": ']+[TradAntDat.side]);
+                                    Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectado en la función "ListaTradeoActual": ']+[TradAntDat.side]);
                                     console.log(' NUEVO TIPO OPERACIÓN DETECTADO: ',v_trad.side);
                             
                             }
 
-                            OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false, periodo7 : false } });
+                            OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                             
                         }
                     }
@@ -981,17 +943,96 @@ Meteor.methods({
 
     },
 
-    'CalculaTendencia':function(TIPO_CAMBIO, LINEA_TIEMPO, ID, PRECIO){
+    'EvaluarTendencias':function(TIPOCAMBIO, TIPO_MUESTREO){
 
+
+        // Formula de deprecación
+        // TENDENCIA = ((valor actual - valor anterior) / valor anterior) * 100
+        // Si es positivo la moneda base se está depreciando y la moneda en cotizacion se está apreciando
+        // Si es negativa la moneda base de está apreciando y la moneda en cotizacion se está apreciando
+        // Cuando se está evaluando la moneda a comprar si el resultado es + esa moneda esta en alza sino está a la baja
+        // Cuando se está evaluando la moneda invertida si el resultado es + esa moneda esta en baja sino está a la alza
+
+
+        try{
+            
+            switch (TIPO_MUESTREO){
+                case 1:
+                    var TransProcesar = OperacionesCompraVenta.find({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{ id_hitbtc : 1, precio : 1, _id: 0 }).fetch();
+                    break;
+                case 2:
+                    var TransProcesar = OperacionesCompraVenta.find({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo2" : false },{ id_hitbtc : 1, precio : 1, _id: 0 }).fetch();
+                    break;
+                case 3:
+                    var TransProcesar = OperacionesCompraVenta.find({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo3" : false },{ id_hitbtc : 1, precio : 1, _id: 0 }).fetch();
+                    break;
+                case 4:
+                    var TransProcesar = OperacionesCompraVenta.find({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo4" : false },{ id_hitbtc : 1, precio : 1, _id: 0 }).fetch();
+                    break;
+                case 5:
+                    var TransProcesar = OperacionesCompraVenta.find({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo5" : false },{ id_hitbtc : 1, precio : 1, _id: 0 }).fetch();
+                    break;
+                case 6:
+                    var TransProcesar = OperacionesCompraVenta.find({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo6" : false },{ id_hitbtc : 1, precio : 1, _id: 0 }).fetch();
+                    break;
+            }
+        }
+        catch (error){
+            Meteor.call("ValidaError", error, 2);
+        };
+        
+        var RegAnt = TransProcesar[0]
+        var RegAct = TransProcesar[1]
+
+        var ValPrecAnt = RegAnt.precio
+        var ValPrecAct = RegAct.precio
+
+        console.log("Valor de RegAnt", ValPrecAnt);
+        console.log("Valor de RegAct", ValPrecAct);
+
+        ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
+
+        console.log("Valor de ProcenApDp", ProcenApDp);
+
+        switch (TIPO_MUESTREO){
+            case 1:
+                TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "tendencia.periodo1" : ProcenApDp, activo : "S" }}, {"multi" : true,"upsert" : true});
+                OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
+                break;
+            case 2:
+                TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "tendencia.periodo2" : ProcenApDp, activo : "S" }}, {"multi" : true,"upsert" : true});
+                OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo2" : false },{$set:{ "muestreo.periodo2" : true }}, {"multi" : true,"upsert" : true});
+                break;
+            case 3:
+                TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "tendencia.periodo3" : ProcenApDp, activo : "S" }}, {"multi" : true,"upsert" : true});
+                OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo3" : false },{$set:{ "muestreo.periodo3" : true }}, {"multi" : true,"upsert" : true});
+                break;
+            case 4:
+                TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "tendencia.periodo4" : ProcenApDp, activo : "S" }}, {"multi" : true,"upsert" : true});
+                OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo4" : false },{$set:{ "muestreo.periodo4" : true }}, {"multi" : true,"upsert" : true});
+                 break;
+            case 5:
+                TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "tendencia.periodo5" : ProcenApDp, activo : "S" }}, {"multi" : true,"upsert" : true});
+                OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo5" : false },{$set:{ "muestreo.periodo5" : true }}, {"multi" : true,"upsert" : true});
+                break;
+            case 6:
+                TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "tendencia.periodo6" : ProcenApDp, activo : "S" }}, {"multi" : true,"upsert" : true});
+                OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo6" : false },{$set:{ "muestreo.periodo6" : true }}, {"multi" : true,"upsert" : true});
+                break;
+            case 7:
+                TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "tendencia.periodo7" : ProcenApDp, activo : "S" }}, {"multi" : true,"upsert" : true});
+                OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo7" : false },{$set:{ "muestreo.periodo7" : true }}, {"multi" : true,"upsert" : true});
+                break;                
+        }        
     },
 
     'CalculaIdEjecucion':function(){
 
-        if (Ejecucion_Trader.find().count() === 0){
-            Ejecucion_Trader.insert({fecha: new Date(), id:1 ,descripcion:'Trader iniciado'});
+        if (LogEjecucionTrader.find().count() === 0){
+            LogEjecucionTrader.insert({fecha: new Date(), id:1 ,descripcion:'Trader iniciado'});
         }
         else {
-            var max_id_ejecucion = Ejecucion_Trader.aggregate([{ $group: {_id: "MAX_ID", max_id : { $max: "$id"}}}]);
+            var max_id_ejecucion = LogEjecucionTrader.aggregate([{ $group: {_id: "MAX_ID", max_id : { $max: "$id"}}}]);
             var v_val_ejecucion = max_id_ejecucion;
             for (C = 0, tamanio_val_ejecucion = max_id_ejecucion.length; C < tamanio_val_ejecucion; C++) {
                 var obj_id_act = max_id_ejecucion[C];
@@ -1002,13 +1043,44 @@ Meteor.methods({
         return nuevo_id;
     },
 
+    'Prueba':function(){
+        
+            /*Jobs.run("ConsultarTransaccionTrad", "XMRBTC", { 
+                in: {
+                    second: 15
+                }
+            })
+
+            Jobs.run("ConsultarTransaccionTrad", "XMRUSD", { 
+                in: {
+                    second: 5
+                }
+            })
+
+            Jobs.run("ConsultarTransaccionTrad", "XMRETH", { 
+                in: {
+                    second: 10
+                }
+            })*/
+
+        
+
+            
+    },
+
     'EjecucionGlobal':function(){
+
         Meteor.call("Encabezado");
-        Meteor.call("GuardarEjecucionTrader", "         Verificando tendencias");
+        Meteor.call("GuardarLogEjecucionTrader", "         Verificando tendencias");
         Meteor.call("ListaMonedas");
         Meteor.call("ListaTiposDeCambios", 2);
         Meteor.call("SaldoActualMonedas");
-        Meteor.call("TipoCambioDisponibleCompra");
+        Ejecucion_Trader.update({ "muestreo.periodo1" : true },{ "muestreo.periodo_inicial" : false , fecha_ejecucion : new Date() });
+        Meteor.call("FinEjecucion");
+        
+        return 0;
+
+        //Meteor.call("TipoCambioDisponibleCompra");
         
         //Meteor.call("Prueba");
 
@@ -1019,8 +1091,35 @@ Meteor.methods({
         //Meteor.call("LibroDeOrdenes");
         //Meteor.call("CrearNuevaOrder");
         //Meteor.call("borrarOrden");
-        Meteor.call("FinEjecucion");
     }
 
 });
 
+Meteor.startup(() => {
+    // code to run on server at startup
+    // Verificamos si la aplicación es su ejecución Inicial o no
+    
+    try {
+        var EjecucionInicial = Ejecucion_Trader.find({ muestreo : { periodo_inicial : true } },{}).count()
+    }
+    catch (error){
+        Meteor.call("ValidaError", error, 2);
+    };
+
+   
+
+    if ( EjecucionInicial === 1 ){
+        Jobs.run("JobSecuenciaInicial", { 
+            in: {
+                second: 5
+                }
+        });
+    }
+    else if ( EjecucionInicial === 0 ) {
+        Jobs.run("JobSecuencia", { 
+            in: {
+                second: 15
+                }
+        });
+    };
+});
