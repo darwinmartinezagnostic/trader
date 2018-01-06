@@ -66,6 +66,40 @@ Jobs.register({
 		    })
     	},
 
+    JobReinicioSecuencia: function (){    	
+    	fecha = moment (new Date());
+    	console.log('        ',fecha._d);
+		console.log('');
+		Meteor.call("GuardarLogEjecucionTrader", '---------  REINICIANDO PROCESOS  ----------');
+	    console.log(' ');
+
+
+
+	    try {
+	        var EjecucionInicial = Ejecucion_Trader.find({ muestreo : { periodo_inicial : true } },{}).count()
+	    }
+	    catch (error){
+	        Meteor.call("ValidaError", error, 2);
+	    };
+
+	   
+	    
+	    if ( EjecucionInicial === 1 ){
+	        Jobs.run("JobSecuenciaInicial", { 
+	            in: {
+	                second: 5
+	                }
+	        });
+	    }
+	    else if ( EjecucionInicial === 0 ) {
+	        Jobs.run("JobSecuencia", { 
+	            in: {
+	                second: 15
+	                }
+	        });
+	    };
+    },
+
    	JobInsertarSecuenciaPeriodo1 : function (TIPO_CAMBIO){
    		fecha = moment (new Date());
    		console.log('        ',fecha._d);
@@ -84,12 +118,11 @@ Jobs.register({
 			Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar , 1 ],	"state" : "pending" });
 		}
 		console.log(' ');
-		/*
 		Jobs.run("JobInsertarSecuenciaPeriodo1", tipo_cambio_verificar, { 
 	    	in: {
 	        	minute: 5
 	    	}
-	    })*/
+	    })
     },
 
     JobInsertarSecuenciaPeriodo2 : function (TIPO_CAMBIO){
@@ -111,12 +144,11 @@ Jobs.register({
 
 		}
 		console.log(' ');
-		/*
 		Jobs.run("JobInsertarSecuenciaPeriodo2", tipo_cambio_verificar, { 
 	    	in: {
 	        	hour: 1
 	    	}
-	    })*/
+	    })
     },
 
     JobInsertarSecuenciaPeriodo3 : function (TIPO_CAMBIO){
@@ -138,12 +170,11 @@ Jobs.register({
 
 		}
 		console.log(' ');
-		/*
 		Jobs.run("JobInsertarSecuenciaPeriodo3", tipo_cambio_verificar, { 
 	    	in: {
 	        	days: 1
 	    	}
-	    })*/
+	    })
     },
 
     JobInsertarSecuenciaPeriodo4 : function (TIPO_CAMBIO){
@@ -191,12 +222,12 @@ Jobs.register({
 			Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar, 5],	"state" : "pending" });
 			}
 		console.log(' ');
-		/*
+
 		Jobs.run("JobInsertarSecuenciaPeriodo5", tipo_cambio_verificar, { 
 	    	in: {
 	        	month: 1
 	    	}
-	    })*/
+	    })
     },
 
     JobInsertarSecuenciaPeriodo6 : function (TIPO_CAMBIO){
@@ -218,12 +249,12 @@ Jobs.register({
 
 		}
 		console.log(' ');
-		/*
+
 		Jobs.run("JobInsertarSecuenciaPeriodo6", tipo_cambio_verificar, { 
 	    	in: {
 	        	year: 1
 	    	}
-	    })*/
+	    })
    	},
 
     JobValidaTendenciaTipoCambio: function (TIPO_CAMBIO, TIPO_MUESTREO){
@@ -237,7 +268,6 @@ Jobs.register({
 	        console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " Muestreo: ", TIPO_MUESTREO)
 
 	        Meteor.call('TipoCambioDisponibleCompra', 2, TIPO_MUESTREO);
-
 
 	        console.log('--------------------------------------------');
 	        console.log('############################################');

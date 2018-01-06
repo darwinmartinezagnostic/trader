@@ -74,7 +74,6 @@ Meteor.methods({
         console.log('############################################');
     },
 
-
     'ConexionGet':function(V_URL) {
         try {
             var V_OBTENIDO = HTTP.get( V_URL,{auth:apikey});
@@ -151,14 +150,17 @@ Meteor.methods({
                     case 500:
                         Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
                         Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Error Interno del servidor'] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('RecuperacionAutonoma');
                         break;
                     case 504:
                         Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
                         Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Tiempo de espera sobrepasado'] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('RecuperacionAutonoma');
                         break;
                     case 503:
                         Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
                         Meteor.call('GuardarLogEjecucionTrader', ['ERROR: '] + [ERROR.response.data.error.code] + [', Mensaje: '] + [ERROR.response.data.error.message] + [' Servicio Inhabilitado'] + [', Descripción: '] + [ERROR.response.data.error.description]);
+                        Meteor.call('RecuperacionAutonoma');
                         break;
                     case 2001:
                         Meteor.call('GuardarLogEjecucionTrader', ['ERROR: Se registró Error consultando el API: '] + [ERROR.response.statusCode]);
@@ -186,6 +188,31 @@ Meteor.methods({
         else if (F_ERROR === 2) {
             return ERROR;
         }
+    },
+
+    'RecuperacionAutonoma':function(){
+
+        console.log('############################################');
+        Meteor.call('GuardarLogEjecucionTrader', ['Intentando Recuperación automática']);
+        Meteor.call('GuardarLogEjecucionTrader', ['Borrando Trabajos no culminados']);
+
+        try {
+            Jobs.private.collection.remove({});
+        }
+        catch (error){
+            Meteor.call('GuardarLogEjecucionTrader', ['No se ha podido relaizar Borrando de Trabajos no culminados']);
+            Meteor.call('GuardarLogEjecucionTrader', ['Se debe verificar manualmente']);
+        }
+
+        Jobs.run("JobReinicioSecuencia", { 
+            in: {
+                second: 1
+                }
+        });
+
+
+
+        console.log('############################################');
     },
 
     'ListaMonedas':function(){
@@ -928,10 +955,6 @@ Meteor.methods({
                                 Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 3 ');
                             }
                             // ESTA ES LA PARTE QUE HAY QUE ARREGLAR
-                            // 
-                            
-                            
-
                             
                             switch (TIPO_MUESTREO){
                                 case 1:
@@ -950,10 +973,6 @@ Meteor.methods({
                                             Meteor.call("ValidaError", error, 2);
                                         };
 
-                                        if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Valor de TradAnt: ', TradAnt);
-                                        }
-
                                         var PeriodoFecha = TradAnt.fecha;
                                         var PeriodoOd_hitbtc = TradAnt.id_hitbtc;
                                         var PeriodoPrecio = TradAnt.precio;
@@ -969,10 +988,6 @@ Meteor.methods({
 
                                         if ( debug_activo === 1) {
                                             Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 3 switch - case 1 - else');
-                                        }
-
-                                        if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Valor de TradAnt: ', TradAnt);
                                         }
 
                                         var PeriodoFecha = TradAnt.periodo1.fecha;
@@ -1014,10 +1029,6 @@ Meteor.methods({
                                             Meteor.call("ValidaError", error, 2);
                                         };
 
-                                        if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Valor de TradAnt: ', TradAnt);
-                                        }
-
                                         var PeriodoFecha = TradAnt.fecha;
                                         var PeriodoOd_hitbtc = TradAnt.id_hitbtc;
                                         var PeriodoPrecio = TradAnt.precio;
@@ -1038,10 +1049,6 @@ Meteor.methods({
 
                                         if ( debug_activo === 1) {
                                             Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 3 switch - case 2 - else');
-                                        }
-
-                                        if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Valor de TradAnt: ', TradAnt);
                                         }
 
                                         var PeriodoFecha = TradAnt.Periodo2.fecha;
@@ -1082,10 +1089,6 @@ Meteor.methods({
                                             Meteor.call("ValidaError", error, 2);
                                         };
 
-                                        if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Valor de TradAnt: ', TradAnt);
-                                        }
-
                                         var PeriodoFecha = TradAnt.fecha;
                                         var PeriodoOd_hitbtc = TradAnt.id_hitbtc;
                                         var PeriodoPrecio = TradAnt.precio;
@@ -1106,10 +1109,6 @@ Meteor.methods({
 
                                         if ( debug_activo === 1) {
                                             Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 3 switch - case 3 - else');
-                                        }
-
-                                        if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Valor de TradAnt: ', TradAnt);
                                         }
 
                                         var PeriodoFecha = TradAnt.Periodo3.fecha;
@@ -1150,10 +1149,6 @@ Meteor.methods({
                                             Meteor.call("ValidaError", error, 2);
                                         };
 
-                                        if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Valor de TradAnt: ', TradAnt);
-                                        }
-
                                         var PeriodoFecha = TradAnt.fecha;
                                         var PeriodoOd_hitbtc = TradAnt.id_hitbtc;
                                         var PeriodoPrecio = TradAnt.precio;
@@ -1174,10 +1169,6 @@ Meteor.methods({
 
                                         if ( debug_activo === 1) {
                                             Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 3 switch - case 4 - else');
-                                        }
-
-                                        if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Valor de TradAnt: ', TradAnt);
                                         }
 
                                         var PeriodoFecha = TradAnt.Periodo4.fecha;
@@ -1217,10 +1208,6 @@ Meteor.methods({
                                         catch (error){
                                             Meteor.call("ValidaError", error, 2);
                                         };
-
-                                        if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Valor de TradAnt: ', TradAnt);
-                                        }
 
                                         var PeriodoFecha = TradAnt.fecha;
                                         var PeriodoOd_hitbtc = TradAnt.id_hitbtc;
@@ -1330,8 +1317,7 @@ Meteor.methods({
                             
                             
                             OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
-                            Meteor.call("GuardarLogEjecucionTrader", [' ListaTradeoActual: Estoy despues del Insert']);
-
+                            
                             console.log('--------------------------------------------');
                             console.log(' TIPO_CAMBIO: ',TIPO_CAMBIO);
                             console.log('--------------------------------------------');
@@ -1340,7 +1326,7 @@ Meteor.methods({
                             console.log(' ');
                             console.log(' LINEA DE TIEMPO: ', PeriodoFecha);
                             console.log(' ID: ',PeriodoOd_hitbtc);
-                            console.log(' PRECIO: ',PeriodoOd_hitbtc);
+                            console.log(' PRECIO: ',PeriodoPrecio);
                             console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacion);
                             console.log('--------------------------------------------');
                             console.log(' ');
@@ -1380,7 +1366,10 @@ Meteor.methods({
         try{
             
             switch (TIPO_MUESTREO){
-                case 1:               
+                case 1:
+                    if ( debug_activo === 1) {
+                        Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 5 - switch Inicial - Case 1');
+                    }
                     try{
                         var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
                     }
@@ -1388,11 +1377,21 @@ Meteor.methods({
                         Meteor.call("ValidaError", error, 2);
                     };                           
                     
-                    var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
+                    try{
+                        var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
+                    }
+                    catch (error){    
+                        Meteor.call("ValidaError", error, 2);
+                    };
                     var RegAnt = TradAnt
                     var RegAct = TransProcesar[0]
+                    Meteor.call("GuardarLogEjecucionTrader", [' ListaTradeoActual: Valor de RegAnt: ']+[RegAnt.periodo1.precio]);
+                    Meteor.call("GuardarLogEjecucionTrader", [' ListaTradeoActual: Valor de RegAct: ']+[RegAct.precio]);
                     break;
                 case 2:
+                    if ( debug_activo === 1) {
+                        Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 5 - switch Inicial - Case 2');
+                    }
                     try{
                         var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
                     }
@@ -1405,6 +1404,9 @@ Meteor.methods({
                     var RegAct = TransProcesar[0]
                     break;
                 case 3:
+                    if ( debug_activo === 1) {
+                        Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 5 - switch Inicial - Case 3');
+                    }
                     try{
                         var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
                     }
@@ -1417,6 +1419,9 @@ Meteor.methods({
                     var RegAct = TransProcesar[1]
                     break;
                 case 4:
+                    if ( debug_activo === 1) {
+                        Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 5 - switch Inicial - Case 4');
+                    }
                     try{
                         var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
                     }
@@ -1428,7 +1433,10 @@ Meteor.methods({
                     var RegAnt = TradAnt
                     var RegAct = TransProcesar[1]
                     break;
-                case 5:
+                case 5:                
+                    if ( debug_activo === 1) {
+                        Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 5 - switch Inicial - Case 5');
+                    }
                     try{
                         var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
                     }
@@ -1441,6 +1449,9 @@ Meteor.methods({
                     var RegAct = TransProcesar[1]
                     break;
                 case 6:
+                    if ( debug_activo === 1) {
+                        Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 5 - switch Inicial - Case 6');
+                    }
                     try{
                         var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
                     }
@@ -1461,8 +1472,8 @@ Meteor.methods({
         var ValPrecAnt = RegAnt.periodo1.precio
         var ValPrecAct = RegAct.precio
 
-        console.log("Valor de RegAnt", ValPrecAnt);
-        console.log("Valor de RegAct", ValPrecAct);
+        console.log("Valor de ValPrecAnt", ValPrecAnt);
+        console.log("Valor de ValPrecAct", ValPrecAct);
 
         ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
 
