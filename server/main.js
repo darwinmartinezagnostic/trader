@@ -977,6 +977,13 @@ Meteor.methods({
                                         var PeriodoOd_hitbtc = TradAnt.id_hitbtc;
                                         var PeriodoPrecio = TradAnt.precio;
                                         var PeriodoTipoOperacion = TradAnt.tipo_operacion;
+
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoFecha: ']+[PeriodoFecha]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]);
+
+                                        TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "periodo1.id_hitbtc": PeriodoOd_hitbtc, "periodo1.fecha": PeriodoFecha,"periodo1.precio" : PeriodoPrecio, "periodo1.tipo_operacion": PeriodoTipoOperacion }});
                                     }
                                     else{
                                         try{
@@ -1007,10 +1014,14 @@ Meteor.methods({
                                                 Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_trad.side]);
                                                 console.log(' NUEVO TIPO OPERACIÓN DETECTADO: ',v_trad.side);
                                         }
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoFecha: ']+[PeriodoFecha]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
                                     }
 
                                     TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "periodo1.id_hitbtc": PeriodoOd_hitbtc, "periodo1.fecha": PeriodoFecha,"periodo1.precio" : PeriodoPrecio, "periodo1.tipo_operacion": PeriodoTipoOperacion }});
-                                    OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
+                                    //OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : PeriodoTipoOperacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                                     break;
                                 case 2:
                                     
@@ -1037,7 +1048,9 @@ Meteor.methods({
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoFecha: ']+[PeriodoFecha]);
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
-                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]);
+
+                                        TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "Periodo2.id_hitbtc": PeriodoOd_hitbtc, "Periodo2.fecha": PeriodoFecha,"Periodo2.precio" : PeriodoPrecio, "Periodo2.tipo_operacion": PeriodoTipoOperacion }}); 
                                     }
                                     else{
                                         try{
@@ -1068,10 +1081,15 @@ Meteor.methods({
                                                 Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_trad.side]);
                                                 console.log(' NUEVO TIPO OPERACIÓN DETECTADO: ',v_trad.side);
                                         }
+
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoFecha: ']+[PeriodoFecha]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
                                     }
 
                                     TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "Periodo2.id_hitbtc": PeriodoOd_hitbtc, "Periodo2.fecha": PeriodoFecha,"Periodo2.precio" : PeriodoPrecio, "Periodo2.tipo_operacion": PeriodoTipoOperacion }});
-                                    OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
+                                    //OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                                     break;
                                 case 3:
                                     if ( TiposDeCambios.find({ tipo_cambio : TIPO_CAMBIO, "Periodo3.id_hitbtc" :{ $exists : false }},{}).count() === 0 || TiposDeCambios.find({ tipo_cambio : TIPO_CAMBIO, "Periodo3.precio" : null },{}).count() === 1 ){
@@ -1097,7 +1115,9 @@ Meteor.methods({
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoFecha: ']+[PeriodoFecha]);
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
-                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]);
+
+                                        TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "Periodo3.id_hitbtc": PeriodoOd_hitbtc, "Periodo3.fecha": PeriodoFecha,"Periodo3.precio" : PeriodoPrecio, "Periodo3.tipo_operacion": PeriodoTipoOperacion }});
                                     }
                                     else{
                                         try{
@@ -1128,10 +1148,16 @@ Meteor.methods({
                                                 Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_trad.side]);
                                                 console.log(' NUEVO TIPO OPERACIÓN DETECTADO: ',v_trad.side);
                                         }
+
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoFecha: ']+[PeriodoFecha]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
+
                                     }
 
                                     TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "Periodo3.id_hitbtc": PeriodoOd_hitbtc, "Periodo3.fecha": PeriodoFecha,"Periodo3.precio" : PeriodoPrecio, "Periodo3.tipo_operacion": PeriodoTipoOperacion }});
-                                    OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
+                                    //OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                                     break;
                                 case 4:
                                     if ( TiposDeCambios.find({ tipo_cambio : TIPO_CAMBIO, "Periodo4.id_hitbtc" :{ $exists : false }},{}).count() === 0 || TiposDeCambios.find({ tipo_cambio : TIPO_CAMBIO, "Periodo4.precio" : null },{}).count() === 1 ){
@@ -1158,6 +1184,9 @@ Meteor.methods({
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
+
+                                        TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "Periodo4.id_hitbtc": PeriodoOd_hitbtc, "Periodo4.fecha": PeriodoFecha,"Periodo4.precio" : PeriodoPrecio, "Periodo4.tipo_operacion": PeriodoTipoOperacion }});
+                                        //OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                                     }
                                     else{
                                         try{
@@ -1188,10 +1217,15 @@ Meteor.methods({
                                                 Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_trad.side]);
                                                 console.log(' NUEVO TIPO OPERACIÓN DETECTADO: ',v_trad.side);
                                         }
+
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoFecha: ']+[PeriodoFecha]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
                                     }
 
                                     TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "Periodo4.id_hitbtc": PeriodoOd_hitbtc, "Periodo4.fecha": PeriodoFecha,"Periodo4.precio" : PeriodoPrecio, "Periodo4.tipo_operacion": PeriodoTipoOperacion }});
-                                    OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
+                                    //OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                                     break;
                                 case 5:
                                     if ( TiposDeCambios.find({ tipo_cambio : TIPO_CAMBIO, "Periodo5.id_hitbtc" :{ $exists : false }},{}).count() === 0 || TiposDeCambios.find({ tipo_cambio : TIPO_CAMBIO, "Periodo5.precio" : null },{}).count() === 1 ){
@@ -1218,6 +1252,9 @@ Meteor.methods({
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
+
+                                        TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "Periodo5.id_hitbtc": PeriodoOd_hitbtc, "Periodo5.fecha": PeriodoFecha,"Periodo5.precio" : PeriodoPrecio, "Periodo5.tipo_operacion": PeriodoTipoOperacion }});
+                                        //OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                                     }
                                     else{
                                         try{
@@ -1248,17 +1285,22 @@ Meteor.methods({
                                                 Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_trad.side]);
                                                 console.log(' NUEVO TIPO OPERACIÓN DETECTADO: ',v_trad.side);
                                         }
+
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoFecha: ']+[PeriodoFecha]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
                                     }
 
                                     TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "Periodo5.id_hitbtc": PeriodoOd_hitbtc, "Periodo5.fecha": PeriodoFecha,"Periodo5.precio" : PeriodoPrecio, "Periodo5.tipo_operacion": PeriodoTipoOperacion }});
-                                    OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
+                                    //OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                                     break;
                                 case 6:
                                     if ( TiposDeCambios.find({ tipo_cambio : TIPO_CAMBIO, "Periodo6.id_hitbtc" :{ $exists : false }},{}).count() === 0 || TiposDeCambios.find({ tipo_cambio : TIPO_CAMBIO, "Periodo6.precio" : null },{}).count() === 1 ){
                                         var ValUltIdTransaccion = Meteor.call('ConsultaTraderGuardados', TIPO_CAMBIO);
 
                                         if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 3 switch - case 5 - if');
+                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 3 switch - case 6 - if');
                                             Meteor.call("GuardarLogEjecucionTrader", [' Valor de ValUltIdTransaccion: ']+[ValUltIdTransaccion]);
                                         }
 
@@ -1277,7 +1319,9 @@ Meteor.methods({
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoFecha: ']+[PeriodoFecha]);
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
                                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
-                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]);
+
+                                        TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "Periodo6.id_hitbtc": PeriodoOd_hitbtc, "Periodo6.fecha": PeriodoFecha,"Periodo6.precio" : PeriodoPrecio, "Periodo6.tipo_operacion": PeriodoTipoOperacion }});
                                     }
                                     else{
                                         try{
@@ -1288,7 +1332,7 @@ Meteor.methods({
                                         };
 
                                         if ( debug_activo === 1) {
-                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 3 switch - case 5 - else');
+                                            Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 3 switch - case 6 - else');
                                         }
 
                                         var PeriodoFecha = TradAnt.Periodo6.fecha;
@@ -1308,15 +1352,21 @@ Meteor.methods({
                                                 Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_trad.side]);
                                                 console.log(' NUEVO TIPO OPERACIÓN DETECTADO: ',v_trad.side);
                                         }
+
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoFecha: ']+[PeriodoFecha]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoOd_hitbtc: ']+[PeriodoOd_hitbtc]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoPrecio: ']+[PeriodoPrecio]);
+                                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de PeriodoTipoOperacion: ']+[PeriodoTipoOperacion]); 
                                     }
 
                                     TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "Periodo6.id_hitbtc": PeriodoOd_hitbtc, "Periodo6.fecha": PeriodoFecha,"Periodo6.precio" : PeriodoPrecio, "Periodo6.tipo_operacion": PeriodoTipoOperacion }});
-                                    OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
+                                    //OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                                     break;               
                             }
                             
+
                             
-                            OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
+                            //OperacionesCompraVenta.insert({ id_hitbtc: v_trad.id, fecha : v_trad.timestamp, tipo_cambio : TIPO_CAMBIO, precio : v_trad.price, tipo_operacion : v_tipo_operacion, tasa_liquidez : v_comision.takeLiquidityRate, proporcion_liquidez : v_comision.provideLiquidityRate, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                             
                             console.log('--------------------------------------------');
                             console.log(' TIPO_CAMBIO: ',TIPO_CAMBIO);
