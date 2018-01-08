@@ -1601,7 +1601,7 @@ Meteor.methods({
         Meteor.call("ListaMonedas");
         Meteor.call("ListaTiposDeCambios", 2);
         Meteor.call("SaldoActualMonedas");
-        Ejecucion_Trader.update({ "muestreo.periodo_inicial" : true },{ "muestreo.periodo_inicial" : false , fecha_ejecucion : new Date() });
+        Ejecucion_Trader.update({ "muestreo.periodo_inicial" : true },{$set :{ "muestreo.periodo_inicial" : false , fecha_ejecucion : new Date() }});
         Meteor.call("FinEjecucion");
         
         return 0;
