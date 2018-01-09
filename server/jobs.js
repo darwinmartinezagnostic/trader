@@ -9,7 +9,7 @@ Jobs.register({
 		Meteor.call("GuardarLogEjecucionTrader", '----------  SOY EL JOB INICIAL  -----------');
 	    console.log(' ');
 
-	    var EjecucionIncial = Meteor.call('EjecucionGlobal'); 
+	    var EjecucionIncial = Meteor.call('EjecucionInicial'); 
 
 	    console.log("Valor de EjecucionIncial", EjecucionIncial);
 
@@ -34,7 +34,7 @@ Jobs.register({
 		        	second: 5
 		    	}
 		    })
-
+/*
 		    Jobs.run("JobInsertarSecuenciaPeriodo2", { 
 		    	in: {
 		        	second: 30
@@ -63,7 +63,7 @@ Jobs.register({
 		    	in: {
 		        	second: 150
 		    	}
-		    })
+		    })*/
     	},
 
     JobReinicioSecuencia: function (){    	
@@ -116,13 +116,13 @@ Jobs.register({
 			var fecha_actual = new Date();
 			var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth(), fecha_actual.getDay(), fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() + 5 )
 			Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar , 1 ],	"state" : "pending" });
-		}
+		}/*
 		console.log(' ');
 		Jobs.run("JobInsertarSecuenciaPeriodo1", tipo_cambio_verificar, { 
 	    	in: {
 	        	minute: 5
 	    	}
-	    })
+	    })*/
     },
 
     JobInsertarSecuenciaPeriodo2 : function (TIPO_CAMBIO){
@@ -270,6 +270,8 @@ Jobs.register({
 	        Meteor.call('TipoCambioDisponibleCompra', 2, TIPO_MUESTREO);
 
 	        console.log('--------------------------------------------');
+	        console.log('############################################');
+	        console.log('-------------- JOB FINALIZADO --------------');
 	        console.log('############################################');
 
 
