@@ -27,7 +27,7 @@ const transacciones = [cuenta]+"transactions";
 const cripto_cuenta= [cuenta]+"crypto/";
 const retiros= [cripto_cuenta]+"withdraw";
 const cart_dep = [cripto_cuenta]+"address";
-const nueva_transferencia = [cuenta]+"transfer";
+const transferencia = [cuenta]+"transfer";
 // API Trading History
 const HistTradeo = [historial]+"trades";
 const HistOrdenes = [historial]+"order";
@@ -439,12 +439,11 @@ Meteor.methods({
                                 console.log(' ');
 
                                 if ( debug_activo === 1) {
-                                    Meteor.call("GuardarLogEjecucionTrader", [' SaldoActualMonedas: Se detecto Saldo en cuenta para invertir" : ']+[v_BlcCuenta.available]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [' SaldoActualMonedas: Se Procede a transferir fondos al Saldo de tra" : ']+[v_BlcCuenta.available]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [' SaldoActualMonedas: Se detectó Saldo en cuenta para invertir" : ']+[v_BlcCuenta.available]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [' SaldoActualMonedas: Se Procede a transferir fondos al Saldo de trader" : ']+[v_BlcCuenta.available]);
                                 };
 
-
-
+                                Meteor.call( 'Transferirfondos', v_sald_moneda.moneda, v_BlcCuenta.available,'bankToExchange');
 
                             }
                         }
@@ -493,6 +492,20 @@ Meteor.methods({
                             console.log('    SALDO CUENTA RESERVA: ',v_BlcCuenta.reserved);
                             console.log('############################################');
                             console.log(' ');
+
+                            if ( debug_activo === 1) {
+                                Meteor.call("GuardarLogEjecucionTrader", [' SaldoActualMonedas: Se detectó Saldo en cuenta para invertir" : ']+[v_BlcCuenta.available]);
+                                Meteor.call("GuardarLogEjecucionTrader", [' SaldoActualMonedas: Se Procede a transferir fondos al Saldo de trader" : ']+[v_BlcCuenta.available]);
+                            };
+
+                            TransferenciaHecha = Meteor.call( 'Transferirfondos', v_sald_moneda.moneda, v_BlcCuenta.available,'bankToExchange');
+
+                            //TransferenciaHecha = Meteor.call( 'Transferirfondos', v_sald_moneda.moneda, 0.050000003698,'exchangeToBank');
+
+                            console.log("Valor de TransferenciaHecha: ", TransferenciaHecha)
+
+
+                            //Meteor.call( 'Transferirfondos', v_sald_moneda.moneda, v_BlcCuenta.available,'bankToExchange');
                         }
                     break;
                 }
@@ -735,18 +748,33 @@ Meteor.methods({
         console.log(' Nueva cartera: ', V_NuevaCartera.address);
     },
 
-    'TransferirfondosReservaTradeo':function(MONEDA){  //Transfer amount to trading
+    'Transferirfondos':function(MONEDA, MONTO, TIPO_TRANSF){  //Transfer amount to trading
 
         console.log('############################################');
-        console.log(' Realiza trasnferencia de fondos desde la reserva a tradeo y viseversa');
+        console.log(' Realiza trasnferencia de fondos desde el saldo de la Cuenta al Saldo de tradeo y viseversa');
         console.log(' ');
 
+        //HAY 2 TIPOS DE TRANSFERENCIAS
+        // "bankToExchange" Del Saldo de la cuenta a el Saldo de Trader
+        // "exchangeToBank" Del Saldo de Trader a el Saldo de la cuenta
+
+        var datos = new Object();
+        datos.currency= MONEDA;
+        datos.amount = MONTO;
+        datos.type = TIPO_TRANSF;
+
+        var url_orden = [transferencia];
+
+        console.log("Valor de url_orden", url_orden);
+
         try{
-            var NuevaCartera = Meteor.call("ConexionPost", transferencia);
+            var NuevaTransferencia = Meteor.call("ConexionPost", url_orden, datos);
         }
         catch (error){
             Meteor.call("ValidaError", error, 1)
         };
+
+        return NuevaTransferencia;
     },
     
     'CrearNuevaOrder':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO){  //POST
@@ -1341,8 +1369,11 @@ Meteor.methods({
 
 
                 try{
-                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia" : ProcenApDp, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    if (ValPrecAct > ValPrecAnt ) {
+                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia" : ProcenApDp, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    }
                     OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
+
                 }
                 catch(error){
                     Meteor.call("ValidaError", error, 2);
@@ -1416,7 +1447,9 @@ Meteor.methods({
 
 
                 try{
-                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo2.tendencia" : ProcenApDp, activo : "S", "periodo2.id_hitbtc": PeriodoId_hitbtcAct, "periodo2.fecha": PeriodoFechaAct,"periodo2.precio" : PeriodoPrecioAct, "periodo2.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    if (ValPrecAct > ValPrecAnt ) {
+                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo2.tendencia" : ProcenApDp, activo : "S", "periodo2.id_hitbtc": PeriodoId_hitbtcAct, "periodo2.fecha": PeriodoFechaAct,"periodo2.precio" : PeriodoPrecioAct, "periodo2.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    }
                     OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo2" : false },{$set:{ "muestreo.periodo2" : true }}, {"multi" : true,"upsert" : true});
                 }
                 catch(error){
@@ -1491,7 +1524,9 @@ Meteor.methods({
 
 
                 try{
-                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo3.tendencia" : ProcenApDp, activo : "S", "periodo3.id_hitbtc": PeriodoId_hitbtcAct, "periodo3.fecha": PeriodoFechaAct,"periodo3.precio" : PeriodoPrecioAct, "periodo3.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    if (ValPrecAct > ValPrecAnt ) {
+                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo3.tendencia" : ProcenApDp, activo : "S", "periodo3.id_hitbtc": PeriodoId_hitbtcAct, "periodo3.fecha": PeriodoFechaAct,"periodo3.precio" : PeriodoPrecioAct, "periodo3.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    }
                     OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo3" : false },{$set:{ "muestreo.periodo3" : true }}, {"multi" : true,"upsert" : true});
                 }
                 catch(error){
@@ -1566,7 +1601,9 @@ Meteor.methods({
 
 
                 try{
-                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo4.tendencia" : ProcenApDp, activo : "S", "periodo4.id_hitbtc": PeriodoId_hitbtcAct, "periodo4.fecha": PeriodoFechaAct,"periodo4.precio" : PeriodoPrecioAct, "periodo4.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    if (ValPrecAct > ValPrecAnt ) {
+                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo4.tendencia" : ProcenApDp, activo : "S", "periodo4.id_hitbtc": PeriodoId_hitbtcAct, "periodo4.fecha": PeriodoFechaAct,"periodo4.precio" : PeriodoPrecioAct, "periodo4.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    }
                     OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo4" : false },{$set:{ "muestreo.periodo4" : true }}, {"multi" : true,"upsert" : true});
                 }
                 catch(error){
@@ -1641,7 +1678,9 @@ Meteor.methods({
 
 
                 try{
-                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo5.tendencia" : ProcenApDp, activo : "S", "periodo5.id_hitbtc": PeriodoId_hitbtcAct, "periodo5.fecha": PeriodoFechaAct,"periodo5.precio" : PeriodoPrecioAct, "periodo5.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    if (ValPrecAct > ValPrecAnt ) {
+                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo5.tendencia" : ProcenApDp, activo : "S", "periodo5.id_hitbtc": PeriodoId_hitbtcAct, "periodo5.fecha": PeriodoFechaAct,"periodo5.precio" : PeriodoPrecioAct, "periodo5.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    }
                     OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo5" : false },{$set:{ "muestreo.periodo5" : true }}, {"multi" : true,"upsert" : true});
                 }
                 catch(error){
@@ -1716,7 +1755,9 @@ Meteor.methods({
 
 
                 try{
-                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo6.tendencia" : ProcenApDp, activo : "S", "periodo6.id_hitbtc": PeriodoId_hitbtcAct, "periodo6.fecha": PeriodoFechaAct,"periodo6.precio" : PeriodoPrecioAct, "periodo6.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    if (ValPrecAct > ValPrecAnt ) {
+                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo6.tendencia" : ProcenApDp, activo : "S", "periodo6.id_hitbtc": PeriodoId_hitbtcAct, "periodo6.fecha": PeriodoFechaAct,"periodo6.precio" : PeriodoPrecioAct, "periodo6.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                    }
                     OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo6" : false },{$set:{ "muestreo.periodo6" : true }}, {"multi" : true,"upsert" : true});
                 }
                 catch(error){
@@ -1728,6 +1769,8 @@ Meteor.methods({
 
     'Prueba':function(){
         
+
+        /*
         try {
             var EjecInicial = Ejecucion_Trader.find({ muestreo : { periodo_inicial : true } },{}).count()
         }
@@ -1750,7 +1793,7 @@ Meteor.methods({
                     second: 15
                     }
             });
-        };
+        };*/
     },
 
     'EjecucionInicial':function(){
@@ -1779,7 +1822,7 @@ Meteor.methods({
 
     'EjecucionGlobal':function(){
 
-        Meteor.call("Prueba");
+        Meteor.call("SaldoActualMonedas", 2);
     }
 
 });
@@ -1787,7 +1830,7 @@ Meteor.methods({
 Meteor.startup(() => {
     // code to run on server at startup
     // Verificamos si la aplicación es su ejecución Inicial o no
-    
+    /*
     try {
         var EjecucionInicial = Ejecucion_Trader.find({ muestreo : { periodo_inicial : true } },{}).count()
     }
@@ -1811,7 +1854,9 @@ Meteor.startup(() => {
                 }
         });
     };
-    
+    */
+
+
    //Meteor.call("EjecucionGlobal");
    //Meteor.call("TipoCambioDisponibleCompra", 2, 1);
     

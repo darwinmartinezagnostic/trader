@@ -18,7 +18,7 @@ Template.home.events({
 Template.home.events({
   'click #ListMon': function (event) {
   	event.preventDefault();
-	Meteor.call('ListaMonedas',function(err,data){
+	Meteor.call('ListaMonedas',1,function(err,data){
 		Session.set('datos',data);
 	});
 
