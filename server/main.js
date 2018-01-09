@@ -1854,10 +1854,5 @@ Meteor.startup(() => {
                 }
         });
     };
-    */
-
-
-   //Meteor.call("EjecucionGlobal");
-   //Meteor.call("TipoCambioDisponibleCompra", 2, 1);
-    
+    */    
 });
