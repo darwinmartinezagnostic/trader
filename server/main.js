@@ -763,7 +763,7 @@ Meteor.methods({
         datos.amount = MONTO;
         datos.type = TIPO_TRANSF;
 
-        var url_orden = [transferencia];
+        var url_orden = transferencia;
 
         console.log("Valor de url_orden", url_orden);
 
@@ -1827,32 +1827,30 @@ Meteor.methods({
 
 });
 
-Meteor.startup(() => {
+Meteor.startup(function (){
     // code to run on server at startup
     // Verificamos si la aplicación es su ejecución Inicial o no
-    /*
+/*
     try {
         var EjecucionInicial = Ejecucion_Trader.find({ muestreo : { periodo_inicial : true } },{}).count()
+
+        if ( EjecucionInicial === 1 ){
+            Jobs.run("JobSecuenciaInicial", {
+                in: {
+                    second: 5
+                    }
+            });
+        }
+        else if ( EjecucionInicial === 0 ) {
+            Jobs.run("JobSecuencia", {
+                in: {
+                    second: 15
+                    }
+            });
+        };
     }
     catch (error){
         Meteor.call("ValidaError", error, 2);
-    };
-
-   
-    
-    if ( EjecucionInicial === 1 ){
-        Jobs.run("JobSecuenciaInicial", { 
-            in: {
-                second: 5
-                }
-        });
     }
-    else if ( EjecucionInicial === 0 ) {
-        Jobs.run("JobSecuencia", { 
-            in: {
-                second: 15
-                }
-        });
-    };
-    */    
+*/
 });
