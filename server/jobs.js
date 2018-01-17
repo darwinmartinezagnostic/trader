@@ -1,6 +1,5 @@
 const Job_activo = 1;
 
-
 Jobs.register({
 	JobSecuenciaInicial: function (){    	
     	fecha = moment (new Date());
@@ -142,13 +141,13 @@ Jobs.register({
 			var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth(), fecha_actual.getDay(), fecha_actual.getHours() +1, fecha_actual.getMinutes(), fecha_actual.getSeconds() )
 			Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar , 2 ],	"state" : "pending" });
 
-		}
+		}/*
 		console.log(' ');
 		Jobs.run("JobInsertarSecuenciaPeriodo2", tipo_cambio_verificar, { 
 	    	in: {
 	        	hour: 1
 	    	}
-	    })
+	    })*/
     },
 
     JobInsertarSecuenciaPeriodo3 : function (TIPO_CAMBIO){
