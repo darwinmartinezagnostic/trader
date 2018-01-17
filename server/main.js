@@ -1925,6 +1925,7 @@ Meteor.methods({
         }
     },
 
+<<<<<<< HEAD
     'CalculaRanking': function( TIPOS_DE_CAMBIOS, VALOR_EJEC, LIMITE_AP_DEP ){
 
         if ( debug_activo === 1) {
@@ -2010,6 +2011,95 @@ Meteor.methods({
             break;
         }
 
+=======
+    'validaMonedasActivas':function(){
+        //traerme las monedas y ver cuales estan activas?
+
+        Meteor.call("ListaMonedas",function(err, result){
+            if (err) {
+                Meteor.call('ValidaError', err, 1);
+            }else {
+                var moneda = Meteor.call("ConexionGet", monedas);
+                var mons = (moneda.data);
+                var monedasBD = Monedas.find({}).fetch();
+                var aux1 = [];
+                var x;
+                var esta;
+
+                for ( a = 0; a < monedasBD.length; a++) {
+                    esta = false;
+                    x = monedasBD[a].moneda;
+                    for ( b = 0; b < mons.length; b++) {
+                        if(x === mons[b].id)
+                        {
+                            esta = true;
+                            break;
+                        }
+                    }
+                    if(!esta){
+                        aux1.push(monedasBD[a]);
+                    }
+                }
+
+                for(aux in aux1)
+                {
+                    try{
+                        Monedas.update({ moneda : aux1[aux].moneda },{$set:{ nombre_moneda : aux1[aux].nombre_moneda, activo : "N" }});
+                    }
+                    catch(error){
+                        console.log('Error: los datos no pudieron ser actualizados');
+                        Meteor.call('ValidaError', error, 1);
+                    }
+                }
+            }
+        });
+
+    },
+
+    'validaTiposDeCambiosActivos':function(){
+        //traerme los tipos de cambio y ver cuales estan activos?
+        Meteor.call("ListaTiposDeCambios", 2,function(err, result){
+            if (err) {
+                Meteor.call('ValidaError', err, 1);
+            }else {
+                var traders = Meteor.call("ConexionGet", simbolos);
+                var mon_camb =(traders.data);
+                var tradersBD = TiposDeCambios.find({}).fetch();
+                var aux1 = [];
+                var x;
+                var esta;
+
+                for ( a = 0; a < tradersBD.length; a++) {
+                    esta = false;
+                    x = tradersBD[a].moneda;
+                    for ( b = 0; b < mon_camb.length; b++) {
+                        if(x === mon_camb[b].id)
+                        {
+                            esta = true;
+                            break;
+                        }
+                    }
+                    if(!esta){
+                        aux1.push(tradersBD[a]);
+                    }
+                }
+
+                console.log(mon_camb[0]);
+                console.log(aux1[0]);
+
+                for(aux in aux1)
+                {
+                    try{
+                        TiposDeCambios.update({ tipo_cambio : aux1[aux].tipo_cambio },{$set:{ tipo_cambio : aux1[aux].tipo_cambio, moneda_base :  aux1[aux].moneda_base, moneda_cotizacion : aux1[aux].moneda_cotizacion, activo : "N" }});
+                    }
+                    catch(error){
+                        console.log('Error: los datos no pudieron ser actualizados');
+                        Meteor.call('ValidaError', error, 1);
+                    }
+                }
+            }
+        });
+>>>>>>> 4af434ee4648e6159e1c851a6ed6f21e02b0f1d0
 
     },
 
