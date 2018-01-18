@@ -2301,11 +2301,6 @@ Meteor.methods({
         }
     },
 
-    'Invertir':function(){ 
-
-        
-    },
-
     'Prueba':function(){ 
 
         try {
