@@ -1165,7 +1165,6 @@ Meteor.methods({
                             Meteor.call('EvaluarTendencias',monedasCambiables[mc]._id, TIPO_MUESTREO );
                         }
                         var TiposDeCambiosRankear = Array.from(set);
-                        //console.log("Valor de set: ", TiposDeCambiosRankear);
                         Meteor.call( 'CalculaRanking', TiposDeCambiosRankear, 2 , V_LimiteApDep);
                         break;
                 }
@@ -2166,7 +2165,7 @@ Meteor.methods({
                     case undefined:
                         
                         console.log('--------------------------------------------');
-                        console.log("             **** EN ESPERA **** ")
+                        console.log("            **** EN ESPERA **** ")
                         console.log("   | Tendencias Analizadas no superan |")
                         console.log("   |   limites Mínimos configurados   |")
                         console.log(' ');
