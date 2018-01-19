@@ -109,19 +109,25 @@ Jobs.register({
    		TipoDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1);
 		Meteor.call("GuardarLogEjecucionTrader", ['Valor de TipoDeCambioVerificar: ']+[TipoDeCambioVerificar]);
 
-		for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
-			var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
-			Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);
-			var fecha_actual = new Date();
-			var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth(), fecha_actual.getDay(), fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() + 5 )
-			Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar , 1 ],	"state" : "pending" });
-		}/*
-		console.log(' ');
-		Jobs.run("JobInsertarSecuenciaPeriodo1", tipo_cambio_verificar, { 
-	    	in: {
-	        	minute: 5
-	    	}
-	    })*/
+		if ( TipoDeCambioVerificar === undefined ) {
+			Meteor.call("GuardarLogEjecucionTrader", ['JobInsertarSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TipoDeCambioVerificar]);
+		}
+		else {
+
+			for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
+				var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
+				Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);
+				var fecha_actual = new Date();
+				var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth(), fecha_actual.getDay(), fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() + 5 )
+				Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar , 1 ],	"state" : "pending" });
+			}/*
+			console.log(' ');
+			Jobs.run("JobInsertarSecuenciaPeriodo1", tipo_cambio_verificar, { 
+		    	in: {
+		        	minute: 5
+		    	}
+		    })*/
+		}
     },
 
     JobInsertarSecuenciaPeriodo2 : function (TIPO_CAMBIO){
@@ -134,20 +140,25 @@ Jobs.register({
     	TipoDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1);
 		Meteor.call("GuardarLogEjecucionTrader", ['Valor de TipoDeCambioVerificar: ']+[TipoDeCambioVerificar]);
 
-		for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
-			var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
-			Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);
-			var fecha_actual = new Date();
-			var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth(), fecha_actual.getDay(), fecha_actual.getHours() +1, fecha_actual.getMinutes(), fecha_actual.getSeconds() )
-			Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar , 2 ],	"state" : "pending" });
+		if ( TipoDeCambioVerificar === undefined ) {
+			Meteor.call("GuardarLogEjecucionTrader", ['JobInsertarSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TipoDeCambioVerificar]);
+		}
+		else {
 
-		}/*
-		console.log(' ');
-		Jobs.run("JobInsertarSecuenciaPeriodo2", tipo_cambio_verificar, { 
-	    	in: {
-	        	hour: 1
-	    	}
-	    })*/
+			for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
+				var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
+				Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);
+				var fecha_actual = new Date();
+				var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth(), fecha_actual.getDay(), fecha_actual.getHours() +1, fecha_actual.getMinutes(), fecha_actual.getSeconds() )
+				Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar , 2 ],	"state" : "pending" });
+			}/*
+			console.log(' ');
+			Jobs.run("JobInsertarSecuenciaPeriodo2", tipo_cambio_verificar, { 
+		    	in: {
+		        	hour: 1
+		    	}
+		    })*/
+		}
     },
 
     JobInsertarSecuenciaPeriodo3 : function (TIPO_CAMBIO){
@@ -160,20 +171,25 @@ Jobs.register({
     	TipoDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1);
 		Meteor.call("GuardarLogEjecucionTrader", ['Valor de TipoDeCambioVerificar: ']+[TipoDeCambioVerificar]);
 
-		for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
-			var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
-			Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);
-			var fecha_actual = new Date();
-			var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth(), fecha_actual.getDay() + 1, fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() )
-			Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar, 3 ],	"state" : "pending" });
-
+		if ( TipoDeCambioVerificar === undefined ) {
+			Meteor.call("GuardarLogEjecucionTrader", ['JobInsertarSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TipoDeCambioVerificar]);
 		}
-		console.log(' ');
-		Jobs.run("JobInsertarSecuenciaPeriodo3", tipo_cambio_verificar, { 
-	    	in: {
-	        	days: 1
-	    	}
-	    })
+		else {
+			
+			for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
+				var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
+				Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);
+				var fecha_actual = new Date();
+				var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth(), fecha_actual.getDay() + 1, fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() )
+				Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar, 3 ],	"state" : "pending" });
+			}
+			console.log(' ');
+			Jobs.run("JobInsertarSecuenciaPeriodo3", tipo_cambio_verificar, { 
+		    	in: {
+		        	days: 1
+		    	}
+		    })
+		}
     },
 
     JobInsertarSecuenciaPeriodo4 : function (TIPO_CAMBIO){
@@ -186,21 +202,26 @@ Jobs.register({
     	TipoDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1);
 		Meteor.call("GuardarLogEjecucionTrader", ['Valor de TipoDeCambioVerificar: ']+[TipoDeCambioVerificar]);
 
-		for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
-			var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
-			Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);
-			var fecha_actual = new Date();
-			var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth(), fecha_actual.getDay() + 7, fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() )
-			Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar, 4],	"state" : "pending" });
-
+		if ( TipoDeCambioVerificar === undefined ) {
+			Meteor.call("GuardarLogEjecucionTrader", ['JobInsertarSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TipoDeCambioVerificar]);
 		}
-		console.log(' ');
+		else {
 			
-		Jobs.run("JobInsertarSecuenciaPeriodo4", tipo_cambio_verificar, { 
-	    	in: {
-	        	days: 7
-	    	}
-	    })
+			for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
+				var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
+				Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);
+				var fecha_actual = new Date();
+				var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth(), fecha_actual.getDay() + 7, fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() )
+				Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar, 4],	"state" : "pending" });
+			}
+			console.log(' ');
+				
+			Jobs.run("JobInsertarSecuenciaPeriodo4", tipo_cambio_verificar, { 
+		    	in: {
+		        	days: 7
+		    	}
+		    })
+		}
     },
 
     JobInsertarSecuenciaPeriodo5 : function (TIPO_CAMBIO){
@@ -210,23 +231,29 @@ Jobs.register({
 		console.log(' ');
 		Meteor.call("GuardarLogEjecucionTrader", 'Estoy en el Job JobInsertarSecuenciaPeriodo5');
 
-    	TipoDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1);
+    	TipoDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1, 5);
 		Meteor.call("GuardarLogEjecucionTrader", ['Valor de TipoDeCambioVerificar: ']+[TipoDeCambioVerificar]);
 
-		for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
-			var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
-			Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);
-			var fecha_actual = new Date();
-			var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth() + 1, fecha_actual.getDay(), fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() )
-			Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar, 5],	"state" : "pending" });
+		if ( TipoDeCambioVerificar === undefined ) {
+			Meteor.call("GuardarLogEjecucionTrader", ['JobInsertarSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TipoDeCambioVerificar]);
+		}
+		else {
+			
+			for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
+				var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
+				Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);
+				var fecha_actual = new Date();
+				var fecha_ejecucion = new Date ( fecha_actual.getFullYear(), fecha_actual.getMonth() + 1, fecha_actual.getDay(), fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() )
+				Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar, 5],	"state" : "pending" });
 			}
-		console.log(' ');
+			console.log(' ');
 
-		Jobs.run("JobInsertarSecuenciaPeriodo5", tipo_cambio_verificar, { 
-	    	in: {
-	        	month: 1
-	    	}
-	    })
+			Jobs.run("JobInsertarSecuenciaPeriodo5", tipo_cambio_verificar, { 
+		    	in: {
+		        	month: 1
+		    	}
+		    })
+		}
     },
 
     JobInsertarSecuenciaPeriodo6 : function (TIPO_CAMBIO){
@@ -236,24 +263,29 @@ Jobs.register({
 		console.log(' ');
 		Meteor.call("GuardarLogEjecucionTrader", 'Estoy en el Job JobInsertarSecuenciaPeriodo6');
 
-    	TipoDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1);
+    	TipoDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1, 6);
 		Meteor.call("GuardarLogEjecucionTrader", ['Valor de TipoDeCambioVerificar: ']+[TipoDeCambioVerificar]);
 
-		for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
-			var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
-			Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);;
-			var fecha_actual = new Date();
-			var fecha_ejecucion = new Date ( fecha_actual.getFullYear() + 1, fecha_actual.getMonth(), fecha_actual.getDay(), fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() )
-			Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar, 6],	"state" : "pending" });
-
+		if ( TipoDeCambioVerificar === undefined ) {
+			Meteor.call("GuardarLogEjecucionTrader", ['JobInsertarSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TipoDeCambioVerificar]);
 		}
-		console.log(' ');
+		else {
+			
+			for (CTP = 0, TTP = TipoDeCambioVerificar.length; CTP < TTP; CTP++){
+				var tipo_cambio_verificar = TipoDeCambioVerificar[CTP];
+				Meteor.call("GuardarLogEjecucionTrader", ['Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar]);;
+				var fecha_actual = new Date();
+				var fecha_ejecucion = new Date ( fecha_actual.getFullYear() + 1, fecha_actual.getMonth(), fecha_actual.getDay(), fecha_actual.getHours(), fecha_actual.getMinutes(), fecha_actual.getSeconds() )
+				Jobs.private.collection.insert({ "name" : "JobValidaTendenciaTipoCambio", "created" : fecha_actual, "due" : fecha_ejecucion, "priority" : 9999999999,	"arguments" : [	tipo_cambio_verificar, 6],	"state" : "pending" });
+			}
+			console.log(' ');
 
-		Jobs.run("JobInsertarSecuenciaPeriodo6", tipo_cambio_verificar, { 
-	    	in: {
-	        	year: 1
-	    	}
-	    })
+			Jobs.run("JobInsertarSecuenciaPeriodo6", tipo_cambio_verificar, { 
+		    	in: {
+		        	year: 1
+		    	}
+		    })
+		}
    	},
 
     JobValidaTendenciaTipoCambio: function (TIPO_CAMBIO, TIPO_MUESTREO){

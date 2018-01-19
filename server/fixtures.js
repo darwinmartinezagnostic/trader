@@ -25,7 +25,10 @@ if (PeriodoMuestreo.find().count() === 0){
 
 if (Parametros.find().count() === 0){
 	Parametros.insert({ fecha : new Date(), dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true }},descripcion : 'Ejecucíón Inicial del Trader' });
+	Parametros.insert({ fecha : new Date(), dominio : 'ejecucion', nombre : 'Depuracion', estado : true, valor: 1 ,descripcion : 'Activar o desactivar las banderas creadas para rasterar errores de ejecución en los diferentes módulos' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'MaxApDep', estado : true, valor: 10 ,descripcion : 'Límite de Apreción (Moneda a comprar) o Depreciación (Moneda en Venta)' });
-	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'MinCompra', estado : true, valor: 0.01 ,descripcion : 'Mínimo de saldo para comprar otras monedas' });
-	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'PropPorcInver', estado : true, valor: { "1-1" : 1, "1-2" : 0.7, "2-2" : 0.3, "1-3" : 0.6, "2-3" : 0.3, "3-3" : 0.1 }, descripcion : 'Proporción de Procentajes de inversión según cantdad de tipos de cambio disponibles para compra' });
+	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadTraders', estado : true, valor: 1 ,descripcion : 'Máximo de Registros Traders consultados a HitBTC' });
+	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'PropPorcInver', estado : true, valor: { p11 : 1, p12 : 0.7, p22 : 0.3, p13 : 0.6, p23 : 0.3, p33 : 0.1 }, descripcion : 'Proporción de Procentajes de inversión según cantdad de tipos de cambio disponibles para compra' });
+	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadTransaccionesAtras', estado : true, valor: 300 ,descripcion : 'Cantidad de ID transacciones de traders hacia atrás que consultarán para determinar por primera vez el valor de la transacción Anterior' });
+	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'ValorMinimoTransferencia', estado : true, valor: 0.000000001 ,descripcion : 'Valor mínimo de para transferir entre los tipos de saldo Cuenta - trader y viceversa' });
 };
