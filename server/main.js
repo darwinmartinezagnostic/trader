@@ -2440,7 +2440,10 @@ Meteor.methods({
                             console.log('--------------------------------------------');
                         }
 
-                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR*/
+                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR 
+                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISCPONIBLES
+                                    DE ÑA MONEDA COMPRADA
+                                    */
 
                                 
                     break;
@@ -2473,9 +2476,6 @@ Meteor.methods({
                                     console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p12*100,'%');
                                     console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-
-                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR*/
-
                                 break;
                                 case 1:
                                     var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
@@ -2484,10 +2484,13 @@ Meteor.methods({
                                     console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
 
-                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR*/
 
                                 break;
                             }
+                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR 
+                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISCPONIBLES
+                                    DE ÑA MONEDA COMPRADA
+                                    */
                             //console.log('     MONTO A INVERTIR: ', ProporcionTipoCambios.valor.p11*100,'%');
                             console.log('--------------------------------------------');
                         }
@@ -2521,9 +2524,6 @@ Meteor.methods({
                                     console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p13*100,'%');
                                     console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-
-                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR*/
-
                                 break;
                                 case 1:
                                     var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
@@ -2532,8 +2532,6 @@ Meteor.methods({
                                     console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
 
-                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR*/
-
                                 break;
                                 case 2:
                                     var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
@@ -2541,11 +2539,12 @@ Meteor.methods({
                                     console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p33*100,'%');
                                     console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-
-                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR*/
-
                                 break;
                             }
+                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR 
+                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISCPONIBLES
+                                    DE ÑA MONEDA COMPRADA
+                                    */
                             console.log('--------------------------------------------');
                         }
                     break;
