@@ -1092,7 +1092,7 @@ Meteor.methods({
     },
 
     'TipoCambioDisponibleCompra':function(VALOR_EJEC, TIPO_MUESTREO){
-
+        var V_EJEC = 2
         console.log ("Estoy en TipoCambioDisponibleCompra");
 
         try
@@ -1118,7 +1118,7 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ningún tipo de Cambio Guardado en la Base de Datos Local, Solucionando ... ']);
                     Monedas.remove({});
                     Meteor.call("ListaMonedas");
-                    Meteor.call("ListaTiposDeCambios", 2);
+                    Meteor.call("ListaTiposDeCambios", V_EJEC);
                     Meteor.call("SaldoActualMonedas");
                     if (TiposDeCambios.find().count() !== 0){
                         Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: ¡ Listo ! ']);
@@ -1155,11 +1155,11 @@ Meteor.methods({
                         var set = new Set();
                         for(mc in monedasCambiables){
                             set.add(monedasCambiables[mc]._id);
-                            Meteor.call('ListaTradeoActual', monedasCambiables[mc]._id, 2, TIPO_MUESTREO);
+                            Meteor.call('ListaTradeoActual', monedasCambiables[mc]._id, V_EJEC, TIPO_MUESTREO);
                             Meteor.call('EvaluarTendencias',monedasCambiables[mc]._id, TIPO_MUESTREO );
                         }
                         var TiposDeCambiosRankear = Array.from(set);
-                        Meteor.call( 'Invertir', TiposDeCambiosRankear, 2 , V_LimiteApDep);
+                        Meteor.call( 'Invertir', TiposDeCambiosRankear, V_EJEC , V_LimiteApDep);
                         break;
                 }
             };
@@ -1549,7 +1549,9 @@ Meteor.methods({
                 }
                 catch (error){    
                 Meteor.call("ValidaError", error, 2);
-                };                           
+                };        
+
+                //console.log("Valor de TradAnt", TradAnt, "Tipode cambio a verificar: ", TIPOCAMBIO, "Valor de TIPO_MUESTREO: ", TIPO_MUESTREO);
                     
                 try{
                     var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
@@ -1628,7 +1630,9 @@ Meteor.methods({
                 }
                 catch (error){    
                 Meteor.call("ValidaError", error, 2);
-                };                           
+                };
+
+                console.log("Valor de TradAnt", TradAnt, "Tipode cambio a verificar: ", TIPOCAMBIO, "Valor de TIPO_MUESTREO: ", TIPO_MUESTREO);                     
                     
                 try{
                     var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo2" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
@@ -2441,8 +2445,8 @@ Meteor.methods({
                         }
 
                                     /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR 
-                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISCPONIBLES
-                                    DE ÑA MONEDA COMPRADA
+                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISPONIBLES
+                                    DE LA MONEDA COMPRADA
                                     */
 
                                 
@@ -2488,8 +2492,8 @@ Meteor.methods({
                                 break;
                             }
                                     /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR 
-                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISCPONIBLES
-                                    DE ÑA MONEDA COMPRADA
+                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISPONIBLES
+                                    DE LA MONEDA COMPRADA
                                     */
                             //console.log('     MONTO A INVERTIR: ', ProporcionTipoCambios.valor.p11*100,'%');
                             console.log('--------------------------------------------');
@@ -2542,8 +2546,8 @@ Meteor.methods({
                                 break;
                             }
                                     /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR 
-                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISCPONIBLES
-                                    DE ÑA MONEDA COMPRADA
+                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISPONIBLES
+                                    DE LA MONEDA COMPRADA
                                     */
                             console.log('--------------------------------------------');
                         }
@@ -2555,6 +2559,8 @@ Meteor.methods({
     },
 
     'Prueba':function(){ 
+        //Meteor.call("Invertir", "XMRUSD", 2, 10);
+
 
         try {
             var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
