@@ -39,7 +39,7 @@ const CantTransAtras = 300;
 // ACTIVACION DE GUARDADO DEBUG DEL CÓDIGO EN DB
 const debug_activo = 1;
 
-
+var idTrans = 0;
 
 //**************************************************
 
@@ -1030,9 +1030,45 @@ Meteor.methods({
         datos.quantity = CANT_MONEDA;
         datos.price = PRECIO;
 
-        var url_orden = [ordenes];
+        var url_orden = ordenes;
 
         var orden = Meteor.call('ConexionPost', url_orden, datos);
+    },
+
+    'CrearNuevaOrderRobot':function(SALDO_ACTUAL,N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA){  //POST
+
+        console.log('############################################');
+        console.log('Creando una nueva orden en el ROBOT');
+
+        var datos = new Object();
+        datos.clientOrderId= N_ID__ORDEN_CLIENT;
+        datos.symbol = TIPO_CAMBIO;
+        datos.side = T_TRANSACCION;
+        datos.timeInForce=ZONA_HORARA;
+        datos.quantity = CANT_MONEDA;
+
+        var fecha = new Date();
+        var base = TIPO_CAMBIO.substr(0,3);
+        var cambio = TIPO_CAMBIO.substr(3,3);
+
+        var moneda = OperacionesCompraVenta.findOne({ tipo_cambio : TIPO_CAMBIO, tipo_operacion : "VENTA" },{ id : 0, precio : 1, fecha : 1 },{ $sort: { fecha : -1 }});
+        var comisiones = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO },{ _id : 0, comision_hitbtc : 1 , comision_mercado : 1 },{ $sort: { fecha : -1 }});
+
+        console.log("Valor de comisiones", comisiones);
+
+        //var cantidad = moneda.precio * CANT_MONEDA;
+        //
+        var cantidad = ((moneda.precio * CANT_MONEDA) - comisiones.comision_hitbtc) - comisiones.comision_mercado;
+
+        var saldo = SALDO_ACTUAL - CANT_MONEDA;
+
+        Monedas.update({moneda : cambio},{$inc:{"saldo.tradeo.activo" : cantidad}})
+
+        Monedas.update({ moneda : base},{$set:{"saldo.tradeo.activo" : saldo}});
+
+        HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT ,tipo_transferencia : T_TRANSACCION, moneda_base : base, moneda_cambio : cambio, monto : cantidad, estado : "Exitoso" });
+
+        console.log("Inversion realizada");
     },
 
     'borrarOrden':function(TIPO_CAMBIO){  //DELETE
@@ -1056,15 +1092,27 @@ Meteor.methods({
             //Meteor.call("GuardarLogEjecucionTrader", [' ConsultaTraderGuardados: Consultando el último ID de Transaccion guardado del tipo_cambio: ']+[TIPO_CAMBIO]);
         };
 
-        if (OperacionesCompraVenta.find({ tipo_cambio:TIPO_CAMBIO }, {}).count() === 0){
+        if ( OperacionesCompraVenta.find({ tipo_cambio:TIPO_CAMBIO }, {}).count() === 0 ){
             if ( debug_activo === 1) {
-                Meteor.call("GuardarLogEjecucionTrader", ['No hay datos en base de datos local de este tipo_cambio: ']+[TIPO_CAMBIO]);
-                console.log('No hay datos en base de datos local de este tipo_cambio: ', TIPO_CAMBIO);
+                console.log('--------------------------------------------');
+                console.log('          TIPO DE CAMBIO: ',TIPO_CAMBIO);
+                console.log('--------------------------------------------');
+                console.log(' ');
+                Meteor.call("GuardarLogEjecucionTrader", [' Sin datos en BD local de este tipo_cambio: ']+[TIPO_CAMBIO]);
+                console.log(' ');
+                console.log('--------------------------------------------');
             };
         }
         else {
             if ( debug_activo === 1) {
-                //Meteor.call("GuardarLogEjecucionTrader", ['Se encontraron datos guardados para este tipo_cambio: ']+[TIPO_CAMBIO]+[' Verificando...']);
+                console.log('--------------------------------------------');
+                console.log('          TIPO DE CAMBIO: ',TIPO_CAMBIO);
+                console.log('--------------------------------------------');
+                console.log(' ');
+                Meteor.call("GuardarLogEjecucionTrader", [' Datos encontrados para este tipo_cambio: ']+[TIPO_CAMBIO]);
+                console.log('                    Verificando... ');
+                console.log(' ');
+                console.log('--------------------------------------------');
             };
             var VAL_TIPO_CAMBIO = OperacionesCompraVenta.aggregate( [{$match: {tipo_cambio:TIPO_CAMBIO}}, {$group: {_id: "$tipo_cambio", max_id : { $max: "$id_hitbtc"}} }]);
 
@@ -1073,8 +1121,8 @@ Meteor.methods({
             for (CTD = 0, tamanio_val_tipo_cambio = v_VAL_TIPO_CAMBIO.length; CTD < tamanio_val_tipo_cambio; CTD++) {
                 var v_INT_VAL_TIPO_CAMBIO = v_VAL_TIPO_CAMBIO[CTD];
 
-                //console.log('Tipo Cambio: ', v_INT_VAL_TIPO_CAMBIO._id);
-                //console.log('Valor del ID: ', v_INT_VAL_TIPO_CAMBIO.max_id);
+                console.log('Tipo Cambio: ', v_INT_VAL_TIPO_CAMBIO._id);
+                console.log('Valor del ID: ', v_INT_VAL_TIPO_CAMBIO.max_id);
             };
 
             if ( v_INT_VAL_TIPO_CAMBIO._id === undefined ) {
@@ -1083,7 +1131,7 @@ Meteor.methods({
             }
             else {
                 if ( debug_activo === 1) {
-                    //Meteor.call("GuardarLogEjecucionTrader", [' ConsultaTraderGuardados: ID de Transaccion recuperado con exito: ']+[v_INT_VAL_TIPO_CAMBIO.max_id]);
+                    Meteor.call("GuardarLogEjecucionTrader", [' ConsultaTraderGuardados: ID de Transaccion recuperado con exito: ']+[v_INT_VAL_TIPO_CAMBIO.max_id]);
                 };
             };
 
@@ -1095,9 +1143,16 @@ Meteor.methods({
         var V_EJEC = 2
         console.log ("Estoy en TipoCambioDisponibleCompra");
 
+        var robot = Parametros.findOne({ dominio : "robot", nombre : "test" }, {_id : 0, valor : 0, estado: 1 });
+
+        if(robot.estado) {
+          Monedas.update({ _id: "BTC" }, { $set: { "saldo.tradeo.activo": 1 } })
+        } 
+
+
         try
             {
-                var Monedas_Saldo = Monedas.find({ "saldo.cuenta.activo" : { $gt : 0 }},{} ).fetch();
+                var Monedas_Saldo = Monedas.find({ "saldo.tradeo.activo" : { $gt : 0 }},{} ).fetch();
             }
         catch (error){
             Meteor.call("ValidaError", error, 2);
@@ -1116,7 +1171,7 @@ Meteor.methods({
 
                 if (TiposDeCambios.find().count() === 0){
                     Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ningún tipo de Cambio Guardado en la Base de Datos Local, Solucionando ... ']);
-                    Monedas.remove({});
+                    //Monedas.remove({});
                     Meteor.call("ListaMonedas");
                     Meteor.call("ListaTiposDeCambios", V_EJEC);
                     Meteor.call("SaldoActualMonedas");
@@ -1127,12 +1182,15 @@ Meteor.methods({
 
                 try
                 {
-                    var monedasCambiables = TiposDeCambios.aggregate([{ $match: { tipo_cambio: { $regex: moneda_saldo.moneda }} },{$group: { _id: "$tipo_cambio" }}]);
+                    var monedasCambiables = TiposDeCambios.aggregate([{ $match: {  $or: [{moneda_base :  moneda_saldo.moneda }, {moneda_cotizacion :  moneda_saldo.moneda } ] }} ,{$group: { _id: "$tipo_cambio" }}]);
+                    //var monedasCambiables = TiposDeCambios.aggregate([{ $match: { tipo_cambio: { $regex: moneda_saldo.moneda }} },{$group: { _id: "$tipo_cambio" }}]);
+                    //var MonedasCambiables1 = TiposDeCambios.find({ $or: [{ moneda_base :  moneda_saldo.moneda }, {moneda_cotizacion :  moneda_saldo.moneda } ] }, { _id : 0 , tipo_cambio : 1, moneda_base : 1, moneda_cotizacion :1 }).fetch();
                 }
                 catch (error){
                     Meteor.call("ValidaError", error, 2);
                 };
                 /*  CONSULTAR LIMITE DE APRECIACION O DEPRECIACION*/
+                /*
                 try
                 {
                     var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
@@ -1141,7 +1199,18 @@ Meteor.methods({
                 catch (error){
                     Meteor.call("ValidaError", error, 2);
                 };
+                */
 
+                //console.log("Valor de MonedasCambiables1", MonedasCambiables1);
+
+                var set = new Set();
+                for(mc in monedasCambiables){
+                    set.add(monedasCambiables[mc]._id);
+                }
+                var TiposDeCambiosRankear = Array.from(set);
+                return TiposDeCambiosRankear
+
+/*
                 switch(VALOR_EJEC){
                     case 1:
                         // HACE UNA CONSULTA GENERAL DE LOS TIPO_CAMBIO EXISTENTES CON SALDO PARA INVERTIR
@@ -1159,9 +1228,10 @@ Meteor.methods({
                             Meteor.call('EvaluarTendencias',monedasCambiables[mc]._id, TIPO_MUESTREO );
                         }
                         var TiposDeCambiosRankear = Array.from(set);
-                        Meteor.call( 'Invertir', TiposDeCambiosRankear, V_EJEC , V_LimiteApDep);
+                        return TiposDeCambiosRankear
+                        //Meteor.call( 'Invertir', TiposDeCambiosRankear, V_EJEC , V_LimiteApDep);
                         break;
-                }
+                }*/
             };
         }
     },
@@ -1179,8 +1249,10 @@ Meteor.methods({
         var Val_trad = (Meteor.call('ConsultaTraderGuardados', TIPO_CAMBIO));
         var Val_trad_tipo_cambio = (Val_trad);
 
+        console.log("Valor de Val_trad_tipo_cambio", Val_trad_tipo_cambio)
+
         if ( debug_activo === 1) {
-            //Meteor.call("GuardarLogEjecucionTrader", [' ListaTradeoActual: Valor recuperado de la funcion "ConsultaTraderGuardados" : ']+[Val_trad_tipo_cambio]);
+            Meteor.call("GuardarLogEjecucionTrader", [' ListaTradeoActual: Valor recuperado de la funcion "ConsultaTraderGuardados" : ']+[Val_trad_tipo_cambio]);
         };
 
         if ( Val_trad_tipo_cambio === undefined ){
@@ -1197,6 +1269,8 @@ Meteor.methods({
         var url_tradeos_completa = [publico]+['trades/']+[TIPO_CAMBIO]+['?']+[url_tradeos_parcial];        
         var v_tradeos = Meteor.call("ConexionGet", url_tradeos_completa);
         var trad_mon = (v_tradeos.data);
+
+
 
 
         for (i = 0, tamanio_trad_mon = trad_mon.length; i < tamanio_trad_mon; i++) {
@@ -1266,6 +1340,11 @@ Meteor.methods({
                                     var TradAnt = (v_TradAnt.data);
 
                                     var v_TradAntDat = TradAnt[0];
+                                    /*
+                                    console.log("Valor de IdTransAnt", IdTransAnt);
+                                    console.log("Valor de url_tradeosParcialAnt", url_tradeosParcialAnt);
+                                    console.log("Valor de v_TradActDat", v_TradActDat);
+                                    console.log("Valor de v_TradAnt", v_TradAnt);*/
 
                                     var PeriodoFechaAnt = v_TradAntDat.timestamp;
                                     var PeriodoId_hitbtcAnt = v_TradAntDat.id;
@@ -1293,6 +1372,8 @@ Meteor.methods({
                                     OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAnt, fecha : PeriodoFechaAnt, tipo_cambio : TIPO_CAMBIO, precio : PeriodoPrecioAnt, tipo_operacion : PeriodoTipoOperacionAnt, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
                                     TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "periodo1.id_hitbtc": PeriodoId_hitbtcAnt, "periodo1.fecha": PeriodoFechaAnt,"periodo1.precio" : PeriodoPrecioAnt, "periodo1.tipo_operacion": PeriodoTipoOperacionAnt }});
                                 }
+
+
                                 break;
                             case 2:
                                 if ( TiposDeCambios.find( {tipo_cambio : TIPO_CAMBIO, "periodo2.precio" : { $exists: true } }).count() === 0 ){
@@ -1526,7 +1607,7 @@ Meteor.methods({
         };
     },
 
-    'EvaluarTendencias':function( TIPOCAMBIO, TIPO_MUESTREO ){
+    'EvaluarTendencias':function( TIPOCAMBIO, TIPO_MUESTREO, V_INVERTIR, TC ){
 
 
         // Formula de deprecación
@@ -1537,7 +1618,9 @@ Meteor.methods({
         // Cuando se está evaluando la moneda invertida si el resultado es + esa moneda esta en baja sino está a la alza
         if ( debug_activo === 1) {
             Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 ');
+            console.log("Tipo de Cambio recibido", TIPOCAMBIO)
         }
+
 
         switch (TIPO_MUESTREO){
             case 1:
@@ -1554,13 +1637,18 @@ Meteor.methods({
                 //console.log("Valor de TradAnt", TradAnt, "Tipode cambio a verificar: ", TIPOCAMBIO, "Valor de TIPO_MUESTREO: ", TIPO_MUESTREO);
                     
                 try{
-                    var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
+                    //var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
+                    var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
                 }
                 catch (error){    
                     Meteor.call("ValidaError", error, 2);
                 };
                 var RegAnt = TradAnt
                 var RegAct = TransProcesar[0]
+
+                console.log("Valores Conseguidos de RegAnt: ", RegAnt)
+                console.log("Valores Conseguidos de RegAct: ", RegAct)
+
 
                 var PeriodoFechaAnt = RegAnt.periodo1.fecha;
                 var PeriodoId_hitbtcAnt = RegAnt.periodo1.id_hitbtc;
@@ -2024,6 +2112,9 @@ Meteor.methods({
                 }
             break;
         }
+
+
+
     },
 
     'Invertir': function( TIPOS_DE_CAMBIOS, VALOR_EJEC, LIMITE_AP_DEP ){
@@ -2034,9 +2125,20 @@ Meteor.methods({
         console.log('############################################');
         console.log(' ');
 
+        console.log(' Parámetros recibidos');
+        console.log(' TIPOS_DE_CAMBIOS : ', TIPOS_DE_CAMBIOS,);
+        console.log(' VALOR_EJEC : ', VALOR_EJEC,);
+        console.log(' LIMITE_AP_DEP: ', LIMITE_AP_DEP,);
+
+        var robot = Parametros.findOne({ dominio : "robot", nombre : "test" }, {_id : 0, valor : 0, estado: 1 });
+
+        var CantPropTipoCambios;
+
         if ( debug_activo === 1) {
             Meteor.call("GuardarLogEjecucionTrader", " 'Invertir' - Paso 6 ");
         }
+
+
 
         switch(VALOR_EJEC){
             case 1:
@@ -2044,11 +2146,9 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", " 'Invertir' - Paso 6 - case 2 ");
                 }
 
-                
-
                 try{
                     var CPTC = TiposDeCambios.aggregate([ { $match: { tipo_cambio : { $in : TIPOS_DE_CAMBIOS } , "periodo1.tendencia" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
-                    var CantPropTipoCambios = CPTC[0].CantidadDeTiposDeCambios;
+                    CantPropTipoCambios = CPTC[0].CantidadDeTiposDeCambios;
                     var RankingTiposDeCambios = TiposDeCambios.aggregate([{ $match: { tipo_cambio : { $in :  TIPOS_DE_CAMBIOS } , "periodo1.tendencia" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia" : -1 }}, { $limit: 3 } ]);
                     var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
                     var ProporcionTipoCambios = PTC[0];
@@ -2080,7 +2180,7 @@ Meteor.methods({
 
                 switch (CantPropTipoCambios){
                     case undefined:
-                        var CantPropTipoCambiosValidados = 0;
+                        CantPropTipoCambiosValidados = 0;
                     break;
                     case 1: 
                         var VMC = RankingTiposDeCambios[0];
@@ -2089,7 +2189,7 @@ Meteor.methods({
                         console.log(" Valor de ValorMinimoCompra", ValorMinimoCompra)
                         var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p11;
                         if ( SaldoInvertir >= ValorMinimoCompra ) {
-                            var CantPropTipoCambiosValidados = CantPropTipoCambios
+                            CantPropTipoCambiosValidados = CantPropTipoCambios
                         }
                     break;
                     case 2: 
@@ -2100,14 +2200,14 @@ Meteor.methods({
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p12;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        var CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                 break;
                                 case 1:
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p22;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        var CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                 break;
                             }
@@ -2121,21 +2221,21 @@ Meteor.methods({
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p13;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        var CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                 break;
                                 case 1:
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p23;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        var CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                 break;
                                 case 2:
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p33;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        var CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                 break;
                             }
@@ -2287,7 +2387,7 @@ Meteor.methods({
 
                 try{
                     var CPTC = TiposDeCambios.aggregate([ { $match: { tipo_cambio : { $in : TIPOS_DE_CAMBIOS } , "periodo1.tendencia" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
-                    var CantPropTipoCambios = CPTC[0].CantidadDeTiposDeCambios;
+                    CantPropTipoCambios = CPTC[0].CantidadDeTiposDeCambios;
                     var RankingTiposDeCambios = TiposDeCambios.aggregate([{ $match: { tipo_cambio : { $in :  TIPOS_DE_CAMBIOS } , "periodo1.tendencia" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia" : -1 }}, { $limit: 3 } ]);
                     var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
                     var ProporcionTipoCambios = PTC[0];
@@ -2315,24 +2415,23 @@ Meteor.methods({
                 }
 
 
-                var CantPropTipoCambiosValidados = 0
-
+                CantPropTipoCambiosValidados = 0
                 switch (CantPropTipoCambios){
                     case undefined:
-                        var CantPropTipoCambiosValidados = 0;
+                        CantPropTipoCambiosValidados = 0;
                     break;
-                    case 1: 
+                    case 1:
                         var VMC = RankingTiposDeCambios[0];
                         ValorMinimoCompra = VMC.min_compra;
                         console.log(' Valor de V_MonedaBase: ', V_MonedaBase);
                         console.log(" Valor de ValorMinimoCompra", ValorMinimoCompra)
                         var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p11;
                         if ( SaldoInvertir >= ValorMinimoCompra ) {
-                            var CantPropTipoCambiosValidados = CantPropTipoCambios
+                            CantPropTipoCambiosValidados = CantPropTipoCambios
                         }
                         console.log("Valor de SaldoInvertir", SaldoInvertir)
                     break;
-                    case 2: 
+                    case 2:
                         for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
                             TipoCambioRanking = RankingTiposDeCambios[CRTC];
                             switch (CRTC){
@@ -2340,7 +2439,7 @@ Meteor.methods({
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p12;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        var CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                     console.log("Valor de SaldoInvertir", SaldoInvertir)
                                     console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
@@ -2350,7 +2449,7 @@ Meteor.methods({
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p22;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        var CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                     console.log("Valor de SaldoInvertir", SaldoInvertir)
                                     console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
@@ -2367,7 +2466,7 @@ Meteor.methods({
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p13;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        var CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                     console.log("Valor de SaldoActualMoneda", SaldoActualMoneda)
                                     console.log("Valor de SaldoInvertir", SaldoInvertir)
@@ -2378,7 +2477,7 @@ Meteor.methods({
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p23;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        var CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                     console.log("Valor de SaldoActualMoneda", SaldoActualMoneda)
                                     console.log("Valor de SaldoInvertir", SaldoInvertir)
@@ -2389,7 +2488,7 @@ Meteor.methods({
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p33;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        var CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                     console.log("Valor de SaldoActualMoneda", SaldoActualMoneda)
                                     console.log("Valor de SaldoInvertir", SaldoInvertir)
@@ -2405,7 +2504,6 @@ Meteor.methods({
 
                 switch (CantPropTipoCambiosValidados){
                     case 0:
-                        
                         console.log('--------------------------------------------');
                         console.log("            **** EN ESPERA **** ")
                         console.log("   | Tendencias Analizadas no superan |")
@@ -2444,12 +2542,16 @@ Meteor.methods({
                             console.log('--------------------------------------------');
                         }
 
-                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR 
-                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISPONIBLES
-                                    DE LA MONEDA COMPRADA
-                                    */
+                                   
+                        if(robot.estado) {
+                            console.log('Entre  En el robot simulador 1' );
+                            idTrans = idTrans+1;
+                            Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir);
+                        } else {
+                         //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                            break;
+                        }
 
-                                
                     break;
                     case 2:
 
@@ -2491,12 +2593,15 @@ Meteor.methods({
 
                                 break;
                             }
-                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR 
-                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISPONIBLES
-                                    DE LA MONEDA COMPRADA
-                                    */
-                            //console.log('     MONTO A INVERTIR: ', ProporcionTipoCambios.valor.p11*100,'%');
-                            console.log('--------------------------------------------');
+
+                            if(robot.estado) {
+                                console.log('Entre  En el robot simulador 2');
+                                idTrans = idTrans+1;
+                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir);
+                            } else {
+                                //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                break;
+                            }
                         }
                     break;
                     case 3:
@@ -2545,17 +2650,27 @@ Meteor.methods({
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
                                 break;
                             }
-                                    /* LLAMAR A LA FUNCION "CrearNuevaOrder" O LLAMAR AL ROBOT SIMULADOR 
-                                    - ESPERAR RESPUESTA Y EJECUTAR NUEVO JOB PARA LOS TIPOS DE CAMBIO DISPONIBLES
-                                    DE LA MONEDA COMPRADA
-                                    */
-                            console.log('--------------------------------------------');
+
+                            if(robot.estado) {
+                                console.log('Entre  En el robot simulador 3');
+                                idTrans = idTrans+1;
+                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir);
+                            } else {
+                                //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                break;
+                            }
                         }
                     break;
                     default:
                 }
             break;
         }
+
+        console.log('--------------------------------------------');
+        console.log('############################################');
+        console.log('--------------   FINALIZADO   --------------');
+        console.log('        ',fecha._d);
+        console.log('############################################');
     },
 
     'Prueba':function(){ 
@@ -2564,6 +2679,8 @@ Meteor.methods({
 
         try {
             var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
+
+
 
             if ( EjecucionInicial === 1 ){
                 Jobs.run("JobSecuenciaInicial", {
@@ -2575,7 +2692,7 @@ Meteor.methods({
             else if ( EjecucionInicial === 0 ) {
                 Jobs.run("JobSecuencia", {
                     in: {
-                        second: 15
+                        second: 5
                         }
                 });
             };
@@ -2583,6 +2700,12 @@ Meteor.methods({
         catch (error){
             Meteor.call("ValidaError", error, 2);
         }
+    /*
+        Jobs.run("JobPrueba", {
+            in: {
+                second: 5
+            }
+        });*/
     },
 
     'EjecucionInicial':function(){
@@ -2617,6 +2740,8 @@ Meteor.methods({
     'EjecucionGlobal':function(){
         //Meteor.call("Encabezado");
         Meteor.call("Prueba");
+        //var tiposCamb = ["XMRUSD", "XMRETH", "XMRBTC"];
+        //Meteor.call("Invertir", tiposCamb, 2, 0);
         //Meteor.call("SaldoActualMonedas", 1);
         //Meteor.call("ListaTiposDeCambios", 1);
         //Meteor.call("TipoCambioDisponibleCompra", 1, 1);
@@ -2645,7 +2770,7 @@ Meteor.startup(function (){
         else if ( EjecucionInicial === 0 ) {
             Jobs.run("JobSecuencia", {
                 in: {
-                    second: 15
+                    second: 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
                     }
             });
         };
