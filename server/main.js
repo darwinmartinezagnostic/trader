@@ -216,7 +216,7 @@ Meteor.methods({
         Meteor.call('GuardarLogEjecucionTrader', ['Borrando Trabajos no culminados']);
 
         try {
-            Jobs.private.collection.remove({});
+            JobsInternal.Utilities.collection.remove({});
         }
         catch (error){
             Meteor.call('GuardarLogEjecucionTrader', ['No se ha podido relaizar Borrando de Trabajos no culminados']);
@@ -237,8 +237,15 @@ Meteor.methods({
     'ListaMonedas':function(){
 
         console.log('############################################');
-        var moneda = Meteor.call("ConexionGet", monedas);
-        var mons = (moneda.data);
+        try{
+            var moneda = Meteor.call("ConexionGet", monedas);
+            var mons = (moneda.data);
+        }
+        catch(error){
+            console.log('Error: No se puedo consultar el api de hitbtc');
+            Meteor.call('RecuperacionAutonoma');
+            Meteor.call('ValidaError', error, 1);
+        }
 
         for ( a = 0, len = mons.length ; a < len; a++) {
             var mon = mons[a];
@@ -290,15 +297,22 @@ Meteor.methods({
         console.log("Valor de ValMinTranf", ValMinTranf)
 
 
+        var robot = Parametros.findOne({ dominio : "robot", nombre : "test" }, {_id : 0, valor : 0, estado: 1 });
+
+
+
+
+
+
         for ( cbmt = 0, tam_bmt = BlcMonedasTradeo.length; cbmt < tam_bmt; cbmt++ ) {
 
             for ( cbct = 0, tam_bct = BlcCuenta.length; cbct < tam_bct; cbct++ ) {
                 var v_BlcMonedasTradeo = BlcMonedasTradeo[cbmt];
                 var MonedaSaldoTradear = v_BlcMonedasTradeo.currency;
-                var SaldoMonedaInvertidoTradear = v_BlcMonedasTradeo.available;
+                var SaldoMonedaInvertidoTradear = Number(v_BlcMonedasTradeo.available);
                 var v_BlcCuenta = BlcCuenta[cbct];
                 var MonedaSaldoCuenta = v_BlcCuenta.currency;
-                var SaldoMonedaGuardadoEnMonederoCuenta = v_BlcCuenta.available;
+                var SaldoMonedaGuardadoEnMonederoCuenta = Number(v_BlcCuenta.available);
 
 
                 switch(VALOR_EJEC){
@@ -607,6 +621,45 @@ Meteor.methods({
                 }
             };
         };
+
+        if(robot.estado) {
+            Monedas.update({
+                                moneda: "BTC"
+                            },
+                            {
+                                $set: {
+                                        saldo: {
+                                            tradeo: {
+                                                activo: 1,
+                                                reserva: 0
+                                            },
+                                            cuenta: {
+                                                activo: 0,
+                                                reserva: 0
+                                            }
+                                        }
+                                    }
+                            });
+
+            Monedas.update({
+                                moneda: "BCN"
+                            },
+                            {
+                                $set: {
+                                        saldo: {
+                                            tradeo: {
+                                                activo: 0.00000001,
+                                                reserva: 0
+                                            },
+                                            cuenta: {
+                                                activo: 0,
+                                                reserva: 0
+                                            }
+                                        }
+                                    }
+                            });
+        } 
+
     },
 
     'ListaTiposDeCambios':function(VALOR){
@@ -623,6 +676,16 @@ Meteor.methods({
 
             var mon_c = mon_camb[j];
 
+            var LTCTipoCambio = mon_c.id;
+            var LTCMonedaBase = mon_c.baseCurrency;
+            var LTCMonedaCotizacion = mon_c.quoteCurrency;
+            var LTCMontoMinCompra = Number( mon_c.tickSize );
+            var LTCValorIncremento = Number( mon_c.quantityIncrement );
+            var LTCComisionCasaCambio = Number( mon_c.takeLiquidityRate );
+            var LTCComisionMercado = Number( mon_c.provideLiquidityRate );
+            var LTCMonedaAplicacionComision = mon_c.feeCurrency;
+
+
             switch(VALOR){
                 case 1:
                     // HACE UNA CONSULTA GENERAL DE LOS TIPO_CAMBIO EXISTENTES
@@ -630,16 +693,16 @@ Meteor.methods({
 
                     console.log(' Tipos de Cambio que se están tradeando en HITBTC');
                     console.log(' ');
-                    console.log(' ********* ', mon_c.id, ' ********* ');
-                    console.log('    MONEDA BASE: ', mon_c.baseCurrency);
-                    console.log('    MONEDA DE COTIZACIÓN: ', mon_c.quoteCurrency);
-                    console.log('    MONTO MIN DE COMPRA: ', mon_c.tickSize);
-                    console.log('    VALOR DE INCREMENTO: ', mon_c.quantityIncrement);
+                    console.log(' ********* ', LTCTipoCambio, ' ********* ');
+                    console.log('    MONEDA BASE: ', LTCMonedaBase);
+                    console.log('    MONEDA DE COTIZACIÓN: ', LTCMonedaCotizacion);
+                    console.log('    MONTO MIN DE COMPRA: ', LTCMontoMinCompra);
+                    console.log('    VALOR DE INCREMENTO: ', LTCValorIncremento);
                     console.log(' ');
                     console.log(' *******    VALORES DE COMISIONES    *******');
-                    console.log('    COMISION HITBTC: ', mon_c.takeLiquidityRate);
-                    console.log('    COMISION DE MERCADO: ', mon_c.provideLiquidityRate);
-                    console.log('    APLICACION DE COMISION A MONEDA: ', mon_c.feeCurrency);
+                    console.log('    COMISION HITBTC: ', LTCComisionCasaCambio);
+                    console.log('    COMISION DE MERCADO: ', LTCComisionMercado);
+                    console.log('    APLICACION DE COMISION A MONEDA: ', LTCMonedaAplicacionComision);
                     //}
                     break;
                 case 2:
@@ -648,7 +711,7 @@ Meteor.methods({
                     if (TiposDeCambios.find({ tipo_cambio : mon_c.id }).count() !== 0) {
                         try{
                             //TiposDeCambios.update({ tipo_cambio : mon_c.id },{$set:{ tipo_cambio : mon_c.id, moneda_base :  mon_c.baseCurrency, moneda_cotizacion : mon_c.quoteCurrency, activo : "S", comision_hitbtc : v_comision.takeLiquidityRate, comision_mercado : v_comision.provideLiquidityRate, min_compra : v_comision.tickSize, moneda_apli_comision : v_comision.feeCurrency, valor_incremento : v_comision.quantityIncrement  }});
-                            TiposDeCambios.update({ tipo_cambio : mon_c.id },{$set:{ tipo_cambio : mon_c.id, moneda_base :  mon_c.baseCurrency, moneda_cotizacion : mon_c.quoteCurrency, activo : "S", comision_hitbtc : mon_c.takeLiquidityRate, comision_mercado : mon_c.provideLiquidityRate, min_compra : mon_c.tickSize, moneda_apli_comision : mon_c.feeCurrency, valor_incremento : mon_c.quantityIncrement  }});
+                            TiposDeCambios.update({ tipo_cambio : LTCTipoCambio },{$set:{ tipo_cambio : LTCTipoCambio, moneda_base :  LTCMonedaBase, moneda_cotizacion : LTCMonedaCotizacion, activo : "S", comision_hitbtc : LTCComisionCasaCambio, comision_mercado : LTCComisionMercado, min_compra : LTCMontoMinCompra, moneda_apli_comision : LTCMonedaAplicacionComision, valor_incremento : LTCValorIncremento  }});
                         }
                         catch(error){
                             console.log('Error: los datos no pudieron ser actualizados');
@@ -657,22 +720,21 @@ Meteor.methods({
                     }
                     else {
                         //TiposDeCambios.insert({tipo_cambio : mon_c.id, moneda_base :  mon_c.baseCurrency, moneda_cotizacion : mon_c.quoteCurrency, activo : "S", comision_hitbtc : v_comision.takeLiquidityRate, comision_mercado : v_comision.provideLiquidityRate });
-                        TiposDeCambios.insert({tipo_cambio : mon_c.id, moneda_base :  mon_c.baseCurrency, moneda_cotizacion : mon_c.quoteCurrency, activo : "S", comision_hitbtc : mon_c.takeLiquidityRate, comision_mercado : mon_c.provideLiquidityRate, min_compra : mon_c.tickSize, moneda_apli_comision : mon_c.feeCurrency, valor_incremento : mon_c.quantityIncrement });
+                        TiposDeCambios.insert({tipo_cambio : LTCTipoCambio, moneda_base :  LTCMonedaBase, moneda_cotizacion : LTCMonedaCotizacion, activo : "S", comision_hitbtc : LTCComisionCasaCambio, comision_mercado : LTCComisionMercado, min_compra : LTCMontoMinCompra, moneda_apli_comision : LTCMonedaAplicacionComision, valor_incremento : LTCValorIncremento });
                         console.log('--------------------------------------------');
                         console.log(' ** Detectado nuevo Tipo de Cambio en HITBTC **');
                         console.log('--------------------------------------------');
                         console.log(' ');
-                        console.log('    ********* ', mon_c.id, ' ********* ');
-                        console.log('    MONEDA BASE: ', mon_c.baseCurrency);
-                        console.log('    MONEDA DE COTIZACIÓN: ', mon_c.quoteCurrency);
-                        console.log('    MONTO MIN DE COMPRA: ', mon_c.tickSize);
-                        console.log('    VALOR DE INCREMENTO: ', mon_c.quantityIncrement);
+                        console.log(' ********* ', LTCTipoCambio, ' ********* ');
+                        console.log('    MONEDA BASE: ', LTCMonedaBase);
+                        console.log('    MONEDA DE COTIZACIÓN: ', LTCMonedaCotizacion);
+                        console.log('    MONTO MIN DE COMPRA: ', LTCMontoMinCompra);
+                        console.log('    VALOR DE INCREMENTO: ', LTCValorIncremento);
                         console.log(' ');
-                        console.log('         Datos Insertados');
-                        console.log(' ')
-                        console.log('    COMISION HITBTC: ', mon_c.takeLiquidityRate);
-                        console.log('    COMISION DE MERCADO: ', mon_c.provideLiquidityRate);
-                        console.log('    APLICACION DE COMISION A MONEDA: ', mon_c.feeCurrency);
+                        console.log(' *******    VALORES DE COMISIONES    *******');
+                        console.log('    COMISION HITBTC: ', LTCComisionCasaCambio);
+                        console.log('    COMISION DE MERCADO: ', LTCComisionMercado);
+                        console.log('    APLICACION DE COMISION A MONEDA: ', LTCMonedaAplicacionComision);
                     }
 
 
@@ -829,7 +891,7 @@ Meteor.methods({
         console.log(' Valor de URL transacciones:', url_transaccion_completa);
 
         var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
-        var v_transaccion=(transaccion.data);        
+        var v_transaccion=(transaccion.data);      
 
         //console.log(v_transaccion);
 
@@ -1035,7 +1097,7 @@ Meteor.methods({
         var orden = Meteor.call('ConexionPost', url_orden, datos);
     },
 
-    'CrearNuevaOrderRobot':function(SALDO_ACTUAL,N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA){  //POST
+    'CrearNuevaOrderRobot':function(SALDO_ACTUAL,N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA, MON_B, MON_C){  //POST
 
         console.log('############################################');
         console.log('Creando una nueva orden en el ROBOT');
@@ -1051,7 +1113,16 @@ Meteor.methods({
         var base = TIPO_CAMBIO.substr(0,3);
         var cambio = TIPO_CAMBIO.substr(3,3);
 
-        var moneda = OperacionesCompraVenta.findOne({ tipo_cambio : TIPO_CAMBIO, tipo_operacion : "VENTA" },{ id : 0, precio : 1, fecha : 1 },{ $sort: { fecha : -1 }});
+        switch (T_TRANSACCION){
+            case 'buy':
+                var V_TipoOperaciont = 'COMPRA';
+                break;
+            case 'sell':
+                var V_TipoOperaciont = 'VENTA';
+                break;
+            }
+
+        var moneda = OperacionesCompraVenta.findOne({ tipo_cambio : TIPO_CAMBIO, tipo_operacion : V_TipoOperaciont },{ id : 0, precio : 1, fecha : 1 },{ $sort: { fecha : -1 }});
         var comisiones = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO },{ _id : 0, comision_hitbtc : 1 , comision_mercado : 1 },{ $sort: { fecha : -1 }});
 
         console.log("Valor de comisiones", comisiones);
@@ -1064,9 +1135,17 @@ Meteor.methods({
 
         Monedas.update({moneda : cambio},{$inc:{"saldo.tradeo.activo" : cantidad}})
 
-        Monedas.update({ moneda : base},{$set:{"saldo.tradeo.activo" : saldo}});
 
-        HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT ,tipo_transferencia : T_TRANSACCION, moneda_base : base, moneda_cambio : cambio, monto : cantidad, estado : "Exitoso" });
+         switch (T_TRANSACCION){
+            case 'buy':
+                Monedas.update({ moneda : MON_C},{$set:{"saldo.tradeo.activo" : saldo}});
+                break;
+            case 'sell':
+                Monedas.update({ moneda : MON_B},{$set:{"saldo.tradeo.activo" : saldo}});
+                break;
+            }
+
+        HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT ,tipo_transferencia : T_TRANSACCION, moneda_base : MON_B, moneda_cambio : MON_C, monto : cantidad, estado : "Exitoso" });
 
         console.log("Inversion realizada");
     },
@@ -1139,16 +1218,14 @@ Meteor.methods({
         };
     },
 
-    'TipoCambioDisponibleCompra':function(VALOR_EJEC, TIPO_MUESTREO){
+    //'TipoCambioDisponibleCompra':function(VALOR_EJEC, TIPO_MUESTREO){
+    'TipoCambioDisponibleCompra':function(){
         var V_EJEC = 2
-        console.log ("Estoy en TipoCambioDisponibleCompra");
+        //console.log ("Estoy en TipoCambioDisponibleCompra");
+        var Vset = new Set();
 
-        var robot = Parametros.findOne({ dominio : "robot", nombre : "test" }, {_id : 0, valor : 0, estado: 1 });
-
-        if(robot.estado) {
-          Monedas.update({ _id: "BTC" }, { $set: { "saldo.tradeo.activo": 1 } })
-        } 
-
+        TempTiposCambioXMoneda.remove({});
+        
 
         try
             {
@@ -1157,9 +1234,7 @@ Meteor.methods({
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
-
-        //console.log("Valor de Monedas_Saldo", Monedas_Saldo[0], 'Valores Recibidos, VALOR_EJEC: ', VALOR_EJEC, ' TIPO_MUESTREO: ', TIPO_MUESTREO);
-        //console.log ("Estoy en TipoCambioDisponibleCompra antes de entar al if");
+        
         
         if ( Monedas_Saldo[0] === undefined ) {
             Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ninguna moneda con saldo disponible para invertir ']);
@@ -1182,57 +1257,45 @@ Meteor.methods({
 
                 try
                 {
-                    var monedasCambiables = TiposDeCambios.aggregate([{ $match: {  $or: [{moneda_base :  moneda_saldo.moneda }, {moneda_cotizacion :  moneda_saldo.moneda } ] }} ,{$group: { _id: "$tipo_cambio" }}]);
-                    //var monedasCambiables = TiposDeCambios.aggregate([{ $match: { tipo_cambio: { $regex: moneda_saldo.moneda }} },{$group: { _id: "$tipo_cambio" }}]);
-                    //var MonedasCambiables1 = TiposDeCambios.find({ $or: [{ moneda_base :  moneda_saldo.moneda }, {moneda_cotizacion :  moneda_saldo.moneda } ] }, { _id : 0 , tipo_cambio : 1, moneda_base : 1, moneda_cotizacion :1 }).fetch();
-                }
-                catch (error){
-                    Meteor.call("ValidaError", error, 2);
-                };
-                /*  CONSULTAR LIMITE DE APRECIACION O DEPRECIACION*/
-                /*
-                try
-                {
-                    var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
-                    var V_LimiteApDep = LimiteApDep[0].valor;
-                }
-                catch (error){
-                    Meteor.call("ValidaError", error, 2);
-                };
-                */
+                    var monedasCambiablesB = TiposDeCambios.aggregate([ { $match: { "moneda_base": moneda_saldo.moneda, "min_compra" : { $lt : moneda_saldo.saldo.tradeo.activo }}}, { $project: { "tipo_cambio" : 1, "accion" : { $literal: 1 }, "moneda_base" : 1, "moneda_cotizacion" : 1, "saldo_moneda_tradear" : { $literal: moneda_saldo.saldo.tradeo.activo }, "moneda_saldo" : { $literal: moneda_saldo.moneda }, "activo" : 1, "comision_hitbtc" : 1, "comision_mercado" : 1, "min_compra" : 1, "moneda_apli_comision" : 1, "valor_incremento" : 1 } } ]);
+                    var monedasCambiablesC = TiposDeCambios.aggregate([ { $match: { "moneda_cotizacion": moneda_saldo.moneda, "min_compra" : { $lt : moneda_saldo.saldo.tradeo.activo }}}, { $project: { "tipo_cambio" : 1, "accion" : { $literal: 2 }, "moneda_base" : 1, "moneda_cotizacion" : 1, "saldo_moneda_tradear" : { $literal: moneda_saldo.saldo.tradeo.activo }, "moneda_saldo" : { $literal: moneda_saldo.moneda }, "activo" : 1, "comision_hitbtc" : 1, "comision_mercado" : 1, "min_compra" : 1, "moneda_apli_comision" : 1, "valor_incremento" : 1 } } ]);
 
-                //console.log("Valor de MonedasCambiables1", MonedasCambiables1);
+                }
+                catch (error){
+                    Meteor.call("ValidaError", error, 2);
+                };
 
                 var set = new Set();
-                for(mc in monedasCambiables){
-                    set.add(monedasCambiables[mc]._id);
+                for(mc in monedasCambiablesB){
+                    set.add( monedasCambiablesB[mc] );
                 }
-                var TiposDeCambiosRankear = Array.from(set);
-                return TiposDeCambiosRankear
 
-/*
-                switch(VALOR_EJEC){
-                    case 1:
-                        // HACE UNA CONSULTA GENERAL DE LOS TIPO_CAMBIO EXISTENTES CON SALDO PARA INVERTIR
-                        var set = new Set();
-                        for(mc in monedasCambiables){
-                            set.add(monedasCambiables[mc]._id);
-                        }
-                        return Array.from(set);
-                        break;
-                    case 2:
-                        var set = new Set();
-                        for(mc in monedasCambiables){
-                            set.add(monedasCambiables[mc]._id);
-                            Meteor.call('ListaTradeoActual', monedasCambiables[mc]._id, V_EJEC, TIPO_MUESTREO);
-                            Meteor.call('EvaluarTendencias',monedasCambiables[mc]._id, TIPO_MUESTREO );
-                        }
-                        var TiposDeCambiosRankear = Array.from(set);
-                        return TiposDeCambiosRankear
-                        //Meteor.call( 'Invertir', TiposDeCambiosRankear, V_EJEC , V_LimiteApDep);
-                        break;
-                }*/
+                for(mc in monedasCambiablesC){
+                    set.add( monedasCambiablesC[mc]);
+                } 
+                var TiposDeCambiosRankear = Array.from(set);
+                
+                for (CTDC = 0, tamanio_TiposDeCambiosRankear = TiposDeCambiosRankear.length; CTDC < tamanio_TiposDeCambiosRankear; CTDC++) {
+                    var V_TiposDeCambiosRankear = TiposDeCambiosRankear[CTDC];
+
+                    Vset.add( V_TiposDeCambiosRankear);
+                };
             };
+
+
+
+            var Valores_TiposDeCambiosRankear = Array.from(Vset);
+
+            //console.log("Valore de Valores_TiposDeCambiosRankear", Valores_TiposDeCambiosRankear)
+
+            for (CTMCB = 0, tamanio_Valores_TiposDeCambiosRankear = Valores_TiposDeCambiosRankear.length; CTMCB < tamanio_Valores_TiposDeCambiosRankear; CTMCB++) {
+                    var V_Valores_TiposDeCambiosRankear = Valores_TiposDeCambiosRankear[CTMCB];
+                    //console.log("Valor de V_Valores_TiposDeCambiosRankear", V_Valores_TiposDeCambiosRankear)
+                    TempTiposCambioXMoneda.insert({ "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio ,"moneda_base": V_Valores_TiposDeCambiosRankear.moneda_base , "accion": V_Valores_TiposDeCambiosRankear.accion ,"moneda_cotizacion" : V_Valores_TiposDeCambiosRankear.moneda_cotizacion, "saldo_moneda_tradear" : V_Valores_TiposDeCambiosRankear.saldo_moneda_tradear, "moneda_saldo" : V_Valores_TiposDeCambiosRankear.moneda_saldo, "activo" : V_Valores_TiposDeCambiosRankear.activo , "comision_hitbtc" : V_Valores_TiposDeCambiosRankear.comision_hitbtc  , "comision_mercado" : V_Valores_TiposDeCambiosRankear.comision_mercado  , "min_compra" : V_Valores_TiposDeCambiosRankear.min_compra , "moneda_apli_comision": V_Valores_TiposDeCambiosRankear.moneda_apli_comision , "valor_incremento" : V_Valores_TiposDeCambiosRankear.valor_incremento });
+       
+                };
+
+            return Valores_TiposDeCambiosRankear;
         }
     },
 
@@ -1348,7 +1411,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAnt = v_TradAntDat.timestamp;
                                     var PeriodoId_hitbtcAnt = v_TradAntDat.id;
-                                    var PeriodoPrecioAnt = v_TradAntDat.price;
+                                    var PeriodoPrecioAnt = Number(v_TradAntDat.price);
                                     switch (v_TradAntDat.side){
                                         case 'buy':
                                             var PeriodoTipoOperacionAnt = 'COMPRA';
@@ -1365,7 +1428,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAct = v_TradActDat.timestamp;
                                     var PeriodoId_hitbtcAct = v_TradActDat.id;
-                                    var PeriodoPrecioAct = v_TradActDat.price;
+                                    var PeriodoPrecioAct = Number(v_TradActDat.price);
                                     var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
 
@@ -1393,7 +1456,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAnt = v_TradAntDat.timestamp;
                                     var PeriodoId_hitbtcAnt = v_TradAntDat.id;
-                                    var PeriodoPrecioAnt = v_TradAntDat.price;
+                                    var PeriodoPrecioAnt = Number(v_TradAntDat.price);
                                     switch (v_TradAntDat.side){
                                         case 'buy':
                                             var PeriodoTipoOperacionAnt = 'COMPRA';
@@ -1410,7 +1473,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAct = v_TradActDat.timestamp;
                                     var PeriodoId_hitbtcAct = v_TradActDat.id;
-                                    var PeriodoPrecioAct = v_TradActDat.price;
+                                    var PeriodoPrecioAct = Number(v_TradActDat.price);
                                     var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
 
@@ -1436,7 +1499,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAnt = v_TradAntDat.timestamp;
                                     var PeriodoId_hitbtcAnt = v_TradAntDat.id;
-                                    var PeriodoPrecioAnt = v_TradAntDat.price;
+                                    var PeriodoPrecioAnt = Number(v_TradAntDat.price);
                                     switch (v_TradAntDat.side){
                                         case 'buy':
                                             var PeriodoTipoOperacionAnt = 'COMPRA';
@@ -1453,7 +1516,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAct = v_TradActDat.timestamp;
                                     var PeriodoId_hitbtcAct = v_TradActDat.id;
-                                    var PeriodoPrecioAct = v_TradActDat.price;
+                                    var PeriodoPrecioAct = Number(v_TradActDat.price);
                                     var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
 
@@ -1479,7 +1542,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAnt = v_TradAntDat.timestamp;
                                     var PeriodoId_hitbtcAnt = v_TradAntDat.id;
-                                    var PeriodoPrecioAnt = v_TradAntDat.price;
+                                    var PeriodoPrecioAnt = Number(v_TradAntDat.price);
                                     switch (v_TradAntDat.side){
                                         case 'buy':
                                             var PeriodoTipoOperacionAnt = 'COMPRA';
@@ -1496,7 +1559,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAct = v_TradActDat.timestamp;
                                     var PeriodoId_hitbtcAct = v_TradActDat.id;
-                                    var PeriodoPrecioAct = v_TradActDat.price;
+                                    var PeriodoPrecioAct = Number(v_TradActDat.price);
                                     var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
 
@@ -1522,7 +1585,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAnt = v_TradAntDat.timestamp;
                                     var PeriodoId_hitbtcAnt = v_TradAntDat.id;
-                                    var PeriodoPrecioAnt = v_TradAntDat.price;
+                                    var PeriodoPrecioAnt = Number(v_TradAntDat.price);
                                     switch (v_TradAntDat.side){
                                         case 'buy':
                                             var PeriodoTipoOperacionAnt = 'COMPRA';
@@ -1539,7 +1602,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAct = v_TradActDat.timestamp;
                                     var PeriodoId_hitbtcAct = v_TradActDat.id;
-                                    var PeriodoPrecioAct = v_TradActDat.price;
+                                    var PeriodoPrecioAct = Number(v_TradActDat.price);
                                     var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
 
@@ -1565,7 +1628,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAnt = v_TradAntDat.timestamp;
                                     var PeriodoId_hitbtcAnt = v_TradAntDat.id;
-                                    var PeriodoPrecioAnt = v_TradAntDat.price;
+                                    var PeriodoPrecioAnt = Number(v_TradAntDat.price);
                                     switch (v_TradAntDat.side){
                                         case 'buy':
                                             var PeriodoTipoOperacionAnt = 'COMPRA';
@@ -1582,7 +1645,7 @@ Meteor.methods({
 
                                     var PeriodoFechaAct = v_TradActDat.timestamp;
                                     var PeriodoId_hitbtcAct = v_TradActDat.id;
-                                    var PeriodoPrecioAct = v_TradActDat.price;
+                                    var PeriodoPrecioAct = Number(v_TradActDat.price);
                                     var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
 
@@ -1595,7 +1658,7 @@ Meteor.methods({
 
                         var PeriodoFechaAct = v_TradActDat.timestamp;
                         var PeriodoId_hitbtcAct = v_TradActDat.id;
-                        var PeriodoPrecioAct = v_TradActDat.price;
+                        var PeriodoPrecioAct = Number(v_TradActDat.price);
                         var PeriodoTipoOperacionAct = v_tipo_operacion_act;
                         OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAct, fecha : PeriodoFechaAct, tipo_cambio : TIPO_CAMBIO, precio : PeriodoPrecioAct, tipo_operacion : PeriodoTipoOperacionAct, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
 
@@ -1607,7 +1670,7 @@ Meteor.methods({
         };
     },
 
-    'EvaluarTendencias':function( TIPOCAMBIO, TIPO_MUESTREO, V_INVERTIR, TC ){
+    'EvaluarTendencias':function( TIPOCAMBIO, TIPO_MUESTREO, T_ACCION){
 
 
         // Formula de deprecación
@@ -1618,7 +1681,7 @@ Meteor.methods({
         // Cuando se está evaluando la moneda invertida si el resultado es + esa moneda esta en baja sino está a la alza
         if ( debug_activo === 1) {
             Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 ');
-            console.log("Tipo de Cambio recibido", TIPOCAMBIO)
+            //console.log("Tipo de Cambio recibido", TIPOCAMBIO, " TIPO_ACCION: ", T_ACCION)
         }
 
 
@@ -1646,18 +1709,18 @@ Meteor.methods({
                 var RegAnt = TradAnt
                 var RegAct = TransProcesar[0]
 
-                console.log("Valores Conseguidos de RegAnt: ", RegAnt)
-                console.log("Valores Conseguidos de RegAct: ", RegAct)
+                //console.log("Valores Conseguidos de RegAnt: ", RegAnt)
+                //console.log("Valores Conseguidos de RegAct: ", RegAct)
 
 
                 var PeriodoFechaAnt = RegAnt.periodo1.fecha;
                 var PeriodoId_hitbtcAnt = RegAnt.periodo1.id_hitbtc;
-                var PeriodoPrecioAnt = RegAnt.periodo1.precio;
+                var PeriodoPrecioAnt = Number(RegAnt.periodo1.precio);
                 var PeriodoTipoOperacionAnt = RegAnt.periodo1.tipo_operacion;
                                     
                 var PeriodoFechaAct = RegAct.fecha;
                 var PeriodoId_hitbtcAct = RegAct.id_hitbtc;
-                var PeriodoPrecioAct = RegAct.precio;
+                var PeriodoPrecioAct = Number(RegAct.precio);
                 var PeriodoTipoOperacionAct = RegAct.tipo_operacion;
 
                     
@@ -1694,14 +1757,51 @@ Meteor.methods({
                 var ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
 
                 console.log(' TENDENCIA: ',ProcenApDp);
-                console.log('--------------------------------------------');
+                //console.log('--------------------------------------------');
 
                 try{
                     if (ValPrecAct > ValPrecAnt ) {
                         TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia" : ProcenApDp, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                        
+                        switch (T_ACCION){
+                            case 1: 
+                                    var CambioSignoTendencia = ( ProcenApDp * 1 )
+                                    console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
+                                    console.log(" TIPO_ACCION ", T_ACCION)
+                                    console.log('--------------------------------------------');
+                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                            break;
+                            case 2: 
+                                    var CambioSignoTendencia = ( ProcenApDp * -1 )
+                                    console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
+                                    console.log(" TIPO_ACCION ", T_ACCION)
+                                    console.log('--------------------------------------------');
+
+                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});   
+                            break;                            
+                        }
+
                     }
                     else{
                         TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia" : ProcenApDp }}, {"multi" : true,"upsert" : true});
+                        switch (T_ACCION){
+                            case 1: 
+                                    var CambioSignoTendencia = ( ProcenApDp * 1 )
+                                    console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
+                                    console.log(" TIPO_ACCION ", T_ACCION)
+                                    console.log('--------------------------------------------');
+                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia }}, {"multi" : true,"upsert" : true});
+                            break;
+                            case 2: 
+                                    var CambioSignoTendencia = ( ProcenApDp * -1 )
+                                    console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
+                                    console.log(" TIPO_ACCION ", T_ACCION)
+                                    console.log('--------------------------------------------');
+                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia }}, {"multi" : true,"upsert" : true});
+                            break;                            
+                        }
+
+
                     }
                     OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                 }
@@ -1709,436 +1809,31 @@ Meteor.methods({
                     Meteor.call("ValidaError", error, 2);
                 }
             break;
-            case 2:
-                if ( debug_activo === 1) {
-                    Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 - switch Inicial - Case 2');
-                }
-                try{
-                    var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
-                }
-                catch (error){    
-                Meteor.call("ValidaError", error, 2);
-                };
-
-                console.log("Valor de TradAnt", TradAnt, "Tipode cambio a verificar: ", TIPOCAMBIO, "Valor de TIPO_MUESTREO: ", TIPO_MUESTREO);                     
-                    
-                try{
-                    var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo2" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
-                }
-                catch (error){    
-                    Meteor.call("ValidaError", error, 2);
-                };
-                var RegAnt = TradAnt
-                var RegAct = TransProcesar[0]
-
-                var PeriodoFechaAnt = RegAnt.periodo2.fecha;
-                var PeriodoId_hitbtcAnt = RegAnt.periodo2.id_hitbtc;
-                var PeriodoPrecioAnt = RegAnt.periodo2.precio;
-                var PeriodoTipoOperacionAnt = RegAnt.periodo2.tipo_operacion;
-                                    
-                var PeriodoFechaAct = RegAct.fecha;
-                var PeriodoId_hitbtcAct = RegAct.id_hitbtc;
-                var PeriodoPrecioAct = RegAct.precio;
-                var PeriodoTipoOperacionAct = RegAct.tipo_operacion;
-
-                    
-
-
-                console.log('--------------------------------------------');
-                console.log('          TIPO DE CAMBIO: ',TIPOCAMBIO);
-                console.log('--------------------------------------------');
-                console.log(' ');
-                console.log('----------- TRANSACCION ANTERIOR -----------');
-                console.log(' ');
-                console.log(' LINEA DE TIEMPO: ', PeriodoFechaAnt);
-                console.log(' ID: ',PeriodoId_hitbtcAnt);
-                console.log(' PRECIO: ',PeriodoPrecioAnt);
-                console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacionAnt);
-                console.log('--------------------------------------------');
-                console.log(' ');
-                console.log('------------ ULTIMA TRANSACCION ------------');
-                console.log(' ');
-                console.log(' LINEA DE TIEMPO: ',PeriodoFechaAct);
-                console.log(' ID: ',PeriodoId_hitbtcAct);
-                console.log(' PRECIO: ',PeriodoPrecioAct);
-                console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacionAct);
-                console.log('--------------------------------------------');
-                console.log('          CALCULANDO TENDENCIA ');
-                console.log('--------------------------------------------');
-                console.log(' ');
-
-
-                var ValPrecAnt = PeriodoPrecioAnt;
-                var ValPrecAct = PeriodoPrecioAct;
-
-                var ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
-
-
-                console.log(' TENDENCIA: ',ProcenApDp);
-                console.log('--------------------------------------------');
-
-
-                try{
-                    if (ValPrecAct > ValPrecAnt ) {
-                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo2.tendencia" : ProcenApDp, activo : "S", "periodo2.id_hitbtc": PeriodoId_hitbtcAct, "periodo2.fecha": PeriodoFechaAct,"periodo2.precio" : PeriodoPrecioAct, "periodo2.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
-                    }
-                    else{
-                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo2.tendencia" : ProcenApDp }}, {"multi" : true,"upsert" : true});
-                    }
-                    OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo2" : false },{$set:{ "muestreo.periodo2" : true }}, {"multi" : true,"upsert" : true});
-                }
-                catch(error){
-                    Meteor.call("ValidaError", error, 2);
-                }
-            break;
-            case 3:
-                if ( debug_activo === 1) {
-                    Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 - switch Inicial - Case 3');
-                }
-                try{
-                    var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
-                }
-                catch (error){    
-                Meteor.call("ValidaError", error, 2);
-                };                           
-                    
-                try{
-                    var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo3" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
-                }
-                catch (error){    
-                    Meteor.call("ValidaError", error, 2);
-                };
-                var RegAnt = TradAnt
-                var RegAct = TransProcesar[0]
-
-                var PeriodoFechaAnt = RegAnt.periodo3.fecha;
-                var PeriodoId_hitbtcAnt = RegAnt.periodo3.id_hitbtc;
-                var PeriodoPrecioAnt = RegAnt.periodo3.precio;
-                var PeriodoTipoOperacionAnt = RegAnt.periodo3.tipo_operacion;
-                                    
-                var PeriodoFechaAct = RegAct.fecha;
-                var PeriodoId_hitbtcAct = RegAct.id_hitbtc;
-                var PeriodoPrecioAct = RegAct.precio;
-                var PeriodoTipoOperacionAct = RegAct.tipo_operacion;
-
-                    
-
-
-                console.log('--------------------------------------------');
-                console.log('          TIPO DE CAMBIO: ',TIPOCAMBIO);
-                console.log('--------------------------------------------');
-                console.log(' ');
-                console.log('----------- TRANSACCION ANTERIOR -----------');
-                console.log(' ');
-                console.log(' LINEA DE TIEMPO: ', PeriodoFechaAnt);
-                console.log(' ID: ',PeriodoId_hitbtcAnt);
-                console.log(' PRECIO: ',PeriodoPrecioAnt);
-                console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacionAnt);
-                console.log('--------------------------------------------');
-                console.log(' ');
-                console.log('------------ ULTIMA TRANSACCION ------------');
-                console.log(' ');
-                console.log(' LINEA DE TIEMPO: ',PeriodoFechaAct);
-                console.log(' ID: ',PeriodoId_hitbtcAct);
-                console.log(' PRECIO: ',PeriodoPrecioAct);
-                console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacionAct);
-                console.log('--------------------------------------------');
-                console.log('          CALCULANDO TENDENCIA ');
-                console.log('--------------------------------------------');
-                console.log(' ');
-
-
-                var ValPrecAnt = PeriodoPrecioAnt;
-                var ValPrecAct = PeriodoPrecioAct;
-
-                var ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
-
-
-                console.log(' TENDENCIA: ',ProcenApDp);
-                console.log('--------------------------------------------');
-
-
-                try{
-                    if (ValPrecAct > ValPrecAnt ) {
-                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo3.tendencia" : ProcenApDp, activo : "S", "periodo3.id_hitbtc": PeriodoId_hitbtcAct, "periodo3.fecha": PeriodoFechaAct,"periodo3.precio" : PeriodoPrecioAct, "periodo3.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
-                    }
-                    else{
-                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo3.tendencia" : ProcenApDp }}, {"multi" : true,"upsert" : true});
-                    }
-                    OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo3" : false },{$set:{ "muestreo.periodo3" : true }}, {"multi" : true,"upsert" : true});
-                }
-                catch(error){
-                    Meteor.call("ValidaError", error, 2);
-                }
-            break;
-            case 4:
-                if ( debug_activo === 1) {
-                    Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 - switch Inicial - Case 4');
-                }
-                try{
-                    var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
-                }
-                catch (error){    
-                Meteor.call("ValidaError", error, 2);
-                };                           
-                    
-                try{
-                    var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo4" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
-                }
-                catch (error){    
-                    Meteor.call("ValidaError", error, 2);
-                };
-                var RegAnt = TradAnt
-                var RegAct = TransProcesar[0]
-
-                var PeriodoFechaAnt = RegAnt.periodo4.fecha;
-                var PeriodoId_hitbtcAnt = RegAnt.periodo4.id_hitbtc;
-                var PeriodoPrecioAnt = RegAnt.periodo4.precio;
-                var PeriodoTipoOperacionAnt = RegAnt.periodo4.tipo_operacion;
-                                    
-                var PeriodoFechaAct = RegAct.fecha;
-                var PeriodoId_hitbtcAct = RegAct.id_hitbtc;
-                var PeriodoPrecioAct = RegAct.precio;
-                var PeriodoTipoOperacionAct = RegAct.tipo_operacion;
-
-                    
-
-
-                console.log('--------------------------------------------');
-                console.log('          TIPO DE CAMBIO: ',TIPOCAMBIO);
-                console.log('--------------------------------------------');
-                console.log(' ');
-                console.log('----------- TRANSACCION ANTERIOR -----------');
-                console.log(' ');
-                console.log(' LINEA DE TIEMPO: ', PeriodoFechaAnt);
-                console.log(' ID: ',PeriodoId_hitbtcAnt);
-                console.log(' PRECIO: ',PeriodoPrecioAnt);
-                console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacionAnt);
-                console.log('--------------------------------------------');
-                console.log(' ');
-                console.log('------------ ULTIMA TRANSACCION ------------');
-                console.log(' ');
-                console.log(' LINEA DE TIEMPO: ',PeriodoFechaAct);
-                console.log(' ID: ',PeriodoId_hitbtcAct);
-                console.log(' PRECIO: ',PeriodoPrecioAct);
-                console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacionAct);
-                console.log('--------------------------------------------');
-                console.log('          CALCULANDO TENDENCIA ');
-                console.log('--------------------------------------------');
-                console.log(' ');
-
-
-                var ValPrecAnt = PeriodoPrecioAnt;
-                var ValPrecAct = PeriodoPrecioAct;
-
-                var ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
-
-
-                console.log(' TENDENCIA: ',ProcenApDp);
-                console.log('--------------------------------------------');
-
-
-                try{
-                    if (ValPrecAct > ValPrecAnt ) {
-                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo4.tendencia" : ProcenApDp, activo : "S", "periodo4.id_hitbtc": PeriodoId_hitbtcAct, "periodo4.fecha": PeriodoFechaAct,"periodo4.precio" : PeriodoPrecioAct, "periodo4.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
-                    }
-                    else{
-                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo4.tendencia" : ProcenApDp }}, {"multi" : true,"upsert" : true});
-                    }
-                    OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo4" : false },{$set:{ "muestreo.periodo4" : true }}, {"multi" : true,"upsert" : true});
-                }
-                catch(error){
-                    Meteor.call("ValidaError", error, 2);
-                }
-            break;
-            case 5:
-                if ( debug_activo === 1) {
-                    Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 - switch Inicial - Case 5');
-                }
-                try{
-                    var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
-                }
-                catch (error){    
-                Meteor.call("ValidaError", error, 2);
-                };                           
-                    
-                try{
-                    var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo5" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
-                }
-                catch (error){    
-                    Meteor.call("ValidaError", error, 2);
-                };
-                var RegAnt = TradAnt
-                var RegAct = TransProcesar[0]
-
-                var PeriodoFechaAnt = RegAnt.periodo5.fecha;
-                var PeriodoId_hitbtcAnt = RegAnt.periodo5.id_hitbtc;
-                var PeriodoPrecioAnt = RegAnt.periodo5.precio;
-                var PeriodoTipoOperacionAnt = RegAnt.periodo5.tipo_operacion;
-                                    
-                var PeriodoFechaAct = RegAct.fecha;
-                var PeriodoId_hitbtcAct = RegAct.id_hitbtc;
-                var PeriodoPrecioAct = RegAct.precio;
-                var PeriodoTipoOperacionAct = RegAct.tipo_operacion;
-
-                    
-
-
-                console.log('--------------------------------------------');
-                console.log('          TIPO DE CAMBIO: ',TIPOCAMBIO);
-                console.log('--------------------------------------------');
-                console.log(' ');
-                console.log('----------- TRANSACCION ANTERIOR -----------');
-                console.log(' ');
-                console.log(' LINEA DE TIEMPO: ', PeriodoFechaAnt);
-                console.log(' ID: ',PeriodoId_hitbtcAnt);
-                console.log(' PRECIO: ',PeriodoPrecioAnt);
-                console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacionAnt);
-                console.log('--------------------------------------------');
-                console.log(' ');
-                console.log('------------ ULTIMA TRANSACCION ------------');
-                console.log(' ');
-                console.log(' LINEA DE TIEMPO: ',PeriodoFechaAct);
-                console.log(' ID: ',PeriodoId_hitbtcAct);
-                console.log(' PRECIO: ',PeriodoPrecioAct);
-                console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacionAct);
-                console.log('--------------------------------------------');
-                console.log('          CALCULANDO TENDENCIA ');
-                console.log('--------------------------------------------');
-                console.log(' ');
-
-
-                var ValPrecAnt = PeriodoPrecioAnt;
-                var ValPrecAct = PeriodoPrecioAct;
-
-                var ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
-
-
-                console.log(' TENDENCIA: ',ProcenApDp);
-                console.log('--------------------------------------------');
-
-
-                try{
-                    if (ValPrecAct > ValPrecAnt ) {
-                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo5.tendencia" : ProcenApDp, activo : "S", "periodo5.id_hitbtc": PeriodoId_hitbtcAct, "periodo5.fecha": PeriodoFechaAct,"periodo5.precio" : PeriodoPrecioAct, "periodo5.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
-                    }
-                    else{
-                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo5.tendencia" : ProcenApDp }}, {"multi" : true,"upsert" : true});
-                    }
-                    OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo5" : false },{$set:{ "muestreo.periodo5" : true }}, {"multi" : true,"upsert" : true});
-                }
-                catch(error){
-                    Meteor.call("ValidaError", error, 2);
-                }
-            break;
-            case 6:
-                if ( debug_activo === 1) {
-                    Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 - switch Inicial - Case 6');
-                }
-                try{
-                    var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
-                }
-                catch (error){    
-                Meteor.call("ValidaError", error, 2);
-                };                           
-                    
-                try{
-                    var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo6" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
-                }
-                catch (error){    
-                    Meteor.call("ValidaError", error, 2);
-                };
-                var RegAnt = TradAnt
-                var RegAct = TransProcesar[0]
-
-                var PeriodoFechaAnt = RegAnt.periodo6.fecha;
-                var PeriodoId_hitbtcAnt = RegAnt.periodo6.id_hitbtc;
-                var PeriodoPrecioAnt = RegAnt.periodo6.precio;
-                var PeriodoTipoOperacionAnt = RegAnt.periodo6.tipo_operacion;
-                                    
-                var PeriodoFechaAct = RegAct.fecha;
-                var PeriodoId_hitbtcAct = RegAct.id_hitbtc;
-                var PeriodoPrecioAct = RegAct.precio;
-                var PeriodoTipoOperacionAct = RegAct.tipo_operacion;
-
-                    
-
-
-                console.log('--------------------------------------------');
-                console.log('          TIPO DE CAMBIO: ',TIPOCAMBIO);
-                console.log('--------------------------------------------');
-                console.log(' ');
-                console.log('----------- TRANSACCION ANTERIOR -----------');
-                console.log(' ');
-                console.log(' LINEA DE TIEMPO: ', PeriodoFechaAnt);
-                console.log(' ID: ',PeriodoId_hitbtcAnt);
-                console.log(' PRECIO: ',PeriodoPrecioAnt);
-                console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacionAnt);
-                console.log('--------------------------------------------');
-                console.log(' ');
-                console.log('------------ ULTIMA TRANSACCION ------------');
-                console.log(' ');
-                console.log(' LINEA DE TIEMPO: ',PeriodoFechaAct);
-                console.log(' ID: ',PeriodoId_hitbtcAct);
-                console.log(' PRECIO: ',PeriodoPrecioAct);
-                console.log(' TIPO OPERACIÓN: ',PeriodoTipoOperacionAct);
-                console.log('--------------------------------------------');
-                console.log('          CALCULANDO TENDENCIA ');
-                console.log('--------------------------------------------');
-                console.log(' ');
-
-
-                var ValPrecAnt = PeriodoPrecioAnt;
-                var ValPrecAct = PeriodoPrecioAct;
-
-                var ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
-
-
-                console.log(' TENDENCIA: ',ProcenApDp);
-                console.log('--------------------------------------------');
-
-
-                try{
-                    if (ValPrecAct > ValPrecAnt ) {
-                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo6.tendencia" : ProcenApDp, activo : "S", "periodo6.id_hitbtc": PeriodoId_hitbtcAct, "periodo6.fecha": PeriodoFechaAct,"periodo6.precio" : PeriodoPrecioAct, "periodo6.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
-                    }
-                    else{
-                        TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo6.tendencia" : ProcenApDp }}, {"multi" : true,"upsert" : true});
-                    }
-                    OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo6" : false },{$set:{ "muestreo.periodo6" : true }}, {"multi" : true,"upsert" : true});
-                }
-                catch(error){
-                    Meteor.call("ValidaError", error, 2);
-                }
-            break;
         }
-
-
-
     },
 
-    'Invertir': function( TIPOS_DE_CAMBIOS, VALOR_EJEC, LIMITE_AP_DEP ){
+    'Invertir': function( MONEDA, VALOR_EJEC, LIMITE_AP_DEP ){
 
+        fecha = moment (new Date());
 
         console.log('############################################');
         console.log(' *CALCULANDO RANKING DE LOS TIPOS DE CAMBIO*');
         console.log('############################################');
+        console.log(' *           MONEDA: ',  MONEDA);
+        console.log('############################################');
         console.log(' ');
 
-        console.log(' Parámetros recibidos');
-        console.log(' TIPOS_DE_CAMBIOS : ', TIPOS_DE_CAMBIOS,);
-        console.log(' VALOR_EJEC : ', VALOR_EJEC,);
-        console.log(' LIMITE_AP_DEP: ', LIMITE_AP_DEP,);
 
+        
         var robot = Parametros.findOne({ dominio : "robot", nombre : "test" }, {_id : 0, valor : 0, estado: 1 });
 
         var CantPropTipoCambios;
 
+
+
         if ( debug_activo === 1) {
             Meteor.call("GuardarLogEjecucionTrader", " 'Invertir' - Paso 6 ");
         }
-
-
 
         switch(VALOR_EJEC){
             case 1:
@@ -2146,10 +1841,12 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", " 'Invertir' - Paso 6 - case 2 ");
                 }
 
+                
+
                 try{
-                    var CPTC = TiposDeCambios.aggregate([ { $match: { tipo_cambio : { $in : TIPOS_DE_CAMBIOS } , "periodo1.tendencia" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
-                    CantPropTipoCambios = CPTC[0].CantidadDeTiposDeCambios;
-                    var RankingTiposDeCambios = TiposDeCambios.aggregate([{ $match: { tipo_cambio : { $in :  TIPOS_DE_CAMBIOS } , "periodo1.tendencia" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia" : -1 }}, { $limit: 3 } ]);
+                    var CPTC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA,"periodo1.tendencia_recalculada" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia_recalculada" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
+                    var CantPropTipoCambios = CPTC[0].CantidadDeTiposDeCambios;
+                    var RankingTiposDeCambios = TempTiposCambioXMoneda.aggregate([{ $match: {  "moneda_saldo" : MONEDA, "periodo1.tendencia_recalculada" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia_recalculada" : -1 }}, { $limit: 3 } ]);
                     var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
                     var ProporcionTipoCambios = PTC[0];
                 }
@@ -2157,262 +1854,11 @@ Meteor.methods({
                     Meteor.call("ValidaError", error, 2);
                 };
 
-                try {
-                    var SAM = TiposDeCambios.aggregate([ { $match: { tipo_cambio : { $in : TIPOS_DE_CAMBIOS } } },
-                                { $group: { _id : { moneda : "$moneda_base" } }}, 
-                                 { $lookup: {
-                                        from: "monedas",
-                                        localField: "_id.moneda",
-                                        foreignField: "moneda",
-                                        as: "MND"
-                                      } }, 
-                                      { $unwind: "$MND" },
-                                      { $project: { _id : 0, moneda : "$_id.moneda", saldo : "$MND.saldo.tradeo.activo" } }
-                            ]);
-                    var SaldoActualMoneda = SAM[0].saldo;
-                }
-                catch (error){
-                    Meteor.call("ValidaError", error, 2);
-                }
 
+                //console.log("Valor de CantPropTipoCambios", CantPropTipoCambios)
 
-                var CantPropTipoCambiosValidados = 0
+                //console.log("Valor de RankingTiposDeCambios", RankingTiposDeCambios)
 
-                switch (CantPropTipoCambios){
-                    case undefined:
-                        CantPropTipoCambiosValidados = 0;
-                    break;
-                    case 1: 
-                        var VMC = RankingTiposDeCambios[0];
-                        ValorMinimoCompra = VMC.min_compra;
-                        console.log(' Valor de V_MonedaBase: ', V_MonedaBase);
-                        console.log(" Valor de ValorMinimoCompra", ValorMinimoCompra)
-                        var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p11;
-                        if ( SaldoInvertir >= ValorMinimoCompra ) {
-                            CantPropTipoCambiosValidados = CantPropTipoCambios
-                        }
-                    break;
-                    case 2: 
-                        for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
-                            TipoCambioRanking = RankingTiposDeCambios[CRTC];
-                            switch (CRTC){
-                                case 0:
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p12;
-                                    var ValorMinimoCompra = TipoCambioRanking.min_compra;
-                                    if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                    }
-                                break;
-                                case 1:
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p22;
-                                    var ValorMinimoCompra = TipoCambioRanking.min_compra;
-                                    if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                    }
-                                break;
-                            }
-                        }
-                    break;
-                    case 3:
-                        for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
-                            TipoCambioRanking = RankingTiposDeCambios[CRTC];
-                            switch (CRTC){
-                                case 0:
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p13;
-                                    var ValorMinimoCompra = TipoCambioRanking.min_compra;
-                                    if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                    }
-                                break;
-                                case 1:
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p23;
-                                    var ValorMinimoCompra = TipoCambioRanking.min_compra;
-                                    if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                    }
-                                break;
-                                case 2:
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p33;
-                                    var ValorMinimoCompra = TipoCambioRanking.min_compra;
-                                    if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                    }
-                                break;
-                            }
-                            console.log('--------------------------------------------');
-                        }
-                    break;
-                }
-                
-
-                switch (CantPropTipoCambiosValidados){
-                    case 0:
-                        
-                        console.log('--------------------------------------------');
-                        console.log("            **** EN ESPERA **** ")
-                        console.log("   | Tendencias Analizadas no superan |")
-                        console.log("   |   limites Mínimos configurados   |")
-                        console.log(' ');
-                        console.log("   Valor Mínimo Actual Configurado: ", LIMITE_AP_DEP)
-                        console.log('--------------------------------------------');
-                    break;
-                    case 1:
-
-                        console.log('--------------------------------------------');
-                        console.log("             **** INVERTIR **** ")
-                        console.log("   | Realizando Calculos de inversión |")
-                        console.log("   |   ............................   |")
-                        console.log(' ');
-
-                        for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
-                            TipoCambioRanking = RankingTiposDeCambios[CRTC];
-
-                            try {
-                                var SAM = Monedas.aggregate([ { $match : { moneda : TipoCambioRanking.moneda_base } }, { $project: { _id : 0, "saldo.tradeo.activo" : 1 } } ]);                                
-                            }
-                            catch (error){
-                                Meteor.call("ValidaError", error, 2);
-                            }
-                            
-                            var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p11;
-                            
-                            console.log('--------------------------------------------');
-                            console.log('                  POSICIÓN:', CRTC+1);
-                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
-                            console.log('     TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
-                            console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p11*100,'%');
-                            console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
-                            console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-                            console.log('--------------------------------------------');
-                        }
-                    break;
-                    case 2:
-
-                        console.log('--------------------------------------------');
-                        console.log("             **** INVERTIR **** ")
-                        console.log("   | Realizando Calculos de inversión |")
-                        console.log("   |   ............................   |")
-                        console.log(' ');
-
-                        for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
-                            TipoCambioRanking = RankingTiposDeCambios[CRTC];
-
-                            try {
-                                var SAM = Monedas.aggregate([ { $match : { moneda : TipoCambioRanking.moneda_base } }, { $project: { _id : 0, "saldo.tradeo.activo" : 1 } } ]);                                
-                            }
-                            catch (error){
-                                Meteor.call("ValidaError", error, 2);
-                            }
-                            
-                            console.log('--------------------------------------------');
-                            console.log('                  POSICIÓN:', CRTC+1);
-                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
-                            console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
-                            switch (CRTC){
-                                case 0:
-                                    var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p12;
-                                    console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p12*100,'%');
-                                    console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
-                                    console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-                                break;
-                                case 1:
-                                    var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p22;
-                                    console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p22*100,'%');
-                                    console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
-                                    console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-                                break;
-                            }
-                            console.log('--------------------------------------------');
-                        }
-                    break;
-                    case 3:
-
-                        console.log('--------------------------------------------');
-                        console.log("             **** INVERTIR **** ")
-                        console.log("   | Realizando Calculos de inversión |")
-                        console.log("   |   ............................   |")
-                        console.log(' ');
-
-                        for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
-                            TipoCambioRanking = RankingTiposDeCambios[CRTC];
-
-                            try {
-                                var SAM = Monedas.aggregate([ { $match : { moneda : TipoCambioRanking.moneda_base } }, { $project: { _id : 0, "saldo.tradeo.activo" : 1 } } ]);                                
-                            }
-                            catch (error){
-                                Meteor.call("ValidaError", error, 2);
-                            }
-                            
-                            console.log('--------------------------------------------');
-                            console.log('                  POSICIÓN:', CRTC+1);
-                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
-                            console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
-                            switch (CRTC){
-                                case 0:
-                                    var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p13;
-                                    console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p13*100,'%');
-                                    console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
-                                    console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-                                break;
-                                case 1:
-                                    var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p23;
-                                    console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p23*100,'%');
-                                    console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
-                                    console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-                                break;
-                                case 2:
-                                    var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p33;
-                                    console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p33*100,'%');
-                                    console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
-                                    console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-                                break;
-                            }
-                            console.log('--------------------------------------------');
-                        }
-                    break;
-                    default:
-                }
-            break;
-            case 2:
-                if ( debug_activo === 1) {
-                    Meteor.call("GuardarLogEjecucionTrader", " 'Invertir' - Paso 6 - case 2 ");
-                }
-
-                
-
-                try{
-                    var CPTC = TiposDeCambios.aggregate([ { $match: { tipo_cambio : { $in : TIPOS_DE_CAMBIOS } , "periodo1.tendencia" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
-                    CantPropTipoCambios = CPTC[0].CantidadDeTiposDeCambios;
-                    var RankingTiposDeCambios = TiposDeCambios.aggregate([{ $match: { tipo_cambio : { $in :  TIPOS_DE_CAMBIOS } , "periodo1.tendencia" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia" : -1 }}, { $limit: 3 } ]);
-                    var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
-                    var ProporcionTipoCambios = PTC[0];
-                }
-                catch (error){
-                    Meteor.call("ValidaError", error, 2);
-                };
-
-                try {
-                    var SAM = TiposDeCambios.aggregate([ { $match: { tipo_cambio : { $in : TIPOS_DE_CAMBIOS } } },
-                                { $group: { _id : { moneda : "$moneda_base" } }}, 
-                                 { $lookup: {
-                                        from: "monedas",
-                                        localField: "_id.moneda",
-                                        foreignField: "moneda",
-                                        as: "MND"
-                                      } }, 
-                                      { $unwind: "$MND" },
-                                      { $project: { _id : 0, moneda : "$_id.moneda", saldo : "$MND.saldo.tradeo.activo" } }
-                            ]);
-                    var SaldoActualMoneda = SAM[0].saldo;
-                }
-                catch (error){
-                    Meteor.call("ValidaError", error, 2);
-                }
 
 
                 CantPropTipoCambiosValidados = 0
@@ -2422,10 +1868,10 @@ Meteor.methods({
                     break;
                     case 1:
                         var VMC = RankingTiposDeCambios[0];
-                        ValorMinimoCompra = VMC.min_compra;
+                        ValorMinimoCompra = TipoCambioRanking.min_compra;
                         console.log(' Valor de V_MonedaBase: ', V_MonedaBase);
                         console.log(" Valor de ValorMinimoCompra", ValorMinimoCompra)
-                        var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p11;
+                        var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p11;
                         if ( SaldoInvertir >= ValorMinimoCompra ) {
                             CantPropTipoCambiosValidados = CantPropTipoCambios
                         }
@@ -2436,21 +1882,23 @@ Meteor.methods({
                             TipoCambioRanking = RankingTiposDeCambios[CRTC];
                             switch (CRTC){
                                 case 0:
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p12;
+                                    var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p13;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
+                                    console.log("Valor de SaldoActualMoneda", TipoCambioRanking.saldo_moneda_tradear)
                                     console.log("Valor de SaldoInvertir", SaldoInvertir)
                                     console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
                                     console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados)
                                 break;
                                 case 1:
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p22;
+                                    var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p23;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
+                                    console.log("Valor de SaldoActualMoneda", TipoCambioRanking.saldo_moneda_tradear)
                                     console.log("Valor de SaldoInvertir", SaldoInvertir)
                                     console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
                                     console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados)
@@ -2463,34 +1911,34 @@ Meteor.methods({
                             TipoCambioRanking = RankingTiposDeCambios[CRTC];
                             switch (CRTC){
                                 case 0:
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p13;
+                                    var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p13;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
-                                    console.log("Valor de SaldoActualMoneda", SaldoActualMoneda)
+                                    console.log("Valor de SaldoActualMoneda", TipoCambioRanking.saldo_moneda_tradear)
                                     console.log("Valor de SaldoInvertir", SaldoInvertir)
                                     console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
                                     console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados)
                                 break;
                                 case 1:
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p23;
+                                    var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p23;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
-                                    console.log("Valor de SaldoActualMoneda", SaldoActualMoneda)
+                                    console.log("Valor de SaldoActualMoneda", TipoCambioRanking.saldo_moneda_tradear)
                                     console.log("Valor de SaldoInvertir", SaldoInvertir)
                                     console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
                                     console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados)
                                 break;
                                 case 2:
-                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p33;
+                                    var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p33;
                                     var ValorMinimoCompra = TipoCambioRanking.min_compra;
                                     if ( SaldoInvertir >= ValorMinimoCompra ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
-                                    console.log("Valor de SaldoActualMoneda", SaldoActualMoneda)
+                                    console.log("Valor de SaldoActualMoneda", TipoCambioRanking.saldo_moneda_tradear)
                                     console.log("Valor de SaldoInvertir", SaldoInvertir)
                                     console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
                                     console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados)
@@ -2522,39 +1970,22 @@ Meteor.methods({
 
                         for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
                             TipoCambioRanking = RankingTiposDeCambios[CRTC];
-
-                            try {
-                                var SAM = Monedas.aggregate([ { $match : { moneda : TipoCambioRanking.moneda_base } }, { $project: { _id : 0, "saldo.tradeo.activo" : 1 } } ]);                                
-                            }
-                            catch (error){
-                                Meteor.call("ValidaError", error, 2);
-                            }
                             
-                            var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p11;
+                            var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p11;
                             
                             console.log('--------------------------------------------');
                             console.log('                  POSICIÓN:', CRTC+1);
                             console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('    MONEDA BASE: ', TipoCambioRanking.moneda_base);
+                            console.log('    MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
                             console.log('     TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
                             console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p11*100,'%');
-                            console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
+                            console.log('     SALDO TOTAL ACTUAL: ', TipoCambioRanking.saldo_moneda_tradear );
                             console.log('     MONTO A INVERTIR: ', SaldoInvertir );
                             console.log('--------------------------------------------');
-                        }
-
-                                   
-                        if(robot.estado) {
-                            console.log('Entre  En el robot simulador 1' );
-                            idTrans = idTrans+1;
-                            Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir);
-                        } else {
-                         //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
-                            break;
-                        }
-
+                        };
                     break;
                     case 2:
-
                         console.log('--------------------------------------------');
                         console.log("             **** INVERTIR **** ")
                         console.log("   | Realizando Calculos de inversión |")
@@ -2563,43 +1994,27 @@ Meteor.methods({
 
                         for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
                             TipoCambioRanking = RankingTiposDeCambios[CRTC];
-
-                            try {
-                                var SAM = Monedas.aggregate([ { $match : { moneda : TipoCambioRanking.moneda_base } }, { $project: { _id : 0, "saldo.tradeo.activo" : 1 } } ]);                                
-                            }
-                            catch (error){
-                                Meteor.call("ValidaError", error, 2);
-                            }
                             
                             console.log('--------------------------------------------');
                             console.log('                  POSICIÓN:', CRTC+1);
                             console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('    MONEDA BASE: ', TipoCambioRanking.moneda_base);
+                            console.log('    MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
                             console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
                             switch (CRTC){
                                 case 0:
-                                    var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
+                                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p12;
                                     console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p12*100,'%');
                                     console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
                                 break;
                                 case 1:
-                                    var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
+                                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p22;
                                     console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p22*100,'%');
                                     console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-
-
-                                break;
-                            }
-
-                            if(robot.estado) {
-                                console.log('Entre  En el robot simulador 2');
-                                idTrans = idTrans+1;
-                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir);
-                            } else {
-                                //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                 break;
                             }
                         }
@@ -2614,49 +2029,410 @@ Meteor.methods({
 
                         for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
                             TipoCambioRanking = RankingTiposDeCambios[CRTC];
-
-                            try {
-                                var SAM = Monedas.aggregate([ { $match : { moneda : TipoCambioRanking.moneda_base } }, { $project: { _id : 0, "saldo.tradeo.activo" : 1 } } ]);                                
-                            }
-                            catch (error){
-                                Meteor.call("ValidaError", error, 2);
-                            }
                             
                             console.log('--------------------------------------------');
                             console.log('                  POSICIÓN:', CRTC+1);
                             console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
-                            console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
+                            console.log('    MONEDA BASE: ', TipoCambioRanking.moneda_base);
+                            console.log('    MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
+                            console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia_recalculada);
                             switch (CRTC){
                                 case 0:
-                                    var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
+                                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p13;
                                     console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p13*100,'%');
                                     console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
                                 break;
                                 case 1:
-                                    var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
+                                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p23;
                                     console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p23*100,'%');
                                     console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
-
                                 break;
                                 case 2:
-                                    var SaldoActualMoneda = SAM[0].saldo.tradeo.activo;
+                                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
                                     var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p33;
                                     console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p33*100,'%');
                                     console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
                                     console.log('     MONTO A INVERTIR: ', SaldoInvertir );
                                 break;
                             }
+                        }
+                    break;
+                    default:
+                }
+            break;
+            case 2:
+                if ( debug_activo === 1) {
+                    Meteor.call("GuardarLogEjecucionTrader", " 'Invertir' - Paso 6 - case 2 ");
+                }
 
-                            if(robot.estado) {
-                                console.log('Entre  En el robot simulador 3');
-                                idTrans = idTrans+1;
-                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir);
-                            } else {
-                                //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                
+
+                try{
+                    var CPTC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA,"periodo1.tendencia_recalculada" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia_recalculada" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
+                    var CantPropTipoCambios = CPTC[0].CantidadDeTiposDeCambios;
+                    var RankingTiposDeCambios = TempTiposCambioXMoneda.aggregate([{ $match: {  "moneda_saldo" : MONEDA, "periodo1.tendencia_recalculada" : { $gt : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia_recalculada" : -1 }}, { $limit: 3 } ]);
+                    var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
+                    var ProporcionTipoCambios = PTC[0];
+                }
+                catch (error){
+                    Meteor.call("ValidaError", error, 2);
+                };
+
+
+                //console.log("Valor de CantPropTipoCambios", CantPropTipoCambios)
+
+                //console.log("Valor de RankingTiposDeCambios", RankingTiposDeCambios)
+
+
+
+                CantPropTipoCambiosValidados = 0
+                switch (CantPropTipoCambios){
+                    case undefined:
+                        CantPropTipoCambiosValidados = 0;
+                    break;
+                    case 1:
+                        var VMC = RankingTiposDeCambios[0];
+                        ValorMinimoCompra = TipoCambioRanking.min_compra;
+                        console.log(' Valor de V_MonedaBase: ', V_MonedaBase);
+                        console.log(" Valor de ValorMinimoCompra", ValorMinimoCompra)
+                        var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p11;
+                        if ( SaldoInvertir >= ValorMinimoCompra ) {
+                            CantPropTipoCambiosValidados = CantPropTipoCambios
+                        }
+                        console.log("Valor de SaldoInvertir", SaldoInvertir)
+                    break;
+                    case 2:
+                        for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
+                            TipoCambioRanking = RankingTiposDeCambios[CRTC];
+                            switch (CRTC){
+                                case 0:
+                                    var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p13;
+                                    var ValorMinimoCompra = TipoCambioRanking.min_compra;
+                                    if ( SaldoInvertir >= ValorMinimoCompra ) {
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                    }
+                                    console.log("Valor de SaldoActualMoneda", TipoCambioRanking.saldo_moneda_tradear)
+                                    console.log("Valor de SaldoInvertir", SaldoInvertir)
+                                    console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
+                                    console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados)
+                                break;
+                                case 1:
+                                    var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p23;
+                                    var ValorMinimoCompra = TipoCambioRanking.min_compra;
+                                    if ( SaldoInvertir >= ValorMinimoCompra ) {
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                    }
+                                    console.log("Valor de SaldoActualMoneda", TipoCambioRanking.saldo_moneda_tradear)
+                                    console.log("Valor de SaldoInvertir", SaldoInvertir)
+                                    console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
+                                    console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados)
+                                break;
+                            }
+                        }
+                    break;
+                    case 3:
+                        for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
+                            TipoCambioRanking = RankingTiposDeCambios[CRTC];
+                            switch (CRTC){
+                                case 0:
+                                    var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p13;
+                                    var ValorMinimoCompra = TipoCambioRanking.min_compra;
+                                    if ( SaldoInvertir >= ValorMinimoCompra ) {
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                    }
+                                    console.log("Valor de SaldoActualMoneda", TipoCambioRanking.saldo_moneda_tradear)
+                                    console.log("Valor de SaldoInvertir", SaldoInvertir)
+                                    console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
+                                    console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados)
+                                break;
+                                case 1:
+                                    var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p23;
+                                    var ValorMinimoCompra = TipoCambioRanking.min_compra;
+                                    if ( SaldoInvertir >= ValorMinimoCompra ) {
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                    }
+                                    console.log("Valor de SaldoActualMoneda", TipoCambioRanking.saldo_moneda_tradear)
+                                    console.log("Valor de SaldoInvertir", SaldoInvertir)
+                                    console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
+                                    console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados)
+                                break;
+                                case 2:
+                                    var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p33;
+                                    var ValorMinimoCompra = TipoCambioRanking.min_compra;
+                                    if ( SaldoInvertir >= ValorMinimoCompra ) {
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                    }
+                                    console.log("Valor de SaldoActualMoneda", TipoCambioRanking.saldo_moneda_tradear)
+                                    console.log("Valor de SaldoInvertir", SaldoInvertir)
+                                    console.log("Valor de ValorMinimoCompra", ValorMinimoCompra)
+                                    console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados)
+                                break;
+                            }
+                            console.log('--------------------------------------------');
+                        }
+                    break;
+                }
+                
+
+                switch (CantPropTipoCambiosValidados){
+                    case 0:
+                        console.log('--------------------------------------------');
+                        console.log("            **** EN ESPERA **** ")
+                        console.log("   | Tendencias Analizadas no superan |")
+                        console.log("   |   limites Mínimos configurados   |")
+                        console.log(' ');
+                        console.log("   Valor Mínimo Actual Configurado: ", LIMITE_AP_DEP)
+                        console.log('--------------------------------------------');
+                    break;
+                    case 1:
+
+                        console.log('--------------------------------------------');
+                        console.log("             **** INVERTIR **** ")
+                        console.log("   | Realizando Calculos de inversión |")
+                        console.log("   |   ............................   |")
+                        console.log(' ');
+
+                        for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
+                            TipoCambioRanking = RankingTiposDeCambios[CRTC];
+                            
+                            var SaldoInvertir = TipoCambioRanking.saldo_moneda_tradear*ProporcionTipoCambios.valor.p11;
+                            
+                            console.log('--------------------------------------------');
+                            console.log('                  POSICIÓN:', CRTC+1);
+                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('     MONEDA BASE: ', TipoCambioRanking.moneda_base);
+                            console.log('     MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
+                            console.log('     TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
+                            console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p11*100,'%');
+                            console.log('     SALDO TOTAL ACTUAL: ', TipoCambioRanking.saldo_moneda_tradear );
+                            console.log('     MONTO A INVERTIR: ', SaldoInvertir );
+                            console.log('     ACCION: ', TipoCambioRanking.accion );
+                            console.log('--------------------------------------------');
+                            
+                            switch (TipoCambioRanking.accion){
+                                case 1:
+                                    if(robot.estado) {
+                                        console.log('Entre  En el robot simulador 1' );
+                                        idTrans = idTrans+1;
+                                        console.log('OPERACION A REALIZAR: VENDER' );
+                                        //--Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'sell',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                    } else {
+                                     //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                    }
+                                break;
+                                case 2:
+                                    if(robot.estado) {
+                                        console.log('Entre  En el robot simulador 1' );
+                                        idTrans = idTrans+1;
+                                        console.log('OPERACION A REALIZAR: COMPRAR' );
+                                        //--Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                    } else {
+                                     //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                        
+                                    }
+                                break;
+                            }
+                        };
+
+
+                    break;
+                    case 2:
+
+                        console.log('--------------------------------------------');
+                        console.log("             **** INVERTIR **** ")
+                        console.log("   | Realizando Calculos de inversión |")
+                        console.log("   |   ............................   |")
+                        console.log(' ');
+
+                        for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
+                            TipoCambioRanking = RankingTiposDeCambios[CRTC];
+                            
+                            console.log('--------------------------------------------');
+                            console.log('                  POSICIÓN:', CRTC+1);
+                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('    MONEDA BASE: ', TipoCambioRanking.moneda_base);
+                            console.log('    MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
+                            console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
+                            switch (CRTC){
+                                case 0:
+                                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
+                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p12;
+                                    console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p12*100,'%');
+                                    console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
+                                    console.log('     MONTO A INVERTIR: ', SaldoInvertir );
+                                    console.log('     ACCION: ', TipoCambioRanking.accion );
+                                    switch (TipoCambioRanking.accion){
+                                        case 1:
+                                            if(robot.estado) {
+                                                console.log('Entre  En el robot simulador 2' );
+                                                idTrans = idTrans+1;
+                                                console.log('OPERACION A REALIZAR: VENDER' );
+                                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'sell',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                            } else {
+                                             //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                            }
+                                        break;
+                                        case 2:
+                                            if(robot.estado) {
+                                                console.log('Entre  En el robot simulador 1' );
+                                                idTrans = idTrans+1;
+                                                console.log('OPERACION A REALIZAR: COMPRAR' );
+                                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                            } else {
+                                             //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                                
+                                            }
+                                        break;
+                                    }
+                                break;
+                                case 1:
+                                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
+                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p22;
+                                    console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p22*100,'%');
+                                    console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
+                                    console.log('     MONTO A INVERTIR: ', SaldoInvertir );
+                                    console.log('     ACCION: ', TipoCambioRanking.accion );
+                                    switch (TipoCambioRanking.accion){
+                                        case 1:
+                                            if(robot.estado) {
+                                                console.log('Entre  En el robot simulador 2' );
+                                                idTrans = idTrans+1;
+                                                console.log('OPERACION A REALIZAR: VENDER' );
+                                                //--Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'sell',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                            } else {
+                                             //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                            }
+                                        break;
+                                        case 2:
+                                            if(robot.estado) {
+                                                console.log('Entre  En el robot simulador 1' );
+                                                idTrans = idTrans+1;
+                                                console.log('OPERACION A REALIZAR: COMPRAR' );
+                                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                            } else {
+                                             //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                                
+                                            }
+                                        break;
+                                    }
+                                break;
+                            }
+                        }
+                    break;
+                    case 3:
+
+                        console.log('--------------------------------------------');
+                        console.log("             **** INVERTIR **** ")
+                        console.log("   | Realizando Calculos de inversión |")
+                        console.log("   |   ............................   |")
+                        console.log(' ');
+
+                        for (CRTC = 0, TRTC = RankingTiposDeCambios.length; CRTC < TRTC; CRTC++) {
+                            TipoCambioRanking = RankingTiposDeCambios[CRTC];
+                            
+                            console.log('--------------------------------------------');
+                            console.log('                  POSICIÓN:', CRTC+1);
+                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('    MONEDA BASE: ', TipoCambioRanking.moneda_base);
+                            console.log('    MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
+                            console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia_recalculada);
+                            switch (CRTC){
+                                case 0:
+                                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
+                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p13;
+                                    console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p13*100,'%');
+                                    console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
+                                    console.log('     MONTO A INVERTIR: ', SaldoInvertir );
+                                    console.log('     ACCION: ', TipoCambioRanking.accion );
+                                    switch (TipoCambioRanking.accion){
+                                        case 1:
+                                            if(robot.estado) {
+                                                console.log('Entre  En el robot simulador 3' );
+                                                idTrans = idTrans+1;
+                                                console.log('OPERACION A REALIZAR: VENDER' );
+                                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'sell',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                            } else {
+                                             //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                            }
+                                        break;
+                                        case 2:
+                                            if(robot.estado) {
+                                                console.log('Entre  En el robot simulador 1' );
+                                                idTrans = idTrans+1;
+                                                console.log('OPERACION A REALIZAR: COMPRAR' );
+                                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                            } else {
+                                             //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                                
+                                            }
+                                        break;
+                                    }
+                                break;
+                                case 1:
+                                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
+                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p23;
+                                    console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p23*100,'%');
+                                    console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
+                                    console.log('     MONTO A INVERTIR: ', SaldoInvertir );
+                                    console.log('     ACCION: ', TipoCambioRanking.accion );
+                                    switch (TipoCambioRanking.accion){
+                                        case 1:
+                                            if(robot.estado) {
+                                                console.log('Entre  En el robot simulador 3' );
+                                                idTrans = idTrans+1;
+                                                console.log('OPERACION A REALIZAR: VENDER' );
+                                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'sell',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                            } else {
+                                             //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                            }
+                                        break;
+                                        case 2:
+                                            if(robot.estado) {
+                                                console.log('Entre  En el robot simulador 1' );
+                                                idTrans = idTrans+1;
+                                                console.log('OPERACION A REALIZAR: COMPRAR' );
+                                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                            } else {
+                                             //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                                
+                                            }
+                                        break;
+                                    }
+                                break;
+                                case 2:
+                                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
+                                    var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p33;
+                                    console.log('     PORCENTAJE A INVERTIR: ', ProporcionTipoCambios.valor.p33*100,'%');
+                                    console.log('     SALDO TOTAL ACTUAL: ', SaldoActualMoneda );
+                                    console.log('     MONTO A INVERTIR: ', SaldoInvertir );
+                                    console.log('     ACCION: ', TipoCambioRanking.accion );
+                                    switch (TipoCambioRanking.accion){
+                                        case 1:
+                                            if(robot.estado) {
+                                                console.log('Entre  En el robot simulador 3' );
+                                                idTrans = idTrans+1;
+                                                console.log('OPERACION A REALIZAR: VENDER' );
+                                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'sell',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                            } else {
+                                             //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                            }
+                                        break;
+                                        case 2:
+                                            if(robot.estado) {
+                                                console.log('Entre  En el robot simulador 1' );
+                                                idTrans = idTrans+1;
+                                                console.log('OPERACION A REALIZAR: COMPRAR' );
+                                                Meteor.call('CrearNuevaOrderRobot',SaldoActualMoneda,idTrans,TipoCambioRanking.tipo_cambio,'buy',SaldoInvertir, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion);
+                                            } else {
+                                             //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
+                                                
+                                            }
+                                        break;
+                                    }
                                 break;
                             }
                         }
@@ -2665,7 +2441,7 @@ Meteor.methods({
                 }
             break;
         }
-
+        
         console.log('--------------------------------------------');
         console.log('############################################');
         console.log('--------------   FINALIZADO   --------------');
@@ -2674,9 +2450,42 @@ Meteor.methods({
     },
 
     'Prueba':function(){ 
-        //Meteor.call("Invertir", "XMRUSD", 2, 10);
+        TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra');
 
+        for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
+                    var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
 
+                    //console.log("Valor de tipo_cambio_verificar", tipo_cambio_verificar)
+
+                    Meteor.call('EvaluarTendencias', tipo_cambio_verificar.tipo_cambio, 1, tipo_cambio_verificar.accion );
+                }               
+                
+
+        //console.log("Valor de TiposDeCambioVerificar", TiposDeCambioVerificar)
+
+        //console.log ("Estoy en Prueba");
+/*
+        for (CTCV = 0, tamanio_TiposDeCambioVerificar = TiposDeCambioVerificar.length; CTCV < tamanio_TiposDeCambioVerificar; CTCV++) {
+            var V_TiposDeCambioVerificar = TiposDeCambioVerificar[CTCV];
+
+            console.log('Valor de TiposDeCambioVerificar -- : ', V_TiposDeCambioVerificar);
+            //console.log('Valor de TiposDeCambioVerificar -- : ', V_TiposDeCambioVerificar._id);
+            Meteor.call('ListaTradeoActual', V_TiposDeCambioVerificar._id, 2, 1);
+            Meteor.call('EvaluarTendencias', V_TiposDeCambioVerificar._id, 1 );
+
+        };
+*/
+        var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
+                                     { $project: { _id : 1 } }
+                                    ]);
+
+        for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
+            var V_moneda_verificar = MonedasVerificar[CMV];
+            //console.log("Valor de V_moneda_verificar", V_moneda_verificar)
+            Meteor.call("Invertir", V_moneda_verificar._id ,2, 2 );
+        }
+
+        /*
         try {
             var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
 
@@ -2699,13 +2508,7 @@ Meteor.methods({
         }
         catch (error){
             Meteor.call("ValidaError", error, 2);
-        }
-    /*
-        Jobs.run("JobPrueba", {
-            in: {
-                second: 5
-            }
-        });*/
+        }*/
     },
 
     'EjecucionInicial':function(){
@@ -2739,7 +2542,7 @@ Meteor.methods({
 
     'EjecucionGlobal':function(){
         //Meteor.call("Encabezado");
-        Meteor.call("Prueba");
+        //Meteor.call("Prueba");
         //var tiposCamb = ["XMRUSD", "XMRETH", "XMRBTC"];
         //Meteor.call("Invertir", tiposCamb, 2, 0);
         //Meteor.call("SaldoActualMonedas", 1);
@@ -2756,7 +2559,7 @@ Meteor.methods({
 Meteor.startup(function (){
     // code to run on server at startup
     // Verificamos si la aplicación es su ejecución Inicial o no
-    /*
+    
     try {
         var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
 
@@ -2778,5 +2581,5 @@ Meteor.startup(function (){
     catch (error){
         Meteor.call("ValidaError", error, 2);
     }
-    */
+    
 });

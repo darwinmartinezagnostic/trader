@@ -152,6 +152,9 @@ Jobs.register({
 
    	"JobSecuenciaPeriodo1" : function (){
    		try{
+
+
+
 	   		var TM = 1;
 	   		V_EJEC = 2;
 	   		fecha = moment (new Date());
@@ -160,34 +163,52 @@ Jobs.register({
 	        console.log(' ');
 			Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el Job JobSecuenciaPeriodo1');
 
-	   		TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1);
+	   		var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1);
 			//Meteor.call("GuardarLogEjecucionTrader", ['Valor de TiposDeCambioVerificar: ']+[TiposDeCambioVerificar]);
 
-			
+			var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
+                                     { $project: { _id : 1 } }
+                                    ]);
+
+
 
 			if ( TiposDeCambioVerificar === undefined ) {
 				Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TiposDeCambioVerificar]);
 			}
 			else {
+	   			if ( JobsInternal.Utilities.collection.find({ name : "JobSecuenciaPeriodo1" , state : "pending" }).count() === 0  ) {
+		            
+					for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
+						var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
 
-				for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
-					var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
+						//console.log("Valor de tipo_cambio_verificar", tipo_cambio_verificar)
 
-					Jobs.run("JobValidaTendenciaTipoCambio", tipo_cambio_verificar, TM, { 
+						Jobs.run("JobValidaTendenciaTipoCambio", tipo_cambio_verificar.tipo_cambio, TM, tipo_cambio_verificar.accion, { 
+					    	in: {
+					        	second: 1
+					    	},
+	    					priority: 9999999999
+						})
+					}				
+					
+					/*
+					console.log(' ');
+					Jobs.run("JobSecuenciaPeriodo1", { 
 				    	in: {
-				        	second: 1
+				        	minute: 5
 				    	},
-    					priority: 9999999999
+	    				priority: 9999999999
+				    })*/
+		        }
+		        else{
+			        console.log(' ');
+					Jobs.run("JobSecuenciaPeriodo1", { 
+						in: {
+							minute: 2
+						},
+	    				priority: 9999999999
 					})
-				}				
-				
-				/*
-				console.log(' ');
-				Jobs.run("JobSecuenciaPeriodo1", { 
-			    	in: {
-			        	minute: 5
-			    	}
-			    })*/
+				}
 			}
 			var ejecucionSecuenciaPeriodo1 = 0
 		}
@@ -195,12 +216,19 @@ Jobs.register({
 			var ejecucionSecuenciaPeriodo1 = 1
 		}
 
+
 		if ( ejecucionSecuenciaPeriodo1 === 0) {
-			Jobs.run("JobValidaInversion", TiposDeCambioVerificar, V_EJEC, { 
-					in: {
-				    	minute: 3
-				    }
-				})
+
+			for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
+				var V_moneda_verificar = MonedasVerificar[CMV];
+				console.log("Valor de V_moneda_verificar", V_moneda_verificar)
+				
+				Jobs.run("JobValidaInversion", V_moneda_verificar._id, V_EJEC, { 
+						in: {
+					    	minute: 3
+					    }
+					})
+			}
     		return this.success(ejecucionSecuenciaPeriodo1);
     	}
     	else {
@@ -396,7 +424,7 @@ Jobs.register({
 		}
    	},
 */
-    "JobValidaTendenciaTipoCambio": function ( TIPO_CAMBIO, TIPO_MUESTREO ){
+    "JobValidaTendenciaTipoCambio": function ( TIPO_CAMBIO, TIPO_MUESTREO, TIPO_ACCION ){
     	try{
 	    	console.log(' Estoy en JobValidaTendenciaTipoCambio');
 	    	if ( Job_activo === 1 ) {
@@ -409,10 +437,10 @@ Jobs.register({
 		        console.log('--------------------------------------------');
 		        console.log(' ');
 		        console.log("Estoy en el Job JobValidaTendenciaTipoCambio");
-		        console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " Muestreo: ", TIPO_MUESTREO)
+		        console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " Muestreo: ", TIPO_MUESTREO, " ACCION: ", TIPO_ACCION)
 
 		        Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, TIPO_MUESTREO);
-	            Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO );
+	            Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO, TIPO_ACCION );
 		        
 		        console.log('--------------------------------------------');
 		        console.log('############################################');
@@ -438,14 +466,8 @@ Jobs.register({
 
 
 
-    "JobValidaInversion": function( TIPOS_DE_CAMBIO, V_EJEC ){
+    "JobValidaInversion": function( MONEDA_VERIFICAR, V_EJEC ){
     	try{
-	    	console.log(' Estoy en JobValidaInversion');
-	    	console.log(' Parámetros recibidos');
-	        console.log(' TIPOS_DE_CAMBIO : ', TIPOS_DE_CAMBIO,);
-	        console.log(' V_EJEC : ', V_EJEC,);
-
-	    	//if ( Jobs.private.collection.aggregate({ $match:{ name : "JobValidaTendenciaTipoCambio" , state : "pending" } }).count() === 0  ) {
 	    	if ( JobsInternal.Utilities.collection.find({ name : "JobValidaTendenciaTipoCambio" , state : "pending" }).count() === 0  ) {
 	            try{
 	                var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
@@ -455,11 +477,11 @@ Jobs.register({
 	                Meteor.call("ValidaError", error, 2);
 	            };
 
-	            Meteor.call('Invertir', TIPOS_DE_CAMBIO, V_EJEC, LimiteApDep );
+	            Meteor.call('Invertir', MONEDA_VERIFICAR, V_EJEC, LimiteApDep );
 	        }
 	        else{
 		        console.log(' ');
-				Jobs.run("JobValidaInversion", TIPOS_DE_CAMBIO, V_EJEC, LimiteApDep, { 
+				Jobs.run("JobValidaInversion", MONEDA_VERIFICAR, V_EJEC, { 
 					in: {
 						minute: 3
 					},
@@ -473,6 +495,7 @@ Jobs.register({
 		}
 
 		if ( ejecucionJobValidaInversion === 0) {
+
     		return this.success(ejecucionJobValidaInversion);
     	}
     	else {
@@ -487,7 +510,6 @@ Jobs.register({
     	try{
 	    	console.log(' Estoy en JobsFrecuenciaDiaria');
 	    	// Mantenieminto de la coleccion JObs_data
-	    	//Jobs.private.collection.remove({ state : 'successful' });
 	    	JobsInternal.Utilities.collection.remove({ state : 'successful' });
 
 	    	// Validaciones de Data base
