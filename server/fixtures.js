@@ -32,4 +32,5 @@ if (Parametros.find().count() === 0){
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadTransaccionesAtras', estado : true, valor: 300 ,descripcion : 'Cantidad de ID transacciones de traders hacia atrás que consultarán para determinar por primera vez el valor de la transacción Anterior' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'ValorMinimoTransferencia', estado : true, valor: 0.000000001 ,descripcion : 'Valor mínimo de para transferir entre los tipos de saldo Cuenta - trader y viceversa' });
 	Parametros.insert({ fecha : new Date(), dominio : "robot", nombre : "test", estado : true, valor : 1, descripcion : "Simula la compra de monedas" });
+	Parametros.insert({ fecha : new Date(), dominio : "prueba", nombre : "saldo", estado : true, valor : 1, descripcion : "Saldo ficticio para ciertas monedas" });
 };

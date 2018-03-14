@@ -115,7 +115,7 @@ Jobs.register({
     	}
     },
 
-   	"JobSecuenciaPeriodo1" : function (V_EJECUCION){
+   	"JobSecuenciaPeriodo1" : function (){
    		try{
 
 
@@ -141,7 +141,7 @@ Jobs.register({
 				Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TiposDeCambioVerificar]);
 			}
 			else {
-	   			if ( JobsInternal.Utilities.collection.find({ name : "JobSecuenciaPeriodo1", "arguments" : { $in: [1] } , state : "pending" }).count() === 0  ) {
+	   			if ( JobsInternal.Utilities.collection.find({ name : "JobValidaInversion", state : "pending" }).count() === 0  ) {
 		            
 					for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
 						var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
@@ -155,13 +155,13 @@ Jobs.register({
 						})
 					}				
 					
-					
+					/*
 					console.log(' ');
-					Jobs.run("JobSecuenciaPeriodo1", 1, { 
+					Jobs.run("JobSecuenciaPeriodo1", { 
 				    	in: {
 				        	minute: 5
 				    	}
-				    })
+				    })*/
 
 				    for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
 						var V_moneda_verificar = MonedasVerificar[CMV];
@@ -176,7 +176,7 @@ Jobs.register({
 		        }
 		        else{
 			        console.log(' ');
-					Jobs.run("JobSecuenciaPeriodo1", 1, { 
+					Jobs.run("JobSecuenciaPeriodo1", { 
 						in: {
 							minute: 3
 						}
@@ -254,7 +254,7 @@ Jobs.register({
 	                Meteor.call("ValidaError", error, 2);
 	            };
 
-	            Meteor.call('Invertir', MONEDA_VERIFICAR, V_EJEC, LimiteApDep );
+	            Meteor.call('Invertir', MONEDA_VERIFICAR, V_EJEC, V_LimiteApDep );
 	        }
 	        else{
 		        console.log(' ');
