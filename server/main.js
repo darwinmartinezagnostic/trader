@@ -73,7 +73,7 @@ Meteor.methods({
         fecha = moment (new Date());
         Meteor.call("GuardarLogEjecucionTrader", 'INICIANDO EJECUCIÓN');
         console.log('############################################');
-        console.log('  ********* INICIANDO EJECUCIÓN ********* ');
+        console.log('         ********* INICIANDO EJECUCIÓN        ********* ');
         console.log('############################################');
         console.log('        ',fecha._d);
         console.log('############################################');
@@ -85,7 +85,7 @@ Meteor.methods({
         Meteor.call("GuardarLogEjecucionTrader", 'FIN DE EJECUCIÓN');
         console.log(' ');
         console.log('############################################');
-        console.log('    ********* FIN DE EJECUCIÓN ********* ');
+        console.log('           ********* FIN DE EJECUCIÓN        ********* ');
         console.log('############################################');
         console.log('        ',fecha._d);
         console.log('############################################');
@@ -353,7 +353,7 @@ Meteor.methods({
                                 console.log('############################################');
                                 console.log('            Saldo disponible');
                                 console.log('############################################');
-                                console.log(' ********* ', ' MONEDA: ', v_sald_moneda.moneda, ' ********* ');
+                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
                                 console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
                                 console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
                                 console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
@@ -399,7 +399,7 @@ Meteor.methods({
                                 console.log('############################################');
                                 console.log('            Saldo disponible');
                                 console.log('############################################');
-                                console.log(' ********* ', ' MONEDA: ', v_sald_moneda.moneda, ' ********* ');
+                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
                                 console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
                                 console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
                                 console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
@@ -445,7 +445,7 @@ Meteor.methods({
                                 console.log('############################################');
                                 console.log('            Saldo disponible');
                                 console.log('############################################');
-                                console.log(' ********* ', ' MONEDA: ', v_sald_moneda.moneda, ' ********* ');
+                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
                                 console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
                                 console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
                                 console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
@@ -492,7 +492,7 @@ Meteor.methods({
                                 console.log('############################################');
                                 console.log('            Saldo disponible');
                                 console.log('############################################');
-                                console.log(' ********* ', ' MONEDA: ', v_sald_moneda.moneda, ' ********* ');
+                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
                                 console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
                                 console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
                                 console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
@@ -550,7 +550,7 @@ Meteor.methods({
                                 console.log('############################################');
                                 console.log('            Saldo disponible');
                                 console.log('############################################');
-                                console.log(' ********* ', ' MONEDA: ', v_sald_moneda.moneda, ' ********* ');
+                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
                                 console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
                                 console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
                                 console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
@@ -596,7 +596,7 @@ Meteor.methods({
                                 console.log('############################################');
                                 console.log('            Saldo disponible');
                                 console.log('############################################');
-                                console.log(' ********* ', ' MONEDA: ', v_sald_moneda.moneda, ' ********* ');
+                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
                                 console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
                                 console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
                                 console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
@@ -693,7 +693,7 @@ Meteor.methods({
 
                     console.log(' Tipos de Cambio que se están tradeando en HITBTC');
                     console.log(' ');
-                    console.log(' ********* ', LTCTipoCambio, ' ********* ');
+                    console.log('        ********* ', LTCTipoCambio, '        ********* ');
                     console.log('    MONEDA BASE: ', LTCMonedaBase);
                     console.log('    MONEDA DE COTIZACIÓN: ', LTCMonedaCotizacion);
                     console.log('    MONTO MIN DE COMPRA: ', LTCMontoMinCompra);
@@ -725,7 +725,7 @@ Meteor.methods({
                         console.log(' ** Detectado nuevo Tipo de Cambio en HITBTC **');
                         console.log('--------------------------------------------');
                         console.log(' ');
-                        console.log(' ********* ', LTCTipoCambio, ' ********* ');
+                        console.log('        ********* ', LTCTipoCambio, '        ********* ');
                         console.log('    MONEDA BASE: ', LTCMonedaBase);
                         console.log('    MONEDA DE COTIZACIÓN: ', LTCMonedaCotizacion);
                         console.log('    MONTO MIN DE COMPRA: ', LTCMontoMinCompra);
@@ -1051,7 +1051,7 @@ Meteor.methods({
             console.log('############################################');
             console.log('            Status Tranferencia');
             console.log('############################################');
-            console.log(' ********* ', ' MONEDA: ',MONEDA, ' ********* ');
+            console.log('        ********* ', ' MONEDA: ',MONEDA, '        ********* ');
             console.log('    FECHA: ', FECHA );
             console.log('    ID: ',IdTransferencia );
             console.log('    TIPO TRANSFERENCIA: ',TipoTransferencia );
@@ -1068,7 +1068,7 @@ Meteor.methods({
             console.log('############################################');
             console.log('            Status Tranferencia');
             console.log('############################################');
-            console.log(' ********* ', ' MONEDA: ',MONEDA, ' ********* ');
+            console.log('        ********* ', ' MONEDA: ',MONEDA, '        ********* ');
             console.log('    FECHA: ', FECHA);
             console.log('    TIPO TRANSFERENCIA: ',TipoTransferencia);
             console.log('     MONTO: ', MONTO);
@@ -1975,7 +1975,7 @@ Meteor.methods({
                             
                             console.log('--------------------------------------------');
                             console.log('                  POSICIÓN:', CRTC+1);
-                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('        ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, '        ********* ');
                             console.log('    MONEDA BASE: ', TipoCambioRanking.moneda_base);
                             console.log('    MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
                             console.log('     TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
@@ -1997,7 +1997,7 @@ Meteor.methods({
                             
                             console.log('--------------------------------------------');
                             console.log('                  POSICIÓN:', CRTC+1);
-                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('        ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, '        ********* ');
                             console.log('    MONEDA BASE: ', TipoCambioRanking.moneda_base);
                             console.log('    MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
                             console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
@@ -2032,7 +2032,7 @@ Meteor.methods({
                             
                             console.log('--------------------------------------------');
                             console.log('                  POSICIÓN:', CRTC+1);
-                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('        ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, '        ********* ');
                             console.log('    MONEDA BASE: ', TipoCambioRanking.moneda_base);
                             console.log('    MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
                             console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia_recalculada);
@@ -2203,7 +2203,7 @@ Meteor.methods({
                             
                             console.log('--------------------------------------------');
                             console.log('                  POSICIÓN:', CRTC+1);
-                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('        ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, '        ********* ');
                             console.log('     MONEDA BASE: ', TipoCambioRanking.moneda_base);
                             console.log('     MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
                             console.log('     TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
@@ -2253,7 +2253,7 @@ Meteor.methods({
                             
                             console.log('--------------------------------------------');
                             console.log('                  POSICIÓN:', CRTC+1);
-                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('        ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, '        ********* ');
                             console.log('    MONEDA BASE: ', TipoCambioRanking.moneda_base);
                             console.log('    MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
                             console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia);
@@ -2336,7 +2336,7 @@ Meteor.methods({
                             
                             console.log('--------------------------------------------');
                             console.log('                  POSICIÓN:', CRTC+1);
-                            console.log(' ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, ' ********* ');
+                            console.log('        ********* ', ' TIPO CAMBIO: ', TipoCambioRanking.tipo_cambio, '        ********* ');
                             console.log('    MONEDA BASE: ', TipoCambioRanking.moneda_base);
                             console.log('    MONEDA COTIZACION: ', TipoCambioRanking.moneda_cotizacion);
                             console.log('    TENDENCIA: ', TipoCambioRanking.periodo1.tendencia_recalculada);
@@ -2509,6 +2509,17 @@ Meteor.methods({
         catch (error){
             Meteor.call("ValidaError", error, 2);
         }*/
+        //Meteor.call("TipoCambioDisponibleCompra");
+        
+        //Meteor.call("Prueba");
+
+        //Meteor.call("ListaTradeoActual",VALOR);
+        //Meteor.call("ConsultaOrdenesAbiertas");
+        //Meteor.call("ListaTradeoActual","BTCUSD");
+        //Meteor.call("EvaluarTendencias");
+        //Meteor.call("LibroDeOrdenes");
+        //Meteor.call("CrearNuevaOrder");
+        //Meteor.call("borrarOrden");
     },
 
     'EjecucionInicial':function(){
@@ -2527,17 +2538,6 @@ Meteor.methods({
         
         return 0;
 
-        //Meteor.call("TipoCambioDisponibleCompra");
-        
-        //Meteor.call("Prueba");
-
-        //Meteor.call("ListaTradeoActual",VALOR);
-        //Meteor.call("ConsultaOrdenesAbiertas");
-        //Meteor.call("ListaTradeoActual","BTCUSD");
-        //Meteor.call("EvaluarTendencias");
-        //Meteor.call("LibroDeOrdenes");
-        //Meteor.call("CrearNuevaOrder");
-        //Meteor.call("borrarOrden");
     },
 
     'EjecucionGlobal':function(){
