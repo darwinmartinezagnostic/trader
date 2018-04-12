@@ -131,17 +131,16 @@ Jobs.register({
 	   		var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1);
 			//Meteor.call("GuardarLogEjecucionTrader", ['Valor de TiposDeCambioVerificar: ']+[TiposDeCambioVerificar]);
 
-			var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
-                                     { $project: { _id : 1 } }
-                                    ]);
+			
 
 
 
 			if ( TiposDeCambioVerificar === undefined ) {
 				Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TiposDeCambioVerificar]);
+				Meteor.call('EjecucionInicial');
 			}
 			else {
-	   			if ( JobsInternal.Utilities.collection.find({ name : "JobValidaInversion", state : "pending" }).count() === 0  ) {
+	   			if ( JobsInternal.Utilities.collection.find({ name : "JobValidaInversion", state : "pending" }).count() === 0 && JobsInternal.Utilities.collection.find({ name : "JobValidaTendenciaTipoCambio" , state : "pending" }).count() === 0 ) {
 		            
 					for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
 						var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
@@ -153,34 +152,99 @@ Jobs.register({
 					        	second: 1
 					    	}
 						})
-					}				
-					
-					/*
-					console.log(' ');
-					Jobs.run("JobSecuenciaPeriodo1", { 
-				    	in: {
-				        	minute: 5
-				    	}
-				    })*/
-
-				    for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
-						var V_moneda_verificar = MonedasVerificar[CMV];
-						console.log("Valor de V_moneda_verificar", V_moneda_verificar)
-						
-						Jobs.run("JobValidaInversion", V_moneda_verificar._id, V_EJEC, { 
-								in: {
-							    	minute: 3
-							    }
-							})
 					}
+
+					var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
+				    var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
+
+				    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion)
+
+				    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
+						
+						console.log(' ');
+						Jobs.run("JobSecuenciaPeriodo1", { 
+					    	in: {
+					        	minute: 5
+					    	}
+					    })
+
+				    }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
+
+				    	console.log(' ');
+						Jobs.run("JobSecuenciaPeriodo1", { 
+					    	in: {
+					        	minute: 5
+					    	}
+					    })
+
+						V_LimiteMaximoEjecucion = V_LimiteMaximoEjecucion - 1
+						
+						Parametros.update({ "dominio": "limites", "nombre": "CantMaximaEjecucion" }, {
+						    $set: {
+						        "estado": true,
+						        "valor": V_LimiteMaximoEjecucion
+						    }
+						})
+					}
+
+				    var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo"}).fetch()
+				    var V_LimiteMuestreo = LimiteMuestreo[0].valor
+
+				    if ( V_LimiteMuestreo === 0 ) {
+
+				    	var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
+                                     { $project: { _id : 1 } }
+                                    ]);
+
+					    for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
+							var V_moneda_verificar = MonedasVerificar[CMV];
+							console.log("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id)
+							
+							Jobs.run("JobValidaInversion", V_moneda_verificar._id, { 
+									in: {
+								    	minute: 3
+								    }
+								})
+						}
+					}else{
+						V_LimiteMuestreo = V_LimiteMuestreo - 1
+						
+						Parametros.update({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo" }, {
+						    $set: {
+						        "estado": true,
+						        "valor": V_LimiteMuestreo
+						    }
+						})
+					}
+
+
 		        }
 		        else{
-			        console.log(' ');
-					Jobs.run("JobSecuenciaPeriodo1", { 
-						in: {
-							minute: 3
-						}
-					})
+		        	var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
+				    var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
+
+				    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion)
+
+				    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
+						
+						console.log(' ');
+						Jobs.run("JobSecuenciaPeriodo1", { 
+					    	in: {
+					        	minute: 1
+					    	}
+					    })
+
+						
+				    }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
+						
+						console.log(' ');
+						Jobs.run("JobSecuenciaPeriodo1", { 
+					    	in: {
+					        	minute: 1
+					    	}
+					    })
+
+				    }
 				}
 			}
 			var ejecucionSecuenciaPeriodo1 = 0
@@ -243,8 +307,10 @@ Jobs.register({
 
 
 
-    "JobValidaInversion": function( MONEDA_VERIFICAR, V_EJEC ){
+    "JobValidaInversion": function( MONEDA_VERIFICAR ){
     	try{
+    		console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
+
 	    	if ( JobsInternal.Utilities.collection.find({ name : "JobValidaTendenciaTipoCambio" , state : "pending" }).count() === 0  ) {
 	            try{
 	                var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
@@ -254,13 +320,13 @@ Jobs.register({
 	                Meteor.call("ValidaError", error, 2);
 	            };
 
-	            Meteor.call('Invertir', MONEDA_VERIFICAR, V_EJEC, V_LimiteApDep );
+	            Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep );
 	        }
 	        else{
 		        console.log(' ');
-				Jobs.run("JobValidaInversion", MONEDA_VERIFICAR, V_EJEC, { 
+				Jobs.run("JobValidaInversion", MONEDA_VERIFICAR, { 
 					in: {
-						minute: 3
+						minute: 1
 					}
 				})
 			}
