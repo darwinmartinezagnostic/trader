@@ -1151,8 +1151,18 @@ Meteor.methods({
 
         var moneda = OperacionesCompraVenta.findOne({ tipo_cambio : TIPO_CAMBIO },{ id : 0, precio : 1, fecha : 1 },{ $sort: { fecha : -1 }});
 
-        var coms_hitbc = COMISION_HITBTC;
-        var coms_mercado = COMISION_MERCADO;
+        if ( COMISION_HITBTC === undefined ) {
+            var coms_hitbc = 0;
+        }else{
+            coms_hitbc = COMISION_HITBTC;
+        }
+
+        if ( COMISION_MERCADO === undefined ) {
+            var coms_mercado = 0
+        }else{
+            coms_mercado = COMISION_MERCADO;
+        }
+        
         var mon_comision = MON_APLIC_COMISION;
         var precio_moneda = moneda.precio
 
@@ -1179,7 +1189,7 @@ Meteor.methods({
 
 
             var nuevo_saldo_moneda_base_actual = ( saldo_moneda_base_act - CANT_INVER );
-            var nuevo_saldo_moneda_coti_actual = (( CANT_INVER * precio_moneda )- COMISION_HITBTC - COMISION_MERCADO + (saldo_moneda_coti_act * CANT_INVER ));
+            var nuevo_saldo_moneda_coti_actual = (( CANT_INVER * precio_moneda )- coms_hitbc - coms_mercado + (saldo_moneda_coti_act * CANT_INVER ));
 
 
             console.log(" Valor de 'saldo_moneda_base_act'", saldo_moneda_base_act);
