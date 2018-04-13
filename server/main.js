@@ -78,7 +78,6 @@ Meteor.methods({
         console.log('        ',fecha._d);
         console.log('############################################');
         console.log(' ');
-        Meteor.call("CalculoGanancia");
     },
 
     'FinEjecucion':function(){
@@ -2770,40 +2769,44 @@ Meteor.methods({
 
     'CalculoGanancia':function(){
 
-
-        var inversionInicial = GananciaPerdida.findOne({},{_id:0, inversion:1,ganancia:1},{ $sort: { fecha : -1 }});
+        var inversionInicial = GananciaPerdida.aggregate([{ $sort: { fecha : - 1 } }, { $limit: 1 }]);
         var sum = 0;
-
-        console.log(inversionInicial);
 
         var monedasSaldo = Monedas.aggregate([{ $project : { moneda:1, "saldo.tradeo.activo": 1, _id: 0 } },{ $match: { "saldo.tradeo.activo" : { $gt : 0 } }}])
 
+        console.log('############################################');
+        console.log('         ********* CALCULANDO GANANCIAS        *********');
+        console.log('############################################');
+
         for(var i = 0; i<monedasSaldo.length; i++) {
-            console.log(monedasSaldo[i].moneda);
-            console.log(monedasSaldo[i].saldo.tradeo.activo);
             if(monedasSaldo[i].moneda != 'USD')
                 sum += Meteor.call("EquivalenteDolar",monedasSaldo[i].moneda,monedasSaldo[i].saldo.tradeo.activo);
             else
                 sum += monedasSaldo[i].saldo.tradeo.activo;
-            console.log(sum);
         }
 
-        if(inversionInicial != null){
+        if(inversionInicial.length > 0) {
 
-            GananciaPerdida.insert({fecha: new Date(), inversionAnterior:inversionInicial.inversion,inversion:sum,ganancia:sum-inversionInicial.inversion,comentario:'Ganancia a la fecha'});
+            GananciaPerdida.insert({fecha: new Date(), inversionAnterior:inversionInicial[0].inversion,inversion:sum,ganancia:sum-inversionInicial[0].inversion,comentario:'Ganancia a la fecha'});
+            console.log('         ********* LA GANACIA ES        *********');
+            console.log(sum-inversionInicial[0].inversion);
+            console.log('############################################');
 
         }else {
+
             GananciaPerdida.insert({fecha: new Date(), inversion:sum,ganancia:0,comentario:'Inversion inicial'});
+            console.log('         ********* NO HAY GANANCIA       *********');
+            console.log('############################################');
         }
 
     },
 
     'EquivalenteDolar':function(moneda,saldo){
 
-        var precioAux = TiposDeCambios.find({tipo_cambio:moneda+'USD'}).fetch();
+        var precioAux = TiposDeCambios.find({moneda_base:moneda,moneda_cotizacion:'USD'}).fetch();
 
         if(precioAux.length === 0) {
-            precioAux = TiposDeCambios.find({tipo_cambio:moneda+'BTC'}).fetch();
+            precioAux = TiposDeCambios.find({moneda_base:moneda,moneda_cotizacion:'BTC'}).fetch();
             saldo *= parseFloat(precioAux[0].periodo1.precio);
             precioAux = TiposDeCambios.find({tipo_cambio:'BTCUSD'}).fetch();
         }
