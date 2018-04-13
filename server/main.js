@@ -1149,7 +1149,7 @@ Meteor.methods({
                 break;
         }
 
-        var moneda = OperacionesCompraVenta.findOne({ tipo_cambio : TIPO_CAMBIO },{ id : 0, precio : 1, fecha : 1 },{ $sort: { fecha : -1 }});
+        var moneda = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPO_CAMBIO }}, { $sort: { fecha : -1 } }, { $limit: 1 }]);
 
         if ( COMISION_HITBTC === undefined ) {
             var coms_hitbc = 0;
@@ -1164,7 +1164,7 @@ Meteor.methods({
         }
         
         var mon_comision = MON_APLIC_COMISION;
-        var precio_moneda = moneda.precio
+        var precio_moneda = moneda[0].precio
 
         if ( MON_SALTRAD === MON_B ) {
 
@@ -1194,7 +1194,7 @@ Meteor.methods({
 
             console.log(" Valor de 'saldo_moneda_base_act'", saldo_moneda_base_act);
             console.log(" Valor de 'saldo_moneda_coti_act'", saldo_moneda_coti_act);
-            console.log(" Valor de 'moneda.precio'", precio_moneda);
+            console.log(" Valor de 'precio_moneda'", precio_moneda);
             console.log(" Valor de 'CANT_INVER'", CANT_INVER);
             console.log(" Valor de 'InversionTotal'", CANT_INVER);
             console.log(" Valor de 'coms_hitbc'", coms_hitbc);
@@ -1334,7 +1334,7 @@ Meteor.methods({
                 console.log('          TIPO DE CAMBIO: ',TIPO_CAMBIO);
                 console.log('--------------------------------------------');
                 console.log(' ');
-                Meteor.call("GuardarLogEjecucionTrader", [' Datos encontrados para este tipo_cambio: ']+[TIPO_CAMBIO]);
+                Meteor.call("GuardarLogEjecucionTrader", [' Datos encontrados']);
                 console.log('                    Verificando... ');
                 console.log(' ');
                 console.log('--------------------------------------------');
@@ -1355,9 +1355,9 @@ Meteor.methods({
                 return v_INT_VAL_TIPO_CAMBIO.max_id;
             }
             else {
-                if ( debug_activo === 1) {
+                /*if ( debug_activo === 1) {
                     Meteor.call("GuardarLogEjecucionTrader", [' ConsultaTraderGuardados: ID de Transaccion recuperado con exito: ']+[v_INT_VAL_TIPO_CAMBIO.max_id]);
-                };
+                };*/
             };
 
             return v_INT_VAL_TIPO_CAMBIO.max_id;
