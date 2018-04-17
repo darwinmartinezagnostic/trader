@@ -1122,6 +1122,8 @@ Meteor.methods({
         var orden = Meteor.call('ConexionPost', url_orden, datos);
 
         Meteor.call('SaldoActualMonedas', 2 );
+
+        //Meteor.call('CalculoGanancia');
     },
 
     'CrearNuevaOrderRobot':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, SALDO_ACTUAL, MON_B, MON_C, MON_SALTRAD, COMISION_HITBTC, COMISION_MERCADO, MON_APLIC_COMISION ){  //POST
@@ -1182,7 +1184,7 @@ Meteor.methods({
                 var saldo_moneda_coti_act = 0
             }else{
                 var moneda_coti_act = Monedas.findOne({ moneda : MON_C });
-                var saldo_moneda_coti_act = moneda_base_act.saldo.tradeo.activo
+                var saldo_moneda_coti_act = moneda_coti_act.saldo.tradeo.activo
             }
 
 
@@ -1200,6 +1202,7 @@ Meteor.methods({
             console.log(" Valor de 'coms_hitbc'", coms_hitbc);
             console.log(" Valor de 'coms_mercado'", coms_mercado);
             console.log(" Valor de 'nuevo_saldo_moneda_base_actual'", nuevo_saldo_moneda_base_actual);
+            console.log(" Valor de 'nuevo_saldo_moneda_coti_actual'", nuevo_saldo_moneda_coti_actual);
             Monedas.update({
                             moneda: MON_B
                                 },
@@ -1212,7 +1215,6 @@ Meteor.methods({
                                             }
                                         }
                                 });
-            console.log(" Valor de 'nuevo_saldo_moneda_coti_actual'", nuevo_saldo_moneda_coti_actual);
             Monedas.update({
                             moneda: MON_C
                                 },
@@ -1227,8 +1229,8 @@ Meteor.methods({
                                 });
 
 
-            //TempSaldoMoneda.insert({ moneda : MON_C, saldo_inicial : saldo_moneda_coti_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: COMISION_HITBTC, comision_mercado_aplicada : COMISION_MERCADO, saldo_final : nuevo_saldo_moneda_coti_actual })
-            //TempSaldoMoneda.insert({ moneda : MON_B, saldo_inicial : saldo_moneda_base_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: 0, comision_mercado_aplicada : 0, saldo_final : nuevo_saldo_moneda_base_actual })
+            //TempSaldoMoneda.insert({ moneda : MON_C, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_coti_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: COMISION_HITBTC, comision_mercado_aplicada : COMISION_MERCADO, saldo_final : nuevo_saldo_moneda_coti_actual })
+            //TempSaldoMoneda.insert({ moneda : MON_B, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_base_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: 0, comision_mercado_aplicada : 0, saldo_final : nuevo_saldo_moneda_base_actual })
             HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : InversionTotal, precio_operacion : precio_moneda, estado : "Exitoso" });
 
         
@@ -1260,6 +1262,8 @@ Meteor.methods({
             console.log(" Valor de 'coms_hitbc'", coms_hitbc);
             console.log(" Valor de 'coms_mercado'", coms_mercado);
             console.log(" Valor de 'nuevo_saldo_moneda_coti_actual'", nuevo_saldo_moneda_coti_actual);
+            console.log(" Valor de 'nuevo_saldo_moneda_base_actual'", nuevo_saldo_moneda_base_actual);
+            
             Monedas.update({
                             moneda: MON_C
                                 },
@@ -1272,7 +1276,6 @@ Meteor.methods({
                                             }
                                         }
                                 });
-            console.log(" Valor de 'nuevo_saldo_moneda_base_actual'", nuevo_saldo_moneda_base_actual);
             Monedas.update({
                             moneda: MON_B
                                 },
@@ -1286,11 +1289,11 @@ Meteor.methods({
                                         }
                                 });
 
-            //TempSaldoMoneda.insert({ moneda : MON_C, saldo_inicial : saldo_moneda_coti_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: COMISION_HITBTC, comision_mercado_aplicada : COMISION_MERCADO, saldo_final : nuevo_saldo_moneda_coti_actual })
-            //TempSaldoMoneda.insert({ moneda : MON_B, saldo_inicial : saldo_moneda_base_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: 0, comision_mercado_aplicada : 0, saldo_final : nuevo_saldo_moneda_base_actual })
+            //TempSaldoMoneda.insert({ moneda : MON_C, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_coti_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: COMISION_HITBTC, comision_mercado_aplicada : COMISION_MERCADO, saldo_final : nuevo_saldo_moneda_coti_actual })
+            //TempSaldoMoneda.insert({ moneda : MON_B, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_base_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: 0, comision_mercado_aplicada : 0, saldo_final : nuevo_saldo_moneda_base_actual })
             HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : InversionTotal, precio_operacion : precio_moneda, estado : "Exitoso" });
         }
-
+        Meteor.call('CalculoGanancia');
         console.log("         Inversion realizada");
         console.log(' ');
         console.log(' ');
@@ -1364,7 +1367,6 @@ Meteor.methods({
         };
     },
 
-    //'TipoCambioDisponibleCompra':function(VALOR_EJEC, TIPO_MUESTREO){
     'TipoCambioDisponibleCompra':function(){
         var V_EJEC = 2
         //console.log ("Estoy en TipoCambioDisponibleCompra");
@@ -1742,14 +1744,14 @@ Meteor.methods({
                                     console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
                                     console.log(" TIPO_ACCION ", T_ACCION)
                                     console.log('--------------------------------------------');
-                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia }}, {"multi" : true,"upsert" : true});
+                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
                             break;
                             case 2: 
                                     var CambioSignoTendencia = ( ProcenApDp * 1 )
                                     console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
                                     console.log(" TIPO_ACCION ", T_ACCION)
                                     console.log('--------------------------------------------');
-                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia }}, {"multi" : true,"upsert" : true});
+                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
                             break;                            
                         }
 
@@ -2240,6 +2242,8 @@ Meteor.methods({
                             var TipoAccion = TipoCambioRanking.accion;
                                 
                             if ( MonCBas === MonedaSaldo ) {
+                                var comision1 = 0;
+                                var comision2 = 0;
                                 var SaldoInverCalculado = SaldoActualMoneda*ProporcionTipoCambios.valor.p11;
                             } else if ( MonCoti === MonedaSaldo ) {
                                 var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p11;
@@ -2328,6 +2332,8 @@ Meteor.methods({
                                     var TipoAccion = TipoCambioRanking.accion;
                                     
                                     if ( MonCBas === MonedaSaldo ) {
+                                        var comision1 = 0;
+                                        var comision2 = 0;
                                         var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;
                                     } else if ( MonCoti === MonedaSaldo ) {
                                         var SaldoInvertir = SaldoActualMoneda*PorcentajeInversion;
@@ -2397,6 +2403,8 @@ Meteor.methods({
                                     var TipoAccion = TipoCambioRanking.accion;
     
                                     if ( MonCBas === MonedaSaldo ) {
+                                        var comision1 = 0;
+                                        var comision2 = 0;
                                         var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;
                                     } else if ( MonCoti === MonedaSaldo ) {
                                         var SaldoInvertir = SaldoActualMoneda*PorcentajeInversion;
@@ -2479,6 +2487,8 @@ Meteor.methods({
                             var TipoAccion = TipoCambioRanking.accion;
                                     
                             if ( MonCBas === MonedaSaldo ) {
+                                var comision1 = 0;
+                                var comision2 = 0;
                                 var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;
                             } else if ( MonCoti === MonedaSaldo ) {
                                 var SaldoInvertir = SaldoActualMoneda*PorcentajeInversion;
@@ -2547,6 +2557,8 @@ Meteor.methods({
                             var TipoAccion = TipoCambioRanking.accion;
     
                             if ( MonCBas === MonedaSaldo ) {
+                                var comision1 = 0;
+                                var comision2 = 0;
                                 var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;
                             } else if ( MonCoti === MonedaSaldo ) {
                                 var SaldoInvertir = SaldoActualMoneda*PorcentajeInversion;
@@ -2615,6 +2627,8 @@ Meteor.methods({
                             var TipoAccion = TipoCambioRanking.accion;
     
                             if ( MonCBas === MonedaSaldo ) {
+                                var comision1 = 0;
+                                var comision2 = 0;
                                 var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;
                             }else if ( MonCoti === MonedaSaldo ) {
                                 var SaldoInvertir = SaldoActualMoneda*PorcentajeInversion;
@@ -2727,7 +2741,8 @@ Meteor.methods({
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                              ///// INVERSION /////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
+        //var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
+        var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "XMR" } },
                                      { $project: { _id : 1 } }
                                     ]);
 
@@ -2798,12 +2813,12 @@ Meteor.methods({
             console.log('         ********* NO HAY GANANCIA       *********');
             console.log('############################################');
         }
-
     },
 
     'EquivalenteDolar':function(moneda,saldo){
 
         var precioAux = TiposDeCambios.find({moneda_base:moneda,moneda_cotizacion:'USD'}).fetch();
+        console.log("Valor de precioAux", precioAux);
 
         if(precioAux.length === 0) {
             precioAux = TiposDeCambios.find({moneda_base:moneda,moneda_cotizacion:'BTC'}).fetch();
@@ -2834,7 +2849,7 @@ Meteor.startup(function (){
     // code to run on server at startup
     // Verificamos si la aplicación es su ejecución Inicial o no
     JobsInternal.Utilities.collection.remove({  });
-    
+    /*
     try {
         var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
 
@@ -2855,6 +2870,6 @@ Meteor.startup(function (){
     }
     catch (error){
         Meteor.call("ValidaError", error, 2);
-    }
-    //Meteor.call("EjecucionGlobal");
+    }*/
+    Meteor.call("EjecucionGlobal");
 });

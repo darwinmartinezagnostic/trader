@@ -31,8 +31,8 @@ if (Parametros.find().count() === 0){
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'PropPorcInver', estado : true, valor: { p11 : 1, p12 : 0.7, p22 : 1, p13 : 0.7, p23 : 0.6, p33 : 1 }, descripcion : 'Proporción de Procentajes de inversión según cantdad de tipos de cambio disponibles para compra' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadTransaccionesAtras', estado : true, valor: 300 ,descripcion : 'Cantidad de ID transacciones de traders hacia atrás que consultarán para determinar por primera vez el valor de la transacción Anterior' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'ValorMinimoTransferencia', estado : true, valor: 0.000000001 ,descripcion : 'Valor mínimo de para transferir entre los tipos de saldo Cuenta - trader y viceversa' });
-	Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "CantidasMinimaMuestreo", estado : true, valor : 3 , descripcion : "Valor de muestreos mínimos antes de invertir" });
-	Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "CantMaximaEjecucion", estado : true, valor : 9999999999 , descripcion : "Valor maximo de ejecución de los job de seguimiento, si el valor es = 9999999999 entonces la ejecución será infinita" });
+	Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "CantidasMinimaMuestreo", estado : true, valor : 4 , descripcion : "Valor de muestreos mínimos antes de invertir" });
+	Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "CantMaximaEjecucion", estado : true, valor : 5 , descripcion : "Valor maximo de ejecución de los job de seguimiento, si el valor es = 9999999999 entonces la ejecución será infinita" });
 	Parametros.insert({ fecha : new Date(), dominio : "robot", nombre : "test", estado : true, valor : 1, descripcion : "Simula la compra de monedas" });
 	Parametros.insert({ fecha : new Date(), dominio : "prueba", nombre : "saldo", estado : true, valor : 1, descripcion : "Saldo ficticio para ciertas monedas" });
 };
