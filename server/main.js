@@ -73,7 +73,7 @@ Meteor.methods({
         fecha = moment (new Date());
         Meteor.call("GuardarLogEjecucionTrader", 'INICIANDO EJECUCIÓN');
         console.log('############################################');
-        console.log('         ********* INICIANDO EJECUCIÓN        ********* ');
+        console.log('  ********* INICIANDO EJECUCIÓN ********* ');
         console.log('############################################');
         console.log('        ',fecha._d);
         console.log('############################################');
@@ -85,7 +85,7 @@ Meteor.methods({
         Meteor.call("GuardarLogEjecucionTrader", 'FIN DE EJECUCIÓN');
         console.log(' ');
         console.log('############################################');
-        console.log('           ********* FIN DE EJECUCIÓN        ********* ');
+        console.log('    ********* FIN DE EJECUCIÓN ********* ');
         console.log('############################################');
         console.log('        ',fecha._d);
         console.log('############################################');
@@ -116,7 +116,7 @@ Meteor.methods({
                 Meteor.call('ValidaError','Conexion_api_fallida', 1);
             }
             else{
-                Meteor.call('ValidaError',error.fetch(), 1);
+                Meteor.call('ValidaError',error, 1);
             }
         }
     },
@@ -131,7 +131,7 @@ Meteor.methods({
                 Meteor.call('ValidaError','Conexion_api_fallida', 1);
             }
             else{
-                Meteor.call('ValidaError',error.fetch(), 1);
+                Meteor.call('ValidaError',error, 1);
             }
         }
     },
@@ -146,7 +146,7 @@ Meteor.methods({
                 Meteor.call('ValidaError','Conexion_api_fallida', 1);
             }
             else{
-                Meteor.call('ValidaError',error.fetch(), 1);
+                Meteor.call('ValidaError',error, 1);
             }
         }
     },
@@ -209,6 +209,63 @@ Meteor.methods({
         }
     },
 
+    'CombierteNumeroExpStr':function(VALOR){
+        if(VALOR.toString().indexOf('e') != -1){
+            if(VALOR.toString().indexOf('.') != -1){
+                NuevoVALOR = VALOR.toString().replace(".", "");
+                //console.log("Valor de NuevoVALOR", NuevoVALOR);
+                separador = "-"
+                V_separador = NuevoVALOR.toString().split(separador);
+                //console.log("Valor de V_separador", V_separador);
+                valor_exp = parseFloat(V_separador[1]);
+                ValorAnalizar = parseFloat(NuevoVALOR).toFixed(valor_exp);
+                //console.log("Valor de ValorAnalizar", ValorAnalizar);
+            }else{
+                separador = "-"
+                V_separador = VALOR.toString().split(separador);
+                //console.log("Valor de V_separador", V_separador);
+                valor_exp = parseFloat(V_separador[1]);
+                ValorAnalizar = VALOR.toFixed(valor_exp);
+                //console.log("Valor de ValorAnalizar", ValorAnalizar);
+            }
+        }else{
+            ValorAnalizar = VALOR;
+        }
+        return ValorAnalizar;
+    },
+
+    'ReemplazaNumeroACero':function(VALOR){
+        if(VALOR.toString().indexOf('e') != -1){
+            if(VALOR.toString().indexOf('.') != -1){
+                NuevoVALOR = VALOR.toString().replace(".", "");
+                //console.log("Valor de NuevoVALOR", NuevoVALOR);
+                separador = "-"
+                V_separador = NuevoVALOR.toString().split(separador);
+                //console.log("Valor de V_separador", V_separador);
+                valor_exp = parseFloat(V_separador[1]);
+                ValorAnalizar = parseFloat(NuevoVALOR).toFixed(valor_exp);
+                //console.log("Valor de ValorAnalizar", ValorAnalizar);
+            }else{
+                separador = "-"
+                V_separador = VALOR.toString().split(separador);
+                valor_exp = parseFloat(V_separador[1]);
+                ValorAnalizar = VALOR.toFixed(valor_exp);
+            }
+        }else{
+            ValorAnalizar = VALOR;
+        }        
+
+        var tstr = ValorAnalizar.toString().trim().length -2;
+        var nvstr = ValorAnalizar.toString().trim().substr(0, tstr);
+        var res = nvstr.replace(/1|2|3|4|5|6|7|8|9/gi, function (x) {
+            return 0;
+        });
+        var res = [res]+["1"];
+        //console.log("Valor de res", res);
+        var Salida = parseFloat(res);
+        return Salida;
+    },
+
     'RecuperacionAutonoma':function(){
 
         console.log('############################################');
@@ -260,7 +317,7 @@ Meteor.methods({
                 }
             }
             else {
-                Monedas.insert({ moneda : mon.id, nombre_moneda : mon.fullName, activo : "S" });
+                Monedas.insert({ moneda : mon.id, nombre_moneda : mon.fullName, activo : "S", min_transferencia : 0.0000000001 });
                 console.log('--------------------------------------------');
                 console.log(' **** Detectada Nueva Moneda en HITBTC ****');
                 console.log('--------------------------------------------');
@@ -288,401 +345,321 @@ Meteor.methods({
         var v_blc_tradeo = Meteor.call("ConexionGet", blc_tradeo);
         var BlcMonedasTradeo=(v_blc_tradeo.data);
         var v_blc_cuenta = Meteor.call("ConexionGet", blc_cuenta);
-        var BlcCuenta = (v_blc_cuenta.data);
-        var c_vect_BlcTrad = 0
+        var BlcCuenta = (v_blc_cuenta.data);        
         var c_vect_BlcCuent = 0
-
-        var VMT = Parametros.findOne({ dominio : "limites", nombre : "ValorMinimoTransferencia", estado : true }, {_id : 0, valor : 1 });
-        var ValMinTranf = VMT.valor;
-        console.log("Valor de ValMinTranf", ValMinTranf)
+        var c_vect_BlcTrad = 0
 
 
         var robot = Parametros.findOne({ dominio : "robot", nombre : "test" }, {_id : 0, valor : 0, estado: 1 });
-
-
-
-
-
-
+        console.log('############################################');
+        Meteor.call("GuardarLogEjecucionTrader", '           VERIFICANDO SALDOS');
+        console.log('############################################');
+        console.log('--------------------------------------------');
         for ( cbmt = 0, tam_bmt = BlcMonedasTradeo.length; cbmt < tam_bmt; cbmt++ ) {
 
-            for ( cbct = 0, tam_bct = BlcCuenta.length; cbct < tam_bct; cbct++ ) {
-                var v_BlcMonedasTradeo = BlcMonedasTradeo[cbmt];
-                var MonedaSaldoTradear = v_BlcMonedasTradeo.currency;
-                var SaldoMonedaInvertidoTradear = Number(v_BlcMonedasTradeo.available);
-                var v_BlcCuenta = BlcCuenta[cbct];
-                var MonedaSaldoCuenta = v_BlcCuenta.currency;
-                var SaldoMonedaGuardadoEnMonederoCuenta = Number(v_BlcCuenta.available);
+            var v_BlcMonedasTradeo = BlcMonedasTradeo[cbmt];
+            var MonedaSaldoTradear = v_BlcMonedasTradeo.currency;
+            var SaldoMonedaInvertidoTradear = Number(v_BlcMonedasTradeo.available);
 
 
-                switch(VALOR_EJEC){
-                    case 1:
-                        if ( SaldoMonedaInvertidoTradear > ValMinTranf && SaldoMonedaGuardadoEnMonederoCuenta > ValMinTranf && MonedaSaldoCuenta === MonedaSaldoTradear ) {
-                            Meteor.call("GuardarLogEjecucionTrader", ' Verificando las monedas que tienen saldo');
-                            try{
-                                var v_moneda_saldo = Monedas.find({ moneda : MonedaSaldoCuenta }, {_id : 1, moneda : 1, nombre_moneda : 1}).fetch();
-                            }
-                            catch (error){
-                                    Meteor.call("ValidaError", error, 2)
-                            };
+            switch(VALOR_EJEC){
+                case 1:
+                    var MonedasSaldoActual = Monedas.find( { $or : [{"saldo.tradeo.activo" : { $gt : 0 }},{ "saldo.cuenta.activo" : { $gt : 0 } }]}).fetch()
 
-                            var v_sald_moneda = v_moneda_saldo[0];
+                    //console.log("Valor de MonedasSaldoActual", MonedasSaldoActual);
 
-                            if ( v_sald_moneda === undefined ){
-                                console.log('No se ha detectado saldo en ninguna de las monedas activas');
-                            }
-                            else {
-                                Monedas.update({
-                                    _id: v_sald_moneda._id,
+
+                    for ( cmsa = 0, tmsa = MonedasSaldoActual.length; cmsa < tmsa; cmsa++ ) {
+                        var v_BMonedasSaldoActual = MonedasSaldoActual[cmsa];
+                        console.log('############################################');
+                        console.log('            Saldo disponible');
+                        console.log('############################################');
+                        console.log('  ********* ', ' MONEDA: ', v_BMonedasSaldoActual.moneda, ' ********* ');
+                        console.log('     SALDO TRADEO: ', v_BMonedasSaldoActual.saldo.tradeo.activo);
+                        console.log('     SALDO TRADEO RESERVA: ', v_BMonedasSaldoActual.saldo.tradeo.reserva);
+                        console.log('     SALDO EN CUENTA: ', v_BMonedasSaldoActual.saldo.cuenta.activo);
+                        console.log('     SALDO CUENTA RESERVA: ', v_BMonedasSaldoActual.saldo.cuenta.reserva);
+                        console.log('############################################');
+                        console.log(' ');
+                    }
+                break;
+                case 2:
+                    try{
+                    var v_moneda_saldo = Monedas.find({ moneda : MonedaSaldoTradear }, {_id : 1, moneda : 1, nombre_moneda : 1}).fetch();
+                    }
+                    catch (error){
+                        Meteor.call("ValidaError", error, 2)
+                    };
+
+                    var v_sald_moneda = v_moneda_saldo[0];
+
+                    if ( v_sald_moneda === undefined ){
+                        console.log('No se ha detectado saldo en ninguna de las monedas activas');
+                    }
+                    else {
+                        Monedas.update({
+                                _id: v_sald_moneda._id,
                                     moneda: v_sald_moneda.moneda
                                 }, {
-                                    $set: {
-                                        saldo: {
-                                            tradeo: {
-                                                activo: Number(v_BlcMonedasTradeo.available),
-                                                reserva: Number(v_BlcMonedasTradeo.reserved)
-                                            },
-                                            cuenta: {
-                                                activo: Number(v_BlcCuenta.available),
-                                                reserva: Number(v_BlcCuenta.reserved)
-                                            }
-                                        }
+                                    $set: { "saldo.tradeo.activo": Number(v_BlcMonedasTradeo.available),
+                                            "saldo.tradeo.reserva": Number(v_BlcMonedasTradeo.reserved)
                                     }
                                 });
+                    }
 
-                                console.log('############################################');
-                                console.log('            Saldo disponible');
-                                console.log('############################################');
-                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
-                                console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
-                                console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
-                                console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
-                                console.log('     SALDO CUENTA RESERVA: ', v_BlcCuenta.reserved);
-                                console.log('############################################');
-                                console.log(' ');
-                            }
-                        }
-                        else if ( SaldoMonedaInvertidoTradear > ValMinTranf && SaldoMonedaGuardadoEnMonederoCuenta !== ValMinTranf && MonedaSaldoCuenta === MonedaSaldoTradear ) {
-                            Meteor.call("GuardarLogEjecucionTrader", ' Verificando las monedas que tienen saldo');
-                            console.log('Estoy en el if 2 moneda', MonedaSaldoCuenta);
-                            try{
-                                var v_moneda_saldo = Monedas.find({ moneda : MonedaSaldoCuenta }, {_id : 1, moneda : 1, nombre_moneda : 1}).fetch();
-                            }
-                            catch (error){
-                                    Meteor.call("ValidaError", error, 2)
-                            };
-
-                            var v_sald_moneda = v_moneda_saldo[0];
-
-                            if ( v_sald_moneda === undefined ){
-                                console.log('No se ha detectado saldo en ninguna de las monedas activas');
-                            }
-                            else {
-                                Monedas.update({
-                                    _id: v_sald_moneda._id,
-                                    moneda: v_sald_moneda.moneda
-                                }, {
-                                    $set: {
-                                        saldo: {
-                                            tradeo: {
-                                                activo: Number(v_BlcMonedasTradeo.available),
-                                                reserva: Number(v_BlcMonedasTradeo.reserved)
-                                            },
-                                            cuenta: {
-                                                activo: Number(v_BlcCuenta.available),
-                                                reserva: Number(v_BlcCuenta.reserved)
-                                            }
-                                        }
-                                    }
-                                });
-
-                                console.log('############################################');
-                                console.log('            Saldo disponible');
-                                console.log('############################################');
-                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
-                                console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
-                                console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
-                                console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
-                                console.log('     SALDO CUENTA RESERVA: ', v_BlcCuenta.reserved);
-                                console.log('############################################');
-                                console.log(' ');
-                            }
-                        }
-                        else if  (SaldoMonedaInvertidoTradear !== ValMinTranf && SaldoMonedaGuardadoEnMonederoCuenta > ValMinTranf && MonedaSaldoCuenta === MonedaSaldoTradear ) {
-                            Meteor.call("GuardarLogEjecucionTrader", ' Verificando las monedas que tienen saldo');
-                            console.log('Estoy en el if 3 moneda', MonedaSaldoCuenta);
-                            try{
-                                var v_moneda_saldo = Monedas.find({ moneda : MonedaSaldoCuenta }, {_id : 1, moneda : 1, nombre_moneda : 1}).fetch();
-                            }
-                            catch (error){
-                                    Meteor.call("ValidaError", error, 2)
-                            };
-
-                            var v_sald_moneda = v_moneda_saldo[0];
-
-                            if ( v_sald_moneda === undefined ){
-                                console.log('No se ha detectado saldo en ninguna de las monedas activas');
-                            }
-                            else {
-                                Monedas.update({
-                                    _id: v_sald_moneda._id,
-                                    moneda: v_sald_moneda.moneda
-                                }, {
-                                    $set: {
-                                        saldo: {
-                                            tradeo: {
-                                                activo: Number(v_BlcMonedasTradeo.available),
-                                                reserva: Number(v_BlcMonedasTradeo.reserved)
-                                            },
-                                            cuenta: {
-                                                activo: Number(v_BlcCuenta.available),
-                                                reserva: Number(v_BlcCuenta.reserved)
-                                            }
-                                        }
-                                    }
-                                });
-
-                                console.log('############################################');
-                                console.log('            Saldo disponible');
-                                console.log('############################################');
-                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
-                                console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
-                                console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
-                                console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
-                                console.log('     SALDO CUENTA RESERVA: ', v_BlcCuenta.reserved);
-                                console.log('############################################');
-                                console.log(' ');
-                            }
-                        }
-                        break;
-                    case 2:
-                        if ( SaldoMonedaInvertidoTradear > ValMinTranf && SaldoMonedaGuardadoEnMonederoCuenta > ValMinTranf && MonedaSaldoCuenta === MonedaSaldoTradear ) {
-                            Meteor.call("GuardarLogEjecucionTrader", ' Verificando las monedas que tienen saldo');
-                            try{
-                                var v_moneda_saldo = Monedas.find({ moneda : MonedaSaldoCuenta }, {_id : 1, moneda : 1, nombre_moneda : 1}).fetch();
-                            }
-                            catch (error){
-                                    Meteor.call("ValidaError", error, 2)
-                            };
-
-                            var v_sald_moneda = v_moneda_saldo[0];
-
-                            if ( v_sald_moneda === undefined ){
-                                console.log('No se ha detectado saldo en ninguna de las monedas activas');
-                            }
-                            else {
-                                Monedas.update({
-                                    _id: v_sald_moneda._id,
-                                    moneda: v_sald_moneda.moneda
-                                }, {
-                                    $set: {
-                                        saldo: {
-                                            tradeo: {
-                                                activo: Number(v_BlcMonedasTradeo.available),
-                                                reserva: Number(v_BlcMonedasTradeo.reserved)
-                                            },
-                                            cuenta: {
-                                                activo: Number(v_BlcCuenta.available),
-                                                reserva: Number(v_BlcCuenta.reserved)
-                                            }
-                                        }
-                                    }
-                                });
-
-                                console.log('############################################');
-                                console.log('            Saldo disponible');
-                                console.log('############################################');
-                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
-                                console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
-                                console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
-                                console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
-                                console.log('     SALDO CUENTA RESERVA: ', v_BlcCuenta.reserved);
-                                console.log('############################################');
-                                console.log(' ');
-
-                                if ( debug_activo === 1) {
-                                    Meteor.call("GuardarLogEjecucionTrader", [' SaldoActualMonedas: Se detectó Saldo en cuenta para invertir" : ']+[v_BlcCuenta.available]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [' SaldoActualMonedas: Se Procede a transferir fondos al Saldo de trader" : ']+[v_BlcCuenta.available]);
-                                };
-
-                                var EstadoTransferencia = Meteor.call( 'Transferirfondos', v_sald_moneda.moneda, v_BlcCuenta.available,'bankToExchange');
-
-                                if ( EstadoTransferencia === 0 ) {
-                                    Meteor.call("GuardarLogEjecucionTrader", ' Verificando saldo nuevamente');
-                                    Meteor.call( 'SaldoActualMonedas', 1);
-                                }
-                            }
-                        }
-                        else if ( SaldoMonedaInvertidoTradear > ValMinTranf && SaldoMonedaGuardadoEnMonederoCuenta !== ValMinTranf && MonedaSaldoCuenta === MonedaSaldoTradear ) {
-                            Meteor.call("GuardarLogEjecucionTrader", ' Verificando las monedas que tienen saldo');
-                            console.log('Estoy en el if 2 moneda', MonedaSaldoCuenta);
-                            try{
-                                var v_moneda_saldo = Monedas.find({ moneda : MonedaSaldoCuenta }, {_id : 1, moneda : 1, nombre_moneda : 1}).fetch();
-                            }
-                            catch (error){
-                                    Meteor.call("ValidaError", error, 2)
-                            };
-
-                            var v_sald_moneda = v_moneda_saldo[0];
-
-                            if ( v_sald_moneda === undefined ){
-                                console.log('No se ha detectado saldo en ninguna de las monedas activas');
-                            }
-                            else {
-                                Monedas.update({
-                                    _id: v_sald_moneda._id,
-                                    moneda: v_sald_moneda.moneda
-                                }, {
-                                    $set: {
-                                        saldo: {
-                                            tradeo: {
-                                                activo: Number(v_BlcMonedasTradeo.available),
-                                                reserva: Number(v_BlcMonedasTradeo.reserved)
-                                            },
-                                            cuenta: {
-                                                activo: Number(v_BlcCuenta.available),
-                                                reserva: Number(v_BlcCuenta.reserved)
-                                            }
-                                        }
-                                    }
-                                });
-
-                                console.log('############################################');
-                                console.log('            Saldo disponible');
-                                console.log('############################################');
-                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
-                                console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
-                                console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
-                                console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
-                                console.log('     SALDO CUENTA RESERVA: ', v_BlcCuenta.reserved);
-                                console.log('############################################');
-                                console.log(' ');
-                            }
-                        }
-                        else if ( SaldoMonedaInvertidoTradear !== ValMinTranf && SaldoMonedaGuardadoEnMonederoCuenta > ValMinTranf && MonedaSaldoCuenta === MonedaSaldoTradear ) {
-                            Meteor.call("GuardarLogEjecucionTrader", ' Verificando las monedas que tienen saldo');
-                            console.log('Estoy en el if 3 moneda', MonedaSaldoCuenta);
-                            try{
-                                var v_moneda_saldo = Monedas.find({ moneda : MonedaSaldoCuenta }, {_id : 1, moneda : 1, nombre_moneda : 1}).fetch();
-                            }
-                            catch (error){
-                                    Meteor.call("ValidaError", error, 2)
-                            };
-
-                            var v_sald_moneda = v_moneda_saldo[0];
-
-                            if ( v_sald_moneda === undefined ){
-                                console.log('No se ha detectado saldo en ninguna de las monedas activas');
-                            }
-                            else {
-                                Monedas.update({
-                                    _id: v_sald_moneda._id,
-                                    moneda: v_sald_moneda.moneda
-                                }, {
-                                    $set: {
-                                        saldo: {
-                                            tradeo: {
-                                                activo: Number(v_BlcMonedasTradeo.available),
-                                                reserva: Number(v_BlcMonedasTradeo.reserved)
-                                            },
-                                            cuenta: {
-                                                activo: Number(v_BlcCuenta.available),
-                                                reserva: Number(v_BlcCuenta.reserved)
-                                            }
-                                        }
-                                    }
-                                });
-
-                                console.log('############################################');
-                                console.log('            Saldo disponible');
-                                console.log('############################################');
-                                console.log('        ********* ', ' MONEDA: ', v_sald_moneda.moneda, '        ********* ');
-                                console.log('     SALDO TRADEO: ', v_BlcMonedasTradeo.available);
-                                console.log('     SALDO TRADEO RESERVA: ', v_BlcMonedasTradeo.reserved);
-                                console.log('     SALDO EN CUENTA: ', v_BlcCuenta.available);
-                                console.log('     SALDO CUENTA RESERVA: ', v_BlcCuenta.reserved);
-                                console.log('############################################');
-                                console.log(' ');
-                            }
-
-                            if ( debug_activo === 1) {
-                                Meteor.call("GuardarLogEjecucionTrader", [' SaldoActualMonedas: Se detectó Saldo en cuenta para invertir" : ']+[v_BlcCuenta.available]);
-                                Meteor.call("GuardarLogEjecucionTrader", [' SaldoActualMonedas: Se Procede a transferir fondos al Saldo de trader" : ']+[v_BlcCuenta.available]);
-                            };
-
-                            var EstadoTransferencia = Meteor.call( 'Transferirfondos', v_sald_moneda.moneda, v_BlcCuenta.available,'bankToExchange');
-
-                            if ( EstadoTransferencia === 0 ) {
-                                Meteor.call("GuardarLogEjecucionTrader", ' Verificando saldo nuevamente');
-                                Meteor.call( 'SaldoActualMonedas', 1);
-                            }
-                        }
-                    break;
-                }
-            };
-        };
-
-        if(robot.estado) {
-
-
-
-            if ( Parametros.find({dominio : "prueba", nombre : "saldo", estado : true, valor : 1 }).count() !== 0 ) {
-                Monedas.update({
-                                    moneda: "BTC"
-                                },
-                                {
-                                    $set: {
-                                            saldo: {
-                                                tradeo: {
-                                                    activo: 1,
-                                                    reserva: 0
-                                                },
-                                                cuenta: {
-                                                    activo: 0,
-                                                    reserva: 0
-                                                }
-                                            }
-                                        }
-                                });
-
-                Monedas.update({
-                                    moneda: "BCN"
-                                },
-                                {
-                                    $set: {
-                                            saldo: {
-                                                tradeo: {
-                                                    activo: 0.00000001,
-                                                    reserva: 0
-                                                },
-                                                cuenta: {
-                                                    activo: 0,
-                                                    reserva: 0
-                                                }
-                                            }
-                                        }
-                                });
-                /*
-                Monedas.update({
-                                    moneda: "XMR"
-                                },
-                                {
-                                    $set: {
-                                            saldo: {
-                                                tradeo: {
-                                                    activo: 0.1,
-                                                    reserva: 0
-                                                },
-                                                cuenta: {
-                                                    activo: 0,
-                                                    reserva: 0
-                                                }
-                                            }
-                                        }
-                                });
-                */
-                Parametros.update({ dominio : "prueba", nombre : "saldo", estado : false },{$set:{ valor : 0 }})
+                break;
             }
+        }
+
+
+        
+        for ( cbct = 0, tam_bct = BlcCuenta.length; cbct < tam_bct; cbct++ ) {
+            var v_BlcCuenta = BlcCuenta[cbct];
+            var MonedaSaldoCuenta = v_BlcCuenta.currency;
+            var SaldoMonedaGuardadoEnMonederoCuenta = Number(v_BlcCuenta.available);
+
+
+            switch(VALOR_EJEC){
+                case 1:
+                    var MonedasSaldoActual = Monedas.find( { $or : [{"saldo.tradeo.activo" : { $gt : 0 }},{ "saldo.cuenta.activo" : { $gt : 0 } }]}).fetch()
+
+                    //console.log("Valor de MonedasSaldoActual", MonedasSaldoActual);
+
+
+                    for ( cmsa = 0, tmsa = MonedasSaldoActual.length; cmsa < tmsa; cmsa++ ) {
+                        var v_BMonedasSaldoActual = MonedasSaldoActual[cmsa];
+                        console.log('############################################');
+                        console.log('            Saldo disponible');
+                        console.log('############################################');
+                        console.log('  ********* ', ' MONEDA: ', v_BMonedasSaldoActual.moneda, ' ********* ');
+                        console.log('     SALDO TRADEO: ', v_BMonedasSaldoActual.saldo.tradeo.activo);
+                        console.log('     SALDO TRADEO RESERVA: ', v_BMonedasSaldoActual.saldo.tradeo.reserva);
+                        console.log('     SALDO EN CUENTA: ', v_BMonedasSaldoActual.saldo.cuenta.activo);
+                        console.log('     SALDO CUENTA RESERVA: ', v_BMonedasSaldoActual.saldo.cuenta.reserva);
+                        console.log('############################################');
+                        console.log(' ');
+                    }
+                break;
+                case 2:
+                    try{
+                    var v_moneda_saldo = Monedas.find({ moneda : MonedaSaldoCuenta }, {_id : 1, moneda : 1, nombre_moneda : 1}).fetch();
+                    }
+                    catch (error){
+                        Meteor.call("ValidaError", error, 2)
+                    };
+
+                    var v_sald_moneda = v_moneda_saldo[0];
+
+                    if ( v_sald_moneda === undefined ){
+                        console.log('No se ha detectado saldo en ninguna de las monedas activas');
+                    }
+                    else {
+                        Monedas.update({
+                                _id: v_sald_moneda._id,
+                                    moneda: v_sald_moneda.moneda
+                                }, {
+                                    $set: { "saldo.cuenta.activo": Number(v_BlcCuenta.available),
+                                            "saldo.cuenta.reserva": Number(v_BlcCuenta.reserved)
+                                    }
+                                });
+                    }
+
+
+                break;
+            }  
+        }
+
+                        ////////////////////  SALDO CABLEADO  ////////////////////
+                            /*
+                            if(robot.estado) {
+                                if ( Parametros.find({dominio : "prueba", nombre : "saldo", estado : true, valor : 1 }).count() !== 0 ) {
+                                    Monedas.update({
+                                                        moneda: "BTC"
+                                                    },
+                                                    {
+                                                        $set: {
+                                                                saldo: {
+                                                                    tradeo: {
+                                                                        activo: 1,
+                                                                        reserva: 0
+                                                                    },
+                            
+                                                                    cuenta: {
+                                                                        activo: 0,
+                                                                        reserva: 0
+                                                                    }
+                                                                }
+                                                            }
+                                                    });
+
+                                    Monedas.update({
+                                                        moneda: "BCN"
+                                                    },
+                                                    {
+                                                        $set: {
+                                                                saldo: {
+                                                                    tradeo: {
+                                                                        activo: 0.00000001,
+                                                                        reserva: 0
+                                                                    },
+                                                                    cuenta: {
+                                                                        activo: 0,
+                                                                        reserva: 0
+                                                                    }
+                                                                }
+                                                            }
+                                                    });
+                                    /*
+                                    Monedas.update({
+                                                        moneda: "XMR"
+                                                    },
+                                                    {
+                                                        $set: {
+                                                                saldo: {
+                                                                    tradeo: {
+                                                                        activo: 0.1,
+                                                                        reserva: 0
+                                                                    },
+                                                                    cuenta: {
+                                                                        activo: 0,
+                                                                        reserva: 0
+                                                                    }
+                                                                }
+                                                            }
+                                                    });
+                                    */
+                                    //Parametros.update({ dominio : "prueba", nombre : "saldo", estado : false },{$set:{ valor : 0 }})
+                                //}
+                            //}
+
+                        //////////////////////////////////////////////////////////
+
+
+        var MonedasSaldoActual = Monedas.find( { $or : [{"saldo.tradeo.activo" : { $gt : 0 }},{ "saldo.cuenta.activo" : { $gt : 0 } }]}).fetch()
+
+        //console.log("Valor de MonedasSaldoActual", MonedasSaldoActual);
+
+
+        for ( cmsa = 0, tmsa = MonedasSaldoActual.length; cmsa < tmsa; cmsa++ ) {
+            var v_BMonedasSaldoActual = MonedasSaldoActual[cmsa];
+            console.log('############################################');
+            console.log('            Saldo disponible');
+            console.log('############################################');
+            console.log('  ********* ', ' MONEDA: ', v_BMonedasSaldoActual.moneda, ' ********* ');
+            console.log('     SALDO TRADEO: ', v_BMonedasSaldoActual.saldo.tradeo.activo);
+            console.log('     SALDO TRADEO RESERVA: ', v_BMonedasSaldoActual.saldo.tradeo.reserva);
+            console.log('     SALDO EN CUENTA: ', v_BMonedasSaldoActual.saldo.cuenta.activo);
+            console.log('     SALDO CUENTA RESERVA: ', v_BMonedasSaldoActual.saldo.cuenta.reserva);
+            console.log('############################################');
+            console.log(' ');
+        }
+    },
+
+    'ValidaMonedasTransfCuentaTRadeo':function(){
+        var CantMonedasSaldoATransferir = Monedas.find( { "saldo.cuenta.activo" : { $gt : 0 } }).fetch().length
+        var MonedasSaldoATransferir = Monedas.find( { "saldo.cuenta.activo" : { $gt : 0 } }).fetch()
+        var ContAtCar = 0
+
+        if ( CantMonedasSaldoATransferir > 0 ) {
+            console.log("Estoy en el if MonedasSaldoATransferir");
+            for ( cmsat = 0, tmsat = CantMonedasSaldoATransferir; cmsat < tmsat; cmsat++ ) {
+                //console.log("Estoy en el for");
+                var v_MonedasSaldoATransferir = MonedasSaldoATransferir[cmsat];
+                var MonedaRev = v_MonedasSaldoATransferir.moneda
+                var SaldoActTransf = v_MonedasSaldoATransferir.saldo.cuenta.activo
+                var SaldoAntTransf = SaldoActTransf
+                var ValMinTranf = v_MonedasSaldoATransferir.min_transferencia
+
+                if ( SaldoActTransf >= ValMinTranf ) {
+                    //console.log("Estoy en el if ( SaldoActTransf >= ValMinTranf )");
+                    var Repeticiones = 1
+                    do {
+                        //console.log("Estoy en el while( SaldoAntTransf === SaldoActTransf )");
+                        //console.log("Moneda:", MonedaRev)
+                        //console.log("Datos a enviar, MonedaRev:", MonedaRev ,"SaldoActTransf", SaldoActTransf, 'bankToExchange');
+                        var EstadoTransferencia = Meteor.call( 'Transferirfondos', MonedaRev, SaldoActTransf, 'bankToExchange');
+                        //console.log("Valor de EstadoTransferencia", EstadoTransferencia);
+                        if ( EstadoTransferencia[0] === 0 ) {
+                            var IdTransVer = EstadoTransferencia[1]
+                            Meteor.call( 'SaldoActualMonedas', 2);
+                            var RevMoneda = Monedas.find({ moneda : MonedaRev,}).fetch();
+                            var SaldoActTransf = RevMoneda[0].saldo.cuenta.activo;
+                            //console.log("Valor de RevMoneda", RevMoneda);
+                            //console.log("Valor de SaldoActTransf", SaldoActTransf);
+                            console.log('############################################');
+                            //var ValMinTranf = RevMoneda[0].min_transferencia
+                            if ( SaldoActTransf !== SaldoAntTransf) {
+                                //console.log("Estoy en el if ( SaldoActTransf !== SaldoAntTransf)");
+                                //console.log("Acá estoy 1");
+                                console.log('############################################');
+                                console.log('       Status Tranferencia', MonedaRev);
+                                console.log('############################################');
+                                console.log('             STATUS: ',"EXITOSO" );
+                                console.log('############################################');
+                                var NuevoValMinTransf = Meteor.call('ReemplazaNumeroACero', SaldoActTransf);
+                                console.log("Valor de NuevoValMinTransf", NuevoValMinTransf)
+                                Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }})
+                                var ValMinTranf = NuevoValMinTransf
+                                HistoralTransferencias.update({ id : EstadoTransferencia[1] }, {$set: { estado: "Exitoso" }});
+                                break;
+                            }else{
+                                //console.log("Estoy en el else de - if ( SaldoActTransf !== SaldoAntTransf)");
+                                //console.log("Acá estoy 2")
+                                console.log('############################################');
+                                console.log('       Status Tranferencia', MonedaRev);
+                                console.log('############################################');
+                                console.log('             STATUS: ',"FALLIDO" );
+                                console.log('############################################');
+                                var ContAtCar = ContAtCar + 1
+                                var ValorAnalizarSaldoActTransf = Meteor.call("CombierteNumeroExpStr", SaldoActTransf);
+                                //console.log("Estoy en el else de - if ( SaldoActTransf !== SaldoAntTransf)");
+                                //console.log("Valor de ValorAnalizarSaldoActTransf", ValorAnalizarSaldoActTransf)
+                                var CantCaracSaldoActTransf = ValorAnalizarSaldoActTransf.toString().trim().length - ContAtCar;
+                                //console.log("Valor de CantCaracSaldoActTransf", CantCaracSaldoActTransf)
+                                var ValStrnSaldoActTransf = ValorAnalizarSaldoActTransf.toString().substr(0, CantCaracSaldoActTransf);
+                                //console.log("Valor de ValStrnSaldoActTransf", ValStrnSaldoActTransf)
+                                var ValFinSaldoActTransf = parseFloat(ValStrnSaldoActTransf);
+                                var SaldoActTransf = ValFinSaldoActTransf;
+                                //console.log("Valor de ValFinSaldoActTransf", ValFinSaldoActTransf)
+                                //console.log("Valor de SaldoActTransf", SaldoActTransf)
+                                var NuevoValMinTransf = Meteor.call('ReemplazaNumeroACero', SaldoActTransf);  
+                                var ValMinTranf = NuevoValMinTransf
+                                //console.log("Valor de NuevoValMinTransf", NuevoValMinTransf)
+                                Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }});                            
+                                HistoralTransferencias.update({ id : EstadoTransferencia[1] }, {$set: { estado: "Fallo" }});
+                            }
+                        }else{
+                            //console.log("Estoy en el else de - if ( EstadoTransferencia[0] === 0 )");
+                            console.log('############################################');
+                            console.log('       Status Tranferencia', MonedaRev);
+                            console.log('############################################');
+                            console.log('             STATUS: ',"FALLIDO" );
+                            console.log('############################################');
+                            var ValorAnalizarSaldoActTransf = Meteor.call("CombierteNumeroExpStr", SaldoActTransf);
+                            var CantCaracSaldoActTransf = ValorAnalizarSaldoActTransf.toString().trim().length;
+                            var ValStrnSaldoActTransf = ValorAnalizarSaldoActTransf.toString().substr(0, CantCaracSaldoActTransf);
+                            var ValFinSaldoActTransf = parseFloat(ValStrnSaldoActTransf);
+                            var SaldoActTransf = ValFinSaldoActTransf;
+                            var NuevoValMinTransf = Meteor.call('ReemplazaNumeroACero', SaldoActTransf);  
+                            var ValMinTranf = NuevoValMinTransf
+                            Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }});
+                            break
+                        }
+                    }while( Repeticiones < 1000 );
+
+                }else{
+                    console.log('############################################');
+                    console.log("  fondos son insuficientes para transferir")
+                    console.log('############################################');
+                }
+
+
+            }
+
+        }else{
+            console.log('############################################');
+            console.log('  NO SE DETECTO SALDO PARA SER TRANSFERIDO ' );
+            console.log('############################################');
         }
     },
 
@@ -718,7 +695,7 @@ Meteor.methods({
 
                     console.log(' Tipos de Cambio que se están tradeando en HITBTC');
                     console.log(' ');
-                    console.log('        ********* ', LTCTipoCambio, '        ********* ');
+                    console.log('    ********* ', LTCTipoCambio, '********* ');
                     console.log('     MONEDA BASE: ', LTCMonedaBase);
                     console.log('     MONEDA DE COTIZACIÓN: ', LTCMonedaCotizacion);
                     console.log('     MONTO MIN DE COMPRA: ', LTCMontoMinCompra);
@@ -750,7 +727,7 @@ Meteor.methods({
                         console.log(' ** Detectado nuevo Tipo de Cambio en HITBTC **');
                         console.log('--------------------------------------------');
                         console.log(' ');
-                        console.log('        ********* ', LTCTipoCambio, '        ********* ');
+                        console.log('    ********* ', LTCTipoCambio, '********* ');
                         console.log('     MONEDA BASE: ', LTCMonedaBase);
                         console.log('     MONEDA DE COTIZACIÓN: ', LTCMonedaCotizacion);
                         console.log('     MONTO MIN DE COMPRA: ', LTCMontoMinCompra);
@@ -771,46 +748,34 @@ Meteor.methods({
         };
     },
 
-    'LibroDeOrdenes':function(){
+    'LibroDeOrdenes':function(TIPO_CAMBIO){
 
         console.log('############################################');
         console.log(' Devuelve los datos reales de los valores compra y venta en negociación - (Libro de Ordenes)');
-
-        try {
-            var traders = Meteor.call("ConexionGet", simbolos);
+        var url_compras_ventas = [publico]+['ticker']+'/'+[TIPO_CAMBIO];
+        try{
+            var compras_ventas = Meteor.call("ConexionGet", url_compras_ventas);
+            var v_compras_ventas = (compras_ventas.data);
         }
         catch (error){
             Meteor.call("ValidaError", error, 1)
         };
-        var mon_trads =(traders.data);
 
+        console.log('\n ');
+        console.log('############################################');
+        console.log('    Verificando Moneda: ',v_compras_ventas.symbol);
+        console.log(' Valor de Oferta en Venta: ', v_compras_ventas.ask);
+        console.log(' Valor de Oferta de Compra: ', v_compras_ventas.bid);
+        console.log(' Marca de tiempo: ', v_compras_ventas.timestamp);
+        console.log('############################################');
 
-        for (j = 0, len = mon_trads.length; j < len; j++) {
-            var mon_trad = mon_trads[j];
+        var sumatoria = parseFloat(v_compras_ventas.ask) + parseFloat(v_compras_ventas.bid);
+        var promedio = sumatoria/2;
+        var CantPromedio = v_compras_ventas.ask.toString().trim().length ;
+        var ValStrnPromedio = promedio.toString().substr(0, CantPromedio);
+        var ValFinPromedio = parseFloat(ValStrnPromedio);
 
-            if ( mon_trad === undefined ) {
-                console.log(' No hay Valores en el libro de Ordenes asociados a este Símbolo');
-            }
-            else {
-                var url_compras_ventas = [publico]+['ticker']+'/'+[mon_trad.id];
-                try{
-                    var compras_ventas = Meteor.call("ConexionGet", url_compras_ventas);
-                    var v_compras_ventas = (compras_ventas.data);
-                }
-            catch (error){
-                    Meteor.call("ValidaError", error, 1)
-                };
-
-                console.log('\n ');
-                console.log('############################################');
-                console.log('    Verificando Moneda: ',v_compras_ventas.symbol);
-                console.log(' Valor de Oferta en Venta: ', v_compras_ventas.ask);
-                console.log(' Valor de Oferta de Compra: ', v_compras_ventas.bid);
-                console.log(' Marca de tiempo: ', v_compras_ventas.timestamp);
-                console.log('############################################');
-            }
-
-        };
+        return ValFinPromedio;
     },
 
     'validaMonedasActivas':function(){
@@ -1033,8 +998,10 @@ Meteor.methods({
     'Transferirfondos':function(MONEDA, MONTO, TIPO_TRANSF){  //Transfer amount to trading
 
         console.log('############################################');
-        console.log(' Realiza transferencia de fondos desde el saldo de la Cuenta al Saldo de tradeo y viseversa');
+        console.log('         TRANSFERENCIA DE FONDOS');
+        console.log('############################################');
         console.log(' ');
+        //console.log("Valores recibidos, MONEDA:", MONEDA, " MONTO: ", MONTO, " TIPO_TRANSF:", TIPO_TRANSF);
 
         //HAY 2 TIPOS DE TRANSFERENCIAS
         // "bankToExchange" Del Saldo de la cuenta a el Saldo de Trader
@@ -1047,15 +1014,21 @@ Meteor.methods({
 
         var url_orden = transferencia;
 
-        try{
+        //try{
             var NuevaTransferencia = Meteor.call("ConexionPost", url_orden, datos);
-        }
-        catch (error){
+            //console.log("Valore de NuevaTransferencia", NuevaTransferencia);
+        //}
+        /*catch (error){
             Meteor.call("ValidaError", error, 1)
+        };*/
+        if ( NuevaTransferencia === undefined ) {
+            var StatusEjecucion = 1;
+        }else{
+            var StatusEjecucion = NuevaTransferencia.statusCode;
+            var IdTransferencia = NuevaTransferencia.data.id;
+            //console.log("Valore de StatusEjecucion", StatusEjecucion);
+            //console.log("Valore de IdTransferencia", IdTransferencia);
         };
-
-        var StatusEjecucion = NuevaTransferencia.statusCode;
-        var IdTransferencia = NuevaTransferencia.data.id;
 
         switch ( TIPO_TRANSF ) {
             case 'bankToExchange':
@@ -1069,61 +1042,87 @@ Meteor.methods({
         var FECHA = new Date()
 
         if ( StatusEjecucion === 200 ) {
-            Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Transferencia Realizada Exitosamente']);
+
+            Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Solicitud de Transferencia Realizada Exitosamente']);
             Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Transacción: ']+[ IdTransferencia ]);
-            HistoralTransferencias.insert({ fecha : FECHA, id : IdTransferencia ,tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : "Exitoso" })
+            HistoralTransferencias.insert({ fecha : FECHA, id : IdTransferencia ,tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : "Verificando" })
 
             console.log('############################################');
             console.log('            Status Tranferencia');
             console.log('############################################');
-            console.log('        ********* ', ' MONEDA: ',MONEDA, '        ********* ');
+            console.log('********* ', ' MONEDA: ',MONEDA, ' *********');
             console.log('    FECHA: ', FECHA );
             console.log('    ID: ',IdTransferencia );
             console.log('    TIPO TRANSFERENCIA: ',TipoTransferencia );
             console.log('     MONTO: ', MONTO);
-            console.log('    STATUS: ',"EXITOSO" );
+            console.log('    STATUS: ',"VERIFICANDO" );
             console.log('############################################');
             console.log(' ');
 
-            return 0;
+            var sal = new Set();
+            sal.add( 0 );
+            sal.add( IdTransferencia );
+            var salida = Array.from(sal);
+            return salida;
         }
         else{
-            HistoralTransferencias.insert({ fecha : FECHA, id : IdTransferencia ,tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : "Fallido" })
+            //HistoralTransferencias.insert({ fecha : FECHA, id : "IdTransferencia" ,tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : "Fallido" })
 
             console.log('############################################');
             console.log('            Status Tranferencia');
             console.log('############################################');
-            console.log('        ********* ', ' MONEDA: ',MONEDA, '        ********* ');
+            console.log('********* ', ' MONEDA: ',MONEDA, ' *********');
             console.log('    FECHA: ', FECHA);
             console.log('    TIPO TRANSFERENCIA: ',TipoTransferencia);
             console.log('     MONTO: ', MONTO);
             console.log('    STATUS: ',"FALLIDO");
             console.log('############################################');
             console.log(' ');
-            Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos:  Transferencia Fallida'] );
+            Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Sulicitud de Transferencia Fallida'] );
+            var sal = new Set();
+            sal.add( 1 );
+            var salida = Array.from(sal);
+            return salida;
         }        
     },
     
-    'CrearNuevaOrder':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_INVER,PRECIO){  //POST
+    'CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C){  //POST
 
         console.log('############################################');
         console.log('Creando una nueva orden');
+        console.log("Valores recibidos, N_ID__ORDEN_CLIENT:" , " TIPO_CAMBIO: ", TIPO_CAMBIO, " T_TRANSACCION: ", T_TRANSACCION, " CANT_INVER: ", CANT_INVER, " PRECIO: ", PRECIO);
+
+        var PRECIO = Meteor.call('LibroDeOrdenes', TIPO_CAMBIO);
+        var fecha = new Date();
+
+        switch (T_TRANSACCION){
+            case 'buy':
+                var V_TipoOperaciont = 'COMPRA';
+                break;
+            case 'sell':
+                var V_TipoOperaciont = 'VENTA';
+                break;
+        }
 
         var datos = new Object();
-        datos.clientOrderId= N_ID__ORDEN_CLIENT;
+        //datos.clientOrderId= N_ID__ORDEN_CLIENT;
         datos.symbol = TIPO_CAMBIO;
         datos.side = T_TRANSACCION;
         datos.timeInForce=ZONA_HORARA;
-        datos.quantity = CANT_MONEDA;
-        datos.price = PRECIO;
+        datos.quantity = CANT_INVER;
+        datos.price = PRECIO; // PRECIO ES REQUERIDO, SE NECESITAN LAS ORDENES DE COMPRA PARA SABER EN CUANTO COMPRAR
 
         var url_orden = ordenes;
 
         var orden = Meteor.call('ConexionPost', url_orden, datos);
 
+        console.log("Valor de orden", orden)
+
         Meteor.call('SaldoActualMonedas', 2 );
 
         //Meteor.call('CalculoGanancia');
+        //
+        HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_cambio : TIPO_CAMBIO, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : MON_B, MON_C, precio_operacion : PRECIO, estado : "Exitoso" });
     },
 
     'CrearNuevaOrderRobot':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, SALDO_ACTUAL, MON_B, MON_C, MON_SALTRAD, COMISION_HITBTC, COMISION_MERCADO, MON_APLIC_COMISION ){  //POST
@@ -1166,9 +1165,10 @@ Meteor.methods({
         }
         
         var mon_comision = MON_APLIC_COMISION;
-        var precio_moneda = moneda[0].precio
+        var precio_moneda = Meteor.call('LibroDeOrdenes', TIPO_CAMBIO);
 
-        if ( MON_SALTRAD === MON_B ) {
+        //if ( MON_SALTRAD === MON_B ) {
+        if ( MON_SALTRAD === MON_C ) {
 
             console.log("Estoy Verificando MON_SALTRAD === MON_B")
 
@@ -1189,7 +1189,7 @@ Meteor.methods({
 
 
 
-
+            var InversionTotal = CANT_INVER
             var nuevo_saldo_moneda_base_actual = ( saldo_moneda_base_act - CANT_INVER );
             var nuevo_saldo_moneda_coti_actual = (( CANT_INVER * precio_moneda )- coms_hitbc - coms_mercado + (saldo_moneda_coti_act * CANT_INVER ));
 
@@ -1231,10 +1231,11 @@ Meteor.methods({
 
             //TempSaldoMoneda.insert({ moneda : MON_C, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_coti_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: COMISION_HITBTC, comision_mercado_aplicada : COMISION_MERCADO, saldo_final : nuevo_saldo_moneda_coti_actual })
             //TempSaldoMoneda.insert({ moneda : MON_B, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_base_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: 0, comision_mercado_aplicada : 0, saldo_final : nuevo_saldo_moneda_base_actual })
-            HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : InversionTotal, precio_operacion : precio_moneda, estado : "Exitoso" });
+            HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_cambio : TIPO_CAMBIO,tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : InversionTotal, precio_operacion : precio_moneda, estado : "Exitoso" });
 
         
-        } else if ( MON_SALTRAD === MON_C ) {
+        //} else if ( MON_SALTRAD === MON_C ) {
+        } else if ( MON_SALTRAD === MON_B ) {
             console.log("Estoy Verificando MON_SALTRAD === MON_C")
             if ( Monedas.find({ moneda : MON_C, "saldo.tradeo.activo" : { $exists: true } }).count() === 0 ) {
                 var saldo_moneda_coti_act = 0
@@ -1291,9 +1292,9 @@ Meteor.methods({
 
             //TempSaldoMoneda.insert({ moneda : MON_C, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_coti_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: COMISION_HITBTC, comision_mercado_aplicada : COMISION_MERCADO, saldo_final : nuevo_saldo_moneda_coti_actual })
             //TempSaldoMoneda.insert({ moneda : MON_B, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_base_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: 0, comision_mercado_aplicada : 0, saldo_final : nuevo_saldo_moneda_base_actual })
-            HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : InversionTotal, precio_operacion : precio_moneda, estado : "Exitoso" });
+            HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_cambio : TIPO_CAMBIO,tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : InversionTotal, precio_operacion : precio_moneda, estado : "Exitoso" });
         }
-        Meteor.call('CalculoGanancia');
+        //Meteor.call('CalculoGanancia');
         console.log("         Inversion realizada");
         console.log(' ');
         console.log(' ');
@@ -1397,7 +1398,7 @@ Meteor.methods({
                     //Monedas.remove({});
                     Meteor.call("ListaMonedas");
                     Meteor.call("ListaTiposDeCambios", V_EJEC);
-                    Meteor.call("SaldoActualMonedas");
+                    Meteor.call("SaldoActualMonedas",2);
                     if (TiposDeCambios.find().count() !== 0){
                         Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: ¡ Listo ! ']);
                     }
@@ -2356,7 +2357,7 @@ Meteor.methods({
                                                 //console.log('Entre  En el robot simulador 1' );
                                                 idTrans = idTrans+1;
                                                 console.log('     OPERACION A REALIZAR: VENDER' );
-                                                Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'sell',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
+                                                Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'buy',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
                                             } else {
                                              //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                             }
@@ -2366,7 +2367,7 @@ Meteor.methods({
                                                 //console.log('Entre  En el robot simulador 2' );
                                                 idTrans = idTrans+1;
                                                 console.log('     OPERACION A REALIZAR: COMPRAR' );
-                                                Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'buy',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
+                                                Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'sell',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
                                             } else {
                                              //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                                 
@@ -2426,7 +2427,7 @@ Meteor.methods({
                                                 //console.log('Entre  En el robot simulador 1' );
                                                 idTrans = idTrans+1;
                                                 console.log('     OPERACION A REALIZAR: VENDER' );
-                                                Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'sell',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
+                                                Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'buy',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
                                             } else {
                                              //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                             }
@@ -2436,7 +2437,7 @@ Meteor.methods({
                                                 //console.log('Entre  En el robot simulador 2' );
                                                 idTrans = idTrans+1;
                                                 console.log('     OPERACION A REALIZAR: COMPRAR' );
-                                                Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'buy',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
+                                                Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'sell',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
                                             } else {
                                              //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                                 
@@ -2511,7 +2512,7 @@ Meteor.methods({
                                         //console.log('Entre  En el robot simulador 1' );
                                         idTrans = idTrans+1;
                                         console.log('     OPERACION A REALIZAR: VENDER' );
-                                        Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'sell',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
+                                        Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'buy',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
                                     } else {
                                     //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                     }
@@ -2521,7 +2522,7 @@ Meteor.methods({
                                         //console.log('Entre  En el robot simulador 2' );
                                         idTrans = idTrans+1;
                                         console.log('     OPERACION A REALIZAR: COMPRAR' );
-                                        Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'buy',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
+                                        Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'sell',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
                                     } else {
                                         //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                     }
@@ -2580,7 +2581,7 @@ Meteor.methods({
                                         //console.log('Entre  En el robot simulador 1' );
                                         idTrans = idTrans+1;
                                         console.log('     OPERACION A REALIZAR: VENDER' );
-                                        Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'sell',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
+                                        Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'buy',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
                                     } else {
                                         //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                     }
@@ -2590,7 +2591,7 @@ Meteor.methods({
                                         //console.log('Entre  En el robot simulador 2' );
                                         idTrans = idTrans+1;
                                         console.log('     OPERACION A REALIZAR: COMPRAR' );
-                                        Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'buy',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
+                                        Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'sell',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
                                     } else {
                                         //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                                 
@@ -2650,7 +2651,7 @@ Meteor.methods({
                                     //console.log('Entre  En el robot simulador 1' );
                                     idTrans = idTrans+1;
                                     console.log('     OPERACION A REALIZAR: VENDER' );
-                                    Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'sell',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
+                                    Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'buy',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
                                     } else {
                                     //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                     }
@@ -2660,7 +2661,7 @@ Meteor.methods({
                                     //console.log('Entre  En el robot simulador 2' );
                                     idTrans = idTrans+1;
                                     console.log('     OPERACION A REALIZAR: COMPRAR' );
-                                    Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'buy',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
+                                    Meteor.call('CrearNuevaOrderRobot',idTrans,TipoCambio,'sell',SaldoInverCalculado, SaldoActualMoneda, TipoCambioRanking.moneda_base, TipoCambioRanking.moneda_cotizacion, TipoCambioRanking.moneda_saldo, COM12, COM22, TipoCambioRanking.moneda_apli_comision);
                                     } else {
                                     //   Meteor.get('CrearNuevaOrder',N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_MONEDA,PRECIO);
                                     }
@@ -2739,7 +2740,7 @@ Meteor.methods({
         }
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                             ///// INVERSION /////
+   /*                                          ///// INVERSION /////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
         var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "XMR" } },
@@ -2751,7 +2752,7 @@ Meteor.methods({
             //console.log("Valor de V_moneda_verificar", V_moneda_verificar)
             Meteor.call("ValidaPropTipoCambiosValidados", V_moneda_verificar._id , 3 );
         }
-
+*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         
@@ -2763,6 +2764,20 @@ Meteor.methods({
         //Meteor.call("LibroDeOrdenes");
         //Meteor.call("CrearNuevaOrder");
         //Meteor.call("borrarOrden");
+        //
+        //
+        //Meteor.call("SaldoActualMonedas", 2);
+        //Valor = Meteor.call("CombierteNumeroExpStr", 1.502e-18);
+        //console.log("Datos Obtenidos: ", Valor);
+        //
+        //'CrearNuevaOrder':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_INVER,PRECIO)
+        Meteor.call("CrearNuevaOrder", "XMRBTC",'sell', 0.109121293);
+        //var precio_promedio = Meteor.call('LibroDeOrdenes', "XMOBTC");
+        //console.log("Datos Obtenidos: ", precio_promedio);
+        //
+        //'Transferirfondos':function(MONEDA, MONTO, TIPO_TRANSF)
+        //Meteor.call("Transferirfondos", "BTC",0.000064538, "exchangeToBank");
+
     },
 
     'EjecucionInicial':function(){
@@ -2771,6 +2786,7 @@ Meteor.methods({
         Meteor.call("ListaMonedas");
         Meteor.call("ListaTiposDeCambios", 2);
         Meteor.call("SaldoActualMonedas", 2);
+        Meteor.call("ValidaMonedasTransfCuentaTRadeo");
         try {
             Parametros.update({ dominio : "ejecucion", nombre : "EjecInicial", "valor.muestreo.periodo_inicial" : true },{$set :{ "valor.muestreo.periodo_inicial" : false , fecha_ejecucion : new Date() }});
         }
@@ -2790,7 +2806,7 @@ Meteor.methods({
         var monedasSaldo = Monedas.aggregate([{ $project : { moneda:1, "saldo.tradeo.activo": 1, _id: 0 } },{ $match: { "saldo.tradeo.activo" : { $gt : 0 } }}])
 
         console.log('############################################');
-        console.log('         ********* CALCULANDO GANANCIAS        *********');
+        console.log('  ********* CALCULANDO GANANCIAS *********');
         console.log('############################################');
 
         for(var i = 0; i<monedasSaldo.length; i++) {
@@ -2803,14 +2819,14 @@ Meteor.methods({
         if(inversionInicial.length > 0) {
 
             GananciaPerdida.insert({fecha: new Date(), inversionAnterior:inversionInicial[0].inversion,inversion:sum,ganancia:sum-inversionInicial[0].inversion,comentario:'Ganancia a la fecha'});
-            console.log('         ********* LA GANACIA ES        *********');
+            console.log('      ********* LA GANACIA ES *********');
             console.log(sum-inversionInicial[0].inversion);
             console.log('############################################');
 
         }else {
 
             GananciaPerdida.insert({fecha: new Date(), inversion:sum,ganancia:0,comentario:'Inversion inicial'});
-            console.log('         ********* NO HAY GANANCIA       *********');
+            console.log('    ********* NO HAY GANANCIA *********');
             console.log('############################################');
         }
     },
@@ -2818,7 +2834,7 @@ Meteor.methods({
     'EquivalenteDolar':function(moneda,saldo){
 
         var precioAux = TiposDeCambios.find({moneda_base:moneda,moneda_cotizacion:'USD'}).fetch();
-        console.log("Valor de precioAux", precioAux);
+        //console.log("Valor de precioAux", precioAux);
 
         if(precioAux.length === 0) {
             precioAux = TiposDeCambios.find({moneda_base:moneda,moneda_cotizacion:'BTC'}).fetch();
@@ -2831,11 +2847,13 @@ Meteor.methods({
 
     'EjecucionGlobal':function(){
         //Meteor.call("Encabezado");
-        //Meteor.call("Prueba");
-        Meteor.call("CalculoGanancia");
+        Meteor.call("Prueba");
+        //Meteor.call("CalculoGanancia");
         //var tiposCamb = ["XMRUSD", "XMRETH", "XMRBTC"];
         //Meteor.call("Invertir", tiposCamb, 2, 0);
-        //Meteor.call("SaldoActualMonedas", 1);
+        /*Meteor.call("ListaMonedas");
+        Meteor.call("SaldoActualMonedas", 2);
+        Meteor.call("ValidaMonedasTransfCuentaTRadeo");*/
         //Meteor.call("ListaTiposDeCambios", 1);
         //Meteor.call("TipoCambioDisponibleCompra", 1, 1);
 
@@ -2849,7 +2867,7 @@ Meteor.startup(function (){
     // code to run on server at startup
     // Verificamos si la aplicación es su ejecución Inicial o no
     JobsInternal.Utilities.collection.remove({  });
-    /*
+    
     try {
         var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
 
@@ -2870,6 +2888,6 @@ Meteor.startup(function (){
     }
     catch (error){
         Meteor.call("ValidaError", error, 2);
-    }*/
-    Meteor.call("EjecucionGlobal");
+    }
+    //Meteor.call("EjecucionGlobal");
 });

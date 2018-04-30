@@ -278,7 +278,7 @@ Jobs.register({
 		        console.log('--------------------------------------------');
 		        console.log(' ');
 		        console.log("Estoy en el Job JobValidaTendenciaTipoCambio");
-		        console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " Muestreo: ", TIPO_MUESTREO, " ACCION: ", TIPO_ACCION)
+		        //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " Muestreo: ", TIPO_MUESTREO, " ACCION: ", TIPO_ACCION)
 
 		        Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, TIPO_MUESTREO);
 	            Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO, TIPO_ACCION );
