@@ -1,6 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 //var moment = require('moment-timezone');
 moment().tz('America/Caracas').format();
+//var venezuela = venezuela.clone().tz('America/Caracas');
+//venezuela.format();
+
+
 
 const autoriza_conexion = Conexion_api.findOne({ casa_cambio : 'hitbtc'}, {_id:0});
 const API_HITBTC2 = autoriza_conexion.api.url;
@@ -561,7 +565,7 @@ Meteor.methods({
         var fecha = moment (new Date());
 
         if ( EstadoTransaccion.statusCode === 200 ) {
-            V_EstadoTransaccion = EstadoTransaccion.data;
+            var V_EstadoTransaccion = EstadoTransaccion.data;
             var FECHA = fecha._d
             var IdTransferencia = V_EstadoTransaccion.id;
             var Indice = V_EstadoTransaccion.index;
@@ -617,7 +621,6 @@ Meteor.methods({
 
 
         return STATUS;
-
     },
 
     'ValidaMonedasTransfCuentaTRadeo':function(){
@@ -2867,110 +2870,6 @@ Meteor.methods({
         console.log('        ',fecha._d);
         console.log('############################################');
     },
-    
-    'Prueba':function(){/*
-        Meteor.call('EjecucionInicial'); 
-
-        TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra');
-/*
-        for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
-                    var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
-
-                    //console.log("Valor de tipo_cambio_verificar", tipo_cambio_verificar)
-
-                    Meteor.call('EvaluarTendencias', tipo_cambio_verificar.tipo_cambio, 1, tipo_cambio_verificar.accion );
-                }               
-                
-
-        //console.log("Valor de TiposDeCambioVerificar", TiposDeCambioVerificar)
-
-        //console.log ("Estoy en Prueba");
-
-        for (CTCV = 0, tamanio_TiposDeCambioVerificar = TiposDeCambioVerificar.length; CTCV < tamanio_TiposDeCambioVerificar; CTCV++) {
-            var V_TiposDeCambioVerificar = TiposDeCambioVerificar[CTCV];
-
-            //console.log('Valor de TiposDeCambioVerificar -- : ', V_TiposDeCambioVerificar);
-            //console.log('Valor de TiposDeCambioVerificar -- : ', V_TiposDeCambioVerificar._id);
-            Meteor.call('ListaTradeoActual', V_TiposDeCambioVerificar._id, 2, 1);
-            Meteor.call('EvaluarTendencias', V_TiposDeCambioVerificar._id, 1 );
-
-        };
-
-
-///////////////////////////////////////////////////////////////////////////////
-*/
-
-        /*
-        try {
-            var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
-
-
-
-            if ( EjecucionInicial === 1 ){
-                Jobs.run("JobSecuenciaInicial", {
-                    in: {
-                        second: 5
-                        }
-                });
-            }
-            else if ( EjecucionInicial === 0 ) {
-                Jobs.run("JobSecuencia", {
-                    in: {
-                        second: 5
-                        }
-                });
-            };
-        }
-        catch (error){
-            Meteor.call("ValidaError", error, 2);
-        }
-*/
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   /*                                          ///// INVERSION /////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
-        var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "XMR" } },
-                                     { $project: { _id : 1 } }
-                                    ]);
-
-        for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
-            var V_moneda_verificar = MonedasVerificar[CMV];
-            //console.log("Valor de V_moneda_verificar", V_moneda_verificar)
-            Meteor.call("ValidaPropTipoCambiosValidados", V_moneda_verificar._id , 3 );
-        }
-*/
-/////////////////////////// /////////////////////////////////////////////////////////////////////////////////
-
-        
-        //Meteor.call("TipoCambioDisponibleCompra");
-                //Meteor.call("ListaTradeoActual",VALOR);
-        //Meteor.call("ConsultaOrdenesAbiertas");
-        //Meteor.call("ListaTradeoActual","BTCUSD");
-        //Meteor.call("EvaluarTendencias");
-        //Meteor.call("LibroDeOrdenes");
-        //Meteor.call("CrearNuevaOrder");
-        //Meteor.call("borrarOrden");
-        //
-        //
-        //Meteor.call("SaldoActualMonedas", 2);
-        //Valor = Meteor.call("CombierteNumeroExpStr", 1.502e-18);
-        //console.log("Datos Obtenidos: ", Valor);
-        //
-        //'CrearNuevaOrder':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_INVER,PRECIO)
-        //Meteor.call("CrearNuevaOrder", "XMRBTC",'sell', 0.109121293);
-        //var precio_promedio = Meteor.call('LibroDeOrdenes', "XMOBTC");
-        //console.log("Datos Obtenidos: ", precio_promedio);
-        //
-        //'Transferirfondos':function(MONEDA, MONTO, TIPO_TRANSF)
-        //Meteor.call("Transferirfondos", "BTC",0.000064538, "exchangeToBank");
-        
-
-
-
-        /*var VEstatus = Meteor.call( 'VerificarTransferencias', "495a8d8f-3a52-4164-a41c-1f9678f2c25a");
-
-        console.log("Valor de Vestatus", VEstatus);*/
-    },
 
     'EjecucionInicial':function(){
 
@@ -3037,6 +2936,122 @@ Meteor.methods({
         return parseFloat(precioAux[0].periodo1.precio)*saldo;
     },
 
+
+    'Prueba':function(){/*
+        Meteor.call('EjecucionInicial');
+
+        TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra');
+/*
+        for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
+                    var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
+
+                    //console.log("Valor de tipo_cambio_verificar", tipo_cambio_verificar)
+
+                    Meteor.call('EvaluarTendencias', tipo_cambio_verificar.tipo_cambio, 1, tipo_cambio_verificar.accion );
+                }
+
+
+        //console.log("Valor de TiposDeCambioVerificar", TiposDeCambioVerificar)
+
+        //console.log ("Estoy en Prueba");
+
+        for (CTCV = 0, tamanio_TiposDeCambioVerificar = TiposDeCambioVerificar.length; CTCV < tamanio_TiposDeCambioVerificar; CTCV++) {
+            var V_TiposDeCambioVerificar = TiposDeCambioVerificar[CTCV];
+
+            //console.log('Valor de TiposDeCambioVerificar -- : ', V_TiposDeCambioVerificar);
+            //console.log('Valor de TiposDeCambioVerificar -- : ', V_TiposDeCambioVerificar._id);
+            Meteor.call('ListaTradeoActual', V_TiposDeCambioVerificar._id, 2, 1);
+            Meteor.call('EvaluarTendencias', V_TiposDeCambioVerificar._id, 1 );
+
+        };
+
+
+///////////////////////////////////////////////////////////////////////////////
+*/
+
+        /*
+        try {
+            var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
+
+
+
+            if ( EjecucionInicial === 1 ){
+                Jobs.run("JobSecuenciaInicial", {
+                    in: {
+                        second: 5
+                        }
+                });
+            }
+            else if ( EjecucionInicial === 0 ) {
+                Jobs.run("JobSecuencia", {
+                    in: {
+                        second: 5
+                        }
+                });
+            };
+        }
+        catch (error){
+            Meteor.call("ValidaError", error, 2);
+        }
+*/
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*                                          ///// INVERSION /////
+     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+             //var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
+             var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "XMR" } },
+                                          { $project: { _id : 1 } }
+                                         ]);
+
+             for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
+                 var V_moneda_verificar = MonedasVerificar[CMV];
+                 //console.log("Valor de V_moneda_verificar", V_moneda_verificar)
+                 Meteor.call("ValidaPropTipoCambiosValidados", V_moneda_verificar._id , 3 );
+             }
+     */
+/////////////////////////// /////////////////////////////////////////////////////////////////////////////////
+
+
+        //Meteor.call("TipoCambioDisponibleCompra");
+        //Meteor.call("ListaTradeoActual",VALOR);
+        //Meteor.call("ConsultaOrdenesAbiertas");
+        //Meteor.call("ListaTradeoActual","BTCUSD");
+        //Meteor.call("EvaluarTendencias");
+        //Meteor.call("LibroDeOrdenes");
+        //Meteor.call("CrearNuevaOrder");
+        //Meteor.call("borrarOrden");
+        //
+        //
+        //Meteor.call("SaldoActualMonedas", 2);
+        //Valor = Meteor.call("CombierteNumeroExpStr", 1.502e-18);
+        //console.log("Datos Obtenidos: ", Valor);
+        //
+        //'CrearNuevaOrder':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_INVER,PRECIO)
+        //Meteor.call("CrearNuevaOrder", "XMRBTC",'sell', 0.109121293);
+        //var precio_promedio = Meteor.call('LibroDeOrdenes', "XMOBTC");
+        //console.log("Datos Obtenidos: ", precio_promedio);
+        //
+        //'Transferirfondos':function(MONEDA, MONTO, TIPO_TRANSF)
+        //Meteor.call("Transferirfondos", "BTC",0.000064538, "exchangeToBank");
+
+
+
+
+        /*var VEstatus = Meteor.call( 'VerificarTransferencias', "495a8d8f-3a52-4164-a41c-1f9678f2c25a");
+
+        console.log("Valor de Vestatus", VEstatus);*/
+        //var moneda = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : "XMR" }}, { $sort: { fecha : -1 } }, { $limit: 1 }]);
+        //var prueba = Monedas.find({ }).fetch();
+        //console.log(moneda);
+        //console.log(prueba);
+        //
+        //
+        //var consulta =[{ $match: { tipo_cambio : "XMR" }}, { $sort: { fecha : -1 } }, { $limit: 1 }];
+        //var resultado= OperacionesCompraVenta.aggregate(consulta);
+        //console.log(resultado);
+
+
+    },
+
     'EjecucionGlobal':function(){
         //Meteor.call("Encabezado");
         Meteor.call("Prueba");
@@ -3059,7 +3074,7 @@ Meteor.startup(function (){
     // code to run on server at startup
     // Verificamos si la aplicación es su ejecución Inicial o no
     JobsInternal.Utilities.collection.remove({  });
-    
+
     try {
         var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
 
