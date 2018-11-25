@@ -214,7 +214,8 @@ Jobs.register({
 						        "estado": true,
 						        "valor": V_LimiteMuestreo
 						    }
-						})
+						});
+
 					}
 
 
@@ -223,7 +224,8 @@ Jobs.register({
 		        	var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
 				    var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
 
-				    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion)
+				    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion);
+				    Meteor.call("GuardarLogEjecucionTrader", ['LIMITE DE EJECUCION ALCANZADO']);
 
 				    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
 						

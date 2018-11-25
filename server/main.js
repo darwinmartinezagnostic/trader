@@ -1,8 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 //var moment = require('moment-timezone');
 moment().tz('America/Caracas').format();
-//var venezuela = venezuela.clone().tz('America/Caracas');
-//venezuela.format();
 
 
 
@@ -1691,8 +1689,7 @@ Meteor.methods({
 
                             TiposDeCambios.update({ tipo_cambio: TipoCambioObtenido }, {    
                                                     $set: {
-                                                            ,
-                                                            "habilitado": 0
+                                                            habilitado: 0
                                                         }
                                                     })
                         }else{
