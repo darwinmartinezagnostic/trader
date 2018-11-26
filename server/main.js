@@ -481,12 +481,12 @@ Meteor.methods({
     'ValidaSaldoEquivalenteActual':function(){
         var fecha = new Date();
         var MonedasSaldoVerificar = Monedas.find( { $or : [{"saldo.tradeo.activo" : { $gt : 0 }},{ "saldo.cuenta.activo" : { $gt : 0 } }]}).fetch();
-        console.log("Valor de MonedasSaldoVerificar", MonedasSaldoVerificar);
+        //console.log("Valor de MonedasSaldoVerificar", MonedasSaldoVerificar);
 
         for ( CMONEDAS = 0, T_CMONEDAS = MonedasSaldoVerificar.length; CMONEDAS < T_CMONEDAS; CMONEDAS++ ) {
 
             V_MonedasSaldoVerificar = MonedasSaldoVerificar[CMONEDAS];
-            console.log("Valor de V_MonedasSaldoVerificar", V_MonedasSaldoVerificar);
+            //console.log("Valor de V_MonedasSaldoVerificar", V_MonedasSaldoVerificar);
             Id = V_MonedasSaldoVerificar._id;
             MonedaSaldo = V_MonedasSaldoVerificar.moneda;
             SaldoTradeoActivo = parseFloat(V_MonedasSaldoVerificar.saldo.tradeo.activo);
@@ -494,7 +494,7 @@ Meteor.methods({
 
             if ( SaldoTradeoActivo !== undefined ) {
                 var EquivalenciaSaldoTradeo = Meteor.call('EquivalenteDolar', MonedaSaldo, SaldoTradeoActivo );
-                console.log("Valor de EquivalenciaSaldoTradeo", EquivalenciaSaldoTradeo);
+                //console.log("Valor de EquivalenciaSaldoTradeo", EquivalenciaSaldoTradeo);
                 Monedas.update({
                                 _id: Id,
                                 moneda: MonedaSaldo
@@ -508,7 +508,7 @@ Meteor.methods({
 
             if ( SaldoCuentaActivo !== undefined ) {
                 var EquivalenciaSaldoCuenta = Meteor.call('EquivalenteDolar', MonedaSaldo, SaldoCuentaActivo );
-                console.log("Valor de EquivalenciaSaldoCuenta", EquivalenciaSaldoCuenta);
+                //console.log("Valor de EquivalenciaSaldoCuenta", EquivalenciaSaldoCuenta);
                 Monedas.update({
                                 _id: Id,
                                 moneda: MonedaSaldo
@@ -932,7 +932,7 @@ Meteor.methods({
             console.log('############################################');
         }
         PromedioObtenido = { 'Promedio': ValFinPromedio, 'Existe': Existencia };
-        console.log("Valor de PromedioObtenido", PromedioObtenido);
+        //console.log("Valor de PromedioObtenido", PromedioObtenido);
         
         return PromedioObtenido;
     },
@@ -1253,7 +1253,7 @@ Meteor.methods({
 
         console.log('############################################');
         console.log('Creando una nueva orden');
-        console.log("Valores recibidos, N_ID__ORDEN_CLIENT:" , " TIPO_CAMBIO: ", TIPO_CAMBIO, " T_TRANSACCION: ", T_TRANSACCION, " CANT_INVER: ", CANT_INVER);
+        //console.log("Valores recibidos, N_ID__ORDEN_CLIENT:" , " TIPO_CAMBIO: ", TIPO_CAMBIO, " T_TRANSACCION: ", T_TRANSACCION, " CANT_INVER: ", CANT_INVER);
 
         //var PRECIO = Meteor.call('LibroDeOrdenes', TIPO_CAMBIO);
         var fecha = new Date();
@@ -1510,7 +1510,7 @@ Meteor.methods({
         if ( SALDO === 0 ) {
             var EquivalenciaActual = 0;
         }else{            
-            console.log("Valores recibidos: MONEDA", [MONEDA]+[' SALDO:']+[SALDO]);
+            //console.log("Valores recibidos: MONEDA", [MONEDA]+[' SALDO:']+[SALDO]);
 
             if ( MONEDA == 'USD' ) {
                 var EquivalenciaActual = parseFloat(SALDO);
@@ -1602,7 +1602,7 @@ Meteor.methods({
                                     var EquivalenciaActual = ( EquivalenciaSaldoMonedaAuxi * ValorPromedioFinal ) / 1;
                                     //console.log("Valor de EquivalenciaActual", EquivalenciaActual);
                                 }else if ( ExistMCUSD !== 0 ) {
-                                    console.log("ESTOY EN 2");
+                                    //console.log("ESTOY EN 2");
                                     precioAux = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MCotizacion }, { moneda_cotizacion : MCotizacion }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).fetch();
                                     //console.log("Valor de precioAux", precioAux);
                                     var TipoCambio = precioAux[0].tipo_cambio;
@@ -1642,7 +1642,7 @@ Meteor.methods({
             }
         }
 
-        console.log("Valor de EquivalenciaActual ", EquivalenciaActual);
+        //console.log("Valor de EquivalenciaActual ", EquivalenciaActual);
 
         return EquivalenciaActual.toFixed(4);
     },
@@ -2378,7 +2378,7 @@ Meteor.methods({
 
                         switch( EstadoTipoCambio ){
                             case "V":
-                                console.log("ESTOY EN EL ELSE 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'V'");
+                                //console.log("ESTOY EN EL ELSE 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'V'");
                                 if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ValorEstadoTipoCambio = "V"
@@ -2431,7 +2431,7 @@ Meteor.methods({
                                 }
                             break;
                             case "A":
-                                console.log("ESTOY EN EL ELSE 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'A'");
+                                //console.log("ESTOY EN EL ELSE 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'A'");
                                 if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoAct ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ValorEstadoTipoCambio = "A"
@@ -3777,9 +3777,6 @@ Meteor.methods({
         console.log("Valor de VALOR", VALOR);
 
         /**/
-
-
-
     },
 
     'EjecucionGlobal':function(){
