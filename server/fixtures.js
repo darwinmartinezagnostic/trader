@@ -37,6 +37,6 @@ if (Parametros.find().count() === 0){
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContAuxiliarEstadoActivo", estado : true, valor : 2 , descripcion : "Valor máximo de Contador Auxiliar de estado Activo" });
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContEstadoVerificando", estado : true, valor : 10 , descripcion : "Valor máximo de Contador de estado Verificando" });
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContAuxiliarEstadoVerificando", estado : true, valor : 3 , descripcion : "Valor máximo de Contador Auxiliar de estado Verificando" });
-	Parametros.insert({ fecha : new Date(), dominio : "robot", nombre : "test", estado : true, valor : 1, descripcion : "Simula la compra de monedas" });
+	Parametros.insert({ fecha : new Date(), dominio : "robot", nombre : "test", estado : true, valor : 0, descripcion : "Simula la compra de monedas" });
 	Parametros.insert({ fecha : new Date(), dominio : "prueba", nombre : "saldo", estado : true, valor : 0, descripcion : "Saldo ficticio para ciertas monedas" });
 };
