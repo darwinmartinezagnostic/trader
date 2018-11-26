@@ -225,7 +225,7 @@ Jobs.register({
 				    var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
 
 				    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion);
-				    Meteor.call("GuardarLogEjecucionTrader", ['LIMITE DE EJECUCION ALCANZADO']);
+				    
 
 				    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
 						
@@ -246,6 +246,8 @@ Jobs.register({
 					    	}
 					    })
 
+				    }else if ( V_LimiteMaximoEjecucion === 0 ) {
+				    	Meteor.call("GuardarLogEjecucionTrader", ['LIMITE DE EJECUCION ALCANZADO']);
 				    }
 				}
 			}
