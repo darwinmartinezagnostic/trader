@@ -248,7 +248,8 @@ Jobs.register({
 
 				    }else if ( V_LimiteMaximoEjecucion === 0 ) {
 				    	Meteor.call("GuardarLogEjecucionTrader", ['LIMITE DE EJECUCION ALCANZADO']);
-				    }
+				    	Meteor.call("FinEjecucion");
+				    };
 				}
 			}
 			var ejecucionSecuenciaPeriodo1 = 0
