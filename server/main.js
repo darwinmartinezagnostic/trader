@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import '../lib/librerias/Concurrent.Thread.js';
 //var moment = require('moment-timezone');
 moment().tz('America/Caracas').format();
 
@@ -2298,7 +2299,7 @@ Meteor.methods({
                                     console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
                                     console.log(" TIPO_ACCION ", T_ACCION)
                                     console.log('--------------------------------------------');
-                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
                             break;
                             case 2: 
                                     //var CambioSignoTendencia = ( ProcenApDp * 1 )
@@ -2307,7 +2308,7 @@ Meteor.methods({
                                     console.log(" TIPO_ACCION ", T_ACCION)
                                     console.log('--------------------------------------------');
 
-                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});   
+                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});   
                             break;                            
                         }
 
@@ -2368,7 +2369,7 @@ Meteor.methods({
                                     console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
                                     console.log(" TIPO_ACCION ", T_ACCION)
                                     console.log('--------------------------------------------');
-                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
                             break;
                             case 2: 
                                     //var CambioSignoTendencia = ( ProcenApDp * 1 )
@@ -2376,7 +2377,7 @@ Meteor.methods({
                                     console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
                                     console.log(" TIPO_ACCION ", T_ACCION)
                                     console.log('--------------------------------------------');
-                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
                             break;                            
                         }
 
@@ -3414,373 +3415,16 @@ Meteor.methods({
     },
 
     'Prueba':function(){
-        JobsInternal.Utilities.collection.remove({  });
-        TiposDeCambios.remove({  });
-        Monedas.remove({  });
-        Meteor.call('EjecucionInicial');
-        /**//*
-        TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra');
-
-
-
-        /*
-                for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
-                            var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
-
-                            //console.log("Valor de tipo_cambio_verificar", tipo_cambio_verificar)
-
-                            Meteor.call('EvaluarTendencias', tipo_cambio_verificar.tipo_cambio, 1, tipo_cambio_verificar.accion );
-                        }
-
-
-                //console.log("Valor de TiposDeCambioVerificar", TiposDeCambioVerificar)
-
-                //console.log ("Estoy en Prueba");
-
-                for (CTCV = 0, tamanio_TiposDeCambioVerificar = TiposDeCambioVerificar.length; CTCV < tamanio_TiposDeCambioVerificar; CTCV++) {
-                    var V_TiposDeCambioVerificar = TiposDeCambioVerificar[CTCV];
-
-                    //console.log('Valor de TiposDeCambioVerificar -- : ', V_TiposDeCambioVerificar);
-                    //console.log('Valor de TiposDeCambioVerificar -- : ', V_TiposDeCambioVerificar._id);
-                    Meteor.call('ListaTradeoActual', V_TiposDeCambioVerificar._id, 2, 1);
-                    Meteor.call('EvaluarTendencias', V_TiposDeCambioVerificar._id, 1 );
-
-                };
-
-
-        ///////////////////////////////////////////////////////////////////////////////
-        */
-
-                /*
-                try {
-                    var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
-
-
-
-                    if ( EjecucionInicial === 1 ){
-                        Jobs.run("JobSecuenciaInicial", {
-                            in: {
-                                second: 5
-                                }
-                        });
-                    }
-                    else if ( EjecucionInicial === 0 ) {
-                        Jobs.run("JobSecuencia", {
-                            in: {
-                                second: 5
-                                }
-                        });
-                    };
-                }
-                catch (error){
-                    Meteor.call("ValidaError", error, 2);
-                }
-        */
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                /*                                          ///// INVERSION /////
-             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                     //var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
-                     var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "XMR" } },
-                                                  { $project: { _id : 1 } }
-                                                 ]);
-
-                     for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
-                         var V_moneda_verificar = MonedasVerificar[CMV];
-                         //console.log("Valor de V_moneda_verificar", V_moneda_verificar)
-                         Meteor.call("ValidaPropTipoCambiosValidados", V_moneda_verificar._id , 3 );
-                     }
-             */
-        /////////////////////////// /////////////////////////////////////////////////////////////////////////////////
-
-
-                //Meteor.call("TipoCambioDisponibleCompra");
-                //Meteor.call("ListaTradeoActual",VALOR);
-                //Meteor.call("ConsultaOrdenesAbiertas");
-                //Meteor.call("ListaTradeoActual","BTCUSD");
-                //Meteor.call("EvaluarTendencias");
-                //Meteor.call("LibroDeOrdenes");
-                //Meteor.call("CrearNuevaOrder");
-                //Meteor.call("borrarOrden");
-                //
-                //
-                //Meteor.call("ActualizaSaldoTodasMonedas", 2);
-                //Valor = Meteor.call("CombierteNumeroExpStr", 1.502e-18);
-                //console.log("Datos Obtenidos: ", Valor);
-                //
-                //'CrearNuevaOrder':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_INVER,PRECIO)
-                //Meteor.call("CrearNuevaOrder", "XMRBTC",'sell', 0.109121293);
-                //var precio_promedio = Meteor.call('LibroDeOrdenes', "XMOBTC");
-                //console.log("Datos Obtenidos: ", precio_promedio);
-                //
-                //'Transferirfondos':function(MONEDA, MONTO, TIPO_TRANSF)
-                //Meteor.call("Transferirfondos", "BTC",0.000064538, "exchangeToBank");
-
-
-
-
-                /*var VEstatus = Meteor.call( 'VerificarTransferencias', "495a8d8f-3a52-4164-a41c-1f9678f2c25a");
-
-                console.log("Valor de Vestatus", VEstatus);*/
-                //var moneda = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : "XMR" }}, { $sort: { fecha : -1 } }, { $limit: 1 }]);
-                //var prueba = Monedas.find({ }).fetch();
-                //console.log(moneda);
-                //console.log(prueba);
-                //
-                //
-                //var consulta =[{ $match: { tipo_cambio : "XMR" }}, { $sort: { fecha : -1 } }, { $limit: 1 }];
-                //var resultado= OperacionesCompraVenta.aggregate(consulta);
-                //console.log(resultado);
-                /*
-                var Orden = Meteor.call('VerificarHistoricoEstadoOrden', 'f7dc839c7f8242aa9e031eb6bda4511a');
-                console.log("Valor de Orden:", Orden);
-                */
-               
-
-        /////////////////////////// /////////////////////////////////////////////////////////////////////////////////
-        /*
-                Meteor.call('ListaTiposDeCambios', 2);
-
-                var fecha = new Date();
-
-                var cont=0;
-
-                var MONEDA_SALDO = 'LTC';
-                var MONEDA_COMISION = 'BTC'
-                var MON_C = 'BTC'
-                var MON_B = 'LTC';
-                var ID_LOTE = Meteor.call('CalculaId', 3);
-                
-
-                //Meteor.call('EquivalenteDolar', MONEDA_SALDO, 0);
-
-                //var SALDO_TOTAL = 1;
-         
-                var ValidaEstadoOrden = Meteor.call('VerificarHistoricoEstadoOrden', '4f0fc8be65604277ba4c883f1f4846fa' );
-
-                var Estado_Orden = ValidaEstadoOrden.Estado
-
-                console.log('Valor de ValidaEstadoOrden', ValidaEstadoOrden)
-
-                Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi estado: ']+[Estado_Orden]);
-
-
-
-                
-                var V_Anteriores = Monedas.aggregate([{ $match: { 'moneda' : MONEDA_SALDO }}]);
-                var ValoresAnteriores = V_Anteriores[0];
-
-
-
-
-
-
-                if (Estado_Orden === "filled") {
-
-                    var IdTransaccionActual = Meteor.call('CalculaId', 2);
-
-                    Meteor.call('GuardarLogEjecucionTrader', ' CrearNuevaOrder: Estoy en: Estado_Orden === "filled"');
-
-                    Meteor.call('ActualizaSaldoActual', MONEDA_SALDO );
-
-                    var V_Actual = Monedas.aggregate([{ $match: { 'moneda' : MONEDA_SALDO }}]);
-                    var ValoresActuales = V_Actual[0];
-
-                    //'EquivalenteDolar':function(moneda, saldo)
-
-                    console.log(" Valor de ValoresAnteriores: ", ValoresAnteriores);
-                    console.log(" Valor de ValoresActuales: ", ValoresActuales);
-
-
-                    var FechaTradeoAnterior = ValoresAnteriores.saldo.tradeo.fecha;
-                    var SaldoTradeoAnterior = ValoresAnteriores.saldo.tradeo.activo;
-                    var V_EquivalenciaTradeoAnterior = ValoresAnteriores.saldo.tradeo.equivalencia;
-                    var SaldoTradeoActual = ValoresActuales.saldo.tradeo.activo;
-                    var V_EquivalenciaTradeoActual = Meteor.call('EquivalenteDolar', MONEDA_SALDO, SaldoTradeoActual);
-                    var V_SaldoInversion = ValidaEstadoOrden.Precio;
-                    var Eqv_V_InverSaldAct = Meteor.call('EquivalenteDolar', MONEDA_SALDO, V_SaldoInversion);
-                    var Eqv_V_InverSaldAnt = ( Eqv_V_InverSaldAct * V_EquivalenciaTradeoAnterior ) / SaldoTradeoActual;
-                    var V_Comision = ValidaEstadoOrden.Comision;
-                    var Equiv_V_Comision = Meteor.call('EquivalenteDolar', MONEDA_COMISION, V_Comision);
-                    if ( MONEDA_SALDO == MON_C ) {
-                        var V_MonedaAdquirida = MON_C
-                    }else{
-                        var V_MonedaAdquirida = MON_B
-                    }
-                    var SaldoMonedaAdquirida = ValidaEstadoOrden.CantidadRecibida;
-                    var V_EquivSaldoMonedaAdquirida = Meteor.call('EquivalenteDolar', V_MonedaAdquirida, SaldoMonedaAdquirida);
-                    var V_IdHitBTC = ValidaEstadoOrden.Id;
-                    var V_IdOrden = ValidaEstadoOrden.IdOrdenCliente;
-                    var V_FormaOperacion = ValidaEstadoOrden.FormaDeOperacion;
-                    var V_Ganancia = V_EquivSaldoMonedaAdquirida - V_EquivalenciaTradeoActual;
-
-                    console.log(" Valor de IdTransaccionActual: ", IdTransaccionActual);
-                    console.log(" Valor de V_IdHitBTC: ", V_IdHitBTC);
-                    console.log(" Valor de ID_LOTE: ", ID_LOTE);
-                    console.log(" Valor de V_IdOrden: ", V_IdOrden);
-                    console.log(" Valor de FechaSaldoAnteior: ", FechaTradeoAnterior);
-                    console.log(" Valor de SaldoTradeoAnterior: ", SaldoTradeoAnterior);
-                    console.log(" Valor de V_EquivalenciaTradeoAnterior: ", V_EquivalenciaTradeoAnterior);
-                    console.log(" Valor de V_SaldoInversion: ", V_SaldoInversion);
-                    console.log(" Valor de Eqv_V_InverSaldAnt: ", Eqv_V_InverSaldAnt);
-                    console.log(" Valor de Eqv_V_InverSaldAct: ", Eqv_V_InverSaldAct);
-                    console.log(" Valor de V_Comision: ", V_Comision);
-                    console.log(" Valor de Equiv_V_Comision: ", Equiv_V_Comision);
-                    console.log(" Valor de V_MonedaAdquirida: ", V_MonedaAdquirida);
-                    console.log(" Valor de SaldoMonedaAdquirida: ", SaldoMonedaAdquirida);
-                    console.log(" Valor de V_EquivSaldoMonedaAdquirida: ", V_EquivSaldoMonedaAdquirida);
-                    console.log(" Valor de V_FormaOperacion: ", V_FormaOperacion);
-                    console.log(" Valor de V_Ganancia: ", V_Ganancia);
-
-                    GananciaPerdida.insert({  id: IdTransaccionActual,
-                                            "Operacion.Id_hitbtc" : V_IdHitBTC,
-                                            "Operacion.id_lote" : ID_LOTE, 
-                                            "Operacion.Id_OrdenHitbtc" : V_IdOrden,
-                                            "MonedaSaldo.Fecha" : FechaTradeoAnterior,
-                                            "MonedaSaldo.Moneda" : MONEDA_SALDO,
-                                            "MonedaSaldo.SaldoTotal" : SaldoTradeoAnterior,
-                                            "MonedaSaldo.Equivalencia" : V_EquivalenciaTradeoAnterior,
-                                            "Inversion.SaldoInversion " : V_SaldoInversion,
-                                            "Inversion.EquivalenciaAnt" : Eqv_V_InverSaldAnt,
-                                            "Inversion.EquivalenciaAct" : Eqv_V_InverSaldAct,
-                                            "Operacion.TipoCompra" : V_FormaOperacion,
-                                            "Comision.Valor" : V_Comision,
-                                            "Comision.Equivalencia" : Equiv_V_Comision,
-                                            "MonedaAdquirida.Fecha" : fecha,
-                                            "MonedaAdquirida.Moneda" : V_MonedaAdquirida,
-                                            "MonedaAdquirida.Saldo" : SaldoMonedaAdquirida,
-                                            "MonedaAdquirida.Equivalencia" : V_EquivSaldoMonedaAdquirida,
-                                            "Ganancia.Valor" :  V_Ganancia});
-
-                                            
-                }   
-                else {
-                    while( Estado_Orden !== "filled" ){                
-                        if ( Estado_Orden === "suspended" || Estado_Orden === "canceled" || Estado_Orden === "expired" ) {
-                            //Meteor.call('GuardarLogEjecucionTrader', ' CrearNuevaOrder: Estoy en: Estado_Orden === "suspended" || Estado_Orden === "canceled" || Estado_Orden === "expired"');
-                            Meteor.call("GuardarLogEjecucionTrader", [' CrearNuevaOrder: Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',T_TRANSACCION :']+[T_TRANSACCION]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
-                            //
-                            //
-                            ///////////////////////////////////////////////////////////////////
-                            cont += 1;
-                            console.log('contador', cont);
-                            Estado_Orden = "filled";
-                            
-
-                            ///////////////////////////////////////////////////////////////////
-                            ///
-                            ///
-                            ///
-
-                        }
-                        else if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
-                            Meteor.call('GuardarLogEjecucionTrader', ' CrearNuevaOrder: Estoy en:  else if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled"');
-                            //Meteor.call("GuardarLogEjecucionTrader", [' CrearNuevaOrder: Orden Parcialmente Completada, Status Recibido: "']+[Estado_Orden]+['", Reintentando Verificación ...']);
-                            //var Estado_Orden = Meteor.call('VerificarHistoricoEstadoOrden', Orden );
-                            if (Estado_Orden === "filled") {
-                                var IdTransaccionActual = Meteor.call('CalculaId', 2);
-
-                                Meteor.call('GuardarLogEjecucionTrader', ' CrearNuevaOrder: Estoy en: Estado_Orden === "filled"');
-
-                                Meteor.call('ActualizaSaldoActual', MONEDA_SALDO );
-
-                                var V_Actual = Monedas.aggregate([{ $match: { 'moneda' : MONEDA_SALDO }}]);
-                                var ValoresActuales = V_Actual[0];
-
-                                //'EquivalenteDolar':function(moneda, saldo)
-
-                                console.log(" Valor de ValoresAnteriores: ", ValoresAnteriores);
-                                console.log(" Valor de ValoresActuales: ", ValoresActuales);
-
-
-                                var FechaTradeoAnterior = ValoresAnteriores.saldo.tradeo.fecha;
-                                var SaldoTradeoAnterior = ValoresAnteriores.saldo.tradeo.activo;
-                                var V_EquivalenciaTradeoAnterior = ValoresAnteriores.saldo.tradeo.equivalencia;
-                                var SaldoTradeoActual = ValoresActuales.saldo.tradeo.activo;
-                                var V_EquivalenciaTradeoActual = Meteor.call('EquivalenteDolar', MONEDA_SALDO, SaldoTradeoActual);
-                                var V_SaldoInversion = ValidaEstadoOrden.Precio;
-                                var Eqv_V_InverSaldAct = Meteor.call('EquivalenteDolar', MONEDA_SALDO, V_SaldoInversion);
-                                var Eqv_V_InverSaldAnt = ( Eqv_V_InverSaldAct * V_EquivalenciaTradeoAnterior ) / SaldoTradeoActual;
-                                var V_Comision = ValidaEstadoOrden.Comision;
-                                var Equiv_V_Comision = Meteor.call('EquivalenteDolar', MONEDA_COMISION, V_Comision);
-                                if ( MONEDA_SALDO == MON_C ) {
-                                    var V_MonedaAdquirida = MON_C
-                                }else{
-                                    var V_MonedaAdquirida = MON_B
-                                }
-                                var SaldoMonedaAdquirida = ValidaEstadoOrden.CantidadRecibida;
-                                var V_EquivSaldoMonedaAdquirida = Meteor.call('EquivalenteDolar', V_MonedaAdquirida, SaldoMonedaAdquirida);
-                                var V_IdHitBTC = ValidaEstadoOrden.Id;
-                                var V_IdOrden = ValidaEstadoOrden.IdOrdenCliente;
-                                var V_FormaOperacion = ValidaEstadoOrden.FormaDeOperacion;
-                                var V_Ganancia = V_EquivSaldoMonedaAdquirida - V_EquivalenciaTradeoActual;
-
-                                console.log(" Valor de IdTransaccionActual: ", IdTransaccionActual);
-                                console.log(" Valor de V_IdHitBTC: ", V_IdHitBTC);
-                                console.log(" Valor de ID_LOTE: ", ID_LOTE);
-                                console.log(" Valor de V_IdOrden: ", V_IdOrden);
-                                console.log(" Valor de FechaSaldoAnteior: ", FechaTradeoAnterior);
-                                console.log(" Valor de SaldoTradeoAnterior: ", SaldoTradeoAnterior);
-                                console.log(" Valor de V_EquivalenciaTradeoAnterior: ", V_EquivalenciaTradeoAnterior);
-                                console.log(" Valor de V_SaldoInversion: ", V_SaldoInversion);
-                                console.log(" Valor de Eqv_V_InverSaldAnt: ", Eqv_V_InverSaldAnt);
-                                console.log(" Valor de Eqv_V_InverSaldAct: ", Eqv_V_InverSaldAct);
-                                console.log(" Valor de V_Comision: ", V_Comision);
-                                console.log(" Valor de Equiv_V_Comision: ", Equiv_V_Comision);
-                                console.log(" Valor de V_MonedaAdquirida: ", V_MonedaAdquirida);
-                                console.log(" Valor de SaldoMonedaAdquirida: ", SaldoMonedaAdquirida);
-                                console.log(" Valor de V_EquivSaldoMonedaAdquirida: ", V_EquivSaldoMonedaAdquirida);
-                                console.log(" Valor de V_FormaOperacion: ", V_FormaOperacion);
-                                console.log(" Valor de V_Ganancia: ", V_Ganancia);
-
-                                GananciaPerdida.insert({  id: IdTransaccionActual,
-                                                        "Operacion.Id_hitbtc" : V_IdHitBTC,
-                                                        "Operacion.id_lote" : ID_LOTE, 
-                                                        "Operacion.Id_OrdenHitbtc" : V_IdOrden,
-                                                        "MonedaSaldo.Fecha" : FechaTradeoAnterior,
-                                                        "MonedaSaldo.Moneda" : MONEDA_SALDO,
-                                                        "MonedaSaldo.SaldoTotal" : SaldoTradeoAnterior,
-                                                        "MonedaSaldo.Equivalencia" : V_EquivalenciaTradeoAnterior,
-                                                        "Inversion.SaldoInversion " : V_SaldoInversion,
-                                                        "Inversion.EquivalenciaAnt" : Eqv_V_InverSaldAnt,
-                                                        "Inversion.EquivalenciaAct" : Eqv_V_InverSaldAct,
-                                                        "Operacion.TipoCompra" : V_FormaOperacion,
-                                                        "Comision.Valor" : V_Comision,
-                                                        "Comision.Equivalencia" : Equiv_V_Comision,
-                                                        "MonedaAdquirida.Fecha" : fecha,
-                                                        "MonedaAdquirida.Moneda" : V_MonedaAdquirida,
-                                                        "MonedaAdquirida.Saldo" : SaldoMonedaAdquirida,
-                                                        "MonedaAdquirida.Equivalencia" : V_EquivSaldoMonedaAdquirida,
-                                                        "Ganancia.Valor" :  V_Ganancia});
-                            }
-                            Meteor.call('sleep',5000);
-                            //
-                            //
-                            ///////////////////////////////////////////////////////////////////
-                            cont += 1;
-                            console.log('contador', cont)
-                            if (cont === 2) {
-                                Estado_Orden = "filled"
-                            }
-
-                            ///////////////////////////////////////////////////////////////////
-                            ///
-                            ///
-                            ///
-                        };
-                    };
-                };
-        /**/
-
-
-
-        ////////////////////
-        /*
-        MONEDA='BTC'
-        SALDO=0.00912129;
-        VALOR= Meteor.call('EquivalenteDolar',MONEDA, SALDO);
-        console.log("Valor de VALOR", VALOR);
-
-        /**/
+        // PRUEBA DE HILOS
+        // 
+        // 
+        // 
+        TIPO_CAMBIO =''
+        Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, TIPO_MUESTREO);
+	    Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO, TIPO_ACCION );
+
+
+        Concurrent.Thread.create( ListaTradeoActual, TIPO_CAMBIO, 2, 1);
     },
 
     'EjecucionGlobal':function(){
@@ -3805,7 +3449,7 @@ Meteor.startup(function (){
     // code to run on server at startup
     // Verificamos si la aplicación es su ejecución Inicial o no
     JobsInternal.Utilities.collection.remove({  });
-    
+    /*
     try {
         var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
 
@@ -3826,6 +3470,6 @@ Meteor.startup(function (){
     }
     catch (error){
         Meteor.call("ValidaError", error, 2);
-    }
-    //Meteor.call("EjecucionGlobal");
+    }*/
+    Meteor.call("EjecucionGlobal");
 });
