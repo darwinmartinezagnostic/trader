@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import '../lib/librerias/Concurrent.Thread.js';
+//import '../lib/librerias/Concurrent.Thread.js';
 //var moment = require('moment-timezone');
 moment().tz('America/Caracas').format();
 
