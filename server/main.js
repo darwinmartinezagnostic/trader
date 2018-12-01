@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-//import '../lib/librerias/Concurrent.Thread.js';
+import '../lib/librerias/Concurrent.Thread.js';
 //var moment = require('moment-timezone');
 moment().tz('America/Caracas').format();
 
@@ -2369,7 +2369,7 @@ Meteor.methods({
                                     console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
                                     console.log(" TIPO_ACCION ", T_ACCION)
                                     console.log('--------------------------------------------');
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
                             break;
                             case 2: 
                                     //var CambioSignoTendencia = ( ProcenApDp * 1 )
@@ -2377,7 +2377,7 @@ Meteor.methods({
                                     console.log(' TENDENCIA RECALCULADA: ',CambioSignoTendencia);
                                     console.log(" TIPO_ACCION ", T_ACCION)
                                     console.log('--------------------------------------------');
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
                             break;                            
                         }
 
@@ -3419,12 +3419,12 @@ Meteor.methods({
         // 
         // 
         // 
-        TIPO_CAMBIO =''
+        /*TIPO_CAMBIO =''
         Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, TIPO_MUESTREO);
 	    Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO, TIPO_ACCION );
 
 
-        Concurrent.Thread.create( ListaTradeoActual, TIPO_CAMBIO, 2, 1);
+        Concurrent.Thread.create( ListaTradeoActual, TIPO_CAMBIO, 2, 1);*/
     },
 
     'EjecucionGlobal':function(){
@@ -3449,7 +3449,7 @@ Meteor.startup(function (){
     // code to run on server at startup
     // Verificamos si la aplicación es su ejecución Inicial o no
     JobsInternal.Utilities.collection.remove({  });
-    /*
+    
     try {
         var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
 
@@ -3470,6 +3470,6 @@ Meteor.startup(function (){
     }
     catch (error){
         Meteor.call("ValidaError", error, 2);
-    }*/
-    Meteor.call("EjecucionGlobal");
+    };
+    //Meteor.call("EjecucionGlobal");
 });
