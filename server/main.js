@@ -2177,7 +2177,7 @@ Meteor.methods({
         // Cuando se está evaluando la moneda invertida si el resultado es + esa moneda esta en baja sino está a la alza
         if ( debug_activo === 1) {
             Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 ');
-            //console.log("Tipo de Cambio recibido", TIPOCAMBIO, " TIPO_ACCION: ", T_ACCION)
+            Meteor.call("GuardarLogEjecucionTrader", [" Tipo de Cambio recibido"]+[TIPOCAMBIO]+[" TIPO_ACCION: "]+[T_ACCION]);
         }
 
 
