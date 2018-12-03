@@ -2273,7 +2273,6 @@ Meteor.methods({
                         
                         switch (T_ACCION){
                             case 1: 
-                                    //var CambioSignoTendencia = ( ProcenApDp * -1 )
                                     var CambioSignoTendencia = ( ProcenApDp * 1 )
                                     Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA RECALCULADA: ']+[CambioSignoTendencia]);
                                     Meteor.call("GuardarLogEjecucionTrader", [" TIPO_ACCION "]+[T_ACCION]);
@@ -2281,7 +2280,6 @@ Meteor.methods({
                                     //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
                             break;
                             case 2: 
-                                    //var CambioSignoTendencia = ( ProcenApDp * 1 )
                                     var CambioSignoTendencia = ( ProcenApDp * -1 )
                                     Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA RECALCULADA: ']+[CambioSignoTendencia]);
                                     Meteor.call("GuardarLogEjecucionTrader", [" TIPO_ACCION "]+[T_ACCION]);
@@ -2344,19 +2342,17 @@ Meteor.methods({
                         switch (T_ACCION){
                             case 1: 
                                     var CambioSignoTendencia = ( ProcenApDp * -1 )
-                                    //var CambioSignoTendencia = ( ProcenApDp * 1 )
                                     Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA RECALCULADA: ']+[CambioSignoTendencia]);
                                     Meteor.call("GuardarLogEjecucionTrader", [" TIPO_ACCION "]+[T_ACCION]);
                                     console.log('--------------------------------------------');
-                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
                             break;
                             case 2: 
                                     var CambioSignoTendencia = ( ProcenApDp * 1 )
-                                    //var CambioSignoTendencia = ( ProcenApDp * -1 )
                                     Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA RECALCULADA: ']+[CambioSignoTendencia]);
                                     Meteor.call("GuardarLogEjecucionTrader", [" TIPO_ACCION "]+[T_ACCION]);
                                     console.log('--------------------------------------------');
-                                    TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
+                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_real" : ProcenApDp, "periodo1.tendencia_recalculada" : CambioSignoTendencia, activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"multi" : true,"upsert" : true});
                             break;                            
                         }
 
