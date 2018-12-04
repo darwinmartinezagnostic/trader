@@ -2274,7 +2274,7 @@ Meteor.methods({
                         switch (T_ACCION){
                             case 1: 
                                     Meteor.call("GuardarLogEjecucionTrader", " ESTOY EN EL IF 'ValPrecAct > ValPrecAnt' SWITCH T_ACCION CASE 1");
-                                    var CambioSignoTendencia = ( ProcenApDp * 1 )
+                                    var CambioSignoTendencia = ( ProcenApDp * -1 )
                                     Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA RECALCULADA: ']+[CambioSignoTendencia]);
                                     Meteor.call("GuardarLogEjecucionTrader", [" TIPO_ACCION "]+[T_ACCION]);
                                     console.log('--------------------------------------------');
@@ -2282,7 +2282,7 @@ Meteor.methods({
                             break;
                             case 2: 
                                     Meteor.call("GuardarLogEjecucionTrader", " ESTOY EN EL IF 'ValPrecAct > ValPrecAnt' SWITCH T_ACCION CASE 2");
-                                    var CambioSignoTendencia = ( ProcenApDp * -1 )
+                                    var CambioSignoTendencia = ( ProcenApDp * 1 )
                                     Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA RECALCULADA: ']+[CambioSignoTendencia]);
                                     Meteor.call("GuardarLogEjecucionTrader", [" TIPO_ACCION "]+[T_ACCION]);
                                     console.log('--------------------------------------------');
