@@ -200,7 +200,8 @@ Jobs.register({
 							var V_moneda_verificar = MonedasVerificar[CMV];
 							console.log("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id)
 							
-							Jobs.run("JobValidaInversion", V_moneda_verificar._id, { 
+							//Jobs.run("JobValidaInversion", V_moneda_verificar._id, {
+							Jobs.run("JobValidaInversion", V_moneda_verificar._id, tipo_cambio_verificar.accion, {
 									in: {
 								    	minute: 3
 								    }
@@ -270,7 +271,7 @@ Jobs.register({
     },
 
 
-    "JobValidaTendenciaTipoCambio": function ( TIPO_CAMBIO, TIPO_MUESTREO, TIPO_ACCION ){
+    "JobValidaTendenciaTipoCambio": function ( TIPO_CAMBIO, TIPO_MUESTREO, TIPO_MONEDA_SALDO ){
     	try{
 	    	console.log(' Estoy en JobValidaTendenciaTipoCambio');
 	    	if ( Job_activo === 1 ) {
@@ -283,10 +284,11 @@ Jobs.register({
 		        console.log('--------------------------------------------');
 		        console.log(' ');
 		        console.log("Estoy en el Job JobValidaTendenciaTipoCambio");
-		        //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " Muestreo: ", TIPO_MUESTREO, " ACCION: ", TIPO_ACCION)
+		        //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " Muestreo: ", TIPO_MUESTREO, " ACCION: ", TIPO_MONEDA_SALDO)
 
 		        Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, TIPO_MUESTREO);
-	            Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO, TIPO_ACCION );
+	            //Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO, TIPO_MONEDA_SALDO );
+	            Meteor.call('EvaluarTendencias', TIPO_CAMBIO );
 		        
 		        console.log('--------------------------------------------');
 		        console.log('############################################');
@@ -312,7 +314,7 @@ Jobs.register({
 
 
 
-    "JobValidaInversion": function( MONEDA_VERIFICAR ){
+    "JobValidaInversion": function( MONEDA_VERIFICAR, TIPO_MONEDA_SALDO ){
     	try{
     		console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
 
@@ -325,7 +327,7 @@ Jobs.register({
 	                Meteor.call("ValidaError", error, 2);
 	            };
 
-	            Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep );
+	            Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep, TIPO_MONEDA_SALDO );
 	        }
 	        else{
 		        console.log(' ');
