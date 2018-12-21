@@ -2231,7 +2231,7 @@ Meteor.methods({
                 console.log(' ');
                 Meteor.call("GuardarLogEjecucionTrader", [' LINEA DE TIEMPO: ']+[PeriodoFechaAnt]);
                 Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[PeriodoId_hitbtcAnt]);
-                Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[PeriodoPrecioAnt]);
+                Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[PeriodoPrecioAnt.toString()]);
                 Meteor.call("GuardarLogEjecucionTrader", [' TIPO OPERACIÓN: ']+[PeriodoTipoOperacionAnt]);
                 Meteor.call("GuardarLogEjecucionTrader", [' COMISION: ']+[PeriodoTipoOperacionAnt]);
                 console.log('--------------------------------------------');
@@ -2240,7 +2240,7 @@ Meteor.methods({
                 console.log(' ');
                 Meteor.call("GuardarLogEjecucionTrader", [' LINEA DE TIEMPO: ']+[PeriodoFechaAct]);
                 Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[PeriodoId_hitbtcAct]);
-                Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[PeriodoPrecioAct]);
+                Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[PeriodoPrecioAct.toString()]);
                 Meteor.call("GuardarLogEjecucionTrader", [' TIPO OPERACIÓN: ']+[PeriodoTipoOperacionAct]);
                 console.log('--------------------------------------------');
                 Meteor.call("GuardarLogEjecucionTrader", '          CALCULANDO TENDENCIA ');
