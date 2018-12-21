@@ -157,9 +157,9 @@ Jobs.register({
 	                    }
 	                };
 	                Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Consultando Tipos de Cambio para Moneda: ']+[moneda_saldo.moneda]+[' SALDO_MONEDA: ']+[moneda_saldo.saldo.tradeo.activo]);
+
 			   		var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda, moneda_saldo.saldo.tradeo.activo);
-			   		//var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra');
-					//Meteor.call("GuardarLogEjecucionTrader", ['Valor de TiposDeCambioVerificar: ']+[TiposDeCambioVerificar]);
+					//Meteor.call("GuardarLogEjecucionTrader", ['Valor de TiposDeCambioVerificar: ']+[TiposDeCambioVerificar[0]]);
 
 					if ( TiposDeCambioVerificar === undefined ) {
 						Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible para moneda: ']+[moneda_saldo.moneda]);
@@ -171,7 +171,7 @@ Jobs.register({
 							for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
 								var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
 
-								Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: Valor de tipo_cambio_verificar: ']+[moneda_saldo.moneda]+[' Moneda: ']+[moneda_saldo.moneda]);
+								Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar.tipo_cambio]+[' Moneda: ']+[moneda_saldo.moneda]);
 								
 								Jobs.run("JobValidaTendenciaTipoCambio", tipo_cambio_verificar.tipo_cambio, TM, tipo_cambio_verificar.accion, { 
 							    	in: {
@@ -179,10 +179,13 @@ Jobs.register({
 							    	}
 								});
 
-								if ( CTP === TTP ) {
-									Meteor.call('ValidarRanking');
-								}
+								/*if ( CTP == TTP ) {
+									
+								}*/
 							}
+
+							Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
+							Meteor.call('ValidarRanking', moneda_saldo.moneda);
 
 							// VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
 						    var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo"}).fetch()
@@ -305,7 +308,7 @@ Jobs.register({
     },
 
 
-    "JobValidaTendenciaTipoCambio": function ( TIPO_CAMBIO, TIPO_MUESTREO, TIPO_MONEDA_SALDO ){
+    "JobValidaTendenciaTipoCambio": function ( TIPO_CAMBIO, TIPO_MUESTREO ){
     	try{
 	    	console.log(' Estoy en JobValidaTendenciaTipoCambio');
 	    	if ( Job_activo === 1 ) {
