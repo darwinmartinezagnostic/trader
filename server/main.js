@@ -1939,67 +1939,37 @@ Meteor.methods({
         };
     },
 
-    'TipoCambioDisponibleCompra':function(){
-        var V_EJEC = 2
-        //console.log ("Estoy en TipoCambioDisponibleCompra");
+    'TipoCambioDisponibleCompra':function(MONEDA){
         var Vset = new Set();
 
-        TempTiposCambioXMoneda.remove({});        
+        TempTiposCambioXMoneda.remove({});
+            try
+            {
+                    //var monedasCambiablesB = TiposDeCambios.aggregate([ { $match: { "moneda_base": moneda_saldo.moneda, "min_compra" : { $lt : moneda_saldo.saldo.tradeo.activo }}}, { $project: { "tipo_cambio" : 1, "accion" : { $literal: 1 }, "moneda_base" : 1, "moneda_cotizacion" : 1, "saldo_moneda_tradear" : { $literal: moneda_saldo.saldo.tradeo.activo }, "moneda_saldo" : { $literal: moneda_saldo.moneda }, "activo" : 1, "comision_hitbtc" : 1, "comision_mercado" : 1, "min_compra" : 1, "moneda_apli_comision" : 1, "valor_incremento" : 1 } } ]);
+                    //var monedasCambiablesC = TiposDeCambios.aggregate([ { $match: { "moneda_cotizacion": moneda_saldo.moneda, "min_compra" : { $lt : moneda_saldo.saldo.tradeo.activo }}}, { $project: { "tipo_cambio" : 1, "accion" : { $literal: 2 }, "moneda_base" : 1, "moneda_cotizacion" : 1, "saldo_moneda_tradear" : { $literal: moneda_saldo.saldo.tradeo.activo }, "moneda_saldo" : { $literal: moneda_saldo.moneda }, "activo" : 1, "comision_hitbtc" : 1, "comision_mercado" : 1, "min_compra" : 1, "moneda_apli_comision" : 1, "valor_incremento" : 1 } } ]);
 
-        try {
-                var Monedas_Saldo = Monedas.aggregate([
-                        { $match : {"saldo.tradeo.equivalencia" : { $gt : 0 }}},
-                        { $sort : {"saldo.tradeo.equivalencia":-1} }
-                    ]);
+                var monedasCambiablesB = TiposDeCambios.aggregate([ { $match: { "moneda_base": MONEDA "min_compra" : { $lt : moneda_saldo.saldo.tradeo.activo }}}, { $project: { "tipo_cambio" : 1, "accion" : { $literal: 1 }, "moneda_base" : 1, "moneda_cotizacion" : 1, "saldo_moneda_tradear" : { $literal: moneda_saldo.saldo.tradeo.activo }, "moneda_saldo" : { $literal: moneda_saldo.moneda }, "activo" : 1, "comision_hitbtc" : 1, "comision_mercado" : 1, "min_compra" : 1, "moneda_apli_comision" : 1, "valor_incremento" : 1 } } ]);
+                var monedasCambiablesC = TiposDeCambios.aggregate([ { $match: { "moneda_cotizacion": MONEDA, "min_compra" : { $lt : moneda_saldo.saldo.tradeo.activo }}}, { $project: { "tipo_cambio" : 1, "accion" : { $literal: 2 }, "moneda_base" : 1, "moneda_cotizacion" : 1, "saldo_moneda_tradear" : { $literal: moneda_saldo.saldo.tradeo.activo }, "moneda_saldo" : { $literal: moneda_saldo.moneda }, "activo" : 1, "comision_hitbtc" : 1, "comision_mercado" : 1, "min_compra" : 1, "moneda_apli_comision" : 1, "valor_incremento" : 1 } } ]);
+
             }
-        catch (error){
-            Meteor.call("ValidaError", error, 2);
-        };        
-        
-        if ( Monedas_Saldo[0] === undefined ) {
-            Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ninguna moneda con saldo disponible para invertir ']);
-        }
-        else{
+            catch (error){
+                Meteor.call("ValidaError", error, 2);
+            };
 
-            for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
-                var moneda_saldo =  Monedas_Saldo[CMS];
+            var set = new Set();
+            for(mc in monedasCambiablesB){
+                set.add( monedasCambiablesB[mc] );
+            }
 
-                if (TiposDeCambios.find().count() === 0){
-                    Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ningún tipo de Cambio Guardado en la Base de Datos Local, Solucionando ... ']);
-                    //Monedas.remove({});
-                    Meteor.call("ListaTiposDeCambios", V_EJEC);
-                    Meteor.call("ListaMonedas");
-                    Meteor.call("ActualizaSaldoTodasMonedas",2);
-                    if (TiposDeCambios.find().count() !== 0){
-                        Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: ¡ Listo ! ']);
-                    }
-                };
-
-                try
-                {
-                    var monedasCambiablesB = TiposDeCambios.aggregate([ { $match: { "moneda_base": moneda_saldo.moneda, "min_compra" : { $lt : moneda_saldo.saldo.tradeo.activo }}}, { $project: { "tipo_cambio" : 1, "accion" : { $literal: 1 }, "moneda_base" : 1, "moneda_cotizacion" : 1, "saldo_moneda_tradear" : { $literal: moneda_saldo.saldo.tradeo.activo }, "moneda_saldo" : { $literal: moneda_saldo.moneda }, "activo" : 1, "comision_hitbtc" : 1, "comision_mercado" : 1, "min_compra" : 1, "moneda_apli_comision" : 1, "valor_incremento" : 1 } } ]);
-                    var monedasCambiablesC = TiposDeCambios.aggregate([ { $match: { "moneda_cotizacion": moneda_saldo.moneda, "min_compra" : { $lt : moneda_saldo.saldo.tradeo.activo }}}, { $project: { "tipo_cambio" : 1, "accion" : { $literal: 2 }, "moneda_base" : 1, "moneda_cotizacion" : 1, "saldo_moneda_tradear" : { $literal: moneda_saldo.saldo.tradeo.activo }, "moneda_saldo" : { $literal: moneda_saldo.moneda }, "activo" : 1, "comision_hitbtc" : 1, "comision_mercado" : 1, "min_compra" : 1, "moneda_apli_comision" : 1, "valor_incremento" : 1 } } ]);
-
-                }
-                catch (error){
-                    Meteor.call("ValidaError", error, 2);
-                };
-
-                var set = new Set();
-                for(mc in monedasCambiablesB){
-                    set.add( monedasCambiablesB[mc] );
-                }
-
-                for(mc in monedasCambiablesC){
-                    set.add( monedasCambiablesC[mc]);
-                } 
-                var TiposDeCambiosRankear = Array.from(set);
+            for(mc in monedasCambiablesC){
+                set.add( monedasCambiablesC[mc]);
+            } 
+            var TiposDeCambiosRankear = Array.from(set);
                 
-                for (CTDC = 0, tamanio_TiposDeCambiosRankear = TiposDeCambiosRankear.length; CTDC < tamanio_TiposDeCambiosRankear; CTDC++) {
-                    var V_TiposDeCambiosRankear = TiposDeCambiosRankear[CTDC];
+            for (CTDC = 0, tamanio_TiposDeCambiosRankear = TiposDeCambiosRankear.length; CTDC < tamanio_TiposDeCambiosRankear; CTDC++) {
+                var V_TiposDeCambiosRankear = TiposDeCambiosRankear[CTDC];
 
-                    Vset.add( V_TiposDeCambiosRankear);
-                };
+                Vset.add( V_TiposDeCambiosRankear);
             };
 
 
@@ -2016,7 +1986,7 @@ Meteor.methods({
                 };
 
             return Valores_TiposDeCambiosRankear;
-        }
+        //}
     },
 
     'ListaTradeoActual':function( TIPO_CAMBIO, VALOR_EJEC, TIPO_MUESTREO ){
@@ -2453,7 +2423,7 @@ Meteor.methods({
                                                     "moneda_apli_comision": V_TmpTCMC.moneda_apli_comision,
                                                     "valor_incremento" : V_TmpTCMC.valor_incremento,
                                                     "estado" : V_TmpTCMC.estado,
-                                                    "tendencia" : V_TmpTCMC.periodo1.tendencia_moneda_base });
+                                                    "tendencia" : V_TmpTCMC.periodo1.tendencia_moneda_cotizacion });
             };
 
         }
@@ -2462,7 +2432,7 @@ Meteor.methods({
         };
     },
 
-    'ValidaPropTipoCambiosValidados': function ( MONEDA, LIMITE_AP_DEP, TIPO_MONEDA_SALDO ){
+    'ValidaPropTipoCambiosValidados': function ( MONEDA, LIMITE_AP_DEP ){
 
         console.log('############################################');
         Meteor.call("GuardarLogEjecucionTrader", ' *CALCULANDO RANKING DE LOS TIPOS DE CAMBIO*');
@@ -2472,43 +2442,16 @@ Meteor.methods({
         console.log(' ');
 
 
-        Meteor.call('ValidarRanking', MONEDA);
+        var CPTC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
+        var RTDC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 3 } ]);
 
 
-
-        var CPTC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"periodo1.tendencia_moneda_base" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
-        var RTDC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"periodo1.tendencia_moneda_base" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 3 } ]);
-
-
-
-        /*
-
-        switch (TIPO_MONEDA_SALDO){
-            case 1:
-                var CPTC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA,"periodo1.tendencia_moneda_base" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia_moneda_base" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
-            break;
-            case 2:
-                var CPTC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA,"periodo1.tendencia_moneda_cotizacion" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia_moneda_cotizacion" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
-            break;
-        }
-
-        
 
         if ( CPTC[0] === undefined ){
             var CantPropTipoCambios = 0
         }else{
             var CantPropTipoCambios = CPTC[0].CantidadDeTiposDeCambios;
         }
-        switch (TIPO_MONEDA_SALDO){
-            case 1:
-                var RTDC = TempTiposCambioXMoneda.aggregate([{ $match: {  estado : "A", "moneda_saldo" : MONEDA, "periodo1.tendencia_moneda_base" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia_moneda_base" : -1 }}, { $limit: 3 } ]);
-            break;
-            case 2:
-                var RTDC = TempTiposCambioXMoneda.aggregate([{ $match: {  estado : "A", "moneda_saldo" : MONEDA, "periodo1.tendencia_moneda_cotizacion" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia_moneda_cotizacion" : -1 }}, { $limit: 3 } ]);
-            break;
-        }
-
-        */
 
         var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
         var PTDC = PTC[0];
@@ -2868,10 +2811,10 @@ Meteor.methods({
                     break;
                 }
 
-        Meteor.call('Invertir', MONEDA, LIMITE_AP_DEP, CantPropTipoCambiosValidados, TIPO_MONEDA_SALDO );
+        Meteor.call('Invertir', MONEDA, LIMITE_AP_DEP, CantPropTipoCambiosValidados );
     },
 
-    'Invertir': function( MONEDA, LIMITE_AP_DEP, CANT_TIP_CAMBIOS_VALIDADOS, TIPO_MONEDA_SALDO ){
+    'Invertir': function( MONEDA, LIMITE_AP_DEP, CANT_TIP_CAMBIOS_VALIDADOS ){
 
         fecha = moment (new Date());
         

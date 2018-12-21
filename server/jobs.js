@@ -117,9 +117,6 @@ Jobs.register({
 
    	"JobSecuenciaPeriodo1" : function (){
    		try{
-
-
-
 	   		var TM = 1;
 	   		V_EJEC = 2;
 	   		fecha = moment (new Date());
@@ -128,132 +125,169 @@ Jobs.register({
 	        console.log(' ');
 			Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el Job JobSecuenciaPeriodo1');
 
-	   		var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', 1);
-			//Meteor.call("GuardarLogEjecucionTrader", ['Valor de TiposDeCambioVerificar: ']+[TiposDeCambioVerificar]);
-
-			
 
 
 
-			if ( TiposDeCambioVerificar === undefined ) {
-				Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TiposDeCambioVerificar]);
-				Meteor.call('EjecucionInicial');
-			}
-			else {
-	   			if ( JobsInternal.Utilities.collection.find({ name : "JobValidaInversion", state : "pending" }).count() === 0 && JobsInternal.Utilities.collection.find({ name : "JobValidaTendenciaTipoCambio" , state : "pending" }).count() === 0 ) {
-		            
-					for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
-						var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
+			try {
+                var Monedas_Saldo = Monedas.aggregate([
+                        { $match : {"saldo.tradeo.equivalencia" : { $gt : 0 }}},
+                        { $sort : {"saldo.tradeo.equivalencia":-1} }
+                    ]);
+            }
+	        catch (error){
+	            Meteor.call("ValidaError", error, 2);
+	        };        
+	        
+	        if ( Monedas_Saldo[0] === undefined ) {
+	            Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ninguna moneda con saldo disponible para invertir ']);
+	        }
+	        else{
 
-						//console.log("Valor de tipo_cambio_verificar", tipo_cambio_verificar)
+	            for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
+	                var moneda_saldo =  Monedas_Saldo[CMS];
 
-						Jobs.run("JobValidaTendenciaTipoCambio", tipo_cambio_verificar.tipo_cambio, TM, tipo_cambio_verificar.accion, { 
-					    	in: {
-					        	second: 1
-					    	}
-						})
+	                if (TiposDeCambios.find().count() === 0){
+	                    Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ningún tipo de Cambio Guardado en la Base de Datos Local, Solucionando ... ']);
+	                    //Monedas.remove({});
+	                    Meteor.call("ListaTiposDeCambios", V_EJEC);
+	                    Meteor.call("ListaMonedas");
+	                    Meteor.call("ActualizaSaldoTodasMonedas",2);
+	                    if (TiposDeCambios.find().count() !== 0){
+	                        Meteor.call("GuardarLogEjecucionTrader", [' Moneda con Saldo: ¡ Listo ! ']);
+	                    }
+	                };
+
+			   		var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda);
+			   		//var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra');
+					//Meteor.call("GuardarLogEjecucionTrader", ['Valor de TiposDeCambioVerificar: ']+[TiposDeCambioVerificar]);
+
+					if ( TiposDeCambioVerificar === undefined ) {
+						Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TiposDeCambioVerificar]);
+						Meteor.call('EjecucionInicial');
 					}
+					else {
+			   			if ( JobsInternal.Utilities.collection.find({ name : "JobValidaInversion", state : "pending" }).count() === 0 && JobsInternal.Utilities.collection.find({ name : "JobValidaTendenciaTipoCambio" , state : "pending" }).count() === 0 ) {
+				            
+							for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
+								var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
 
-					var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
-				    var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
+								//console.log("Valor de tipo_cambio_verificar", tipo_cambio_verificar)
 
-				    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion)
+								Jobs.run("JobValidaTendenciaTipoCambio", tipo_cambio_verificar.tipo_cambio, TM, tipo_cambio_verificar.accion, { 
+							    	in: {
+							        	second: 1
+							    	}
+								});
 
-				    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
-						
-						console.log(' ');
-						Jobs.run("JobSecuenciaPeriodo1", { 
-					    	in: {
-					        	minute: 5
-					    	}
-					    })
+								if ( CTP === TTP ) {
+									Meteor.call('ValidarRanking');
+								}
+							}
 
-				    }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
+							// VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
+						    var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo"}).fetch()
+						    var V_LimiteMuestreo = LimiteMuestreo[0].valor
 
-				    	console.log(' ');
-						Jobs.run("JobSecuenciaPeriodo1", { 
-					    	in: {
-					        	minute: 5
-					    	}
-					    })
+						    if ( V_LimiteMuestreo === 0 ) {
 
-						V_LimiteMaximoEjecucion = V_LimiteMaximoEjecucion - 1
-						
-						Parametros.update({ "dominio": "limites", "nombre": "CantMaximaEjecucion" }, {
-						    $set: {
-						        "estado": true,
-						        "valor": V_LimiteMaximoEjecucion
-						    }
-						})
-					}
+						    	var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
+		                                     { $project: { _id : 1 } }
+		                                    ]);
 
-				    var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo"}).fetch()
-				    var V_LimiteMuestreo = LimiteMuestreo[0].valor
+							    for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
+									var V_moneda_verificar = MonedasVerificar[CMV];
+									console.log("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id)
+									
+									//Jobs.run("JobValidaInversion", V_moneda_verificar._id, {
+									Jobs.run("JobValidaInversion", V_moneda_verificar._id, tipo_cambio_verificar.accion, {
+											in: {
+										    	minute: 3
+										    }
+										})
+								}
+							}else{
+								V_LimiteMuestreo = V_LimiteMuestreo - 1
+								
+								Parametros.update({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo" }, {
+								    $set: {
+								        "estado": true,
+								        "valor": V_LimiteMuestreo
+								    }
+								});
+							}
 
-				    if ( V_LimiteMuestreo === 0 ) {
 
-				    	var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
-                                     { $project: { _id : 1 } }
-                                    ]);
+							// VALIDA EL LIMITE TOTAL DE EJECUCIÓN DE LA APLICACION SI ESTE ES IGUAL '9999999999' ENTONCES SE EJECUTARÁ DE FORMA INFINITA
+							// SINO ENTONCES ESTE VALOR SERÁ ACTUALIZADO RESTANDO 1 SE EJECUTARA HASTA QUE EL CONTADOR LLEGUE A 0
+							var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
+						    var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
 
-					    for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
-							var V_moneda_verificar = MonedasVerificar[CMV];
-							console.log("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id)
-							
-							//Jobs.run("JobValidaInversion", V_moneda_verificar._id, {
-							Jobs.run("JobValidaInversion", V_moneda_verificar._id, tipo_cambio_verificar.accion, {
-									in: {
-								    	minute: 3
+						    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion)
+
+						    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
+								
+								console.log(' ');
+								Jobs.run("JobSecuenciaPeriodo1", { 
+							    	in: {
+							        	minute: 5
+							    	}
+							    })
+
+						    }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
+
+						    	console.log(' ');
+								Jobs.run("JobSecuenciaPeriodo1", { 
+							    	in: {
+							        	minute: 5
+							    	}
+							    })
+
+								V_LimiteMaximoEjecucion = V_LimiteMaximoEjecucion - 1
+								
+								Parametros.update({ "dominio": "limites", "nombre": "CantMaximaEjecucion" }, {
+								    $set: {
+								        "estado": true,
+								        "valor": V_LimiteMaximoEjecucion
 								    }
 								})
+							}
+
+				        }
+				        else{
+				        	var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
+						    var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
+
+						    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion);
+						    
+
+						    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
+								
+								console.log(' ');
+								Jobs.run("JobSecuenciaPeriodo1", { 
+							    	in: {
+							        	minute: 1
+							    	}
+							    })
+
+								
+						    }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
+								
+								console.log(' ');
+								Jobs.run("JobSecuenciaPeriodo1", { 
+							    	in: {
+							        	minute: 1
+							    	}
+							    })
+
+						    }else if ( V_LimiteMaximoEjecucion === 0 ) {
+						    	Meteor.call("GuardarLogEjecucionTrader", ['LIMITE DE EJECUCION ALCANZADO']);
+						    	Meteor.call("FinEjecucion");
+						    };
 						}
-					}else{
-						V_LimiteMuestreo = V_LimiteMuestreo - 1
-						
-						Parametros.update({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo" }, {
-						    $set: {
-						        "estado": true,
-						        "valor": V_LimiteMuestreo
-						    }
-						});
-
 					}
-
-
-		        }
-		        else{
-		        	var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
-				    var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
-
-				    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion);
-				    
-
-				    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
-						
-						console.log(' ');
-						Jobs.run("JobSecuenciaPeriodo1", { 
-					    	in: {
-					        	minute: 1
-					    	}
-					    })
-
-						
-				    }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
-						
-						console.log(' ');
-						Jobs.run("JobSecuenciaPeriodo1", { 
-					    	in: {
-					        	minute: 1
-					    	}
-					    })
-
-				    }else if ( V_LimiteMaximoEjecucion === 0 ) {
-				    	Meteor.call("GuardarLogEjecucionTrader", ['LIMITE DE EJECUCION ALCANZADO']);
-				    	Meteor.call("FinEjecucion");
-				    };
+					var ejecucionSecuenciaPeriodo1 = 0
 				}
 			}
-			var ejecucionSecuenciaPeriodo1 = 0
 		}
 		catch(error){
 			var ejecucionSecuenciaPeriodo1 = 1
