@@ -156,13 +156,13 @@ Jobs.register({
 	                        Meteor.call("GuardarLogEjecucionTrader", [' Moneda con Saldo: ¡ Listo ! ']);
 	                    }
 	                };
-
+	                Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Consultando Tipos de Cambio para Moneda: ']+[moneda_saldo.moneda]);
 			   		var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda);
 			   		//var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra');
 					//Meteor.call("GuardarLogEjecucionTrader", ['Valor de TiposDeCambioVerificar: ']+[TiposDeCambioVerificar]);
 
 					if ( TiposDeCambioVerificar === undefined ) {
-						Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible ']+[TiposDeCambioVerificar]);
+						Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible para moneda: ']+[moneda_saldo.moneda]);
 						Meteor.call('EjecucionInicial');
 					}
 					else {
@@ -171,8 +171,8 @@ Jobs.register({
 							for (CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++){
 								var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
 
-								//console.log("Valor de tipo_cambio_verificar", tipo_cambio_verificar)
-
+								Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: Valor de tipo_cambio_verificar: ']+[moneda_saldo.moneda]+[' Moneda: ']+[moneda_saldo.moneda]);
+								
 								Jobs.run("JobValidaTendenciaTipoCambio", tipo_cambio_verificar.tipo_cambio, TM, tipo_cambio_verificar.accion, { 
 							    	in: {
 							        	second: 1
@@ -348,7 +348,7 @@ Jobs.register({
 
 
 
-    "JobValidaInversion": function( MONEDA_VERIFICAR, TIPO_MONEDA_SALDO ){
+    "JobValidaInversion": function( MONEDA_VERIFICAR ){
     	try{
     		console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
 
@@ -361,7 +361,7 @@ Jobs.register({
 	                Meteor.call("ValidaError", error, 2);
 	            };
 
-	            Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep, TIPO_MONEDA_SALDO );
+	            Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep );
 	        }
 	        else{
 		        console.log(' ');
