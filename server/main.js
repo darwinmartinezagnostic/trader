@@ -1940,7 +1940,7 @@ Meteor.methods({
     },
 
     'TipoCambioDisponibleCompra':function(MONEDA, SALDO_MONEDA){
-        Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA], [' SALDO_MONEDA: ']+[SALDO_MONEDA]);
+        Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_MONEDA: ']+[SALDO_MONEDA]);
         var Vset = new Set();
 
         TempTiposCambioXMoneda.remove({});
