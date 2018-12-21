@@ -1940,6 +1940,7 @@ Meteor.methods({
     },
 
     'TipoCambioDisponibleCompra':function(MONEDA, SALDO_MONEDA){
+        Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA], [' SALDO_MONEDA: ']+[SALDO_MONEDA]);
         var Vset = new Set();
 
         TempTiposCambioXMoneda.remove({});
@@ -1976,7 +1977,7 @@ Meteor.methods({
 
             var Valores_TiposDeCambiosRankear = Array.from(Vset);
 
-            //console.log("Valore de Valores_TiposDeCambiosRankear", Valores_TiposDeCambiosRankear)
+            Meteor.call("GuardarLogEjecucionTrader", [' Valore de Valores_TiposDeCambiosRankear: ']+[Valores_TiposDeCambiosRankear]);
 
             for (CTMCB = 0, tamanio_Valores_TiposDeCambiosRankear = Valores_TiposDeCambiosRankear.length; CTMCB < tamanio_Valores_TiposDeCambiosRankear; CTMCB++) {
                     var V_Valores_TiposDeCambiosRankear = Valores_TiposDeCambiosRankear[CTMCB];
