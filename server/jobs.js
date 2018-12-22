@@ -403,6 +403,7 @@ Jobs.register({
 	    	Meteor.call("validaMonedasActivas");
 	    	Meteor.call("ListaTiposDeCambios",2);
 	    	Meteor.call("validaTiposDeCambiosActivos");
+	    	Meteor.call("EquivalenteDolarMinCompra");
 
 
 	    	Jobs.run("JobsFrecuenciaDiaria", { 
