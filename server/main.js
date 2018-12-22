@@ -494,7 +494,7 @@ Meteor.methods({
             SaldoCuentaActivo = parseFloat(V_MonedasSaldoVerificar.saldo.cuenta.activo);
 
             if ( SaldoTradeoActivo !== undefined ) {
-                var EquivalenciaSaldoTradeo = Meteor.call('EquivalenteDolar', MonedaSaldo, SaldoTradeoActivo );
+                var EquivalenciaSaldoTradeo = Meteor.call('EquivalenteDolar', MonedaSaldo, SaldoTradeoActivo, 2 );
                 //console.log("Valor de EquivalenciaSaldoTradeo", EquivalenciaSaldoTradeo);
                 Monedas.update({
                                 _id: Id,
@@ -508,7 +508,7 @@ Meteor.methods({
             }
 
             if ( SaldoCuentaActivo !== undefined ) {
-                var EquivalenciaSaldoCuenta = Meteor.call('EquivalenteDolar', MonedaSaldo, SaldoCuentaActivo );
+                var EquivalenciaSaldoCuenta = Meteor.call('EquivalenteDolar', MonedaSaldo, SaldoCuentaActivo, 2 );
                 //console.log("Valor de EquivalenciaSaldoCuenta", EquivalenciaSaldoCuenta);
                 Monedas.update({
                                 _id: Id,
@@ -1502,20 +1502,20 @@ Meteor.methods({
         if ( SALDO === 0 ) {
             var EquivalenciaActual = 0;
         }else{            
-            //console.log("Valores recibidos: MONEDA", [MONEDA]+[' SALDO:']+[SALDO]);
+           //console.log("Valores recibidos: MONEDA", [MONEDA]+[' SALDO:']+[SALDO]);
 
             if ( MONEDA == 'USD' ) {
                 var EquivalenciaActual = parseFloat(SALDO);
             }else{
-                //console.log("EquivalenteDolar: Valores recibidos - MONEDA:", [MONEDA]+[' ,SALDO:']+[SALDO]);
+                console.log("EquivalenteDolar: Valores recibidos - MONEDA:", [MONEDA]+[' ,SALDO:']+[SALDO]);
 
                 var ExisteTipoCambio = TiposDeCambios.find({ $or: [ { moneda_base : MONEDA }, { moneda_cotizacion : MONEDA }]},{ _id : 0, tipo_cambio : 1}).count();
-                //console.log("Valor de ExisteTipoCambio", ExisteTipoCambio);
+                console.log("Valor de ExisteTipoCambio", ExisteTipoCambio);
 
                 if ( ExisteTipoCambio !== 0 ) {
 
                     var DIRECTO = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).count();
-                    //console.log("Valor de DIRECTO", DIRECTO);            
+                    console.log("Valor de DIRECTO", DIRECTO);            
 
                     if ( DIRECTO !== 0 ) {
                         var precioAux = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).fetch();
@@ -1539,11 +1539,12 @@ Meteor.methods({
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                                     console.log("Valor de ValorPromedio", ValorPromedio);
                                 }
-                                break;
+                            break;
                             case 2:
                                 console.log("Estoy en el case 2");
                                 var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
-                                break;
+                                console.log("Valor de ValorPromedio", ValorPromedio);
+                            break;
                         }
 
 
@@ -3493,7 +3494,7 @@ Meteor.methods({
         //
         //
         
-
+        Meteor.call("ValidaSaldoEquivalenteActual");
 
 
         /*
