@@ -2013,7 +2013,7 @@ Meteor.methods({
         Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_MONEDA_EQUIV: ']+[SALDO_MONEDA_EQUIV]);
         var Vset = new Set();
 
-        TempTiposCambioXMoneda.remove({ moneda : MONEDA });
+        TempTiposCambioXMoneda.remove({ moneda_saldo : MONEDA });
         try
         {
             var Valores_TiposDeCambiosRankear = TiposDeCambios.find( { $or : [{"moneda_base" : MONEDA },{ "moneda_cotizacion" : MONEDA }],  "min_compra_equivalente" : { $lt : SALDO_MONEDA_EQUIV }}).fetch();
