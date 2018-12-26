@@ -356,7 +356,7 @@ Meteor.methods({
 
             if (Monedas.find({ moneda : mon.id }).count() !== 0) {
                 try{
-                    Monedas.update({ moneda : mon.id },{$set:{ nombre_moneda : mon.fullName, activo : "S" }});
+                    Monedas.update({ moneda : mon.id },{$set:{ nombre_moneda : mon.fullName, activo : "S" }}, {"multi" : true,"upsert" : true});
                 }
                 catch(error){
                     Meteor.call("GuardarLogEjecucionTrader", ' Error: los datos no pudieron ser actualizados');
@@ -447,7 +447,7 @@ Meteor.methods({
                                         $set: { "saldo.tradeo.activo": Number(v_BlcMonedasTradeo.available),
                                                 "saldo.tradeo.reserva": Number(v_BlcMonedasTradeo.reserved)
                                     }
-                        });
+                        }, {"multi" : true,"upsert" : true});
                     }
                 }
 
@@ -472,7 +472,7 @@ Meteor.methods({
                                     $set: { "saldo.cuenta.activo": Number(v_BlcCuenta.available),
                                             "saldo.cuenta.reserva": Number(v_BlcCuenta.reserved)
                                     }
-                                });
+                                }, {"multi" : true,"upsert" : true});
                     }                    
                 }
             break;
@@ -504,7 +504,7 @@ Meteor.methods({
                                             "saldo.tradeo.fecha": fecha, 
                                             "saldo.tradeo.equivalencia": Number(EquivalenciaSaldoTradeo),
                                         }
-                                });
+                                }, {"multi" : true,"upsert" : true});
             }
 
             if ( SaldoCuentaActivo !== undefined ) {
@@ -518,7 +518,7 @@ Meteor.methods({
                                             "saldo.cuenta.fecha": fecha,
                                             "saldo.cuenta.equivalencia": Number(EquivalenciaSaldoCuenta),
                                         }
-                                });
+                                }, {"multi" : true,"upsert" : true});
             }
         }
 
@@ -563,7 +563,7 @@ Meteor.methods({
                                             $set: { "saldo.tradeo.activo": Number(v_BlcMonedasTradeo.available),
                                                     "saldo.tradeo.reserva": Number(v_BlcMonedasTradeo.reserved)
                                         }
-                        });
+                        }, {"multi" : true,"upsert" : true});
                     }
             }
         }
@@ -594,7 +594,7 @@ Meteor.methods({
                                             $set: { "saldo.cuenta.activo": Number(v_BlcCuenta.available),
                                                     "saldo.cuenta.reserva": Number(v_BlcCuenta.reserved)
                                             }
-                        });
+                        }, {"multi" : true,"upsert" : true});
                     }
             }
         }
@@ -666,7 +666,7 @@ Meteor.methods({
             var TransExist = HistoralTransferencias.find( { id : IdTransferencia }).fetch().length
 
             if ( TransExist > 0 ) {
-                HistoralTransferencias.update({ id : IdTransferencia }, {$set: { estado: STATUS }});
+                HistoralTransferencias.update({ id : IdTransferencia }, {$set: { estado: STATUS }}, {"multi" : true,"upsert" : true});
             }else{
                 HistoralTransferencias.insert({ fecha : FECHA, id : IdTransferencia, indice : Indice, tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : STATUS, fecha_creacion_solicitud : fechaCreacionSol, fecha_ejecucion_solicitud : fechaProcesamientoSol })
             };
@@ -738,7 +738,7 @@ Meteor.methods({
                                 console.log('############################################');*/
                                 var NuevoValMinTransf = Meteor.call('ReemplazaNumeroACero', SaldoActTransf);
                                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de NuevoValMinTransf']+[NuevoValMinTransf]);
-                                Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }})
+                                Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }}, {"multi" : true,"upsert" : true});
                                 var ValMinTranf = NuevoValMinTransf
                                 //HistoralTransferencias.update({ id : EstadoTransferencia[1] }, {$set: { estado: "Exitoso" }});
                                 break;
@@ -765,7 +765,7 @@ Meteor.methods({
                                 var NuevoValMinTransf = Meteor.call('ReemplazaNumeroACero', SaldoActTransf);  
                                 var ValMinTranf = NuevoValMinTransf
                                 //console.log("Valor de NuevoValMinTransf", NuevoValMinTransf)
-                                Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }});                            
+                                Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }}, {"multi" : true,"upsert" : true});                            
                                 //HistoralTransferencias.update({ id : EstadoTransferencia[1] }, {$set: { estado: "Fallo" }});
                             }
                         }else if ( EstadoTransferencia[0] === 0 && EstadoTransferencia[2] === "FALLIDO" || EstadoTransferencia[0] === 1 ){
@@ -782,7 +782,7 @@ Meteor.methods({
                             var SaldoActTransf = ValFinSaldoActTransf;
                             var NuevoValMinTransf = Meteor.call('ReemplazaNumeroACero', SaldoActTransf);  
                             var ValMinTranf = NuevoValMinTransf
-                            Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }});
+                            Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }}, {"multi" : true,"upsert" : true});
                             break
                         }
                     }while( Repeticiones < 1000 );
@@ -852,7 +852,7 @@ Meteor.methods({
 
                     if (TiposDeCambios.find({ tipo_cambio : mon_c.id }).count() !== 0) {
                         try{
-                            TiposDeCambios.update({ tipo_cambio : LTCTipoCambio },{$set:{ tipo_cambio : LTCTipoCambio, moneda_base :  LTCMonedaBase, moneda_cotizacion : LTCMonedaCotizacion, activo : "S", habilitado : 1 , comision_hitbtc : LTCComisionCasaCambio, comision_mercado : LTCComisionMercado, min_compra : LTCMontoMinCompra, moneda_apli_comision : LTCMonedaAplicacionComision, valor_incremento : LTCValorIncremento, c_estado_p: 0, c_estado_a: 0  }});
+                            TiposDeCambios.update({ tipo_cambio : LTCTipoCambio },{$set:{ tipo_cambio : LTCTipoCambio, moneda_base :  LTCMonedaBase, moneda_cotizacion : LTCMonedaCotizacion, activo : "S", habilitado : 1 , comision_hitbtc : LTCComisionCasaCambio, comision_mercado : LTCComisionMercado, min_compra : LTCMontoMinCompra, moneda_apli_comision : LTCMonedaAplicacionComision, valor_incremento : LTCValorIncremento, c_estado_p: 0, c_estado_a: 0  }}, {"multi" : true,"upsert" : true});
                         }
                         catch(error){
                             Meteor.call("GuardarLogEjecucionTrader", ' Error: los datos no pudieron ser actualizados');
@@ -920,7 +920,7 @@ Meteor.methods({
                 EquivalenciasDol.insert({ fecha : fecha._d, tipo_cambio : v_compras_ventas.symbol, ValorOfertaVenta : v_compras_ventas.ask, ValorOfertaCompra : v_compras_ventas.bid, Promedio : ValFinPromedio, Existe : Existencia })
             }
             else{
-                EquivalenciasDol.update({ tipo_cambio : v_compras_ventas.symbol },{$set:{ fecha : fecha._d, ValorOfertaVenta : v_compras_ventas.ask, ValorOfertaCompra : v_compras_ventas.bid, Promedio : ValFinPromedio, Existe : Existencia }});
+                EquivalenciasDol.update({ tipo_cambio : v_compras_ventas.symbol },{$set:{ fecha : fecha._d, ValorOfertaVenta : v_compras_ventas.ask, ValorOfertaCompra : v_compras_ventas.bid, Promedio : ValFinPromedio, Existe : Existencia }}, {"multi" : true,"upsert" : true});
             }
         }
         PromedioObtenido = { 'Promedio': ValFinPromedio, 'Existe': Existencia };
@@ -961,7 +961,7 @@ Meteor.methods({
                 for(aux in aux1)
                 {
                     try{
-                        Monedas.update({ moneda : aux1[aux].moneda },{$set:{ nombre_moneda : aux1[aux].nombre_moneda, activo : "N" }});
+                        Monedas.update({ moneda : aux1[aux].moneda },{$set:{ nombre_moneda : aux1[aux].nombre_moneda, activo : "N" }}, {"multi" : true,"upsert" : true});
                     }
                     catch(error){
                         Meteor.call("GuardarLogEjecucionTrader", 'Error: los datos no pudieron ser actualizados');
@@ -1006,7 +1006,7 @@ Meteor.methods({
                 for(aux in aux1)
                 {
                     try{
-                        TiposDeCambios.update({ tipo_cambio : aux1[aux].tipo_cambio },{$set:{ tipo_cambio : aux1[aux].tipo_cambio, moneda_base :  aux1[aux].moneda_base, moneda_cotizacion : aux1[aux].moneda_cotizacion, activo : "N" }});
+                        TiposDeCambios.update({ tipo_cambio : aux1[aux].tipo_cambio },{$set:{ tipo_cambio : aux1[aux].tipo_cambio, moneda_base :  aux1[aux].moneda_base, moneda_cotizacion : aux1[aux].moneda_cotizacion, activo : "N" }}, {"multi" : true,"upsert" : true});
                     }
                     catch(error){
                         Meteor.call("GuardarLogEjecucionTrader", 'Error: los datos no pudieron ser actualizados');
@@ -1560,7 +1560,7 @@ Meteor.methods({
                                                         $set: {
                                                                 habilitado: 0
                                                             }
-                                                        })
+                                                        }, {"multi" : true,"upsert" : true});
                         }else{
                             //console.log("Valor de ValorPromedio", ValorPromedio.Promedio);
                             var EquivalenciaActual = (parseFloat(SALDO) * ValorPromedio.Promedio ) / 1;
@@ -1616,7 +1616,7 @@ Meteor.methods({
                                                         $set: {
                                                                 habilitado: 0
                                                             }
-                                                        })
+                                                        }, {"multi" : true,"upsert" : true});
                             }else{
                                 //console.log("Valor de ValorPromedioObtenido", ValorPromedioObtenido.Promedio);
                                 var EquivalenciaSaldoMonedaAuxi = (parseFloat(SALDO)  * parseFloat(ValorPromedioObtenido.Promedio) ) / 1;
@@ -1688,7 +1688,7 @@ Meteor.methods({
             //console.log("Valor de EquivDolarMinComp", EquivDolarMinComp);
 
             try{
-                TiposDeCambios.update({ tipo_cambio : V_T_CAMBIOS.tipo_cambio },{$set:{ min_compra_equivalente : parseFloat(EquivDolarMinComp) }});
+                TiposDeCambios.update({ tipo_cambio : V_T_CAMBIOS.tipo_cambio },{$set:{ min_compra_equivalente : parseFloat(EquivDolarMinComp) }}, {"multi" : true,"upsert" : true});
             }
             catch (error){
                 Meteor.call("ValidaError", error, 2);
@@ -1785,7 +1785,7 @@ Meteor.methods({
                                                 }
                                             }
                                         }
-                                });
+                                }, {"multi" : true,"upsert" : true});
             Monedas.update({
                             moneda: MON_C
                                 },
@@ -1797,7 +1797,7 @@ Meteor.methods({
                                                 }
                                             }
                                         }
-                                });
+                                }, {"multi" : true,"upsert" : true});
 
 
             TempSaldoMoneda.insert({ moneda : MON_C, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_coti_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: COMISION_HITBTC, comision_mercado_aplicada : COMISION_MERCADO, saldo_final : nuevo_saldo_moneda_coti_actual })
@@ -1847,7 +1847,7 @@ Meteor.methods({
                                                 }
                                             }
                                         }
-                                });
+                                }, {"multi" : true,"upsert" : true});
             Monedas.update({
                             moneda: MON_B
                                 },
@@ -1859,7 +1859,7 @@ Meteor.methods({
                                                 }
                                             }
                                         }
-                                });
+                                }, {"multi" : true,"upsert" : true});
 
             TempSaldoMoneda.insert({ moneda : MON_C, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_coti_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: COMISION_HITBTC, comision_mercado_aplicada : COMISION_MERCADO, saldo_final : nuevo_saldo_moneda_coti_actual })
             TempSaldoMoneda.insert({ moneda : MON_B, tipo_operacion : V_TipoOperaciont, saldo_inicial : saldo_moneda_base_act, monto_inversion : CANT_INVER, comision_hibtc_aplicada: 0, comision_mercado_aplicada : 0, saldo_final : nuevo_saldo_moneda_base_actual })
@@ -2165,7 +2165,7 @@ Meteor.methods({
 
 
                                     OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAnt, fecha : PeriodoFechaAnt, tipo_cambio : TIPO_CAMBIO, precio : PeriodoPrecioAnt, tipo_operacion : PeriodoTipoOperacionAnt, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
-                                    TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "periodo1.id_hitbtc": PeriodoId_hitbtcAnt, "periodo1.fecha": PeriodoFechaAnt,"periodo1.precio" : PeriodoPrecioAnt, "periodo1.tipo_operacion": PeriodoTipoOperacionAnt }});
+                                    TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "periodo1.id_hitbtc": PeriodoId_hitbtcAnt, "periodo1.fecha": PeriodoFechaAnt,"periodo1.precio" : PeriodoPrecioAnt, "periodo1.tipo_operacion": PeriodoTipoOperacionAnt }}, {"multi" : true,"upsert" : true});
                                 }else{
                                     var PeriodoFechaAct = v_TradActDat.timestamp;
                                     var PeriodoId_hitbtcAct = v_TradActDat.id;
