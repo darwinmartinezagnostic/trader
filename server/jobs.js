@@ -158,7 +158,12 @@ Jobs.register({
 	                };
 	                Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Consultando Tipos de Cambio para Moneda: ']+[moneda_saldo.moneda]+[' SALDO_MONEDA: ']+[moneda_saldo.saldo.tradeo.activo]);
 
-			   		var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda, moneda_saldo.saldo.tradeo.activo);
+
+
+	                //LIMPIANDO LA COLECCION TEMPORAL "TempTiposCambioXMoneda"
+	                TempTiposCambioXMoneda.remove({ moneda_saldo : Monedas_Saldo[0].moneda, });
+
+			   		var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda, moneda_saldo.saldo.tradeo.equivalencia);
 					//Meteor.call("GuardarLogEjecucionTrader", ['Valor de TiposDeCambioVerificar: ']+[TiposDeCambioVerificar[0]]);
 
 					if ( TiposDeCambioVerificar === undefined ) {
@@ -322,8 +327,8 @@ Jobs.register({
 		        console.log(' ');
 		        console.log("Estoy en el Job JobValidaTendenciaTipoCambio");
 		        //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " Muestreo: ", TIPO_MUESTREO, " ACCION: ", TIPO_MONEDA_SALDO)
-
-		        Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, TIPO_MUESTREO);
+		        //Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, TIPO_MUESTREO);
+		        Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC);
 	            //Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO, TIPO_MONEDA_SALDO );
 	            Meteor.call('EvaluarTendencias', TIPO_CAMBIO );
 		        
