@@ -2034,6 +2034,9 @@ Meteor.methods({
             } else if (MONEDA == V_Valores_TiposDeCambiosRankear.moneda_cotizacion ){
                 var accion = 2
             }
+
+            // ACA SE PRODUCE EL ERROR
+
             /*
             TempTiposCambioXMoneda.insert({ "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio ,
                                             "moneda_base": V_Valores_TiposDeCambiosRankear.moneda_base , 
@@ -2049,26 +2052,26 @@ Meteor.methods({
                                             "valor_incremento" : V_Valores_TiposDeCambiosRankear.valor_incremento, 
                                             estado : V_Valores_TiposDeCambiosRankear.estado });
             */
-           
-            TempTiposCambioXMoneda.update({ "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio }, {    
+            TempTiposCambioXMoneda.update({ "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio, 
+                                             "accion": accion }, {    
                                             $set: {
-                                                    "moneda_base": V_Valores_TiposDeCambiosRankear.moneda_base , 
-                                                    "accion": accion ,
+                                                    "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio,
+                                                    "moneda_base": V_Valores_TiposDeCambiosRankear.moneda_base, 
+                                                    "accion": accion,
                                                     "moneda_cotizacion" : V_Valores_TiposDeCambiosRankear.moneda_cotizacion, 
                                                     "saldo_moneda_tradear" : SALDO_MONEDA_EQUIV, 
                                                     "moneda_saldo" : MONEDA, 
-                                                    "activo" : V_Valores_TiposDeCambiosRankear.activo , 
-                                                    "comision_hitbtc" : V_Valores_TiposDeCambiosRankear.comision_hitbtc  , 
-                                                    "comision_mercado" : V_Valores_TiposDeCambiosRankear.comision_mercado  , 
-                                                    "min_compra" : V_Valores_TiposDeCambiosRankear.min_compra , 
-                                                    "moneda_apli_comision": V_Valores_TiposDeCambiosRankear.moneda_apli_comision , 
-                                                    "valor_incremento" : V_Valores_TiposDeCambiosRankear.valor_incremento, 
+                                                    "activo" : V_Valores_TiposDeCambiosRankear.activo,
+                                                    "comision_hitbtc" : V_Valores_TiposDeCambiosRankear.comision_hitbtc,
+                                                    "comision_mercado" : V_Valores_TiposDeCambiosRankear.comision_mercado,
+                                                    "min_compra" : V_Valores_TiposDeCambiosRankear.min_compra,
+                                                    "moneda_apli_comision": V_Valores_TiposDeCambiosRankear.moneda_apli_comision,
+                                                    "valor_incremento" : V_Valores_TiposDeCambiosRankear.valor_incremento,
                                                     estado : V_Valores_TiposDeCambiosRankear.estado
                                                 }
                                             }, 
                                             {"multi" : true,"upsert" : true});
         };
-
         return Valores_TiposDeCambiosRankear;
     },
 
@@ -2252,7 +2255,7 @@ Meteor.methods({
                 var RegAnt = TradAnt
                 var RegAct = TransProcesar[0]
 
-                console.log("Valores Conseguidos de RegAnt: ", RegAnt)
+                //console.log("Valores Conseguidos de RegAnt: ", RegAnt)
                 //console.log("Valores Conseguidos de RegAct: ", RegAct)
 
 
@@ -2351,7 +2354,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else if ( ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ValorEstadoTipoCambio = "V"
@@ -2377,7 +2380,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else if ( ContEstadoTipoCambioPrinc === LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2404,7 +2407,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else if ( ContEstadoTipoCambioPrinc === LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2431,7 +2434,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 };
                             break;
                             case "I":
@@ -2461,7 +2464,7 @@ Meteor.methods({
                                 										"periodo1.fecha": PeriodoFechaAct,
                                 										"periodo1.precio" : PeriodoPrecioAct,
                                 										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                								{ "upsert" : true });
+                                								{ "multi" : true,"upsert" : true });
                             break;
                             case "A":
                                 Meteor.call("GuardarLogEjecucionTrader", "ESTOY EN EL ELSE 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'A'");
@@ -2490,7 +2493,7 @@ Meteor.methods({
                                 										"periodo1.fecha": PeriodoFechaAct,
                                 										"periodo1.precio" : PeriodoPrecioAct,
                                 										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                								{ "upsert" : true });
+                                								{ "multi" : true,"upsert" : true });
                             break;
                         };
                         
@@ -2533,7 +2536,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ValorEstadoTipoCambio = "V"
@@ -2559,7 +2562,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc === LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2586,7 +2589,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else if ( PeriodoId_hitbtcAnt !== PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc === LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2613,7 +2616,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else if ( PeriodoId_hitbtcAnt !== PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ContEstadoTipoCambioAux = ContEstadoTipoCambioAux + 1;
@@ -2640,7 +2643,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else if ( PeriodoId_hitbtcAnt !== PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2667,7 +2670,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 };
                             break;
                             case "I":
@@ -2698,7 +2701,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2725,7 +2728,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }
                             break;
                             case "A":
@@ -2755,7 +2758,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc === LimtContEdoAct ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2782,7 +2785,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 }else if ( PeriodoId_hitbtcAnt !== PeriodoId_hitbtcAct ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2809,7 +2812,7 @@ Meteor.methods({
                                     										"periodo1.fecha": PeriodoFechaAct,
                                     										"periodo1.precio" : PeriodoPrecioAct,
                                     										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "upsert" : true });
+                                    								{ "multi" : true,"upsert" : true });
                                 };
                             break;
                         };
@@ -3903,13 +3906,13 @@ Meteor.methods({
 
         console.log("Valor de Monedas_Saldo", Monedas_Saldo[0]);
         console.log("Valor de Monedas_Saldo.saldo.tradeo.equivalencia", Monedas_Saldo[0].saldo.tradeo.equivalencia);
-        TempTiposCambioXMoneda.remove({ moneda_saldo : Monedas_Saldo[0].moneda, });
+        //TempTiposCambioXMoneda.remove({ moneda_saldo : Monedas_Saldo[0].moneda, });
          var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', Monedas_Saldo[0].moneda, Monedas_Saldo[0].saldo.tradeo.equivalencia);
 
          for (CMS = 0, TMS = TiposDeCambioVerificar.length; CMS < TMS; CMS++){
              var TipoCambio =  TiposDeCambioVerificar[CMS];
-             console.log("Valor de TipoCambio", TipoCambio)
-             console.log("Valor de TipoCambio", TipoCambio.tipo_cambio)
+             //console.log("Valor de TipoCambio", TipoCambio)
+             //console.log("Valor de TipoCambio", TipoCambio.tipo_cambio)
 
              Meteor.call('ListaTradeoActual', TipoCambio.tipo_cambio, 2);
              Meteor.call('EvaluarTendencias', TipoCambio.tipo_cambio );             
