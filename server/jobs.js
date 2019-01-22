@@ -7,6 +7,7 @@ Jobs.configure({
 });
 */
 Jobs.register({
+	/*
 	"JobSecuenciaInicial": function (){
 		try{
 	    	fecha = moment (new Date());
@@ -48,11 +49,14 @@ Jobs.register({
 		        Meteor.call("GuardarLogEjecucionTrader", '----------  SOY EL JOB GENERAL  -----------');
 		        console.log(' ');
 
-		        Jobs.run("JobSecuenciaPeriodo1", 0, { 
-			    	in: {
-			        	second: 5
-			    	}
-			    })
+		        if ( JobsInternal.Utilities.collection.find({ name : "JobSecuenciaPeriodo1", state : "pending" }).count() === 0 ){
+
+			        Jobs.run("JobSecuenciaPeriodo1", 0, { 
+				    	in: {
+				        	second: 5
+				    	}
+				    })
+				}
 
 			    var ejecucionJobSecuencia = 0
 			}
@@ -62,9 +66,38 @@ Jobs.register({
 
 			if ( ejecucionJobSecuencia === 0) {
 	    		return this.success(ejecucionJobSecuencia);
+
+		        if ( V_LimiteMaximoEjecucion === 9999999999 ) {
+								
+					console.log(' ');
+					Jobs.run("JobSecuencia", { 
+						in: {
+						       	second: 5
+						   	}
+					})
+
+				}else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
+
+				 	console.log(' ');
+					Jobs.run("JobSecuencia", { 
+				    	in: {
+					        	second: 5
+					    	}
+					})
+
+					V_LimiteMaximoEjecucion = V_LimiteMaximoEjecucion - 1
+						
+					Parametros.update({ "dominio": "limites", "nombre": "CantMaximaEjecucion" }, {
+					   				$set: {
+						        				"estado": true,
+								        		"valor": V_LimiteMaximoEjecucion
+								    			}
+									})
+				}
 	    	}
 	    	else {
 	    		this.failure(ejecucionJobSecuencia);
+				var ejecucionJobSecuencia = 1
 	    	}
     	},
 
@@ -116,6 +149,7 @@ Jobs.register({
     },
 
    	"JobSecuenciaPeriodo1" : function (){
+
    		try{
 	   		var TM = 1;
 	   		V_EJEC = 2;
@@ -183,10 +217,6 @@ Jobs.register({
 							        	second: 1
 							    	}
 								});
-
-								/*if ( CTP == TTP ) {
-									
-								}*/
 							}
 
 							Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
@@ -232,6 +262,10 @@ Jobs.register({
 
 						    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion)
 
+
+
+						    ///HAY QUE SACAR ESTO DE ACÁ
+						    /*
 						    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
 								
 								console.log(' ');
@@ -259,7 +293,7 @@ Jobs.register({
 								    }
 								})
 							}
-
+							*//*
 				        }
 				        else{
 				        	var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
@@ -310,8 +344,8 @@ Jobs.register({
     	else {
     		this.failure(ejecucionSecuenciaPeriodo1);
     	}
-    },
 
+    },
 
     "JobValidaTendenciaTipoCambio": function ( TIPO_CAMBIO, TIPO_MUESTREO ){
     	try{
@@ -394,7 +428,8 @@ Jobs.register({
     	}
     },
 
-
+	
+    */
     // JOB DE MANTENIMIENTO U OTROS DE EJECUCION
     
     "JobsFrecuenciaDiaria": function(){

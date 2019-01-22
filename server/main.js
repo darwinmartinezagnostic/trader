@@ -1497,6 +1497,7 @@ Meteor.methods({
     },    
 
     'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
+        Meteor.call('sleep', 100);
         var SALDO = parseFloat(S_MOND);
 
         if ( SALDO === 0 ) {
@@ -2035,23 +2036,6 @@ Meteor.methods({
                 var accion = 2
             }
 
-            // ACA SE PRODUCE EL ERROR
-
-            /*
-            TempTiposCambioXMoneda.insert({ "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio ,
-                                            "moneda_base": V_Valores_TiposDeCambiosRankear.moneda_base , 
-                                            "accion": accion ,
-                                            "moneda_cotizacion" : V_Valores_TiposDeCambiosRankear.moneda_cotizacion, 
-                                            "saldo_moneda_tradear" : SALDO_MONEDA_EQUIV, 
-                                            "moneda_saldo" : MONEDA, 
-                                            "activo" : V_Valores_TiposDeCambiosRankear.activo , 
-                                            "comision_hitbtc" : V_Valores_TiposDeCambiosRankear.comision_hitbtc  , 
-                                            "comision_mercado" : V_Valores_TiposDeCambiosRankear.comision_mercado  , 
-                                            "min_compra" : V_Valores_TiposDeCambiosRankear.min_compra , 
-                                            "moneda_apli_comision": V_Valores_TiposDeCambiosRankear.moneda_apli_comision , 
-                                            "valor_incremento" : V_Valores_TiposDeCambiosRankear.valor_incremento, 
-                                            estado : V_Valores_TiposDeCambiosRankear.estado });
-            */
             TempTiposCambioXMoneda.update({ "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio, 
                                              "accion": accion }, {    
                                             $set: {
@@ -2258,6 +2242,8 @@ Meteor.methods({
                 //console.log("Valores Conseguidos de RegAnt: ", RegAnt)
                 //console.log("Valores Conseguidos de RegAct: ", RegAct)
 
+                var MonBase =  RegAnt.moneda_base;
+                var MonCoti =  RegAnt.moneda_cotizacion;
 
                 var LimtContEdoAct = LCEA[0].valor;
                 var LimtContAuxEdoAct = LCEAA[0].valor;
@@ -2310,6 +2296,8 @@ Meteor.methods({
                 var ValPrecAct = PeriodoPrecioAct;
 
                 var ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
+                var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                var TendenciaMonedaCotizacion = ProcenApDp
 
                 //Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA: ']+[ProcenApDp]);
                 //console.log('--------------------------------------------');
@@ -2318,11 +2306,11 @@ Meteor.methods({
                     if (ValPrecAct > ValPrecAnt ) {
 
 
-                        Meteor.call("GuardarLogEjecucionTrader", " ESTOY EN EL IF 'ValPrecAct > ValPrecAnt'");
-                        var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                        var TendenciaMonedaCotizacion = ProcenApDp
-                        Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[TendenciaMonedaBase.toFixed(4)]);
-                        Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[TendenciaMonedaCotizacion.toFixed(4)]);
+                        Meteor.call("GuardarLogEjecucionTrader", " VALOR ACTUAL ES MAYOR QUE VALOR ANTERIOR");
+                        //var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                        //var TendenciaMonedaCotizacion = ProcenApDp
+                        Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
+                        Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[MonCoti]+[' = ']+[TendenciaMonedaCotizacion.toFixed(4)]);
                         console.log('--------------------------------------------');
                         
                         switch( EstadoTipoCambio ){
@@ -2438,7 +2426,7 @@ Meteor.methods({
                                 };
                             break;
                             case "I":
-                                Meteor.call("GuardarLogEjecucionTrader", "ESTOY EN EL ELSE 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'I'");
+                                Meteor.call("GuardarLogEjecucionTrader", "ESTOY EN EL IF 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'I'");
                                 var ContEstadoTipoCambioPrinc = 0;
                                 var ContEstadoTipoCambioAux = 0;
                                 var ValorEstadoTipoCambio = "V"
@@ -2467,7 +2455,7 @@ Meteor.methods({
                                 								{ "multi" : true,"upsert" : true });
                             break;
                             case "A":
-                                Meteor.call("GuardarLogEjecucionTrader", "ESTOY EN EL ELSE 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'A'");
+                                Meteor.call("GuardarLogEjecucionTrader", "ESTOY EN EL IF 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'A'");
                                 var ContEstadoTipoCambioPrinc = 0;
                                 var ContEstadoTipoCambioAux = 0;
                                 var ValorEstadoTipoCambio = "A"
@@ -2501,11 +2489,11 @@ Meteor.methods({
                     }
                     else{
 
-                        Meteor.call("GuardarLogEjecucionTrader", " ESTOY EN EL IF 'ValPrecAct > ValPrecAnt'");
-                        var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                        var TendenciaMonedaCotizacion = ProcenApDp
-                        Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[TendenciaMonedaBase.toFixed(4)]);
-                        Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[TendenciaMonedaCotizacion.toFixed(4)]);
+                        Meteor.call("GuardarLogEjecucionTrader", "  VALOR ACTUAL ES MENOR QUE VALOR ANTERIOR");
+                        //var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                        //var TendenciaMonedaCotizacion = ProcenApDp
+                        Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
+                        Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[MonCoti]+[' = ']+[TendenciaMonedaCotizacion.toFixed(4)]);
                         console.log('--------------------------------------------');
                         
                         switch( EstadoTipoCambio ){
@@ -3852,6 +3840,28 @@ Meteor.methods({
         return 0;
     },
 
+    'EjecucionGlobal':function(){
+        //Meteor.call("Encabezado");
+        //Meteor.call("ActualizaSaldoTodasMonedas", 2);
+        Meteor.call("Prueba");
+        //Meteor.call("SecuenciasSecundarias");
+        //Meteor.call("CalculoGanancia");
+        //var tiposCamb = ["XMRUSD", "XMRETH", "XMRBTC"];
+        //Meteor.call("Invertir", tiposCamb, 2, 0);
+        /*Meteor.call("ListaMonedas");
+        Meteor.call("ValidaMonedasTransfCuentaTRadeo");*/
+        //Meteor.call("ListaTiposDeCambios", 1);
+        //Meteor.call("TipoCambioDisponibleCompra", 1, 1);
+
+        //console.log("Valor de prueba: ", prueba);
+
+        //Meteor.call("FinEjecucion");
+    },
+
+    //#############################################
+    //                  PRUEBA
+    //#############################################
+
     'Prueba':function(){
         // PRUEBA DE HILOS
         // 
@@ -3859,7 +3869,7 @@ Meteor.methods({
         // 
         /*TIPO_CAMBIO =''
         Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, TIPO_MUESTREO);
-	    Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO, TIPO_MONEDA_SALDO );
+        Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO, TIPO_MONEDA_SALDO );
 
 
         Concurrent.Thread.create( ListaTradeoActual, TIPO_CAMBIO, 2, 1);*/
@@ -3897,27 +3907,31 @@ Meteor.methods({
         */
        
 
-
+        //#############################################################################################################################################
        
         var Monedas_Saldo = Monedas.aggregate([
-                        { $match : {"saldo.tradeo.equivalencia" : { $gt : 0 }, moneda : 'LTC' }},
+                        { $match : {"saldo.tradeo.equivalencia" : { $gt : 0 }, moneda : 'BTC' }},
                         { $sort : {"saldo.tradeo.equivalencia":-1} }
                     ]);
 
-        console.log("Valor de Monedas_Saldo", Monedas_Saldo[0]);
-        console.log("Valor de Monedas_Saldo.saldo.tradeo.equivalencia", Monedas_Saldo[0].saldo.tradeo.equivalencia);
+        //console.log("Valor de Monedas_Saldo", Monedas_Saldo[0]);
+        //console.log("Valor de Monedas_Saldo.saldo.tradeo.equivalencia", Monedas_Saldo[0].saldo.tradeo.equivalencia);
         //TempTiposCambioXMoneda.remove({ moneda_saldo : Monedas_Saldo[0].moneda, });
          var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', Monedas_Saldo[0].moneda, Monedas_Saldo[0].saldo.tradeo.equivalencia);
 
-         for (CMS = 0, TMS = TiposDeCambioVerificar.length; CMS < TMS; CMS++){
-             var TipoCambio =  TiposDeCambioVerificar[CMS];
-             //console.log("Valor de TipoCambio", TipoCambio)
-             //console.log("Valor de TipoCambio", TipoCambio.tipo_cambio)
+        for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
+             for (CMS = 0, TMS = TiposDeCambioVerificar.length; CMS < TMS; CMS++){
+                 var TipoCambio =  TiposDeCambioVerificar[CMS];
+                 //console.log("Valor de TipoCambio", TipoCambio)
+                 //console.log("Valor de TipoCambio", TipoCambio.tipo_cambio)
 
-             Meteor.call('ListaTradeoActual', TipoCambio.tipo_cambio, 2);
-             Meteor.call('EvaluarTendencias', TipoCambio.tipo_cambio );             
-         }
+                 Meteor.call('ListaTradeoActual', TipoCambio.tipo_cambio, 2);
+                 Meteor.call('EvaluarTendencias', TipoCambio.tipo_cambio );             
+             }
+        }
         Meteor.call('ValidarRanking', Monedas_Saldo[0].moneda);
+        
+
 
         /*
 
@@ -3941,24 +3955,12 @@ Meteor.methods({
 
         console.log("Valor de valor", valor[0]);
         */
+       
+        //#############################################################################################################################################
+
+       //Meteor.call("SecuenciasSecundarias");
     },
 
-    'EjecucionGlobal':function(){
-        //Meteor.call("Encabezado");
-        //Meteor.call("ActualizaSaldoTodasMonedas", 2);
-        Meteor.call("Prueba");
-        //Meteor.call("CalculoGanancia");
-        //var tiposCamb = ["XMRUSD", "XMRETH", "XMRBTC"];
-        //Meteor.call("Invertir", tiposCamb, 2, 0);
-        /*Meteor.call("ListaMonedas");
-        Meteor.call("ValidaMonedasTransfCuentaTRadeo");*/
-        //Meteor.call("ListaTiposDeCambios", 1);
-        //Meteor.call("TipoCambioDisponibleCompra", 1, 1);
-
-        //console.log("Valor de prueba: ", prueba);
-
-        //Meteor.call("FinEjecucion");
-    }
 });
 
 Meteor.startup(function (){
@@ -3971,18 +3973,12 @@ Meteor.startup(function (){
         var EjecucionInicial = Parametros.find({ dominio : 'ejecucion', nombre : 'EjecInicial', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
         
         if ( EjecucionInicial === 1 ){
-            Jobs.run("JobSecuenciaInicial", {
-                in: {
-                    second: 5
-                    }
-            });
+            
+            Meteor.call('SecuenciaInicial');
         }
         else if ( EjecucionInicial === 0 ) {
-            Jobs.run("JobSecuencia", {
-                in: {
-                    second: 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-                    }
-            });
+
+            Meteor.call('SecuenciasSecundarias');
         };
     }
     catch (error){
