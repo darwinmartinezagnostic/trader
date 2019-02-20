@@ -2299,6 +2299,14 @@ Meteor.methods({
 
                 
 
+                if ( MONEDASALDO = MonBase ) {                    
+                    var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                    var TendenciaMonedaCotizacion = ProcenApDp
+                } 
+                else if ( MONEDASALDO = MonCoti ) {                    
+                    var TendenciaMonedaBase = ProcenApDp
+                    var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
+                }
                 //Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA: ']+[ProcenApDp]);
                 //console.log('--------------------------------------------');
 
@@ -2307,14 +2315,6 @@ Meteor.methods({
 
 
                         Meteor.call("GuardarLogEjecucionTrader", " VALOR ACTUAL ES MAYOR QUE VALOR ANTERIOR");
-                        if ( MONEDASALDO = MonBase ) {                    
-                            var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                            var TendenciaMonedaCotizacion = ProcenApDp
-                        } 
-                        else if ( MONEDASALDO = MonCoti ) {                    
-                            var TendenciaMonedaBase = ProcenApDp
-                            var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
-                        }
                         Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
                         Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[MonCoti]+[' = ']+[TendenciaMonedaCotizacion.toFixed(4)]);
                         console.log('--------------------------------------------');
@@ -2496,14 +2496,6 @@ Meteor.methods({
                     else{
 
                         Meteor.call("GuardarLogEjecucionTrader", "  VALOR ACTUAL ES MENOR QUE VALOR ANTERIOR");
-                        if ( MONEDASALDO = MonBase ) {                    
-                            var TendenciaMonedaBase = ProcenApDp
-                            var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
-                        } 
-                        else if ( MONEDASALDO = MonCoti ) {                    
-                            var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                            var TendenciaMonedaCotizacion = ProcenApDp
-                        }
                         Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
                         Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[MonCoti]+[' = ']+[TendenciaMonedaCotizacion.toFixed(4)]);
                         console.log('--------------------------------------------');
