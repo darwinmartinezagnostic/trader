@@ -187,7 +187,8 @@ Meteor.methods({
                     Parametros.update({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo" }, {
                                     $set: {
                                         "estado": true,
-                                        "valor": V_LimiteMuestreo
+                                        "valor": V_LimiteMuestreo,
+                                        "fecha_ejecucion" : new Date()
                                     }
                                 });
                 }           
