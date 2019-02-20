@@ -2194,7 +2194,7 @@ Meteor.methods({
     },
 
     //'EvaluarTendencias':function( TIPOCAMBIO, TIPO_MUESTREO, TIPO_MONEDA_SALDO){
-    'EvaluarTendencias':function( TIPOCAMBIO ){
+    'EvaluarTendencias':function( TIPOCAMBIO, MONEDASALDO ){
 
         // Formula de deprecación
         // TENDENCIA = ((valor actual - valor anterior) / valor anterior) * 100
@@ -2240,7 +2240,7 @@ Meteor.methods({
                 var RegAct = TransProcesar[0]
 
                 //console.log("Valores Conseguidos de RegAnt: ", RegAnt)
-                //console.log("Valores Conseguidos de RegAct: ", RegAct)
+                //console.log("Valores Conseguidos de RegAct: ", RegAct);
 
                 var MonBase =  RegAnt.moneda_base;
                 var MonCoti =  RegAnt.moneda_cotizacion;
@@ -2296,8 +2296,15 @@ Meteor.methods({
                 var ValPrecAct = PeriodoPrecioAct;
 
                 var ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
-                var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                var TendenciaMonedaCotizacion = ProcenApDp
+
+                if ( MONEDASALDO = MonBase ) {                    
+                    var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                    var TendenciaMonedaCotizacion = ProcenApDp
+                } 
+                else if ( MONEDASALDO = MonCoti ) {                    
+                    var TendenciaMonedaBase = ProcenApDp
+                    var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
+                } 
 
                 //Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA: ']+[ProcenApDp]);
                 //console.log('--------------------------------------------');
@@ -3255,16 +3262,6 @@ Meteor.methods({
         var EstadoRobot = Robot[0].valor
 
         try{ 
-            /*
-            switch (TIPO_MONEDA_SALDO){
-                case 1:
-                    var RankingTiposDeCambios = TempTiposCambioXMoneda.aggregate([{ $match: { "moneda_saldo" : MONEDA, estado : "A", habilitado : 1,"periodo1.tendencia_moneda_base" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia_moneda_base" : -1 }}, { $limit: CANT_TIP_CAMBIOS_VALIDADOS } ]);
-                break;
-                case 2:
-                    var RankingTiposDeCambios = TempTiposCambioXMoneda.aggregate([{ $match: { "moneda_saldo" : MONEDA, estado : "A", habilitado : 1,"periodo1.tendencia_moneda_cotizacion" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "periodo1.tendencia_moneda_cotizacion" : -1 }}, { $limit: CANT_TIP_CAMBIOS_VALIDADOS } ]);
-                break;
-            }
-            */
             var RankingTiposDeCambios = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA, estado : "A", habilitado : 1, "tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: CANT_TIP_CAMBIOS_VALIDADOS } ]);
             
             var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])

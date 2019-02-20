@@ -155,7 +155,7 @@ Meteor.methods({
 
                             Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar.tipo_cambio]+[' Moneda: ']+[moneda_saldo.moneda]);
                                 
-                            Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar.tipo_cambio )
+                            Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar.tipo_cambio, moneda_saldo.moneda )
                         }
 
                         Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
@@ -201,7 +201,7 @@ Meteor.methods({
         }
     },
 
-    'ValidaTendenciaTipoCambio': function ( TIPO_CAMBIO ){
+    'ValidaTendenciaTipoCambio': function ( TIPO_CAMBIO, MONEDA_SALDO ){
         try{
             console.log(' Estoy en ValidaTendenciaTipoCambio');
             var V_EJEC = 2
@@ -216,7 +216,7 @@ Meteor.methods({
                 
             Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC);
 
-            Meteor.call('EvaluarTendencias', TIPO_CAMBIO );
+            Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
                 
             console.log('--------------------------------------------');
             console.log('############################################');
