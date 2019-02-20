@@ -183,12 +183,13 @@ Meteor.methods({
                     }
                 }else{
                     V_LimiteMuestreo = V_LimiteMuestreo - 1
-                                
+                    
+                    fecha = moment (new Date()); 
                     Parametros.update({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo" }, {
                                     $set: {
                                         "estado": true,
                                         "valor": V_LimiteMuestreo,
-                                        "fecha_ejecucion" : new Date()
+                                        "fecha_ejecucion" : fecha
                                     }
                                 });
                 }           
