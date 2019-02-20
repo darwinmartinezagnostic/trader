@@ -189,7 +189,7 @@ Meteor.methods({
                                     $set: {
                                         "estado": true,
                                         "valor": V_LimiteMuestreo,
-                                        "fecha_ejecucion" : fecha
+                                        "fecha_ejecucion" : fecha._d
                                     }
                                 });
                 }           
