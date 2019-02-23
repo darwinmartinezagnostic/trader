@@ -2300,12 +2300,16 @@ Meteor.methods({
                 
 
                 if ( MONEDASALDO = MonBase ) {                    
-                    var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                    var TendenciaMonedaCotizacion = ProcenApDp
-                } 
-                else if ( MONEDASALDO = MonCoti ) {                    
+                    //var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                    //var TendenciaMonedaCotizacion = ProcenApDp
                     var TendenciaMonedaBase = ProcenApDp
                     var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
+                } 
+                else if ( MONEDASALDO = MonCoti ) {                    
+                    //var TendenciaMonedaBase = ProcenApDp
+                    //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
+                    var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                    var TendenciaMonedaCotizacion = ProcenApDp
                 }
                 //Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA: ']+[ProcenApDp]);
                 //console.log('--------------------------------------------');
