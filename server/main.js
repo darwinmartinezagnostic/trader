@@ -2299,23 +2299,23 @@ Meteor.methods({
 
                 
 
-                if ( MONEDASALDO = MonBase ) {                    
-                    //var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                    //var TendenciaMonedaCotizacion = ProcenApDp
-                    var TendenciaMonedaBase = ProcenApDp
-                    var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
-                } 
-                else if ( MONEDASALDO = MonCoti ) {                    
-                    //var TendenciaMonedaBase = ProcenApDp
-                    //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
-                    var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                    var TendenciaMonedaCotizacion = ProcenApDp
-                }
                 //Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA: ']+[ProcenApDp]);
                 //console.log('--------------------------------------------');
 
                 try{
                     if (ValPrecAct > ValPrecAnt ) {
+                        if ( MONEDASALDO = MonBase ) {                    
+                            //var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                            //var TendenciaMonedaCotizacion = ProcenApDp
+                            var TendenciaMonedaBase = ProcenApDp
+                            var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
+                        } 
+                        else if ( MONEDASALDO = MonCoti ) {                    
+                            //var TendenciaMonedaBase = ProcenApDp
+                            //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
+                            var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                            var TendenciaMonedaCotizacion = ProcenApDp
+                        }
 
 
                         Meteor.call("GuardarLogEjecucionTrader", " VALOR ACTUAL ES MAYOR QUE VALOR ANTERIOR");
@@ -2498,7 +2498,18 @@ Meteor.methods({
                         OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                     }
                     else{
-
+                        if ( MONEDASALDO = MonBase ) {                    
+                            var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                            var TendenciaMonedaCotizacion = ProcenApDp
+                            //var TendenciaMonedaBase = ProcenApDp
+                            //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
+                        } 
+                        else if ( MONEDASALDO = MonCoti ) {                    
+                            var TendenciaMonedaBase = ProcenApDp
+                            var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
+                            //var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                            //var TendenciaMonedaCotizacion = ProcenApDp
+                        }
                         Meteor.call("GuardarLogEjecucionTrader", "  VALOR ACTUAL ES MENOR QUE VALOR ANTERIOR");
                         Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
                         Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[MonCoti]+[' = ']+[TendenciaMonedaCotizacion.toFixed(4)]);
