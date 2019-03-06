@@ -4,7 +4,8 @@ import { Meteor } from 'meteor/meteor';
 moment().tz('America/Caracas').format();
 
 
-
+const autoriza_conexion = Conexion_api.findOne({ casa_cambio : 'hitbtc'}, {_id:0});
+const API_HITBTC2 = autoriza_conexion.api.url;
 
 const publico = API_HITBTC2+"public/";
 const tradeo = API_HITBTC2+"trading/";
