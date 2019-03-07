@@ -2047,6 +2047,7 @@ Meteor.methods({
                 try{
                 	if ( MONEDASALDO = MonBase ){
                 		if ( ValPrecAct > ValPrecAnt ) {
+                			console.log( "Acá estoy 1");
 	                        /*if ( MONEDASALDO = MonBase ) {
 	                        	//var TendenciaMonedaBase = ProcenApDp
 	                            //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
@@ -2364,6 +2365,7 @@ Meteor.methods({
 	                        OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
 	                    }
 	                    else if ( MONEDASALDO = MonBase ){
+	                    	console.log( "Acá estoy 2");
 	                        /*if ( MONEDASALDO = MonBase ) {
 	                            //var TendenciaMonedaBase = ( ProcenApDp * -1 )
 	                            //var TendenciaMonedaCotizacion = ProcenApDp
@@ -2932,6 +2934,7 @@ Meteor.methods({
                 	}
                 	else if ( MONEDASALDO = MonCoti ) {
                 		if ( ValPrecAct > ValPrecAnt ) {
+                			console.log( "Acá estoy 3");
 	                        /*if ( MONEDASALDO = MonBase ) {
 	                        	//var TendenciaMonedaBase = ProcenApDp
 	                            //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
@@ -3249,6 +3252,7 @@ Meteor.methods({
 	                        OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
 	                    }
 	                    else if ( MONEDASALDO = MonBase ){
+	                    	console.log( "Acá estoy 4");
 	                        /*if ( MONEDASALDO = MonBase ) {
 	                            //var TendenciaMonedaBase = ( ProcenApDp * -1 )
 	                            //var TendenciaMonedaCotizacion = ProcenApDp
