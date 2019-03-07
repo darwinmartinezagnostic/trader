@@ -1893,7 +1893,7 @@ Meteor.methods({
                                     				{ $set:{	"periodo1.Base.id_hitbtc": PeriodoId_hitbtc, 
                                     							"periodo1.Base.fecha": PeriodoFecha,
                                     							"periodo1.Base.precio" : PeriodoPrecio, 
-                                    							"periodo1.Base.tipo_operacion": PeriodoTipoOperacion
+                                    							"periodo1.Base.tipo_operacion": PeriodoTipoOperacion,
                                     							"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtc, 
                                     							"periodo1.Cotizacion.fecha": PeriodoFecha,
                                     							"periodo1.Cotizacion.precio" : PeriodoPrecio, 
