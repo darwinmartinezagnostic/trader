@@ -1942,7 +1942,7 @@ Meteor.methods({
         }
 
 
-	           	console.log("Estoy en EvaluarTendencias 2");
+	    console.log("Estoy en EvaluarTendencias 2");
                 if ( debug_activo === 1) {
                     Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 - switch Inicial - Case 1');
                 }
