@@ -214,7 +214,7 @@ Meteor.methods({
             console.log('----------- VALIDANDO TENDENCIA ------------');
             console.log('--------------------------------------------');
             console.log(' ');
-            //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " V_EJEC: ", V_EJEC);
+            console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " V_EJEC: ", V_EJEC);
                 
             Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC);
 
