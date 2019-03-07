@@ -1850,48 +1850,73 @@ Meteor.methods({
                         console.log('############################################');
                     }
                     else {
-                        //switch(TIPO_MUESTREO){
-                            //case 1:
-                                if ( TiposDeCambios.find( {tipo_cambio : TIPO_CAMBIO, "periodo1.Base.precio" : { $exists: true } }).count() === 0 ){
-                                    if ( debug_activo === 1) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 2 - case 1');
-                                    }
+                        if ( TiposDeCambios.find( {tipo_cambio : TIPO_CAMBIO, "periodo1.Base.precio" : { $exists: true } }).count() === 0 ){
+                        	if ( debug_activo === 1) {
+                            	Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 2 - case 1');
+                            }
                                    
-                                    var PeriodoFechaAntMB = v_TradActDat.timestamp;
-                                    var PeriodoId_hitbtcAntMB = v_TradActDat.id;
-                                    var PeriodoPrecioAntMB = Number(v_TradActDat.price);
-                                    switch (v_TradActDat.side){
-                                        case 'buy':
-                                            var PeriodoTipoOperacionAntMB = 'COMPRA';
-                                            break;
-                                        case 'sell':
-                                            var PeriodoTipoOperacionAntMB = 'VENTA';
-                                            break;
-                                        default:
-                                            Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_TradAntDat.side]);
-                                            var PeriodoTipoOperacionAntMB = v_TradActDat.side;
-                                    }
+                            var PeriodoFecha = v_TradActDat.timestamp;
+                            var PeriodoId_hitbtc = v_TradActDat.id;
+                            var PeriodoPrecio = Number(v_TradActDat.price);
+                            switch (v_TradActDat.side){
+                            	case 'buy':
+                                	var PeriodoTipoOperacion = 'COMPRA';
+                                break;
+                                case 'sell':
+                                	var PeriodoTipoOperacion = 'VENTA';
+                                break;
+                                default:
+                                	Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_TradAntDat.side]);
+                                    var PeriodoTipoOperacion = v_TradActDat.side;
+                            }
                                    
-                                    var PeriodoFechaAct = v_TradActDat.timestamp;
-                                    var PeriodoId_hitbtcAct = v_TradActDat.id;
-                                    var PeriodoPrecioAct = Number(v_TradActDat.price);
-                                    var PeriodoTipoOperacionAct = v_tipo_operacion_act;
+                            var PeriodoFechaAct = v_TradActDat.timestamp;
+                            var PeriodoId_hitbtcAct = v_TradActDat.id;
+                            var PeriodoPrecioAct = Number(v_TradActDat.price);
+                            var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
 
-                                    OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAntMB, fecha : PeriodoFechaAntMB, tipo_cambio : TIPO_CAMBIO, precio : PeriodoPrecioAntMB, tipo_operacion : PeriodoTipoOperacionAntMB, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
-                                    TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB, "periodo1.Base.fecha": PeriodoFechaAntMB,"periodo1.Base.precio" : PeriodoPrecioAntMB, "periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB }}, {"multi" : true,"upsert" : true});
-                                }else{
-                                    var PeriodoFechaAct = v_TradActDat.timestamp;
-                                    var PeriodoId_hitbtcAct = v_TradActDat.id;
-                                    var PeriodoPrecioAct = Number(v_TradActDat.price);
-                                    var PeriodoTipoOperacionAct = v_tipo_operacion_act;
-                                    OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAct, fecha : PeriodoFechaAct, tipo_cambio : TIPO_CAMBIO, precio : PeriodoPrecioAct, tipo_operacion : PeriodoTipoOperacionAct, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
+                            OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtc, 
+                                    						fecha : PeriodoFecha, 
+                                    						tipo_cambio : TIPO_CAMBIO, 
+                                    						precio : PeriodoPrecio, 
+                                    						tipo_operacion : PeriodoTipoOperacion, 
+                                    						muestreo : {periodo1 : false, 
+                                    									periodo2 : false, 
+                                    									periodo3 : false, 
+                                    									periodo4 : false, 
+                                    									periodo5 : false, 
+                                    									periodo6 : false } 
+                                    								});
+
+                            TiposDeCambios.update(	{ tipo_cambio : TIPO_CAMBIO },
+                                    				{ $set:{	"periodo1.Base.id_hitbtc": PeriodoId_hitbtc, 
+                                    							"periodo1.Base.fecha": PeriodoFecha,
+                                    							"periodo1.Base.precio" : PeriodoPrecio, 
+                                    							"periodo1.Base.tipo_operacion": PeriodoTipoOperacion
+                                    							"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtc, 
+                                    							"periodo1.Cotizacion.fecha": PeriodoFecha,
+                                    							"periodo1.Cotizacion.precio" : PeriodoPrecio, 
+                                    							"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacion}}, 
+                                    				{ "multi" : true,"upsert" : true });
+                            }else{
+                            	var PeriodoFechaAct = v_TradActDat.timestamp;
+                                var PeriodoId_hitbtcAct = v_TradActDat.id;
+                                var PeriodoPrecioAct = Number(v_TradActDat.price);
+                                var PeriodoTipoOperacionAct = v_tipo_operacion_act;
+                                OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAct, 
+                                    							fecha : PeriodoFechaAct, 
+                                    							tipo_cambio : TIPO_CAMBIO, 
+                                    							precio : PeriodoPrecioAct, 
+                                    							tipo_operacion : PeriodoTipoOperacionAct, 
+                                    							muestreo : {periodo1 : false, 
+                                    										periodo2 : false, 
+                                    										periodo3 : false, 
+                                    										periodo4 : false, 
+                                    										periodo5 : false, 
+                                    										periodo6 : false } 
+                                    							});
                                 }
-                            //break;
-                        //}
-
-
-
                     }
                     break;
                 default:
