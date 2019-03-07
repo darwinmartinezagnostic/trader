@@ -1934,10 +1934,10 @@ Meteor.methods({
         // Si es negativa la moneda base de está apreciando y la moneda en cotizacion se está depreciando
         // Cuando se está evaluando la moneda a comprar si el resultado es + esa moneda esta en alza sino está a la baja
         // Cuando se está evaluando la moneda invertida si el resultado es + esa moneda esta en baja sino está a la alza
-        console.log("Estoy en EvaluarTendencias ");
+        console.log("Estoy en EvaluarTendencias 1");
         if ( debug_activo === 1) {
             Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 ');
-            Meteor.call("GuardarLogEjecucionTrader", [" Tipo de Cambio recibido"]+[TIPOCAMBIO]+[" MONEDA_SALDO: "]+[MONEDA_SALDO]);
+            Meteor.call("GuardarLogEjecucionTrader", [" Tipo de Cambio recibido"]+[TIPOCAMBIO]+[" MONEDA_SALDO: "]+[MONEDASALDO]);
             Meteor.call("GuardarLogEjecucionTrader", [" Tipo de Cambio recibido: "]+[TIPOCAMBIO]);
         }
 
@@ -2043,12 +2043,12 @@ Meteor.methods({
                 var ProcenApDpMB = ((( ValPrecAct - ValPrecAntMB ) / ValPrecAntMB ) * 100 ) ;
                 var ProcenApDpMC = ((( ValPrecAct - ValPrecAntMC ) / ValPrecAntMC ) * 100 ) ;
 
-                console.log('Valor de MONEDA_SALDO:', [MONEDA_SALDO]);
+                console.log('Valor de MONEDASALDO:', [MONEDASALDO]);
                 console.log('Valor de MonBase:', [MonBase]);
                 console.log('Valor de MonCoti:', [MonCoti]);
 
                 try{
-                	if ( MONEDA_SALDO = MonBase ){
+                	if ( MONEDASALDO = MonBase ){
                 		if ( ValPrecAct > ValPrecAntMB ) {
                 			console.log( "Acá estoy 1");
 	                        /*if ( MONEDASALDO = MonBase ) {
@@ -2935,7 +2935,7 @@ Meteor.methods({
 	                        OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
 	                    }
                 	}
-                	else if ( MONEDA_SALDO = MonCoti ) {
+                	else if ( MONEDASALDO = MonCoti ) {
                 		if ( ValPrecAct > ValPrecAntMC ) {
                 			console.log( "Acá estoy 3");
 	                        /*if ( MONEDA_SALDO = MonBase ) {
