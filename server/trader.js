@@ -2043,14 +2043,14 @@ Meteor.methods({
                 var ProcenApDpMB = ((( ValPrecAct - ValPrecAntMB ) / ValPrecAntMB ) * 100 ) ;
                 var ProcenApDpMC = ((( ValPrecAct - ValPrecAntMC ) / ValPrecAntMC ) * 100 ) ;
 
-                console.log('Valor de MONEDASALDO:', [MONEDASALDO]);
-                console.log('Valor de MonBase:', [MonBase]);
-                console.log('Valor de MonCoti:', [MonCoti]);
+                //console.log('Valor de MONEDASALDO:', [MONEDASALDO]);
+                //console.log('Valor de MonBase:', [MonBase]);
+                //console.log('Valor de MonCoti:', [MonCoti]);
 
                 try{
                     if ( MONEDASALDO = MonBase ){
                         if ( ValPrecAct > ValPrecAntMB ) {
-                            console.log( "Acá estoy 1");
+                            //console.log( "Acá estoy 1");
 
                             var TendenciaMonedaBase = ProcenApDpMB
                             var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
@@ -2146,7 +2146,7 @@ Meteor.methods({
                             OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                         }
                         else if ( ValPrecAct <= ValPrecAntMB ){
-                            console.log( "Acá estoy 2");
+                            //console.log( "Acá estoy 2");
                             /*if ( MONEDASALDO = MonBase ) {
                                 //var TendenciaMonedaBase = ( ProcenApDp * -1 )
                                 //var TendenciaMonedaCotizacion = ProcenApDp
@@ -2317,7 +2317,7 @@ Meteor.methods({
                     }
                     else if ( MONEDASALDO = MonCoti ) {
                         if ( ValPrecAct >= ValPrecAntMC ) {
-                            console.log( "Acá estoy 3");
+                            //console.log( "Acá estoy 3");
                             /*if ( MONEDA_SALDO = MonBase ) {
                                 //var TendenciaMonedaBase = ProcenApDp
                                 //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
@@ -2428,7 +2428,7 @@ Meteor.methods({
                             OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                         }
                         else if ( ValPrecAct < ValPrecAntMC ){
-                            console.log( "Acá estoy 4");
+                            //console.log( "Acá estoy 4");
 
                             var TendenciaMonedaBase = ProcenApDpMB
                             var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )

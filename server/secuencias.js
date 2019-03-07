@@ -151,9 +151,9 @@ Meteor.methods({
                         for ( CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++ ){
                             var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
 
-                            console.log("Valor de tipo_cambio_verificar.tipo_cambio", tipo_cambio_verificar.tipo_cambio)
+                            //console.log("Valor de tipo_cambio_verificar.tipo_cambio", tipo_cambio_verificar.tipo_cambio)
 
-                            Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar.tipo_cambio]+[' Moneda: ']+[moneda_saldo.moneda]);
+                            //Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar.tipo_cambio]+[' Moneda: ']+[moneda_saldo.moneda]);
                                 
                             Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar.tipo_cambio, moneda_saldo.moneda )
                         }
