@@ -1942,15 +1942,12 @@ Meteor.methods({
         }
 
 
-        /*switch (TIPO_MUESTREO){
-            case 1:*/
-            	console.log("Estoy en EvaluarTendencias 2");
+	           	console.log("Estoy en EvaluarTendencias 2");
                 if ( debug_activo === 1) {
                     Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 - switch Inicial - Case 1');
                 }
                 try{
                     var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
-                    //var TradAnt = TempTiposCambioXMoneda.findOne({ tipo_cambio : TIPOCAMBIO });
                 }
                 catch (error){    
                 Meteor.call("ValidaError", error, 2);
@@ -3829,8 +3826,6 @@ Meteor.methods({
                 catch(error){
                     Meteor.call("ValidaError", error, 2);
                 }
-            //break;
-        //}
     },
 
     'ValidarRanking': function(MONEDA){
