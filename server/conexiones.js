@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 moment().tz('America/Caracas').format();
 
 const autoriza_conexion = Conexion_api.findOne({ casa_cambio : 'hitbtc'}, {_id:0});
-const API_HITBTC2 = autoriza_conexion.api.url;
 const key = autoriza_conexion.key;
 const secret = autoriza_conexion.secret;
 const apikey = key+':'+secret;

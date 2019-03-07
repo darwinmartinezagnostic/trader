@@ -1852,24 +1852,24 @@ Meteor.methods({
                     else {
                         //switch(TIPO_MUESTREO){
                             //case 1:
-                                if ( TiposDeCambios.find( {tipo_cambio : TIPO_CAMBIO, "periodo1.precio" : { $exists: true } }).count() === 0 ){
+                                if ( TiposDeCambios.find( {tipo_cambio : TIPO_CAMBIO, "periodo1.Base.precio" : { $exists: true } }).count() === 0 ){
                                     if ( debug_activo === 1) {
                                         Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 2 - case 1');
                                     }
                                    
-                                    var PeriodoFechaAnt = v_TradActDat.timestamp;
-                                    var PeriodoId_hitbtcAnt = v_TradActDat.id;
-                                    var PeriodoPrecioAnt = Number(v_TradActDat.price);
+                                    var PeriodoFechaAntMB = v_TradActDat.timestamp;
+                                    var PeriodoId_hitbtcAntMB = v_TradActDat.id;
+                                    var PeriodoPrecioAntMB = Number(v_TradActDat.price);
                                     switch (v_TradActDat.side){
                                         case 'buy':
-                                            var PeriodoTipoOperacionAnt = 'COMPRA';
+                                            var PeriodoTipoOperacionAntMB = 'COMPRA';
                                             break;
                                         case 'sell':
-                                            var PeriodoTipoOperacionAnt = 'VENTA';
+                                            var PeriodoTipoOperacionAntMB = 'VENTA';
                                             break;
                                         default:
                                             Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_TradAntDat.side]);
-                                            var PeriodoTipoOperacionAnt = v_TradActDat.side;
+                                            var PeriodoTipoOperacionAntMB = v_TradActDat.side;
                                     }
                                    
                                     var PeriodoFechaAct = v_TradActDat.timestamp;
@@ -1878,8 +1878,8 @@ Meteor.methods({
                                     var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
 
-                                    OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAnt, fecha : PeriodoFechaAnt, tipo_cambio : TIPO_CAMBIO, precio : PeriodoPrecioAnt, tipo_operacion : PeriodoTipoOperacionAnt, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
-                                    TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "periodo1.id_hitbtc": PeriodoId_hitbtcAnt, "periodo1.fecha": PeriodoFechaAnt,"periodo1.precio" : PeriodoPrecioAnt, "periodo1.tipo_operacion": PeriodoTipoOperacionAnt }}, {"multi" : true,"upsert" : true});
+                                    OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAntMB, fecha : PeriodoFechaAntMB, tipo_cambio : TIPO_CAMBIO, precio : PeriodoPrecioAntMB, tipo_operacion : PeriodoTipoOperacionAntMB, muestreo : { periodo1 : false, periodo2 : false, periodo3 : false, periodo4 : false, periodo5 : false, periodo6 : false } });
+                                    TiposDeCambios.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ "periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB, "periodo1.Base.fecha": PeriodoFechaAntMB,"periodo1.Base.precio" : PeriodoPrecioAntMB, "periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB }}, {"multi" : true,"upsert" : true});
                                 }else{
                                     var PeriodoFechaAct = v_TradActDat.timestamp;
                                     var PeriodoId_hitbtcAct = v_TradActDat.id;
@@ -1932,7 +1932,6 @@ Meteor.methods({
                 //console.log("Valor de TradAnt", TradAnt, "Tipode cambio a verificar: ", TIPOCAMBIO, "Valor de TIPO_MUESTREO: ", TIPO_MUESTREO);
                     
                 try{
-                    //var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
                     var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
                     var LCEA = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "LimiteContEstadoActivo", estado : true  } }, { $project: {_id : 0, valor : 1}}]);
                     var LCEAA = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "LimiteContAuxiliarEstadoActivo", estado : true  } }, { $project: {_id : 0, valor : 1}}]);
@@ -1957,10 +1956,15 @@ Meteor.methods({
                 var LimtContEdoVer = LCEV[0].valor;
                 var LimtContAuxEdoVer = LCEAV[0].valor;
 
-                var PeriodoFechaAnt = RegAnt.periodo1.fecha;
-                var PeriodoId_hitbtcAnt = RegAnt.periodo1.id_hitbtc;
-                var PeriodoPrecioAnt = Number(RegAnt.periodo1.precio);
-                var PeriodoTipoOperacionAnt = RegAnt.periodo1.tipo_operacion;
+                var PeriodoFechaAntMB = RegAnt.periodo1.Base.fecha;
+                var PeriodoId_hitbtcAntMB = RegAnt.periodo1.Base.id_hitbtc;
+                var PeriodoPrecioAntMB = Number(RegAnt.periodo1.Base.precio);
+                var PeriodoTipoOperacionAntMB = RegAnt.periodo1.Base.tipo_operacion;
+
+                var PeriodoFechaAntMC = RegAnt.periodo1.Cotizacion.fecha;
+                var PeriodoId_hitbtcAntMC = RegAnt.periodo1.Cotizacion.id_hitbtc;
+                var PeriodoPrecioAntMC = Number(RegAnt.periodo1.Cotizacion.precio);
+                var PeriodoTipoOperacionAntMC = RegAnt.periodo1.Cotizacion.tipo_operacion;
                 
                 var EstadoTipoCambio = RegAnt.estado;
                 var ContEstadoTipoCambioPrinc = RegAnt.c_estado_p;
@@ -1978,13 +1982,22 @@ Meteor.methods({
                 Meteor.call("GuardarLogEjecucionTrader", ['          TIPO DE CAMBIO: ']+[TIPOCAMBIO]);
                 console.log('--------------------------------------------');
                 console.log(' ');
-                Meteor.call("GuardarLogEjecucionTrader", '----------- TRANSACCION ANTERIOR -----------');
+                Meteor.call("GuardarLogEjecucionTrader", '-------- TRANSACCION ANTERIOR MB  ---------');
                 console.log(' ');
-                Meteor.call("GuardarLogEjecucionTrader", [' LINEA DE TIEMPO: ']+[PeriodoFechaAnt]);
-                Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[PeriodoId_hitbtcAnt]);
-                Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[PeriodoPrecioAnt.toString()]);
-                Meteor.call("GuardarLogEjecucionTrader", [' TIPO OPERACIÓN: ']+[PeriodoTipoOperacionAnt]);
-                Meteor.call("GuardarLogEjecucionTrader", [' COMISION: ']+[PeriodoTipoOperacionAnt]);
+                Meteor.call("GuardarLogEjecucionTrader", [' LINEA DE TIEMPO: ']+[PeriodoFechaAntMB]);
+                Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[PeriodoId_hitbtcAntMB]);
+                Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[PeriodoPrecioAntMB.toString()]);
+                Meteor.call("GuardarLogEjecucionTrader", [' TIPO OPERACIÓN: ']+[PeriodoTipoOperacionAntMB]);
+                //Meteor.call("GuardarLogEjecucionTrader", [' COMISION: ']+[PeriodoTipoOperacionAntMB]);
+                console.log('--------------------------------------------');
+                console.log(' ');
+                Meteor.call("GuardarLogEjecucionTrader", '-------- TRANSACCION ANTERIOR MC  ---------');
+                console.log(' ');
+                Meteor.call("GuardarLogEjecucionTrader", [' LINEA DE TIEMPO: ']+[PeriodoFechaAntMC]);
+                Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[PeriodoId_hitbtcAntMC]);
+                Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[PeriodoPrecioAntMC.toString()]);
+                Meteor.call("GuardarLogEjecucionTrader", [' TIPO OPERACIÓN: ']+[PeriodoTipoOperacionAntMC]);
+                //Meteor.call("GuardarLogEjecucionTrader", [' COMISION: ']+[PeriodoTipoOperacionAntMB]);
                 console.log('--------------------------------------------');
                 console.log(' ');
                 Meteor.call("GuardarLogEjecucionTrader", '------------ ULTIMA TRANSACCION ------------');
@@ -1999,31 +2012,27 @@ Meteor.methods({
                 console.log(' ');
 
 
-                var ValPrecAnt = PeriodoPrecioAnt;
+                var ValPrecAntMB = PeriodoPrecioAntMB;
+                var ValPrecAntMC = PeriodoPrecioAntMB;
                 var ValPrecAct = PeriodoPrecioAct;
 
-                var ProcenApDp = (((ValPrecAct - ValPrecAnt ) / ValPrecAnt ) * 100 ) ;
-
-                
-
-                //Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA: ']+[ProcenApDp]);
-                //console.log('--------------------------------------------');
+                var ProcenApDpMB = ((( ValPrecAct - ValPrecAntMB ) / ValPrecAntMB ) * 100 ) ;
+                var ProcenApDpMC = ((( ValPrecAct - ValPrecAntMC ) / ValPrecAntMC ) * 100 ) ;
 
                 try{
                     if (ValPrecAct > ValPrecAnt ) {
-                        if ( MONEDASALDO = MonBase ) {                    
-                            //var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                            //var TendenciaMonedaCotizacion = ProcenApDp
-                            var TendenciaMonedaBase = ProcenApDp
-                            var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
-                        } 
-                        else if ( MONEDASALDO = MonCoti ) {                    
-                            //var TendenciaMonedaBase = ProcenApDp
+                        if ( MONEDASALDO = MonBase ) {
+                        	//var TendenciaMonedaBase = ProcenApDp
                             //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
-                            var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                            var TendenciaMonedaCotizacion = ProcenApDp
+                        	var TendenciaMonedaBase = ProcenApDpMB
+                            var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
+                        } 
+                        else if ( MONEDASALDO = MonCoti ) {
+                        	//var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                            //var TendenciaMonedaCotizacion = ProcenApDp
+                        	var TendenciaMonedaBase = ( ProcenApDpMB * -1 )
+                            var TendenciaMonedaCotizacion = ProcenApDpMC
                         }
-
 
                         Meteor.call("GuardarLogEjecucionTrader", " VALOR ACTUAL ES MAYOR QUE VALOR ANTERIOR");
                         Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
@@ -2036,110 +2045,191 @@ Meteor.methods({
                                 if ( ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ContEstadoTipoCambioAux = ContEstadoTipoCambioAux + 1;
-                                    var ValorEstadoTipoCambio = "V"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
+                                    var ValorEstadoTipoCambio = "V";
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                    
+
                                 }else if ( ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ValorEstadoTipoCambio = "V"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                    
                                 }else if ( ContEstadoTipoCambioPrinc === LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
                                     var ValorEstadoTipoCambio = "I"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                    
                                 }else if ( ContEstadoTipoCambioPrinc === LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
                                     var ValorEstadoTipoCambio = "A"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                    
                                 };
                             break;
                             case "I":
@@ -2147,75 +2237,115 @@ Meteor.methods({
                                 var ContEstadoTipoCambioPrinc = 0;
                                 var ContEstadoTipoCambioAux = 0;
                                 var ValorEstadoTipoCambio = "V"
-                                TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                										"activo" : VTPCBM.activo,
-                                										"habilitado" : VTPCBM.habilitado,
-                                										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                										"comision_mercado" : VTPCBM.comision_mercado,
-                                										"min_compra" : VTPCBM.min_compra,
-                                										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                										"valor_incremento" : VTPCBM.valor_incremento,
-                                										"estado" : ValorEstadoTipoCambio,
-                                										"c_estado_p" : VTPCBM.c_estado_p,
-                                										"c_estado_a" : VTPCBM.c_estado_a,
-                                										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                 										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                 										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                										"periodo1.fecha": PeriodoFechaAct,
-                                										"periodo1.precio" : PeriodoPrecioAct,
-                                										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                								{ "multi" : true,"upsert" : true });
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                    
                             break;
                             case "A":
                                 Meteor.call("GuardarLogEjecucionTrader", "ESTOY EN EL IF 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'A'");
                                 var ContEstadoTipoCambioPrinc = 0;
                                 var ContEstadoTipoCambioAux = 0;
                                 var ValorEstadoTipoCambio = "A"
-                                TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                										"activo" : VTPCBM.activo,
-                                										"habilitado" : VTPCBM.habilitado,
-                                										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                										"comision_mercado" : VTPCBM.comision_mercado,
-                                										"min_compra" : VTPCBM.min_compra,
-                                										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                										"valor_incremento" : VTPCBM.valor_incremento,
-                                										"estado" : ValorEstadoTipoCambio,
-                                										"c_estado_p" : VTPCBM.c_estado_p,
-                                										"c_estado_a" : VTPCBM.c_estado_a,
-                                										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                 										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                 										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                										"periodo1.fecha": PeriodoFechaAct,
-                                										"periodo1.precio" : PeriodoPrecioAct,
-                                										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                								{ "multi" : true,"upsert" : true });
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAntMC,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAntMC,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                    
                             break;
                         };
                         
                         OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                     }
                     else{
-                        if ( MONEDASALDO = MonBase ) {                    
-                            var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                            var TendenciaMonedaCotizacion = ProcenApDp
-                            //var TendenciaMonedaBase = ProcenApDp
-                            //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
-                        } 
-                        else if ( MONEDASALDO = MonCoti ) {                    
-                            var TendenciaMonedaBase = ProcenApDp
-                            var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
+                        if ( MONEDASALDO = MonBase ) {
                             //var TendenciaMonedaBase = ( ProcenApDp * -1 )
                             //var TendenciaMonedaCotizacion = ProcenApDp
+                            var TendenciaMonedaBase = ( ProcenApDp * -1 )
+                            var TendenciaMonedaCotizacion = ProcenApDpMC
+                        } 
+                        else if ( MONEDASALDO = MonCoti ) {
+                            //var TendenciaMonedaBase = ProcenApDp
+                            //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
+                            var TendenciaMonedaBase = ProcenApDpMB
+                            var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
                         }
                         Meteor.call("GuardarLogEjecucionTrader", "  VALOR ACTUAL ES MENOR QUE VALOR ANTERIOR");
                         Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
@@ -2225,11 +2355,54 @@ Meteor.methods({
                         switch( EstadoTipoCambio ){
                             case "V":
                                 Meteor.call("GuardarLogEjecucionTrader", "ESTOY EN EL ELSE 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'V'");
-                                if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
+                                if ( PeriodoId_hitbtcAntMB === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ValorEstadoTipoCambio = "V"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                    /*
+                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.Base.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.Base.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
+                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.Base.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.Base.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.Base.fecha": PeriodoFechaAct,"periodo1.Base.precio" : PeriodoPrecioAct, "periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
                                     TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
                                     								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
                                     										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
@@ -2244,289 +2417,479 @@ Meteor.methods({
                                     										"c_estado_p" : VTPCBM.c_estado_p,
                                     										"c_estado_a" : VTPCBM.c_estado_a,
                                     										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
-                                }else if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
+                                     										"periodo1.Base.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+                                     										"periodo1.Base.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
+                                    										"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+                                    										"periodo1.Base.fecha": PeriodoFechaAct,
+                                    										"periodo1.Base.precio" : PeriodoPrecioAct,
+                                    										"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct }},
+                                    								{ "multi" : true,"upsert" : true });*/
+                                }else if ( PeriodoId_hitbtcAntMB === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ValorEstadoTipoCambio = "V"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
-                                }else if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc === LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                }else if ( PeriodoId_hitbtcAntMB === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc === LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
                                     var ValorEstadoTipoCambio = "I"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
-                                }else if ( PeriodoId_hitbtcAnt !== PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc === LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                }else if ( PeriodoId_hitbtcAntMB !== PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc === LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
                                     var ValorEstadoTipoCambio = "A"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
-                                }else if ( PeriodoId_hitbtcAnt !== PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                }else if ( PeriodoId_hitbtcAntMB !== PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ContEstadoTipoCambioAux = ContEstadoTipoCambioAux + 1;
                                     var ValorEstadoTipoCambio = "V"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
-                                }else if ( PeriodoId_hitbtcAnt !== PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                }else if ( PeriodoId_hitbtcAntMB !== PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux === LimtContAuxEdoVer  ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
                                     var ValorEstadoTipoCambio = "A"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
                                 };
                             break;
                             case "I":
                                 Meteor.call("GuardarLogEjecucionTrader", "ESTOY EN EL ELSE 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'I'");
-                                if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct ){
+                                if ( PeriodoId_hitbtcAntMB === PeriodoId_hitbtcAct ){
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
                                     var ValorEstadoTipoCambio = "I"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
                                 }else {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
                                     var ValorEstadoTipoCambio = "V"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
                                 }
                             break;
                             case "A":
                                 Meteor.call("GuardarLogEjecucionTrader", "ESTOY EN EL ELSE 'ValPrecAct > ValPrecAnt' SWITCH EstadoTipoCambio CASE 'A'");
-                                if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoAct ) {
+                                if ( PeriodoId_hitbtcAntMB === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoAct ) {
                                     var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
                                     var ValorEstadoTipoCambio = "A"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
-                                }else if ( PeriodoId_hitbtcAnt === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc === LimtContEdoAct ) {
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                }else if ( PeriodoId_hitbtcAntMB === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc === LimtContEdoAct ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
                                     var ValorEstadoTipoCambio = "V"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
-                                }else if ( PeriodoId_hitbtcAnt !== PeriodoId_hitbtcAct ) {
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
+                                }else if ( PeriodoId_hitbtcAntMB !== PeriodoId_hitbtcAct ) {
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
                                     var ValorEstadoTipoCambio = "A"
-                                    TiposDeCambios.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado: ValorEstadoTipoCambio, "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct, c_estado_p: ContEstadoTipoCambioPrinc, c_estado_a: ContEstadoTipoCambioAux }});
-                                    //TempTiposCambioXMoneda.update({ tipo_cambio : TIPOCAMBIO },{$set:{ estado : ValorEstadoTipoCambio , "periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)), "periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)), activo : "S", "periodo1.id_hitbtc": PeriodoId_hitbtcAct, "periodo1.fecha": PeriodoFechaAct,"periodo1.precio" : PeriodoPrecioAct, "periodo1.tipo_operacion": PeriodoTipoOperacionAct }}, {"upsert" : true});
-                                    TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
-                                    								{ $set:{"moneda_base" : VTPCBM.moneda_base ,
-                                    										"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
-                                    										"activo" : VTPCBM.activo,
-                                    										"habilitado" : VTPCBM.habilitado,
-                                    										"comision_hitbtc" : VTPCBM.comision_hitbtc,
-                                    										"comision_mercado" : VTPCBM.comision_mercado,
-                                    										"min_compra" : VTPCBM.min_compra,
-                                    										"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
-                                    										"valor_incremento" : VTPCBM.valor_incremento,
-                                    										"estado" : ValorEstadoTipoCambio,
-                                    										"c_estado_p" : VTPCBM.c_estado_p,
-                                    										"c_estado_a" : VTPCBM.c_estado_a,
-                                    										"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
-                                     										"periodo1.tendencia_moneda_base" : parseFloat(TendenciaMonedaBase.toFixed(4)),
-                                     										"periodo1.tendencia_moneda_cotizacion" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)),
-                                    										"periodo1.id_hitbtc": PeriodoId_hitbtcAct,
-                                    										"periodo1.fecha": PeriodoFechaAct,
-                                    										"periodo1.precio" : PeriodoPrecioAct,
-                                    										"periodo1.tipo_operacion": PeriodoTipoOperacionAct }},
-                                    								{ "multi" : true,"upsert" : true });
+                                    var ValorActivo = "S";
+	                                TiposDeCambios.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                						{ $set:{ 	estado: ValorEstadoTipoCambio,
+	                                    								activo : ValorActivo,
+	                                    								c_estado_p: ContEstadoTipoCambioPrinc,
+	                                    								c_estado_a: ContEstadoTipoCambioAux,
+	                                    								"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    								"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    								"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    								"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                    								"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),
+	                                    								"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    								"periodo1.Cotizacion.fecha": PeriodoFechaAntMC,
+	                                    								"periodo1.Cotizacion.precio" : PeriodoPrecioAntMC,
+	                                    								"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                    								"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4)) }
+	                                    					});
+	                                TempTiposCambioXMoneda.update(	{ tipo_cambio : TIPOCAMBIO },
+	                                    							{ $set:{"moneda_base" : VTPCBM.moneda_base ,
+	                                    									"moneda_cotizacion" : VTPCBM.moneda_cotizacion,
+	                                    									"activo" : VTPCBM.activo,
+	                                    									"habilitado" : VTPCBM.habilitado,
+	                                    									"comision_hitbtc" : VTPCBM.comision_hitbtc,
+	                                    									"comision_mercado" : VTPCBM.comision_mercado,
+	                                    									"min_compra" : VTPCBM.min_compra,
+	                                    									"moneda_apli_comision" : VTPCBM.moneda_apli_comision,
+	                                    									"valor_incremento" : VTPCBM.valor_incremento,
+	                                    									"estado" : ValorEstadoTipoCambio,
+	                                    									"c_estado_p" : VTPCBM.c_estado_p,
+	                                    									"c_estado_a" : VTPCBM.c_estado_a,
+	                                    									"min_compra_equivalente" : VTPCBM.min_compra_equivalente,
+	                                    									"periodo1.Base.id_hitbtc": PeriodoId_hitbtcAntMB,
+	                                    									"periodo1.Base.fecha": PeriodoFechaAntMB,
+	                                    									"periodo1.Base.precio" : PeriodoPrecioAntMB,
+	                                    									"periodo1.Base.tipo_operacion": PeriodoTipoOperacionAntMB,
+	                                     									"periodo1.Base.tendencia" : parseFloat(TendenciaMonedaBase.toFixed(4)),                                    										
+	                                    									"periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+	                                    									"periodo1.Cotizacion.fecha": PeriodoFechaAct,
+	                                    									"periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+	                                    									"periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+	                                     									"periodo1.Cotizacion.tendencia" : parseFloat(TendenciaMonedaCotizacion.toFixed(4))}},
+	                                    							{ "multi" : true,"upsert" : true });
                                 };
                             break;
                         };
@@ -2544,7 +2907,7 @@ Meteor.methods({
     'ValidarRanking': function(MONEDA){
         TmpTipCambioXMonedaReord.remove({ moneda_saldo : MONEDA });
         try{
-            var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, accion : 1 }}, { $sort: { "periodo1.tendencia_moneda_base" : -1 }}, { $limit: 3 } ]);
+            var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, accion : 1 }}, { $sort: { "periodo1.Base.tendencia_moneda_base" : -1 }}, { $limit: 3 } ]);
             for (CTMCB = 0, T_TmpTCMB = TmpTCMB.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMB = TmpTCMB[CTMCB];
                 //console.log("Valor de V_TmpTCMB", V_TmpTCMB)
@@ -2561,11 +2924,11 @@ Meteor.methods({
                                                     "moneda_apli_comision": V_TmpTCMB.moneda_apli_comision,
                                                     "valor_incremento" : V_TmpTCMB.valor_incremento,
                                                     "estado" : V_TmpTCMB.estado,
-                                                    "tendencia" : V_TmpTCMB.periodo1.tendencia_moneda_base });
+                                                    "tendencia" : V_TmpTCMB.periodo1.Base.tendencia_moneda_base });
            
             };
 
-            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, accion : 2 }}, { $sort: { "periodo1.tendencia_moneda_cotizacion" : -1 }}, { $limit: 3 } ]);
+            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, accion : 2 }}, { $sort: { "periodo1.Base.tendencia_moneda_cotizacion" : -1 }}, { $limit: 3 } ]);
             for (CTMCB = 0, T_TmpTCMB = TmpTCMC.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMC = TmpTCMC[CTMCB];
                 //console.log("Valor de V_TmpTCMC", V_TmpTCMC)
@@ -2582,7 +2945,7 @@ Meteor.methods({
                                                     "moneda_apli_comision": V_TmpTCMC.moneda_apli_comision,
                                                     "valor_incremento" : V_TmpTCMC.valor_incremento,
                                                     "estado" : V_TmpTCMC.estado,
-                                                    "tendencia" : V_TmpTCMC.periodo1.tendencia_moneda_cotizacion });
+                                                    "tendencia" : V_TmpTCMC.periodo1.Base.tendencia_moneda_cotizacion });
             };
 
         }
@@ -3021,10 +3384,10 @@ Meteor.methods({
                     /*
                     switch (TIPO_MONEDA_SALDO){
                         case 1:
-                            var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_base;
+                            var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base;
                         break;
                         case 2:
-                            var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_cotizacion;
+                            var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion;
                         break;
                     }*/
                     var Tendencia = TipoCambioRanking.tendencia;
@@ -3115,17 +3478,17 @@ Meteor.methods({
                         Meteor.call("GuardarLogEjecucionTrader", [' ******** ']+[' TIPO CAMBIO: ']+[TipoCambioRanking.tipo_cambio]+['********']);
                         Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA BASE: ']+[TipoCambioRanking.moneda_base]);
                         Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA COTIZACION: ']+[TipoCambioRanking.moneda_cotizacion]);
-                        Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[TipoCambioRanking.periodo1.tendencia_moneda_base]);
+                        Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[TipoCambioRanking.periodo1.Base.tendencia_moneda_base]);
                         switch (CRTC2){
                             case 0:
                                 var TipoCambio = TipoCambioRanking.tipo_cambio
                                 /*
                                 switch (TIPO_MONEDA_SALDO){
                                     case 1:
-                                        var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_base
+                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base
                                     break;
                                     case 2:
-                                        var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_cotizacion
+                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion
                                     break;
                                 }*/
                                 var Tendencia = TipoCambioRanking.tendencia;
@@ -3202,10 +3565,10 @@ Meteor.methods({
                                     /*
                                     switch (TIPO_MONEDA_SALDO){
                                         case 1:
-                                            var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_base
+                                            var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base
                                         break;
                                         case 2:
-                                            var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_cotizacion
+                                            var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion
                                         break;
                                     }*/
                                     var Tendencia = TipoCambioRanking.tendencia;
@@ -3291,7 +3654,7 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", [' ******** ']+[' TIPO CAMBIO: ']+[TipoCambioRanking.tipo_cambio]+['********']);
                     Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA BASE: ']+[TipoCambioRanking.moneda_base]);
                     Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA COTIZACION: ']+[TipoCambioRanking.moneda_cotizacion]);
-                    Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[TipoCambioRanking.periodo1.tendencia_moneda_base]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[TipoCambioRanking.periodo1.Base.tendencia_moneda_base]);
                     switch (CRTC3){
                         case 0:
                             var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear;
@@ -3299,10 +3662,10 @@ Meteor.methods({
                                 /*
                                 switch (TIPO_MONEDA_SALDO){
                                     case 1:
-                                        var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_base
+                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base
                                     break;
                                     case 2:
-                                        var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_cotizacion
+                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion
                                     break;
                                 }*/
                             var Tendencia = TipoCambioRanking.tendencia;
@@ -3378,10 +3741,10 @@ Meteor.methods({
                                 /*
                                 switch (TIPO_MONEDA_SALDO){
                                     case 1:
-                                        var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_base
+                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base
                                     break;
                                     case 2:
-                                        var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_cotizacion
+                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion
                                     break;
                                 }*/
                             var Tendencia = TipoCambioRanking.tendencia;
@@ -3457,10 +3820,10 @@ Meteor.methods({
                                 /*
                                 switch (TIPO_MONEDA_SALDO){
                                     case 1:
-                                        var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_base
+                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base
                                     break;
                                     case 2:
-                                        var Tendencia = TipoCambioRanking.periodo1.tendencia_moneda_cotizacion
+                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion
                                     break;
                                 }*/
                             var Tendencia = TipoCambioRanking.tendencia;
