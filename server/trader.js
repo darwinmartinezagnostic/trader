@@ -1970,8 +1970,8 @@ Meteor.methods({
                 var RegAnt = TradAnt
                 var RegAct = TransProcesar[0]
 
-                //console.log("Valores Conseguidos de RegAnt: ", RegAnt)
-                //console.log("Valores Conseguidos de RegAct: ", RegAct);
+                console.log("Valores Conseguidos de RegAnt: ", RegAnt)
+                console.log("Valores Conseguidos de RegAct: ", RegAct);
 
                 var MonBase =  RegAnt.moneda_base;
                 var MonCoti =  RegAnt.moneda_cotizacion;
