@@ -1936,7 +1936,7 @@ Meteor.methods({
         // Cuando se está evaluando la moneda invertida si el resultado es + esa moneda esta en baja sino está a la alza
         if ( debug_activo === 1) {
             Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 ');
-            //Meteor.call("GuardarLogEjecucionTrader", [" Tipo de Cambio recibido"]+[TIPOCAMBIO]+[" MONEDA_SALDO: "]+[MONEDA_SALDO]);
+            Meteor.call("GuardarLogEjecucionTrader", [" Tipo de Cambio recibido"]+[TIPOCAMBIO]+[" MONEDA_SALDO: "]+[MONEDA_SALDO]);
             Meteor.call("GuardarLogEjecucionTrader", [" Tipo de Cambio recibido: "]+[TIPOCAMBIO]);
         }
 
