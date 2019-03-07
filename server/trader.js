@@ -2586,6 +2586,9 @@ Meteor.methods({
                         }
                     }
                 }
+                catch(error){
+                    Meteor.call("ValidaError", error, 2);
+                }
     },
 
     'ValidarRanking': function(MONEDA){
