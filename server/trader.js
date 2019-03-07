@@ -1934,6 +1934,7 @@ Meteor.methods({
         // Si es negativa la moneda base de está apreciando y la moneda en cotizacion se está depreciando
         // Cuando se está evaluando la moneda a comprar si el resultado es + esa moneda esta en alza sino está a la baja
         // Cuando se está evaluando la moneda invertida si el resultado es + esa moneda esta en baja sino está a la alza
+        console.log("Estoy en EvaluarTendencias ");
         if ( debug_activo === 1) {
             Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 ');
             Meteor.call("GuardarLogEjecucionTrader", [" Tipo de Cambio recibido"]+[TIPOCAMBIO]+[" MONEDA_SALDO: "]+[MONEDA_SALDO]);
@@ -1943,6 +1944,7 @@ Meteor.methods({
 
         /*switch (TIPO_MUESTREO){
             case 1:*/
+            	console.log("Estoy en EvaluarTendencias 2");
                 if ( debug_activo === 1) {
                     Meteor.call("GuardarLogEjecucionTrader", ' EvaluarTendencias: Paso 5 - switch Inicial - Case 1');
                 }
@@ -1970,7 +1972,7 @@ Meteor.methods({
                 var RegAnt = TradAnt
                 var RegAct = TransProcesar[0]
 
-                console.log("Valores Conseguidos de RegAnt: ", RegAnt)
+                console.log("Valores Conseguidos de RegAnt: ", RegAnt);
                 console.log("Valores Conseguidos de RegAct: ", RegAct);
 
                 var MonBase =  RegAnt.moneda_base;
