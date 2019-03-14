@@ -1247,7 +1247,7 @@ Meteor.methods({
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                                     console.log("Valor de ValorPromedio", ValorPromedio);
                                     if ( ValorPromedio === undefined) {
-                                        var ValorPromedio = JSON.stringify({ Existe : 0, Promedio : 0 });
+                                        var ValorPromedio = { 'Existe' : 0, 'Promedio' : 0 };
                                         console.log("Valor de ValorPromedioObtenido: ", ValorPromedio);
                                         var ValorPromedioObtenido = ValorPromedio;
                                     }
@@ -1311,7 +1311,7 @@ Meteor.methods({
                                 if ( ValorPromedio === undefined ) {
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                                     if ( ValorPromedio === undefined) {
-                                        var ValorPromedio = JSON.stringify({ Existe : 0, Promedio : 0 });
+                                        var ValorPromedio = { 'Existe' : 0, 'Promedio' : 0 };
                                         console.log("Valor de ValorPromedioObtenido: ", ValorPromedio);
                                         var ValorPromedioObtenido = ValorPromedio;
                                     }
