@@ -1248,6 +1248,7 @@ Meteor.methods({
                                     console.log("Valor de ValorPromedio", ValorPromedio);
                                     if ( ValorPromedio === undefined) {
                                         var ValorPromedio = { Existe : 0, Promedio : 0 };
+                                        console.log("Valor de ValorPromedioObtenido: ", ValorPromedio);
                                         var ValorPromedioObtenido = ValorPromedio;
                                     }
                                 }
