@@ -478,7 +478,7 @@ Meteor.methods({
                         }else if ( EstadoTransferencia[0] === 0 && EstadoTransferencia[2] === "FALLIDO" || EstadoTransferencia[0] === 1 ){
                             Meteor.call("GuardarLogEjecucionTrader", [' Estoy en el else de - if ( EstadoTransferencia[0] === 0 )']);
                             console.log('############################################');
-                            Meteor.call("GuardarLogEjecucionTrader", ['       Status Tranferencia']+[MonedaRev]);
+                            Meteor.call("GuardarLogEjecucionTrader", ['       Status Tranferencia ']+[MonedaRev]);
                             console.log('############################################');
                             Meteor.call("GuardarLogEjecucionTrader", ['             STATUS: ']+['FALLIDO']);
                             console.log('############################################');
@@ -1246,6 +1246,9 @@ Meteor.methods({
                                     console.log("Estoy en el  if ( ValorPromedio === undefined ) ");
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                                     console.log("Valor de ValorPromedio", ValorPromedio);
+                                    if ( ValorPromedio === undefined) {
+                                        var EquivalenciaActual = 0;
+                                    }
                                 }
                             break;
                             case 2:
