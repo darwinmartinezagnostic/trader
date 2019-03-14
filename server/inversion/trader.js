@@ -1308,6 +1308,9 @@ Meteor.methods({
 
                                 if ( ValorPromedio === undefined ) {
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
+                                    if ( ValorPromedio === undefined) {
+                                        var ValorPromedio = 0;
+                                    }
                                 }
                                     break;
                                 case 2:
