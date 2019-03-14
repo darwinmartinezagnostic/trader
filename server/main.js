@@ -37,6 +37,7 @@ Meteor.startup(function (){
         //var EjecucionInicial = Parametros.find({ dominio : 'Ejecucion', nombre : 'ModoEjecucion', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
         var EjecucionInicial = Parametros.aggregate([   { $match : { dominio : "Ejecucion", nombre : "ModoEjecucion" } },
                                                         { $project : { _id : 0, valor : 1 } }]);
+        console.log("Valor de EjecucionInicial: ", EjecucionInicial);
         /*
         if ( EjecucionInicial === 1 ){
             
