@@ -1248,9 +1248,10 @@ Meteor.methods({
                                     console.log("Valor de ValorPromedio", ValorPromedio);
                                     if ( ValorPromedio === undefined) {
                                         var ValorPromedio = { 'Promedio' : 0, 'Existe' : 0 };
-                                        //console.log("Valor de ValorPromedio: ", ValorPromedio);
+                                        console.log("Valor de ValorPromedio: ", ValorPromedio);
                                         //var ValorPromedioObtenido = ValorPromedio;
-                                        var ValorPromedioObtenido = { 'Promedio' : 0, 'Existe' : 0 };
+                                        //var ValorPromedioObtenido = { 'Promedio' : 0, 'Existe' : 0 };
+                                        //console.log("Valor de ValorPromedioObtenido: ", ValorPromedioObtenido);
                                     }
                                 }
                             break;
@@ -1313,9 +1314,10 @@ Meteor.methods({
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                                     if ( ValorPromedio === undefined) {
                                         var ValorPromedio = { 'Promedio' : 0, 'Existe' : 0 };
-                                        //console.log("Valor de ValorPromedio: ", ValorPromedio);
+                                        console.log("Valor de ValorPromedio: ", ValorPromedio);
                                         //var ValorPromedioObtenido = ValorPromedio;
                                         var ValorPromedioObtenido = { 'Promedio' : 0, 'Existe' : 0 };
+                                        console.log("Valor de ValorPromedioObtenido: ", ValorPromedioObtenido);
                                     }
                                 }
                                     break;
