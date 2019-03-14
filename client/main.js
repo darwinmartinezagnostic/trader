@@ -4,13 +4,13 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import './main.html';
 
 Template.home.events({
-  'click #EjecGlob': function (event) {
+  'click #Prub': function (event) {
   	event.preventDefault();
-	Meteor.call('EjecucionGlobal',function(err,data){
+	Meteor.call('Prueba',function(err,data){
 		Session.set('datos',data);
 	});
 
-	Router.go('/EjecucionGlobal');
+	Router.go('/Prueba');
 	
   }
 });
@@ -184,7 +184,7 @@ Template.home.events({
 
 //////////////////////////////////////////////////////////
 
-Template.EjecucionGlobal.events({
+Template.Prueba.events({
   'click #back': function (event) {
   	event.preventDefault();
     Router.go('/');
@@ -194,7 +194,7 @@ Template.EjecucionGlobal.events({
   }
 });
 
-Template.EjecucionGlobal.helpers({
+Template.Prueba.helpers({
 	  'datos':function(){
 	  	return Session.get('datos');
 	  }
