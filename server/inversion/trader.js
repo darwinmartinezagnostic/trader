@@ -1246,8 +1246,8 @@ Meteor.methods({
                                     console.log("Estoy en el  if ( ValorPromedio === undefined ) ");
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                                     console.log("Valor de ValorPromedio", ValorPromedio);
-                                    if ( ValorPromedio === undefined) {
-                                        var ValorPromedio = 0;
+                                    if ( ValorPromedio === undefined ) {
+                                        var ValorPromedio === 0;
                                     }
                                 }
                             break;
