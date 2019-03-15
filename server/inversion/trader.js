@@ -1832,7 +1832,7 @@ Meteor.methods({
         var url_tradeos_completa = [publico]+['trades/']+[TIPO_CAMBIO]+['?']+[url_tradeos_parcial];        
         var v_tradeos = Meteor.call("ConexionGet", url_tradeos_completa);
         var trad_mon = (v_tradeos.data);
-
+        console.log("Valor de trad_mon:", trad_mon);
 
 
 
