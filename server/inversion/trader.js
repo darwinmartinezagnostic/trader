@@ -612,7 +612,7 @@ Meteor.methods({
             console.log("Valor de ValorDemanda", ValorDemanda);
 
             if ( ValorOferta === null || ValorDemanda === null ) {
-                Meteor.call("GuardarLogEjecucionTrader", "Entre por if ( ValorOferta === undefined || ValorDemanda === undefined ");
+                Meteor.call("GuardarLogEjecucionTrader", "Entre por if ( ValorOferta === null || ValorDemanda === null ");
                 var ValFinPromedio = 0;
                 var Existencia = 0;
             }else{
