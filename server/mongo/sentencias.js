@@ -6,7 +6,7 @@ Meteor.methods({
 	'ActualizaTiposDeCambios':function( TMA, TC, EST, VA, CTCP, CTCA, IDM, FM, PM, TOM, TM ){
 		if ( TMA == 1 ) {
 			console.log("Valores ecibidos: TMA: ",[TMA]+[", TC: "]+[TC]+[", EST: "]+[EST]+[", VA: "]+[VA]+[", CTCP: "]+[CTCP]);
-			console.log([", CTCA: "]+[CTCA]+[", IDM: "]+[IDM][", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]);
+			console.log([", CTCA: "]+[CTCA]+[", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]);
 			TiposDeCambios.update(	{ tipo_cambio : TC },
 			                        { $set:{ 	estado: EST,
 			                        			activo : VA,
