@@ -105,10 +105,10 @@ Meteor.methods({
         console.log("Valor de ValorPromedio", ValorPromedio);
         */
        
-		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
+		//for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
 			//Meteor.call('ListaTradeoActual', TIPO_CAMBIO, 2);
         	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
-        }
+        //}
 
 
         //#############################################################################################################################################
