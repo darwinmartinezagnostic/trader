@@ -89,12 +89,13 @@ Meteor.methods({
          //Meteor.call('EquivalenteDolarMinCompra');
          
         var TIPO_CAMBIO = 'USDKRWB';
+        /*
         valor = EquivalenciasDol.aggregate([ { $match: { tipo_cambio : TIPO_CAMBIO }}, 
                                             { $project: { _id : 0, promedio : 1 } }
                                             ]);
 
         console.log("Valor de valor", valor[0]);
-
+		*/
 
         var TipoCambioObtenido = TIPO_CAMBIO;
 
