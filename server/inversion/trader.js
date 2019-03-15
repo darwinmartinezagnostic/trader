@@ -605,8 +605,8 @@ Meteor.methods({
 
         if ( compras_ventas !== undefined ) {
             var v_compras_ventas = (compras_ventas.data);
-            var ValorOferta = parseFloat(v_compras_ventas.ask)
-            var ValorDemanda = parseFloat(v_compras_ventas.bid)
+            var ValorOferta = v_compras_ventas.ask;
+            var ValorDemanda = v_compras_ventas.bid;
 
             console.log("Valor de ValorOferta", ValorOferta);
             console.log("Valor de ValorDemanda", ValorDemanda);
@@ -617,7 +617,7 @@ Meteor.methods({
                 var Existencia = 0;
             }else{
                 //var sumatoria = parseFloat(v_compras_ventas.ask) + parseFloat(v_compras_ventas.bid);
-                var sumatoria = ValorOferta + ValorDemanda;
+                var sumatoria = parseFloat(ValorOferta) + parseFloat(ValorDemanda);
                 var promedio = sumatoria/2;
                 //var CantPromedio = v_compras_ventas.ask.toString().trim().length ;
                 var CantPromedio = ValorOferta.toString().trim().length ;
