@@ -1958,13 +1958,13 @@ Meteor.methods({
                                                                             periodo6 : false } 
                                                                 });*/
                         
-
+                        console.log(' 1111111');
                         if ( OperacionesCompraVenta.find( { tipo_cambio : TIPO_CAMBIO }).count() === 0 ){
-                            OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtc, 
-                                                            fecha : PeriodoFecha, 
+                            OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAct, 
                                                             tipo_cambio : TIPO_CAMBIO, 
-                                                            precio : PeriodoPrecio, 
-                                                            tipo_operacion : PeriodoTipoOperacion, 
+                                                            fecha : PeriodoFechaAct, 
+                                                            precio : PeriodoPrecioAct, 
+                                                            tipo_operacion : PeriodoTipoOperacionAct, 
                                                             muestreo : {periodo1 : false, 
                                                                         periodo2 : false, 
                                                                         periodo3 : false, 
@@ -1973,7 +1973,7 @@ Meteor.methods({
                                                                         periodo6 : false } 
                                                                     });
                         }else{
-
+                        console.log(' 1111111');
                         OperacionesCompraVenta.update(  { tipo_cambio : TIPO_CAMBIO },
                                                         {$set:{ id_hitbtc: PeriodoId_hitbtcAct, 
                                                                 fecha : PeriodoFechaAct,
