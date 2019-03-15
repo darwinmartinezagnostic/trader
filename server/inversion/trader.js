@@ -1997,7 +1997,8 @@ Meteor.methods({
                                                             {$set:{ id_hitbtc: PeriodoId_hitbtcAct, 
                                                                     fecha : PeriodoFechaAct,
                                                                     precio : PeriodoPrecioAct, 
-                                                                    tipo_operacion : PeriodoTipoOperacionAct},
+                                                                    tipo_operacion : PeriodoTipoOperacionAct}
+                                                            },
                                                             {"multi" : true,"upsert" : true});
                         }
 
