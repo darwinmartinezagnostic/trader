@@ -1939,7 +1939,7 @@ Meteor.methods({
 
 
                         //try{
-                                var PeriodoFechaAct = v_TradActDat.timestamp;
+                        /*        var PeriodoFechaAct = v_TradActDat.timestamp;
                                 var PeriodoId_hitbtcAct = v_TradActDat.id;
                                 var PeriodoPrecioAct = Number(v_TradActDat.price);
                                 var PeriodoCantidad = v_TradActDat.quantity;
@@ -1955,7 +1955,8 @@ Meteor.methods({
                                                                             periodo4 : false, 
                                                                             periodo5 : false, 
                                                                             periodo6 : false } 
-                                                                });
+                                                                });*/
+                        var IdOCV= Meteor.call('CalculaId', 3);
                         OperacionesCompraVenta.update(  { tipo_cambio : TIPO_CAMBIO },
                                                         {$set:{ id_hitbtc: PeriodoId_hitbtcAct, 
                                                                 fecha : PeriodoFechaAct,
@@ -1966,9 +1967,11 @@ Meteor.methods({
                                                                             periodo3 : false, 
                                                                             periodo4 : false, 
                                                                             periodo5 : false, 
-                                                                            periodo6 : false  })
-                        
-                        OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
+                                                                            periodo6 : false  }}
+                                                        },
+                                                        {"multi" : true,"upsert" : true});
+
+                        //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
 
                         Meteor.call("GuardarLogEjecucionTrader", [' LINEA DE TIEMPO: ']+[PeriodoFechaAct]);
                         Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[PeriodoId_hitbtcAct]);
