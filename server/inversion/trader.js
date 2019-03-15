@@ -1957,7 +1957,23 @@ Meteor.methods({
                                                                             periodo5 : false, 
                                                                             periodo6 : false } 
                                                                 });*/
-                        var IdOCV= Meteor.call('CalculaId', 3);
+                        
+
+                        if ( OperacionesCompraVenta.find( { tipo_cambio : TIPO_CAMBIO }).count() === 0 ){
+                            OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtc, 
+                                                            fecha : PeriodoFecha, 
+                                                            tipo_cambio : TIPO_CAMBIO, 
+                                                            precio : PeriodoPrecio, 
+                                                            tipo_operacion : PeriodoTipoOperacion, 
+                                                            muestreo : {periodo1 : false, 
+                                                                        periodo2 : false, 
+                                                                        periodo3 : false, 
+                                                                        periodo4 : false, 
+                                                                        periodo5 : false, 
+                                                                        periodo6 : false } 
+                                                                    });
+                        }else{
+
                         OperacionesCompraVenta.update(  { tipo_cambio : TIPO_CAMBIO },
                                                         {$set:{ id_hitbtc: PeriodoId_hitbtcAct, 
                                                                 fecha : PeriodoFechaAct,
@@ -1971,6 +1987,9 @@ Meteor.methods({
                                                                             periodo6 : false  }}
                                                         },
                                                         {"multi" : true,"upsert" : true});
+                        }
+
+
 
                         //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
 
