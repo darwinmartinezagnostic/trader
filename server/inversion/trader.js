@@ -1904,11 +1904,7 @@ Meteor.methods({
                                                             },
                                                             {"multi" : true,"upsert" : true});
                         }
-
-
-
-                        //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
-
+                        /*
                         Meteor.call("GuardarLogEjecucionTrader", [' LINEA DE TIEMPO: ']+[PeriodoFechaAct]);
                         Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[PeriodoId_hitbtcAct]);
                         Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[PeriodoPrecioAct]);
@@ -1916,8 +1912,7 @@ Meteor.methods({
                         Meteor.call("GuardarLogEjecucionTrader", [' TIPO OPERACIÓN: ']+[PeriodoTipoOperacionAct]); 
 
                         console.log('############################################');
-                        console.log(' ');
-                        /*}*/
+                        console.log(' ');*/
                     }
                     break;
                 default:
