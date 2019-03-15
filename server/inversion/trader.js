@@ -1802,7 +1802,7 @@ Meteor.methods({
 
         console.log('############################################');
         console.log(' ');
-
+        /*
         //consultamos el último id_transaccion de este Símbolo
         if ( debug_activo === 1) {
             //Meteor.call("GuardarLogEjecucionTrader", ['"ListaTradeoActual" consultando último id_transaccion del tipo_cambio: ']+[TIPO_CAMBIO]);
@@ -1827,7 +1827,8 @@ Meteor.methods({
             Val_trad_tipo_cambio= Val_trad_tipo_cambio+1;
             var url_tradeos_parcial= ['&sort=ASC&by=id&from=']+[Val_trad_tipo_cambio]+['&limit=1&format_numbers=number'];
         };
-
+        */
+        var url_tradeos_parcial= ['from=0&by=trade_id&sort=DESC&start_index=0&limit=']+[cant_traders]+['&format_numbers=number'];
         var url_tradeos_completa = [publico]+['trades/']+[TIPO_CAMBIO]+['?']+[url_tradeos_parcial];        
         var v_tradeos = Meteor.call("ConexionGet", url_tradeos_completa);
         var trad_mon = (v_tradeos.data);
