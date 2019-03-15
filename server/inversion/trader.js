@@ -2040,9 +2040,9 @@ Meteor.methods({
                 var ProcenApDpMB = ((( ValPrecAct - ValPrecAntMB ) / ValPrecAntMB ) * 100 ) ;
                 var ProcenApDpMC = ((( ValPrecAct - ValPrecAntMC ) / ValPrecAntMC ) * 100 ) ;
 
-                //console.log('Valor de MONEDASALDO:', [MONEDASALDO]);
-                //console.log('Valor de MonBase:', [MonBase]);
-                //console.log('Valor de MonCoti:', [MonCoti]);
+                console.log('Valor de MONEDASALDO:', [MONEDASALDO]);
+                console.log('Valor de MonBase:', [MonBase]);
+                console.log('Valor de MonCoti:', [MonCoti]);
 
                 try{
                     if ( MONEDASALDO = MonBase ){
