@@ -2061,7 +2061,7 @@ Meteor.methods({
                             console.log('--------------------------------------------');
                             
                             switch( EstadoTipoCambio ){
-                                case "V":
+                                case 'V':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonBase : ESTOY EN 'ValPrecAct > ValPrecAntMB' SWITCH EstadoTipoCambio CASE 'V'");
                                     if ( ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                         var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
@@ -2115,7 +2115,7 @@ Meteor.methods({
                                         
                                     };
                                 break;
-                                case "I":
+                                case 'I':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonBase : ESTOY EN 'ValPrecAct > ValPrecAntMB' SWITCH EstadoTipoCambio CASE 'I'");
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2127,9 +2127,8 @@ Meteor.methods({
 
                                     //'ActualizaTempTiposCambioXMoneda':function( TMA, TC, MB, MC, ACT, HAB, CHBT, CM, MACM, VI, EST, CEP, CEA, MINC, MCE, IDM, FM, PM, TOM, TM )
                                     Meteor.call('ActualizaTempTiposCambioXMoneda', TMA, TIPOCAMBIO, VTPCBM.moneda_base , VTPCBM.moneda_cotizacion, VTPCBM.activo, VTPCBM.habilitado, VTPCBM.comision_hitbtc, VTPCBM.comision_mercado, VTPCBM.moneda_apli_comision, VTPCBM.valor_incremento, ValorEstadoTipoCambio, VTPCBM.c_estado_p, VTPCBM.c_estado_a, VTPCBM.min_compra, VTPCBM.min_compra_equivalente, PeriodoId_hitbtcAct, PeriodoFechaAct, PeriodoPrecioAct, PeriodoTipoOperacionAct, parseFloat(TendenciaMonedaBase.toFixed(4)));
-                                        
                                 break;
-                                case "A":
+                                case 'A':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonBase : ESTOY EN 'ValPrecAct > ValPrecAntMB' SWITCH EstadoTipoCambio CASE 'A'");
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2141,7 +2140,6 @@ Meteor.methods({
 
                                     //'ActualizaTempTiposCambioXMoneda':function( TMA, TC, MB, MC, ACT, HAB, CHBT, CM, MACM, VI, EST, CEP, CEA, MINC, MCE, IDM, FM, PM, TOM, TM )
                                     Meteor.call('ActualizaTempTiposCambioXMoneda', TMA, TIPOCAMBIO, VTPCBM.moneda_base , VTPCBM.moneda_cotizacion, VTPCBM.activo, VTPCBM.habilitado, VTPCBM.comision_hitbtc, VTPCBM.comision_mercado, VTPCBM.moneda_apli_comision, VTPCBM.valor_incremento, ValorEstadoTipoCambio, VTPCBM.c_estado_p, VTPCBM.c_estado_a, VTPCBM.min_compra, VTPCBM.min_compra_equivalente, PeriodoId_hitbtcAct, PeriodoFechaAct, PeriodoPrecioAct, PeriodoTipoOperacionAct, parseFloat(TendenciaMonedaBase.toFixed(4)));
-                                        
                                 break;
                             };
                             
@@ -2173,7 +2171,7 @@ Meteor.methods({
                             console.log('--------------------------------------------');
                             
                             switch( EstadoTipoCambio ){
-                                case "V":
+                                case 'V':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonBase : ESTOY EN 'ValPrecAct <= ValPrecAntMB' SWITCH EstadoTipoCambio CASE 'V'");
                                     if ( PeriodoId_hitbtcAntMB === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                         var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
@@ -2247,7 +2245,7 @@ Meteor.methods({
                                         
                                     };
                                 break;
-                                case "I":
+                                case 'I':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonBase : ESTOY EN 'ValPrecAct <= ValPrecAntMB' SWITCH EstadoTipoCambio CASE 'I'");
                                     if ( PeriodoId_hitbtcAntMB === PeriodoId_hitbtcAct ){
                                         var ContEstadoTipoCambioPrinc = 0;
@@ -2275,7 +2273,7 @@ Meteor.methods({
                                         
                                     }
                                 break;
-                                case "A":
+                                case 'A':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonBase : ESTOY EN 'ValPrecAct <= ValPrecAntMB' SWITCH EstadoTipoCambio CASE 'A'");
                                     if ( PeriodoId_hitbtcAntMB === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoAct ) {
                                         var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
@@ -2346,7 +2344,7 @@ Meteor.methods({
                             console.log('--------------------------------------------');
                             
                             switch( EstadoTipoCambio ){
-                                case "V":
+                                case 'V':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonCoti : ESTOY EN 'ValPrecAct > ValPrecAntMC' SWITCH EstadoTipoCambio CASE 'V'");
                                     if ( ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                         var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
@@ -2397,7 +2395,7 @@ Meteor.methods({
 
                                     };
                                 break;
-                                case "I":
+                                case 'I':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonCoti : ESTOY EN 'ValPrecAct > ValPrecAntMC' SWITCH EstadoTipoCambio CASE 'I'");
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2409,9 +2407,8 @@ Meteor.methods({
 
                                     //'ActualizaTempTiposCambioXMoneda':function( TMA, TC, MB, MC, ACT, HAB, CHBT, CM, MACM, VI, EST, CEP, CEA, MINC, MCE, IDM, FM, PM, TOM, TM )
                                     Meteor.call('ActualizaTempTiposCambioXMoneda', TMA, TIPOCAMBIO, VTPCBM.moneda_base , VTPCBM.moneda_cotizacion, VTPCBM.activo, VTPCBM.habilitado, VTPCBM.comision_hitbtc, VTPCBM.comision_mercado, VTPCBM.moneda_apli_comision, VTPCBM.valor_incremento, ValorEstadoTipoCambio, VTPCBM.c_estado_p, VTPCBM.c_estado_a, VTPCBM.min_compra, VTPCBM.min_compra_equivalente, PeriodoId_hitbtcAct, PeriodoFechaAct, PeriodoPrecioAct, PeriodoTipoOperacionAct, parseFloat(TendenciaMonedaCotizacion.toFixed(4)) );
-
                                 break;
-                                case "A":
+                                case 'A':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonCoti : ESTOY EN 'ValPrecAct > ValPrecAntMC' SWITCH EstadoTipoCambio CASE 'A'");
                                     var ContEstadoTipoCambioPrinc = 0;
                                     var ContEstadoTipoCambioAux = 0;
@@ -2423,7 +2420,6 @@ Meteor.methods({
 
                                     //'ActualizaTempTiposCambioXMoneda':function( TMA, TC, MB, MC, ACT, HAB, CHBT, CM, MACM, VI, EST, CEP, CEA, MINC, MCE, IDM, FM, PM, TOM, TM )
                                     Meteor.call('ActualizaTempTiposCambioXMoneda', TMA, TIPOCAMBIO, VTPCBM.moneda_base , VTPCBM.moneda_cotizacion, VTPCBM.activo, VTPCBM.habilitado, VTPCBM.comision_hitbtc, VTPCBM.comision_mercado, VTPCBM.moneda_apli_comision, VTPCBM.valor_incremento, ValorEstadoTipoCambio, VTPCBM.c_estado_p, VTPCBM.c_estado_a, VTPCBM.min_compra, VTPCBM.min_compra_equivalente, PeriodoId_hitbtcAct, PeriodoFechaAct, PeriodoPrecioAct, PeriodoTipoOperacionAct, parseFloat(TendenciaMonedaCotizacion.toFixed(4)) );
-
                                 break;
                             };
                             
@@ -2442,7 +2438,7 @@ Meteor.methods({
                             console.log('--------------------------------------------');
 
                             switch( EstadoTipoCambio ){
-                                case "V":
+                                case 'V':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonCoti : ESTOY EN 'ValPrecAct <= ValPrecAntMC' SWITCH EstadoTipoCambio CASE 'V'");
                                     if ( PeriodoId_hitbtcAntMC === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoVer && ContEstadoTipoCambioAux < LimtContAuxEdoVer  ) {
                                         var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
@@ -2516,7 +2512,7 @@ Meteor.methods({
                                         
                                     };
                                 break;
-                                case "I":
+                                case 'I':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonCoti : ESTOY EN 'ValPrecAct <= ValPrecAntMC' SWITCH EstadoTipoCambio CASE 'I'");
                                     if ( PeriodoId_hitbtcAntMC === PeriodoId_hitbtcAct ){
                                         var ContEstadoTipoCambioPrinc = 0;
@@ -2544,7 +2540,7 @@ Meteor.methods({
                                         
                                     }
                                 break;
-                                case "A":
+                                case 'A':
                                     Meteor.call("GuardarLogEjecucionTrader", " MONEDASALDO = MonCoti : ESTOY EN 'ValPrecAct <= ValPrecAntMC' SWITCH EstadoTipoCambio CASE 'A'");
                                     if ( PeriodoId_hitbtcAntMC === PeriodoId_hitbtcAct && ContEstadoTipoCambioPrinc < LimtContEdoAct ) {
                                         var ContEstadoTipoCambioPrinc = ContEstadoTipoCambioPrinc + 1;
