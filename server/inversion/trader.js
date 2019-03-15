@@ -2049,10 +2049,8 @@ Meteor.methods({
                     if ( MONEDASALDO === MonBase ){
                         var TMA = 1;
                         if ( ValPrecAct > ValPrecAntMB ) {
-
                            
                             var TendenciaMonedaBase = ProcenApDpMB
-                            //var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
 
                             Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonBase");
                             Meteor.call("GuardarLogEjecucionTrader", " VALOR ACTUAL ES MAYOR QUE VALOR ANTERIOR");
@@ -2146,19 +2144,6 @@ Meteor.methods({
                             //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                         }
                         else if ( ValPrecAct <= ValPrecAntMB ){
-                            //console.log( "Acá estoy 2");
-                            /*if ( MONEDASALDO = MonBase ) {
-                                //var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                                //var TendenciaMonedaCotizacion = ProcenApDp
-                                var TendenciaMonedaBase = ( ProcenApDpMB * -1 )
-                                var TendenciaMonedaCotizacion = ProcenApDpMC
-                            } 
-                            else if ( MONEDASALDO = MonCoti ) {
-                                //var TendenciaMonedaBase = ProcenApDp
-                                //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
-                                var TendenciaMonedaBase = ProcenApDpMB
-                                var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
-                            }*/
                             
                             var TendenciaMonedaBase = ( ProcenApDpMB * -1 )
                             var TendenciaMonedaCotizacion = ProcenApDpMC
@@ -2320,21 +2305,6 @@ Meteor.methods({
                     else if ( MONEDASALDO === MonCoti ) {
                         var TMA = 2;
                         if ( ValPrecAct > ValPrecAntMC ) {
-                            //console.log( "Acá estoy 3");
-                            /*if ( MONEDA_SALDO = MonBase ) {
-                                //var TendenciaMonedaBase = ProcenApDp
-                                //var TendenciaMonedaCotizacion = ( ProcenApDp * -1 )
-                                var TendenciaMonedaBase = ProcenApDpMB
-                                var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
-                            } 
-                            else if ( MONEDA_SALDO = MonCoti ) {
-                                //var TendenciaMonedaBase = ( ProcenApDp * -1 )
-                                //var TendenciaMonedaCotizacion = ProcenApDp
-                                var TendenciaMonedaBase = ( ProcenApDpMB * -1 )
-                                var TendenciaMonedaCotizacion = ProcenApDpMC
-                            }*/
-
-                            //var TendenciaMonedaBase = ( ProcenApDpMB * -1 )
                             var TendenciaMonedaCotizacion = ProcenApDpMC
 
                             Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonCoti");
@@ -2426,9 +2396,6 @@ Meteor.methods({
                             //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                         }
                         else if ( ValPrecAct <= ValPrecAntMC ){
-                            //console.log( "Acá estoy 4");
-
-                            //var TendenciaMonedaBase = ProcenApDpMB
                             var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
 
                             Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonCoti");
