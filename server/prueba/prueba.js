@@ -89,7 +89,7 @@ Meteor.methods({
          //Meteor.call('EquivalenteDolarMinCompra');
          
         var TIPO_CAMBIO = 'BTCUSD';
-        var MONEDA_SALDO = 'BTC'
+        var MONEDA_SALDO = 'USD'
         /*
         valor = EquivalenciasDol.aggregate([ { $match: { tipo_cambio : TIPO_CAMBIO }}, 
                                             { $project: { _id : 0, promedio : 1 } }
