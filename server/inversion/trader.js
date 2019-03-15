@@ -1936,33 +1936,36 @@ Meteor.methods({
 
 
 
-                        Meteor.call("GuardarLogEjecucionTrader", [' LINEA DE TIEMPO: ']+[v_TradActDat.timestamp]);
-                        Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[v_TradActDat.id]);
-                        Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[v_TradActDat.price]);
-                        Meteor.call("GuardarLogEjecucionTrader", [' CANTIDAD: ',]+[v_TradActDat.quantity]);
-                        Meteor.call("GuardarLogEjecucionTrader", [' TIPO OPERACIÓN: ']+[v_tipo_operacion_act]); 
+
+
+                        //try{
+                                var PeriodoFechaAct = v_TradActDat.timestamp;
+                                var PeriodoId_hitbtcAct = v_TradActDat.id;
+                                var PeriodoPrecioAct = Number(v_TradActDat.price);
+                                var PeriodoCantidad = v_tipo_operacion_act;
+                                var PeriodoTipoOperacionAct = v_tipo_operacion_act;
+                                OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAct, 
+                                                                fecha : PeriodoFechaAct, 
+                                                                tipo_cambio : TIPO_CAMBIO, 
+                                                                precio : PeriodoPrecioAct, 
+                                                                tipo_operacion : PeriodoTipoOperacionAct, 
+                                                                muestreo : {periodo1 : false, 
+                                                                            periodo2 : false, 
+                                                                            periodo3 : false, 
+                                                                            periodo4 : false, 
+                                                                            periodo5 : false, 
+                                                                            periodo6 : false } 
+                                                                });
+
+
+                        Meteor.call("GuardarLogEjecucionTrader", [' LINEA DE TIEMPO: ']+[PeriodoFechaAct]);
+                        Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[PeriodoId_hitbtcAct]);
+                        Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[PeriodoPrecioAct]);
+                        Meteor.call("GuardarLogEjecucionTrader", [' CANTIDAD: ',]+[PeriodoCantidad]);
+                        Meteor.call("GuardarLogEjecucionTrader", [' TIPO OPERACIÓN: ']+[PeriodoTipoOperacionAct]); 
 
                         console.log('############################################');
                         console.log(' ');
-
-
-
-                            	var PeriodoFechaAct = v_TradActDat.timestamp;
-                                var PeriodoId_hitbtcAct = v_TradActDat.id;
-                                var PeriodoPrecioAct = Number(v_TradActDat.price);
-                                var PeriodoTipoOperacionAct = v_tipo_operacion_act;
-                                OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAct, 
-                                    							fecha : PeriodoFechaAct, 
-                                    							tipo_cambio : TIPO_CAMBIO, 
-                                    							precio : PeriodoPrecioAct, 
-                                    							tipo_operacion : PeriodoTipoOperacionAct, 
-                                    							muestreo : {periodo1 : false, 
-                                    										periodo2 : false, 
-                                    										periodo3 : false, 
-                                    										periodo4 : false, 
-                                    										periodo5 : false, 
-                                    										periodo6 : false } 
-                                    							});
                         /*}*/
                     }
                     break;
