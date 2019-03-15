@@ -106,7 +106,8 @@ Meteor.methods({
         */
        
 		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
-        	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
+			Meteor.call('ListaTradeoActual', TIPO_CAMBIO, 2);
+        	//Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
         }
 
 
