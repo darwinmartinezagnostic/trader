@@ -1461,7 +1461,8 @@ Meteor.methods({
                 break;
         }
 
-        var moneda = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPO_CAMBIO }}, { $sort: { fecha : -1 } }, { $limit: 1 }]);
+        //var moneda = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPO_CAMBIO }}, { $sort: { fecha : -1 } }, { $limit: 1 }]);
+        var moneda = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPO_CAMBIO }}]);
 
         if ( COMISION_HITBTC === undefined ) {
             var coms_hitbc = 0;
@@ -1960,7 +1961,7 @@ Meteor.methods({
                         
                         console.log(' 1111111');
                         if ( OperacionesCompraVenta.find( { tipo_cambio : TIPO_CAMBIO }).count() === 0 ){
-                            OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAct, 
+                            /*OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAct, 
                                                             tipo_cambio : TIPO_CAMBIO, 
                                                             fecha : PeriodoFechaAct, 
                                                             precio : PeriodoPrecioAct, 
@@ -1971,22 +1972,33 @@ Meteor.methods({
                                                                         periodo4 : false, 
                                                                         periodo5 : false, 
                                                                         periodo6 : false } 
+                                                                    });*/
+                            OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAct, 
+                                                            tipo_cambio : TIPO_CAMBIO, 
+                                                            fecha : PeriodoFechaAct, 
+                                                            precio : PeriodoPrecioAct, 
+                                                            tipo_operacion : PeriodoTipoOperacionAct 
                                                                     });
                         }else{
-                        console.log(' 1111111');
-                        OperacionesCompraVenta.update(  { tipo_cambio : TIPO_CAMBIO },
-                                                        {$set:{ id_hitbtc: PeriodoId_hitbtcAct, 
-                                                                fecha : PeriodoFechaAct,
-                                                                precio : PeriodoPrecioAct, 
-                                                                tipo_operacion : PeriodoTipoOperacionAct, 
-                                                                muestreo : {periodo1 : false, 
-                                                                            periodo2 : false, 
-                                                                            periodo3 : false, 
-                                                                            periodo4 : false, 
-                                                                            periodo5 : false, 
-                                                                            periodo6 : false  }}
-                                                        },
-                                                        {"multi" : true,"upsert" : true});
+                            /*OperacionesCompraVenta.update(  { tipo_cambio : TIPO_CAMBIO },
+                                                            {$set:{ id_hitbtc: PeriodoId_hitbtcAct, 
+                                                                    fecha : PeriodoFechaAct,
+                                                                    precio : PeriodoPrecioAct, 
+                                                                    tipo_operacion : PeriodoTipoOperacionAct, 
+                                                                    muestreo : {periodo1 : false, 
+                                                                                periodo2 : false, 
+                                                                                periodo3 : false, 
+                                                                                periodo4 : false, 
+                                                                                periodo5 : false, 
+                                                                                periodo6 : false  }}
+                                                            },
+                                                            {"multi" : true,"upsert" : true});*/
+                            OperacionesCompraVenta.update(  { tipo_cambio : TIPO_CAMBIO },
+                                                            {$set:{ id_hitbtc: PeriodoId_hitbtcAct, 
+                                                                    fecha : PeriodoFechaAct,
+                                                                    precio : PeriodoPrecioAct, 
+                                                                    tipo_operacion : PeriodoTipoOperacionAct},
+                                                            {"multi" : true,"upsert" : true});
                         }
 
 
@@ -2041,7 +2053,8 @@ Meteor.methods({
                 //console.log("Valor de TradAnt", TradAnt, "Tipode cambio a verificar: ", TIPOCAMBIO, "Valor de TIPO_MUESTREO: ", TIPO_MUESTREO);
                     
                 try{
-                    var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
+                    //var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO }}, { $sort: { id_hitbtc : - 1 } }, { $limit: 1 }]);
+                    var TransProcesar = OperacionesCompraVenta.aggregate([{ $match: { tipo_cambio : TIPOCAMBIO }}]);
                     var LCEA = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "LimiteContEstadoActivo", estado : true  } }, { $project: {_id : 0, valor : 1}}]);
                     var LCEAA = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "LimiteContAuxiliarEstadoActivo", estado : true  } }, { $project: {_id : 0, valor : 1}}]);
                     var LCEV = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "LimiteContEstadoVerificando", estado : true  } }, { $project: {_id : 0, valor : 1}}]);
@@ -2231,7 +2244,7 @@ Meteor.methods({
                                 break;
                             };
                             
-                            OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
+                            //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                         }
                         else if ( ValPrecAct <= ValPrecAntMB ){
                             //console.log( "Acá estoy 2");
@@ -2400,7 +2413,7 @@ Meteor.methods({
                                 break;
                             };
 
-                            OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
+                            //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                         }
                     }
                     else if ( MONEDASALDO = MonCoti ) {
@@ -2510,7 +2523,7 @@ Meteor.methods({
                                 break;
                             };
                             
-                            OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
+                            //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                         }
                         else if ( ValPrecAct <= ValPrecAntMC ){
                             //console.log( "Acá estoy 4");
@@ -2667,7 +2680,7 @@ Meteor.methods({
                                 break;
                             };
 
-                            OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
+                            //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                         }
                     }
                 }
