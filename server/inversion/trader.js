@@ -600,7 +600,7 @@ Meteor.methods({
 
 
         var compras_ventas = Meteor.call("ConexionGet", url_compras_ventas);
-        //console.log("Valor de compras_ventas", compras_ventas);
+        console.log("Valor de compras_ventas", compras_ventas);
 
 
         if ( compras_ventas !== undefined ) {
