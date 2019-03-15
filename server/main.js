@@ -35,9 +35,11 @@ Meteor.startup(function (){
     try {
         // Verificamos si la aplicación es su ejecución Inicial o no
         //var EjecucionInicial = Parametros.find({ dominio : 'Ejecucion', nombre : 'ModoEjecucion', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
-        var EjecucionInicial = Parametros.aggregate([   { $match : { dominio : "Ejecucion", nombre : "ModoEjecucion" } },
+        var ModoEjecucion = Parametros.aggregate([   { $match : { dominio : "Ejecucion", nombre : "ModoEjecucion" } },
                                                         { $project : { _id : 0, valor : 1 } }]);
-        console.log("Valor de EjecucionInicial: ", EjecucionInicial);
+        
+        var ValorModoEjecucion = ModoEjecucion[0].valor
+        console.log("Valor de EjecucionInicial: ", ValorModoEjecucion);
         /*
         if ( EjecucionInicial === 1 ){
             
@@ -49,7 +51,7 @@ Meteor.startup(function (){
         };*/
 
 
-        switch ( EjecucionInicial ){
+        switch ( ValorModoEjecucion ){
             case 0:
                 Meteor.call("Prueba");
             break;
@@ -67,5 +69,4 @@ Meteor.startup(function (){
     catch (error){
         Meteor.call("ValidaError", error, 2);
     };
-    //Meteor.call("EjecucionGlobal");
 });
