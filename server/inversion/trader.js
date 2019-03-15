@@ -1907,6 +1907,7 @@ Meteor.methods({
                             var PeriodoFechaAct = v_TradActDat.timestamp;
                             var PeriodoId_hitbtcAct = v_TradActDat.id;
                             var PeriodoPrecioAct = Number(v_TradActDat.price);
+                            var PeriodoCantidadAct = v_TradActDat.quantity;
                             var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
                             /*
@@ -1976,8 +1977,9 @@ Meteor.methods({
                             OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtcAct, 
                                                             tipo_cambio : TIPO_CAMBIO, 
                                                             fecha : PeriodoFechaAct, 
-                                                            precio : PeriodoPrecioAct, 
-                                                            tipo_operacion : PeriodoTipoOperacionAct 
+                                                            precio : PeriodoPrecioAct,
+                                                            cantidad : PeriodoCantidadAct,
+                                                            tipo_operacion : PeriodoTipoOperacionAct
                                                                     });
                         }else{
                             /*OperacionesCompraVenta.update(  { tipo_cambio : TIPO_CAMBIO },
@@ -1997,6 +1999,7 @@ Meteor.methods({
                                                             {$set:{ id_hitbtc: PeriodoId_hitbtcAct, 
                                                                     fecha : PeriodoFechaAct,
                                                                     precio : PeriodoPrecioAct, 
+                                                                    cantidad : PeriodoCantidadAct,
                                                                     tipo_operacion : PeriodoTipoOperacionAct}
                                                             },
                                                             {"multi" : true,"upsert" : true});
@@ -2009,7 +2012,7 @@ Meteor.methods({
                         Meteor.call("GuardarLogEjecucionTrader", [' LINEA DE TIEMPO: ']+[PeriodoFechaAct]);
                         Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[PeriodoId_hitbtcAct]);
                         Meteor.call("GuardarLogEjecucionTrader", [' PRECIO: ']+[PeriodoPrecioAct]);
-                        Meteor.call("GuardarLogEjecucionTrader", [' CANTIDAD: ',]+[PeriodoCantidad]);
+                        Meteor.call("GuardarLogEjecucionTrader", [' CANTIDAD: ',]+[PeriodoCantidadAct]);
                         Meteor.call("GuardarLogEjecucionTrader", [' TIPO OPERACIÓN: ']+[PeriodoTipoOperacionAct]); 
 
                         console.log('############################################');
