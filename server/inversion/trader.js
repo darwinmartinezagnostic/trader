@@ -1902,13 +1902,13 @@ Meteor.methods({
                                 	Meteor.call("GuardarLogEjecucionTrader", ['Nuevo tipo de operacion detectada en la función "ListaTradeoActual": ']+[v_TradAntDat.side]);
                                     var PeriodoTipoOperacion = v_TradActDat.side;
                             }
-                                   
+                            */    
                             var PeriodoFechaAct = v_TradActDat.timestamp;
                             var PeriodoId_hitbtcAct = v_TradActDat.id;
                             var PeriodoPrecioAct = Number(v_TradActDat.price);
                             var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
-
+                            /*
                             OperacionesCompraVenta.insert({ id_hitbtc: PeriodoId_hitbtc, 
                                     						fecha : PeriodoFecha, 
                                     						tipo_cambio : TIPO_CAMBIO, 
