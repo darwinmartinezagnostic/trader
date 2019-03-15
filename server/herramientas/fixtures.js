@@ -24,7 +24,7 @@ if (PeriodoMuestreo.find().count() === 0){
 };
 
 if (Parametros.find().count() === 0){
-	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'ModoEjecucion', estado : true, valor: 1 ,descripcion : 'Modo de Ejecucíón del Trader, 0 = Pruebas, 1 = EjecucionInicial, 2 = SecuenciasSecundarias' });
+	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'ModoEjecucion', estado : true, valor: 0 ,descripcion : 'Modo de Ejecucíón del Trader, 0 = Pruebas, 1 = EjecucionInicial, 2 = SecuenciasSecundarias' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'Depuracion', estado : true, valor: 1 ,descripcion : 'Activar o desactivar las banderas creadas para rasterar errores de ejecución en los diferentes módulos' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'MaxApDep', estado : true, valor: 3 ,descripcion : 'Límite de Apreción (Moneda a comprar) o Depreciación (Moneda en Venta)' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadTraders', estado : true, valor: 1 ,descripcion : 'Máximo de Registros Traders consultados a HitBTC' });

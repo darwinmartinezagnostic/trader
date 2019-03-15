@@ -16,7 +16,7 @@ Meteor.methods({
         Meteor.call("ActualizaSaldoTodasMonedas", 1);
         Meteor.call("EquivalenteDolarMinCompra");
         try {
-            Parametros.update({ dominio : "ejecucion", nombre : "ModoEjecucion", "valor" : 1 },{$set :{ "valor" : 2 , fecha_ejecucion : new Date() }});
+            Parametros.update({ dominio : "Ejecucion", nombre : "ModoEjecucion", "valor" : 1 },{$set :{ "valor" : 2 , fecha_ejecucion : new Date() }});
         }
         catch (error){
             Meteor.call("ValidaError", error, 2);
@@ -34,22 +34,11 @@ Meteor.startup(function (){
     
     try {
         // Verificamos si la aplicación es su ejecución Inicial o no
-        //var EjecucionInicial = Parametros.find({ dominio : 'Ejecucion', nombre : 'ModoEjecucion', estado : true, valor: { muestreo : { periodo_inicial : true } }},{}).count()
         var ModoEjecucion = Parametros.aggregate([   { $match : { dominio : "Ejecucion", nombre : "ModoEjecucion" } },
                                                         { $project : { _id : 0, valor : 1 } }]);
         
         var ValorModoEjecucion = ModoEjecucion[0].valor
         console.log("Valor de EjecucionInicial: ", ValorModoEjecucion);
-        /*
-        if ( EjecucionInicial === 1 ){
-            
-            Meteor.call('SecuenciaInicial');
-        }
-        else if ( EjecucionInicial === 0 ) {
-
-            Meteor.call('SecuenciasSecundarias');
-        };*/
-
 
         switch ( ValorModoEjecucion ){
             case 0:
@@ -61,10 +50,7 @@ Meteor.startup(function (){
             case 2:
                 Meteor.call('SecuenciasSecundarias');
             break;                
-            }
-
-
-
+        }
     }
     catch (error){
         Meteor.call("ValidaError", error, 2);
