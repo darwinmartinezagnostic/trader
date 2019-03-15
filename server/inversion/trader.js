@@ -2046,7 +2046,7 @@ Meteor.methods({
                 console.log(' ');
 
                 try{
-                    if ( MONEDASALDO == MonBase ){
+                    if ( MONEDASALDO === MonBase ){
                         Meteor.call("GuardarLogEjecucionTrader", "  DEBO ENTRAR POR ACÁ");
                         var TMA = 1;
                         if ( ValPrecAct > ValPrecAntMB ) {
@@ -2319,7 +2319,7 @@ Meteor.methods({
                             //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                         }
                     }
-                    else if ( MONEDASALDO == MonCoti ) {
+                    else if ( MONEDASALDO === MonCoti ) {
                         var TMA = 2;
                         if ( ValPrecAct > ValPrecAntMC ) {
                             //console.log( "Acá estoy 3");
