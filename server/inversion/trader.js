@@ -600,7 +600,7 @@ Meteor.methods({
 
 
         var compras_ventas = Meteor.call("ConexionGet", url_compras_ventas);
-        //console.log("Valor de compras_ventas", compras_ventas);
+        console.log("Valor de compras_ventas", compras_ventas);
 
 
         if ( compras_ventas === undefined ) {           
@@ -1247,14 +1247,14 @@ Meteor.methods({
                                     console.log("Valor de TipoCambioObtenido", TipoCambioObtenido);
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                                     console.log("Valor de ValorPromedio", ValorPromedio);
-                                    if ( ValorPromedio === undefined ) {
+                                    /*if ( ValorPromedio === undefined ) {
                                         console.log("Entre en el segundo if ( ValorPromedio === undefined ) {  ");
                                         var ValorPromedio = { 'Promedio' : 0, 'Existe' : 0 };
                                         console.log("Valor de ValorPromedio: ", ValorPromedio);
                                         //var ValorPromedioObtenido = ValorPromedio;
                                         //var ValorPromedioObtenido = { 'Promedio' : 0, 'Existe' : 0 };
                                         //console.log("Valor de ValorPromedioObtenido: ", ValorPromedioObtenido);
-                                    }
+                                    }*/
                                 }
                             break;
                             case 2:
@@ -1314,14 +1314,14 @@ Meteor.methods({
 
                                 if ( ValorPromedio === undefined ) {
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
-                                    if ( ValorPromedio === undefined) {
+                                    /*if ( ValorPromedio === undefined) {
                                         console.log("Entre en el segundo if ( ValorPromedio === undefined ) { B ");
                                         var ValorPromedio = { 'Promedio' : 0, 'Existe' : 0 };
                                         console.log("Valor de ValorPromedio: ", ValorPromedio);
                                         //var ValorPromedioObtenido = ValorPromedio;
                                         var ValorPromedioObtenido = { 'Promedio' : 0, 'Existe' : 0 };
                                         console.log("Valor de ValorPromedioObtenido: ", ValorPromedioObtenido);
-                                    }
+                                    }*/
                                 }
                                     break;
                                 case 2:

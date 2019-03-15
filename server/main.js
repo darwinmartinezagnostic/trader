@@ -34,8 +34,8 @@ Meteor.startup(function (){
     
     try {
         // Verificamos si la aplicación es su ejecución Inicial o no
-        var ModoEjecucion = Parametros.aggregate([   { $match : { dominio : "Ejecucion", nombre : "ModoEjecucion" } },
-                                                        { $project : { _id : 0, valor : 1 } }]);
+        var ModoEjecucion = Parametros.aggregate([  { $match : { dominio : "Ejecucion", nombre : "ModoEjecucion" } },
+                                                    { $project : { _id : 0, valor : 1 } }]);
         
         var ValorModoEjecucion = ModoEjecucion[0].valor
         console.log("Valor de EjecucionInicial: ", ValorModoEjecucion);

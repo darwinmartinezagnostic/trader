@@ -48,7 +48,7 @@ Meteor.methods({
        
 
         //#############################################################################################################################################
-       
+       	/*
         var Monedas_Saldo = Monedas.aggregate([
                         { $match : {"saldo.tradeo.equivalencia" : { $gt : 0 }, moneda : 'BTC' }},
                         { $sort : {"saldo.tradeo.equivalencia":-1} }
@@ -70,7 +70,7 @@ Meteor.methods({
              }
         }
         Meteor.call('ValidarRanking', Monedas_Saldo[0].moneda);
-        
+        */
 
 
         /*
@@ -87,17 +87,35 @@ Meteor.methods({
 
         */
          //Meteor.call('EquivalenteDolarMinCompra');
-         /*
-        var TIPO_CAMBIO = 'ETHUSD';
+         
+        var TIPO_CAMBIO = 'USDKRWB';
         valor = EquivalenciasDol.aggregate([ { $match: { tipo_cambio : TIPO_CAMBIO }}, 
                                             { $project: { _id : 0, promedio : 1 } }
                                             ]);
 
         console.log("Valor de valor", valor[0]);
-        */
+
+
+        var TipoCambioObtenido = TIPO_CAMBIO;
+
+
+        var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
+        console.log("Valor de ValorPromedio", ValorPromedio);
+        
        
         //#############################################################################################################################################
 
        //Meteor.call("SecuenciasSecundarias");
+
+
+
+
+       Meteor.call("SecuenciasSecundarias");
+
+
+
+
+
+
     },
 });
