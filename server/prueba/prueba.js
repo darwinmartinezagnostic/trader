@@ -89,7 +89,7 @@ Meteor.methods({
          //Meteor.call('EquivalenteDolarMinCompra');
          
         var TIPO_CAMBIO = 'XMRBTC';
-        var MONEDA_SALDO = 'BTX'
+        var MONEDA_SALDO = 'BTC'
         /*
         valor = EquivalenciasDol.aggregate([ { $match: { tipo_cambio : TIPO_CAMBIO }}, 
                                             { $project: { _id : 0, promedio : 1 } }
@@ -106,8 +106,8 @@ Meteor.methods({
         */
        
 		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
-			Meteor.call('ListaTradeoActual', TIPO_CAMBIO, 2);
-        	//Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
+			//Meteor.call('ListaTradeoActual', TIPO_CAMBIO, 2);
+        	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
         }
 
 
