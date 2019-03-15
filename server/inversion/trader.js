@@ -2053,7 +2053,8 @@ Meteor.methods({
                            
                             var TendenciaMonedaBase = ProcenApDpMB
                             //var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
-
+                            
+                            Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonBase");
                             Meteor.call("GuardarLogEjecucionTrader", " VALOR ACTUAL ES MAYOR QUE VALOR ANTERIOR");
                             Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
                             Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[MonCoti]+[' = ']+[TendenciaMonedaCotizacion.toFixed(4)]);
@@ -2337,6 +2338,7 @@ Meteor.methods({
                             //var TendenciaMonedaBase = ( ProcenApDpMB * -1 )
                             var TendenciaMonedaCotizacion = ProcenApDpMC
 
+                            Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonCoti");
                             Meteor.call("GuardarLogEjecucionTrader", " VALOR ACTUAL ES MAYOR QUE VALOR ANTERIOR");
                             Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
                             Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[MonCoti]+[' = ']+[TendenciaMonedaCotizacion.toFixed(4)]);
