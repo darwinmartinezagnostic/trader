@@ -2034,7 +2034,7 @@ Meteor.methods({
 
 
                 var ValPrecAntMB = PeriodoPrecioAntMB;
-                var ValPrecAntMC = PeriodoPrecioAntMB;
+                var ValPrecAntMC = PeriodoPrecioAntMC;
                 var ValPrecAct = PeriodoPrecioAct;
 
                 var ProcenApDpMB = ((( ValPrecAct - ValPrecAntMB ) / ValPrecAntMB ) * 100 ) ;
@@ -2043,6 +2043,7 @@ Meteor.methods({
                 console.log('Valor de MONEDASALDO:', [MONEDASALDO]);
                 console.log('Valor de MonBase:', [MonBase]);
                 console.log('Valor de MonCoti:', [MonCoti]);
+                console.log(' ');
 
                 try{
                     if ( MONEDASALDO == MonBase ){
@@ -2433,7 +2434,7 @@ Meteor.methods({
 
                             Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonCoti");
                             Meteor.call("GuardarLogEjecucionTrader", "  VALOR ACTUAL ES MENOR QUE VALOR ANTERIOR");
-                            Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
+                            //Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase.toFixed(4)]);
                             Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[MonCoti]+[' = ']+[TendenciaMonedaCotizacion.toFixed(4)]);
                             console.log('--------------------------------------------');
 
