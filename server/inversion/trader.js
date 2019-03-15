@@ -608,15 +608,19 @@ Meteor.methods({
             var ValorOferta = parseFloat(v_compras_ventas.ask)
             var ValorDemanda = parseFloat(v_compras_ventas.bid)
 
+            console.log("Valor de ValorOferta", ValorOferta);
+            console.log("Valor de ValorDemanda", ValorDemanda);
+
             if ( ValorOferta === undefined || ValorDemanda === undefined ) {
-                Meteor.call("GuardarLogEjecucionTrader", "Entre por compras_ventas === undefined ");
+                Meteor.call("GuardarLogEjecucionTrader", "Entre por if ( ValorOferta === undefined || ValorDemanda === undefined ");
                 var ValFinPromedio = 0;
                 var Existencia = 0;
             }else{
                 //var sumatoria = parseFloat(v_compras_ventas.ask) + parseFloat(v_compras_ventas.bid);
                 var sumatoria = ValorOferta + ValorDemanda;
                 var promedio = sumatoria/2;
-                var CantPromedio = v_compras_ventas.ask.toString().trim().length ;
+                //var CantPromedio = v_compras_ventas.ask.toString().trim().length ;
+                var CantPromedio = ValorOferta.toString().trim().length ;
                 var ValStrnPromedio = promedio.toString().substr(0, CantPromedio);
                 var ValFinPromedio = parseFloat(ValStrnPromedio);
                 var Existencia = 1;
