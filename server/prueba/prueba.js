@@ -96,7 +96,7 @@ Meteor.methods({
 
         console.log("Valor de valor", valor[0]);
 		*/
-
+		
         var TipoCambioObtenido = TIPO_CAMBIO;
 
 
