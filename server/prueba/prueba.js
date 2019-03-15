@@ -88,7 +88,8 @@ Meteor.methods({
         */
          //Meteor.call('EquivalenteDolarMinCompra');
          
-        var TIPO_CAMBIO = 'USDKRWB';
+        var TIPO_CAMBIO = 'XMRBTC';
+        var MONEDA_SALDO = 'BTX'
         /*
         valor = EquivalenciasDol.aggregate([ { $match: { tipo_cambio : TIPO_CAMBIO }}, 
                                             { $project: { _id : 0, promedio : 1 } }
@@ -96,14 +97,19 @@ Meteor.methods({
 
         console.log("Valor de valor", valor[0]);
 		*/
-		
+		/*
         var TipoCambioObtenido = TIPO_CAMBIO;
 
 
         var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
         console.log("Valor de ValorPromedio", ValorPromedio);
-        
+        */
        
+		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
+        	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
+        }
+
+
         //#############################################################################################################################################
 
        //Meteor.call("SecuenciasSecundarias");
@@ -111,7 +117,7 @@ Meteor.methods({
 
 
 
-       Meteor.call("SecuenciasSecundarias");
+       //Meteor.call("SecuenciasSecundarias");
 
 
 

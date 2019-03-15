@@ -28,7 +28,7 @@ Meteor.methods({
 });
 
 Meteor.startup(function (){
-    // code to run on server at startup
+    // código que se ejecuta al iniciar la aplicación en el servidor
     JobsInternal.Utilities.collection.remove({  });
     LogEjecucionTrader.remove({  });
     
