@@ -2047,6 +2047,7 @@ Meteor.methods({
 
                 try{
                     if ( MONEDASALDO == MonBase ){
+                        Meteor.call("GuardarLogEjecucionTrader", "  DEBO ENTRAR POR ACÁ");
                         var TMA = 1;
                         if ( ValPrecAct > ValPrecAntMB ) {
 
