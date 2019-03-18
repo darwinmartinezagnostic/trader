@@ -2146,7 +2146,6 @@ Meteor.methods({
                         else if ( ValPrecAct <= ValPrecAntMB ){
                             
                             var TendenciaMonedaBase = ( ProcenApDpMB * -1 )
-                            var TendenciaMonedaCotizacion = ProcenApDpMC
 
                             Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonBase");
                             Meteor.call("GuardarLogEjecucionTrader", "  VALOR ACTUAL ES MENOR QUE VALOR ANTERIOR");
@@ -2305,7 +2304,8 @@ Meteor.methods({
                     else if ( MONEDASALDO === MonCoti ) {
                         var TMA = 2;
                         if ( ValPrecAct > ValPrecAntMC ) {
-                            var TendenciaMonedaCotizacion = ProcenApDpMC
+                            //var TendenciaMonedaCotizacion = ProcenApDpMC
+                            var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
 
                             Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonCoti");
                             Meteor.call("GuardarLogEjecucionTrader", " VALOR ACTUAL ES MAYOR QUE VALOR ANTERIOR");
