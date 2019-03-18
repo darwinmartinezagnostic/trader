@@ -2577,7 +2577,7 @@ Meteor.methods({
                                                     "moneda_apli_comision": V_TmpTCMB.moneda_apli_comision,
                                                     "valor_incremento" : V_TmpTCMB.valor_incremento,
                                                     "estado" : V_TmpTCMB.estado,
-                                                    "tendencia" : V_TmpTCMB.periodo1.Base.tendencia_moneda_base });
+                                                    "tendencia" : V_TmpTCMB.periodo1.Base.tendencia });
            
             };
 
@@ -2598,7 +2598,7 @@ Meteor.methods({
                                                     "moneda_apli_comision": V_TmpTCMC.moneda_apli_comision,
                                                     "valor_incremento" : V_TmpTCMC.valor_incremento,
                                                     "estado" : V_TmpTCMC.estado,
-                                                    "tendencia" : V_TmpTCMC.periodo1.Base.tendencia_moneda_cotizacion });
+                                                    "tendencia" : V_TmpTCMC.periodo1.Cotizacion.tendencia });
             };
 
         }
