@@ -2560,7 +2560,7 @@ Meteor.methods({
     'ValidarRanking': function(MONEDA){
         TmpTipCambioXMonedaReord.remove({ moneda_saldo : MONEDA });
         try{
-            var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, accion : 1 }}, { $sort: { "periodo1.Base.tendencia_moneda_base" : -1 }}, { $limit: 3 } ]);
+            var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, accion : 1 }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: 3 } ]);
             for (CTMCB = 0, T_TmpTCMB = TmpTCMB.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMB = TmpTCMB[CTMCB];
                 //console.log("Valor de V_TmpTCMB", V_TmpTCMB)
@@ -2581,7 +2581,7 @@ Meteor.methods({
            
             };
 
-            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, accion : 2 }}, { $sort: { "periodo1.Base.tendencia_moneda_cotizacion" : -1 }}, { $limit: 3 } ]);
+            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, accion : 2 }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
             for (CTMCB = 0, T_TmpTCMB = TmpTCMC.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMC = TmpTCMC[CTMCB];
                 //console.log("Valor de V_TmpTCMC", V_TmpTCMC)
