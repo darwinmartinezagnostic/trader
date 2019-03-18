@@ -2396,7 +2396,8 @@ Meteor.methods({
                             //OperacionesCompraVenta.update({ tipo_cambio : TIPOCAMBIO, "muestreo.periodo1" : false },{$set:{ "muestreo.periodo1" : true }}, {"multi" : true,"upsert" : true});
                         }
                         else if ( ValPrecAct <= ValPrecAntMC ){
-                            var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
+                            //var TendenciaMonedaCotizacion = ( ProcenApDpMC * -1 )
+                            var TendenciaMonedaCotizacion = ( ProcenApDpMC )
 
                             Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonCoti");
                             Meteor.call("GuardarLogEjecucionTrader", "  VALOR ACTUAL ES MENOR QUE VALOR ANTERIOR");
