@@ -1769,19 +1769,18 @@ Meteor.methods({
             var V_Valores_TiposDeCambiosRankear = Valores_TiposDeCambiosRankear[CTMCB];
             //console.log("Valor de V_Valores_TiposDeCambiosRankear", V_Valores_TiposDeCambiosRankear)
             //Meteor.call("GuardarLogEjecucionTrader", [' Valore de V_Valores_TiposDeCambiosRankear: ']+[V_Valores_TiposDeCambiosRankear]);
-                    
+            /* 
             if ( MONEDA == V_Valores_TiposDeCambiosRankear.moneda_base ) {
                 var accion = 1
             } else if (MONEDA == V_Valores_TiposDeCambiosRankear.moneda_cotizacion ){
                 var accion = 2
             }
-
+            */
             TempTiposCambioXMoneda.update({ "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio, 
-                                             "accion": accion }, {    
+                                             "moneda_saldo" : MONEDA }, {    
                                             $set: {
                                                     "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio,
-                                                    "moneda_base": V_Valores_TiposDeCambiosRankear.moneda_base, 
-                                                    "accion": accion,
+                                                    "moneda_base": V_Valores_TiposDeCambiosRankear.moneda_base,
                                                     "moneda_cotizacion" : V_Valores_TiposDeCambiosRankear.moneda_cotizacion, 
                                                     "saldo_moneda_tradear" : SALDO_MONEDA_EQUIV, 
                                                     "moneda_saldo" : MONEDA, 
@@ -1791,7 +1790,7 @@ Meteor.methods({
                                                     "min_compra" : V_Valores_TiposDeCambiosRankear.min_compra,
                                                     "moneda_apli_comision": V_Valores_TiposDeCambiosRankear.moneda_apli_comision,
                                                     "valor_incremento" : V_Valores_TiposDeCambiosRankear.valor_incremento,
-                                                    estado : V_Valores_TiposDeCambiosRankear.estado
+                                                    "estado" : V_Valores_TiposDeCambiosRankear.estado
                                                 }
                                             }, 
                                             {"multi" : true,"upsert" : true});
@@ -1921,7 +1920,6 @@ Meteor.methods({
         };
     },
 
-    //'EvaluarTendencias':function( TIPOCAMBIO, TIPO_MUESTREO, TIPO_MONEDA_SALDO){
     'EvaluarTendencias':function( TIPOCAMBIO, MONEDASALDO ){
 
         // Formula de deprecación
@@ -2579,13 +2577,12 @@ Meteor.methods({
     'ValidarRanking': function(MONEDA){
         TmpTipCambioXMonedaReord.remove({ moneda_saldo : MONEDA });
         try{
-            var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, accion : 1 }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: 3 } ]);
+            var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: 3 } ]);
             for (CTMCB = 0, T_TmpTCMB = TmpTCMB.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMB = TmpTCMB[CTMCB];
                 //console.log("Valor de V_TmpTCMB", V_TmpTCMB)
                 TmpTipCambioXMonedaReord.insert({ "tipo_cambio": V_TmpTCMB.tipo_cambio,
                                                     "moneda_base": V_TmpTCMB.moneda_base,
-                                                    "accion": V_TmpTCMB.accion,
                                                     "moneda_cotizacion" : V_TmpTCMB.moneda_cotizacion, 
                                                     "saldo_moneda_tradear" : V_TmpTCMB.saldo_moneda_tradear,
                                                     "moneda_saldo" : V_TmpTCMB.moneda_saldo,
@@ -2600,13 +2597,12 @@ Meteor.methods({
            
             };
 
-            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, accion : 2 }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
+            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
             for (CTMCB = 0, T_TmpTCMB = TmpTCMC.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMC = TmpTCMC[CTMCB];
                 //console.log("Valor de V_TmpTCMC", V_TmpTCMC)
                 TmpTipCambioXMonedaReord.insert({ "tipo_cambio": V_TmpTCMC.tipo_cambio,
                                                     "moneda_base": V_TmpTCMC.moneda_base,
-                                                    "accion": V_TmpTCMC.accion,
                                                     "moneda_cotizacion" : V_TmpTCMC.moneda_cotizacion, 
                                                     "saldo_moneda_tradear" : V_TmpTCMC.saldo_moneda_tradear,
                                                     "moneda_saldo" : V_TmpTCMC.moneda_saldo,
@@ -3053,15 +3049,6 @@ Meteor.methods({
                     TipoCambioRanking = RankingTiposDeCambios[CRTC1];
 
                     var TipoCambio = TipoCambioRanking.tipo_cambio
-                    /*
-                    switch (TIPO_MONEDA_SALDO){
-                        case 1:
-                            var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base;
-                        break;
-                        case 2:
-                            var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion;
-                        break;
-                    }*/
                     var Tendencia = TipoCambioRanking.tendencia;
                     var PorcentajeInversion = ProporcionTipoCambios.valor.p11
                     var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
@@ -3079,13 +3066,14 @@ Meteor.methods({
                     var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
                     var MonCBas = TipoCambioRanking.moneda_base;
                     var MonCoti = TipoCambioRanking.moneda_cotizacion;
-                    var TipoAccion = TipoCambioRanking.accion;
                                 
                     if ( MonCBas === MonedaSaldo ) {
+                        var TipoAccion = 1;
                         var comision1 = 0;
                         var comision2 = 0;
                         var SaldoInverCalculado = SaldoActualMoneda*ProporcionTipoCambios.valor.p11;
                     } else if ( MonCoti === MonedaSaldo ) {
+                        var TipoAccion = 2;
                         var SaldoInvertir = SaldoActualMoneda*ProporcionTipoCambios.valor.p11;
                         var comision1 = ValorComisionHBTC * SaldoInvertir
                         var comision2 = ValorComisionMerc * SaldoInvertir
@@ -3108,7 +3096,7 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", ['     ACCION: ']+[TipoAccion]);
                     console.log('--------------------------------------------');
                             
-                    switch (TipoCambioRanking.accion){
+                    switch ( TipoAccion ){
                         case 1:
                             if( EstadoRobot === 1 ) {
                                 Meteor.call("GuardarLogEjecucionTrader", ' Entre  En el robot simulador 1' );
@@ -3154,15 +3142,6 @@ Meteor.methods({
                         switch (CRTC2){
                             case 0:
                                 var TipoCambio = TipoCambioRanking.tipo_cambio
-                                /*
-                                switch (TIPO_MONEDA_SALDO){
-                                    case 1:
-                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base
-                                    break;
-                                    case 2:
-                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion
-                                    break;
-                                }*/
                                 var Tendencia = TipoCambioRanking.tendencia;
                                 var PorcentajeInversion = ProporcionTipoCambios.valor.p12
                                 var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
@@ -3180,13 +3159,14 @@ Meteor.methods({
                                 var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
                                 var MonCBas = TipoCambioRanking.moneda_base;
                                 var MonCoti = TipoCambioRanking.moneda_cotizacion;
-                                var TipoAccion = TipoCambioRanking.accion;
                                     
                                 if ( MonCBas === MonedaSaldo ) {
+                                    var TipoAccion = 1;
                                     var comision1 = 0;
                                     var comision2 = 0;
                                     var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;
                                 } else if ( MonCoti === MonedaSaldo ) {
+                                    var TipoAccion = 2;
                                     var SaldoInvertir = SaldoActualMoneda*PorcentajeInversion;
                                     var comision1 = ValorComisionHBTC * SaldoInvertir
                                     var comision2 = ValorComisionMerc * SaldoInvertir
@@ -3201,7 +3181,7 @@ Meteor.methods({
                                 Meteor.call("GuardarLogEjecucionTrader", ['     COMISION DE MERCADO: ']+[comision2]);
                                 Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA APLICACION COMISION: ']+[MonedaApCom]);
                                 Meteor.call("GuardarLogEjecucionTrader", ['     ACCION: ']+[TipoAccion]);
-                                switch (TipoCambioRanking.accion){
+                                switch ( TipoAccion ){
                                     case 1:
                                         if( EstadoRobot === 1 ) {
                                             Meteor.call("GuardarLogEjecucionTrader", ' Entre  En el robot simulador 1' );
@@ -3234,15 +3214,6 @@ Meteor.methods({
                                         var SaldoActualMoneda = SAM[0].saldo.tradeo.activo
                                     }
                                     var TipoCambio = TipoCambioRanking.tipo_cambio
-                                    /*
-                                    switch (TIPO_MONEDA_SALDO){
-                                        case 1:
-                                            var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base
-                                        break;
-                                        case 2:
-                                            var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion
-                                        break;
-                                    }*/
                                     var Tendencia = TipoCambioRanking.tendencia;
                                     var PorcentajeInversion = ProporcionTipoCambios.valor.p22
                                     if ( TipoCambioRanking.comision_hitbtc === undefined) {
@@ -3259,13 +3230,14 @@ Meteor.methods({
                                     var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
                                     var MonCBas = TipoCambioRanking.moneda_base;
                                     var MonCoti = TipoCambioRanking.moneda_cotizacion;
-                                    var TipoAccion = TipoCambioRanking.accion;
     
                                     if ( MonCBas === MonedaSaldo ) {
+                                        var TipoAccion = 1;
                                         var comision1 = 0;
                                         var comision2 = 0;
                                         var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;
                                     } else if ( MonCoti === MonedaSaldo ) {
+                                        var TipoAccion = 2;
                                         var SaldoInvertir = SaldoActualMoneda*PorcentajeInversion;
                                         var comision1 = ValorComisionHBTC * SaldoInvertir
                                         var comision2 = ValorComisionMerc * SaldoInvertir
@@ -3279,7 +3251,7 @@ Meteor.methods({
                                     Meteor.call("GuardarLogEjecucionTrader", ['     COMISION DE MERCADO: ']+[comision2]);
                                     Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA APLICACION COMISION: ']+[MonedaApCom]);
                                     Meteor.call("GuardarLogEjecucionTrader", ['     ACCION: ']+[TipoAccion]);
-                                    switch (TipoCambioRanking.accion){
+                                    switch ( TipoAccion ){
                                         case 1:
                                             if( EstadoRobot === 1 ) {
                                                 Meteor.call("GuardarLogEjecucionTrader", ' Entre  En el robot simulador 1' );
@@ -3331,15 +3303,6 @@ Meteor.methods({
                         case 0:
                             var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear;
                             var TipoCambio = TipoCambioRanking.tipo_cambio
-                                /*
-                                switch (TIPO_MONEDA_SALDO){
-                                    case 1:
-                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base
-                                    break;
-                                    case 2:
-                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion
-                                    break;
-                                }*/
                             var Tendencia = TipoCambioRanking.tendencia;
                             var PorcentajeInversion = ProporcionTipoCambios.valor.p13
                             if ( TipoCambioRanking.comision_hitbtc === undefined) {
@@ -3356,13 +3319,14 @@ Meteor.methods({
                             var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
                             var MonCBas = TipoCambioRanking.moneda_base;
                             var MonCoti = TipoCambioRanking.moneda_cotizacion;
-                            var TipoAccion = TipoCambioRanking.accion;
                                     
                             if ( MonCBas === MonedaSaldo ) {
+                                var TipoAccion = 1;
                                 var comision1 = 0;
                                 var comision2 = 0;
                                 var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;
                             } else if ( MonCoti === MonedaSaldo ) {
+                                var TipoAccion = 2;
                                 var SaldoInvertir = SaldoActualMoneda*PorcentajeInversion;
                                 var comision1 = ValorComisionHBTC * SaldoInvertir
                                 var comision2 = ValorComisionMerc * SaldoInvertir
@@ -3377,7 +3341,7 @@ Meteor.methods({
                             Meteor.call("GuardarLogEjecucionTrader", ['     COMISION DE MERCADO: ']+[comision2]);
                             Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA APLICACION COMISION: ']+[MonedaApCom]);
                             Meteor.call("GuardarLogEjecucionTrader", ['     ACCION: ']+[TipoAccion]);
-                            switch (TipoCambioRanking.accion){
+                            switch ( TipoAccion ){
                                 case 1:
                                     if( EstadoRobot === 1 ) {
                                         Meteor.call("GuardarLogEjecucionTrader", ' Entre  En el robot simulador 1' );
@@ -3410,15 +3374,6 @@ Meteor.methods({
                                 var SaldoActualMoneda = SAM[0].saldo.tradeo.activo
                             }
                             var TipoCambio = TipoCambioRanking.tipo_cambio
-                                /*
-                                switch (TIPO_MONEDA_SALDO){
-                                    case 1:
-                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base
-                                    break;
-                                    case 2:
-                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion
-                                    break;
-                                }*/
                             var Tendencia = TipoCambioRanking.tendencia;
                             var PorcentajeInversion = ProporcionTipoCambios.valor.p23;
                             if ( TipoCambioRanking.comision_hitbtc === undefined) {
@@ -3435,13 +3390,14 @@ Meteor.methods({
                             var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
                             var MonCBas = TipoCambioRanking.moneda_base;
                             var MonCoti = TipoCambioRanking.moneda_cotizacion;
-                            var TipoAccion = TipoCambioRanking.accion;
     
                             if ( MonCBas === MonedaSaldo ) {
+                                var TipoAccion = 1;
                                 var comision1 = 0;
                                 var comision2 = 0;
                                 var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;
                             } else if ( MonCoti === MonedaSaldo ) {
+                                var TipoAccion = 2;
                                 var SaldoInvertir = SaldoActualMoneda*PorcentajeInversion;
                                 var comision1 = ValorComisionHBTC * SaldoInvertir
                                 var comision2 = ValorComisionMerc * SaldoInvertir
@@ -3455,7 +3411,7 @@ Meteor.methods({
                             Meteor.call("GuardarLogEjecucionTrader", ['     COMISION DE MERCADO: ']+[comision2]);
                             Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA APLICACION COMISION: ']+[MonedaApCom]);
                             Meteor.call("GuardarLogEjecucionTrader", ['     ACCION: ']+[TipoAccion]);
-                            switch (TipoCambioRanking.accion){
+                            switch ( TipoAccion ){
                                 case 1:
                                     if( EstadoRobot === 1 ) {
                                         Meteor.call("GuardarLogEjecucionTrader", ' Entre  En el robot simulador 1' );
@@ -3489,15 +3445,6 @@ Meteor.methods({
                                 var SaldoActualMoneda = SAM[0].saldo.tradeo.activo
                             }
                             var TipoCambio = TipoCambioRanking.tipo_cambio
-                                /*
-                                switch (TIPO_MONEDA_SALDO){
-                                    case 1:
-                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_base
-                                    break;
-                                    case 2:
-                                        var Tendencia = TipoCambioRanking.periodo1.Base.tendencia_moneda_cotizacion
-                                    break;
-                                }*/
                             var Tendencia = TipoCambioRanking.tendencia;
                             var PorcentajeInversion = ProporcionTipoCambios.valor.p33
                             if ( TipoCambioRanking.comision_hitbtc === undefined) {
@@ -3514,13 +3461,14 @@ Meteor.methods({
                             var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
                             var MonCBas = TipoCambioRanking.moneda_base;
                             var MonCoti = TipoCambioRanking.moneda_cotizacion;
-                            var TipoAccion = TipoCambioRanking.accion;
     
                             if ( MonCBas === MonedaSaldo ) {
+                                var TipoAccion = 1;
                                 var comision1 = 0;
                                 var comision2 = 0;
                                 var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;
                             }else if ( MonCoti === MonedaSaldo ) {
+                                var TipoAccion = 1;
                                 var SaldoInvertir = SaldoActualMoneda*PorcentajeInversion;
                                 var comision1 = ValorComisionHBTC * SaldoInvertir
                                 var comision2 = ValorComisionMerc * SaldoInvertir
@@ -3534,7 +3482,7 @@ Meteor.methods({
                             Meteor.call("GuardarLogEjecucionTrader", ['     COMISION DE MERCADO: ']+[comision2]);
                             Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA APLICACION COMISION: ']+[MonedaApCom]);
                             Meteor.call("GuardarLogEjecucionTrader", ['     ACCION: ']+[TipoAccion]);
-                            switch (TipoCambioRanking.accion){
+                            switch ( TipoAccion ){
                                 case 1:
                                     if( EstadoRobot === 1 ) {
                                         Meteor.call("GuardarLogEjecucionTrader", ' Entre  En el robot simulador 1' );
