@@ -83,7 +83,7 @@ Meteor.methods({
 
                 var contador = contador + 1;
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de V_LimiteMaximoEjecucion ']+[V_LimiteMaximoEjecucion]);
-                Meteor.call("GuardarLogEjecucionTrader", ' FIN DE SECUENCIA');
+                Meteor.call("GuardarLogEjecucionTrader", [' FIN DE SECUENCIA - ']+[fecha._d]);
 
             }while( V_LimiteMaximoEjecucion !== 0 );
             
@@ -176,7 +176,7 @@ Meteor.methods({
 
                     for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
                         var V_moneda_verificar = MonedasVerificar[CMV];
-                        console.log("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id);
+                        //console.log("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id);
                                     
                         Meteor.call("ValidaInversion", V_moneda_verificar._id, tipo_cambio_verificar.accion);
 
@@ -205,7 +205,7 @@ Meteor.methods({
 
     'ValidaTendenciaTipoCambio': function ( TIPO_CAMBIO, MONEDA_SALDO ){
         try{
-            console.log(' Estoy en ValidaTendenciaTipoCambio');
+            //console.log(' Estoy en ValidaTendenciaTipoCambio');
             var V_EJEC = 2
             fecha = moment (new Date());
 
@@ -238,7 +238,7 @@ Meteor.methods({
 
     'ValidaInversion': function( MONEDA_VERIFICAR ){
         try{
-            console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
+            //console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
 
             if ( JobsInternal.Utilities.collection.find({ name : "JobValidaTendenciaTipoCambio" , state : "pending" }).count() === 0  ) {
                 try{
