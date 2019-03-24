@@ -1,5 +1,8 @@
 import { Meteor } from 'meteor/meteor';
+//import { Constantes } from '../herramientas/Global.js';
 moment().tz('America/Caracas').format();
+
+//var CONSTANTES = Meteor.call("Constantes");
 
 Meteor.methods({
     //#############################################
@@ -130,7 +133,7 @@ Meteor.methods({
                         //Monedas.remove({});
                         Meteor.call("ListaTiposDeCambios", V_EJEC);
                         Meteor.call("ListaMonedas");
-                        Meteor.call("ActualizaSaldoTodasMonedas",2);
+                        Meteor.call("ActualizaSaldoTodasMonedas");
                         if (TiposDeCambios.find().count() !== 0){
                             Meteor.call("GuardarLogEjecucionTrader", [' Moneda con Saldo: ¡ Listo ! ']);
                         }

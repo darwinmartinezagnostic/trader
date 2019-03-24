@@ -1,23 +1,24 @@
 import { Meteor } from 'meteor/meteor';
+//import { Constantes } from '../herramientas/Global.js';
 moment().tz('America/Caracas').format();
-
+/*
 const debug_activo = 1;
 
 var idTrans = 0;
-
+*/
 
 
 Meteor.methods({
-
     'VerificarHistoricoEstadoOrden':function(ORDEN){
+		var CONSTANTES = Meteor.call("Constantes");
         Meteor.call('sleep',5000);
         //Maximo TiempoEspera = 6000
         TiempoEspera = 6000;
         // AGREGAR A URL LIMITE DE ORDENES A OBTENER
-        Url_VerificarHistOrden = [HistOrdenes]+['?clientOrderId=']+[ORDEN];
+        Url_VerificarHistOrden = [CONSTANTES.HistOrdenes]+['?clientOrderId=']+[ORDEN];
         v_Estado_Orden = Meteor.call('ConexionGet', Url_VerificarHistOrden );
         var EstadoOrden=(v_Estado_Orden.data[0]);
-        Url_HistOrdenIdTrdades = [HistOrdenes]+['/']+[EstadoOrden.id]+['/trades'];
+        Url_HistOrdenIdTrdades = [CONSTANTES.HistOrdenes]+['/']+[EstadoOrden.id]+['/trades'];
         V_Desc_Orden = Meteor.call('ConexionGet', Url_HistOrdenIdTrdades );
         DescOrden = V_Desc_Orden.data[0];
 
@@ -52,10 +53,11 @@ Meteor.methods({
     },
 
     'VerificarEstadoOrden':function(ORDEN){
+    	var CONSTANTES = Meteor.call("Constantes");
         Meteor.call('sleep',5000);
         //Maximo TiempoEspera = 6000
         TiempoEspera = 6000;
-        Url_VerificarOrden = [ordenes]+['?clientOrderId=']+[TiempoEspera];
+        Url_VerificarOrden = [CONSTANTES.ordenes]+['?clientOrderId=']+[TiempoEspera];
         console.log('Valor de Url_VerificarOrden', Url_VerificarOrden)
         Estado_Orden = Meteor.call('ConexionGet', Url_VerificarOrden );
 
@@ -1684,8 +1686,7 @@ Meteor.methods({
     },
     
     'CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){  //POST
-
-        console.log('############################################');
+    	console.log('############################################');
         Meteor.call("GuardarLogEjecucionTrader", 'Creando una nueva orden');
         //console.log("Valores recibidos, N_ID__ORDEN_CLIENT:" , " TIPO_CAMBIO: ", TIPO_CAMBIO, " T_TRANSACCION: ", T_TRANSACCION, " CANT_INVER: ", CANT_INVER);
 

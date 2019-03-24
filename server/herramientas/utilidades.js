@@ -147,7 +147,7 @@ Meteor.methods({
                         //
                         switch (TIPO_ACCION){
                             case 1:
-                                console.log("Estoy en el case 1")
+                                //console.log("Estoy en el case 1")
                                 var ValorObtenido = EquivalenciasDol.aggregate([    { $match: { tipo_cambio : TipoCambioObtenido }}, 
                                                                                     { $project: { _id : 0, Promedio : 1 , Existe : 1 } }
                                                                                 ]);

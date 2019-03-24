@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+//import { Constantes } from '../herramientas/Global.js';
 moment().tz('America/Caracas').format();
 
 Meteor.methods({

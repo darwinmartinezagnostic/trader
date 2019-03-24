@@ -1,10 +1,11 @@
 import { Meteor } from 'meteor/meteor';
+//import { Constantes } from '../herramientas/Global.js';
 moment().tz('America/Caracas').format();
 
 Meteor.methods({
 
     'Transferirfondos':function(MONEDA, MONTO, TIPO_TRANSF){  //Transfer amount to trading
-
+        var CONSTANTES = Meteor.call("Constantes");
         console.log('############################################');
         Meteor.call("GuardarLogEjecucionTrader", '         TRANSFERENCIA DE FONDOS');
         console.log('############################################');
@@ -20,7 +21,7 @@ Meteor.methods({
         datos.amount = MONTO;
         datos.type = TIPO_TRANSF;
 
-        var url_orden = transferencia;
+        var url_orden = CONSTANTES.transferencia;
 
         //try{
             var NuevaTransferencia = Meteor.call("ConexionPost", url_orden, datos);

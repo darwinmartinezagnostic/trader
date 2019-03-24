@@ -1,16 +1,20 @@
 import { Meteor } from 'meteor/meteor';
+//import { Constantes } from '../herramientas/Global.js';
 moment().tz('America/Caracas').format();
+//var CONSTANTES = Meteor.call("Constantes");
 
+/*
 const autoriza_conexion = Conexion_api.findOne({ casa_cambio : 'hitbtc'}, {_id:0});
 const key = autoriza_conexion.key;
 const secret = autoriza_conexion.secret;
 const apikey = key+':'+secret;
-
+*/
 Meteor.methods({
 
     'ConexionGet':function(V_URL) {
+        var CONSTANTES = Meteor.call("Constantes");   
         try {
-            var V_OBTENIDO = HTTP.get( V_URL,{auth:apikey});
+            var V_OBTENIDO = HTTP.get( V_URL,{auth:CONSTANTES.apikey});
             return V_OBTENIDO;
         }
         catch (error){
@@ -24,8 +28,9 @@ Meteor.methods({
     },
 
     'ConexionPost':function(V_URL,datos) {
+        var CONSTANTES = Meteor.call("Constantes");   
         try {
-            var V_OBTENIDO = HTTP.post( V_URL,{auth:apikey,data:datos});
+            var V_OBTENIDO = HTTP.post( V_URL,{auth:CONSTANTES.apikey,data:datos});
             return V_OBTENIDO;
         }
         catch (error){
@@ -39,8 +44,9 @@ Meteor.methods({
     },
 
     'ConexionPut':function(V_URL,datos) {
+        var CONSTANTES = Meteor.call("Constantes");
         try {
-            var V_OBTENIDO = HTTP.put( V_URL,{auth:apikey,data:datos});
+            var V_OBTENIDO = HTTP.put( V_URL,{auth:CONSTANTES.apikey,data:datos});
             return V_OBTENIDO;
         }
         catch (error){
@@ -54,8 +60,9 @@ Meteor.methods({
     },
 
     'ConexionDel':function(V_URL,datos) {
+        var CONSTANTES = Meteor.call("Constantes");
         try {
-            var V_OBTENIDO = HTTP.del( V_URL,{auth:apikey,data:datos});
+            var V_OBTENIDO = HTTP.del( V_URL,{auth:CONSTANTES.apikey,data:datos});
             return V_OBTENIDO;
         }
         catch (error){

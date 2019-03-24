@@ -88,8 +88,8 @@ Meteor.methods({
         */
          //Meteor.call('EquivalenteDolarMinCompra');
          
-        var TIPO_CAMBIO = 'BTCUSD';
-        var MONEDA_SALDO = 'BTC'
+        //var TIPO_CAMBIO = 'BTCUSD';
+        //var MONEDA_SALDO = 'BTC'
         /*
         valor = EquivalenciasDol.aggregate([ { $match: { tipo_cambio : TIPO_CAMBIO }}, 
                                             { $project: { _id : 0, promedio : 1 } }
@@ -107,8 +107,12 @@ Meteor.methods({
        
 		//for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
 			//Meteor.call('ListaTradeoActual', TIPO_CAMBIO, 2);
-        	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
+        	//Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
         //}
+
+
+
+
 
 
         //#############################################################################################################################################
@@ -119,6 +123,28 @@ Meteor.methods({
 
 
        //Meteor.call("SecuenciasSecundarias");
+
+
+
+        //var ContanteActual = Meteor.call("Constantes");
+        //console.log ("Valor de ContanteActual: ", ContanteActual);
+        //Meteor.call("ActualizaSaldoTodasMonedas");
+        //Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+        //Meteor.call("ActualizaSaldoTodasMonedas");
+        //Meteor.call("ValidaSaldoEquivalenteActual");
+        //Meteor.call("ConsultarSaldoTodasMonedas");
+        //Meteor.call("EquivalenteDolarMinCompra");
+        
+
+
+        //Meteor.call("ListaTiposDeCambios", 2);
+        //Meteor.call("ListaMonedas");
+        //Meteor.call("ActualizaSaldoTodasMonedas");
+        //Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+        //Meteor.call("ActualizaSaldoTodasMonedas");
+        //Meteor.call("ValidaSaldoEquivalenteActual");
+        //Meteor.call("ConsultarSaldoTodasMonedas");
+        Meteor.call("EquivalenteDolarMinCompra");
     },
 
     'CrearNuevaOrderRobot':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, SALDO_ACTUAL, MON_B, MON_C, MON_SALTRAD, COMISION_HITBTC, COMISION_MERCADO, MON_APLIC_COMISION ){  //POST

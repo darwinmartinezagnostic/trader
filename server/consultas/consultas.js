@@ -1,10 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 moment().tz('America/Caracas').format();
+//var CONSTANTES = Meteor.call("Constantes");
 
 Meteor.methods({
 
     'ConsultarTransaciones':function(){
-
+        var CONSTANTES = Meteor.call("Constantes");
         //para verificar las transaccion solo por monedas especifica se realiza la contruccion parcial de la URL anexando la abreviatura de la monedas ejemp "BTC"
         //const url_transaccion_parcial= ['currency=']+['<abreviatura moneda>']+['&sort=ASC&by=timestamp&limit=']+[cant_transacciones];
 
@@ -13,8 +14,8 @@ Meteor.methods({
         console.log('############################################');
         Meteor.call("GuardarLogEjecucionTrader", ' Devuelve los datos Historicos de Transacciones realizadas en la cuenta');
         console.log(' ');
-        var url_transaccion_parcial=['sort=ASC&by=timestamp&limit=']+[cant_transacciones];
-        var url_transaccion_completa=[transacciones]+'?'+[url_transaccion_parcial];
+        var url_transaccion_parcial=['sort=ASC&by=timestamp&limit=']+[CONSTANTES.cant_transacciones];
+        var url_transaccion_completa=[CONSTANTES.transacciones]+'?'+[url_transaccion_parcial];
         console.log(' Valor de URL transacciones:', url_transaccion_completa);
 
         var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
@@ -40,8 +41,8 @@ Meteor.methods({
     },
 
     'ConsultaOrdenesAbiertas':function(TIPO_CAMBIO){
-
-        var url_orden = [ordenes];
+        var CONSTANTES = Meteor.call("Constantes");
+        var url_orden = [CONSTANTES.ordenes];
         var OrdeneAbiertas = Meteor.call("ConexionGet",url_orden);
 
         if ( OrdeneAbiertas === undefined ) {
@@ -51,6 +52,29 @@ Meteor.methods({
         }
         else{
             console.log("Ordenes Activas: ", OrdeneAbiertas)
+        }
+    },
+
+    'ConsultarSaldoTodasMonedas':function(){
+        var MonedasSaldoActual = Monedas.find( { $or : [{"saldo.tradeo.activo" : { $gt : 0 }},{ "saldo.cuenta.activo" : { $gt : 0 } }]}).fetch()
+
+        //console.log("Valor de MonedasSaldoActual", MonedasSaldoActual);
+
+
+        for ( cmsa = 0, tmsa = MonedasSaldoActual.length; cmsa < tmsa; cmsa++ ) {
+            var v_BMonedasSaldoActual = MonedasSaldoActual[cmsa];
+            console.log('############################################');
+            Meteor.call("GuardarLogEjecucionTrader", '            Saldo disponible');
+            console.log('############################################');
+            Meteor.call("GuardarLogEjecucionTrader", ['  ********* ']+[' MONEDA: ']+[v_BMonedasSaldoActual.moneda]+[' ********* ']);
+            Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TRADEO: ']+[v_BMonedasSaldoActual.saldo.tradeo.activo]);
+            Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TRADEO EQUIVALENTE $: ']+[v_BMonedasSaldoActual.saldo.tradeo.equivalencia]);
+            Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TRADEO RESERVA: ']+[v_BMonedasSaldoActual.saldo.tradeo.reserva]);
+            Meteor.call("GuardarLogEjecucionTrader", ['     SALDO EN CUENTA: ']+[v_BMonedasSaldoActual.saldo.cuenta.activo]);
+            Meteor.call("GuardarLogEjecucionTrader", ['     SALDO CUENTA EQUIVALENTE $: ']+[v_BMonedasSaldoActual.saldo.cuenta.equivalencia]);
+            Meteor.call("GuardarLogEjecucionTrader", ['     SALDO CUENTA RESERVA: ']+[v_BMonedasSaldoActual.saldo.tradeo.reserva]);
+            console.log('############################################');
+            console.log(' ');
         }
     },
     

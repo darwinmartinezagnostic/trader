@@ -9,11 +9,11 @@ Meteor.methods({
         Meteor.call("Encabezado");
         Meteor.call("ListaTiposDeCambios", 2);
         Meteor.call("ListaMonedas");
-        Meteor.call("ActualizaSaldoTodasMonedas", 2);
+        Meteor.call("ActualizaSaldoTodasMonedas");
         Meteor.call("ValidaMonedasTransfCuentaTRadeo");
-        Meteor.call("ActualizaSaldoTodasMonedas", 2);
+        Meteor.call("ActualizaSaldoTodasMonedas");
         Meteor.call("ValidaSaldoEquivalenteActual");
-        Meteor.call("ActualizaSaldoTodasMonedas", 1);
+        Meteor.call("ConsultarSaldoTodasMonedas");
         Meteor.call("EquivalenteDolarMinCompra");
         try {
             Parametros.update({ dominio : "Ejecucion", nombre : "ModoEjecucion", "valor" : 1 },{$set :{ "valor" : 2 , fecha_ejecucion : new Date() }});
