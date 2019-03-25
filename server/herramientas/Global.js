@@ -13,7 +13,7 @@ Meteor.methods({
 		const cuenta = API_HITBTC2+"account/";
 		const historial = API_HITBTC2+"history/";
 		const ordenes = API_HITBTC2+"order";
-		const ZONA_HORARA = "GTC";
+		const ZONA_HORARIA = "GTC";
 		//**************************************************
 		//**************************************************
 		// API Public
@@ -50,7 +50,7 @@ Meteor.methods({
 			cuenta : cuenta,
 			historial : historial,
 			ordenes : ordenes,
-			ZONA_HORARA : ZONA_HORARA,
+			ZONA_HORARIA : ZONA_HORARIA,
 			monedas : monedas,
 			simbolos : simbolos,
 			blc_tradeo : blc_tradeo,

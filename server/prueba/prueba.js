@@ -88,8 +88,8 @@ Meteor.methods({
         */
          //Meteor.call('EquivalenteDolarMinCompra');
          
-        //var TIPO_CAMBIO = 'BTCUSD';
-        //var MONEDA_SALDO = 'BTC'
+        var TIPO_CAMBIO = 'BTCUSD';
+        var MONEDA_SALDO = 'BTC'
         /*
         valor = EquivalenciasDol.aggregate([ { $match: { tipo_cambio : TIPO_CAMBIO }}, 
                                             { $project: { _id : 0, promedio : 1 } }
@@ -144,7 +144,10 @@ Meteor.methods({
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
         //Meteor.call("ConsultarSaldoTodasMonedas");
-        Meteor.call("EquivalenteDolarMinCompra");
+        //Meteor.call("EquivalenteDolarMinCompra");
+        //Meteor.call('ListaTradeoActual', TIPO_CAMBIO, 2);
+        Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
+
     },
 
     'CrearNuevaOrderRobot':function(N_ID__ORDEN_CLIENT,TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, SALDO_ACTUAL, MON_B, MON_C, MON_SALTRAD, COMISION_HITBTC, COMISION_MERCADO, MON_APLIC_COMISION ){  //POST

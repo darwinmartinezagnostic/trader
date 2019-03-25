@@ -16,7 +16,7 @@ Meteor.methods({
         Meteor.call("ConsultarSaldoTodasMonedas");
         Meteor.call("EquivalenteDolarMinCompra");
         try {
-            Parametros.update({ dominio : "Ejecucion", nombre : "ModoEjecucion", "valor" : 1 },{$set :{ "valor" : 2 , fecha_ejecucion : new Date() }});
+            Parametros.update({ dominio : "Ejecucion", nombre : "ModoEjecucion", "valor" : 1 },{ $set :{ "valor" : 2 , fecha_ejecucion : new Date() }});
         }
         catch (error){
             Meteor.call("ValidaError", error, 2);
