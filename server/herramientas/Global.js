@@ -33,15 +33,16 @@ Meteor.methods({
 		const HistTradeo = [historial]+"trades";
 		const HistOrdenes = [historial]+"order";
 		// CANTIDADES DE REGISTROS
-		const cant_traders = 1;
-		const cant_transacciones = 3;
+		const cant_traders = Parametros.aggregate([  { $match : { dominio : "limites", nombre : "CantidadTraders" } },
+                                                    { $project : { _id : 0, valor : 1 } }]);
 		// CANTIDAD DE REGISTROS ID HACIA ATRÁS
-		const CantTransAtras = 300;
+		const CantTransAtras = Parametros.aggregate([  { $match : { dominio : "limites", nombre : "CantidadTransaccionesAtras" } },
+                                                    { $project : { _id : 0, valor : 1 } }]);;
 		// ACTIVACION DE GUARDADO DEBUG DEL CÓDIGO EN DB
 		const debug_activo = Parametros.aggregate([  { $match : { dominio : "Ejecucion", nombre : "Depuracion" } },
                                                     { $project : { _id : 0, valor : 1 } }]);;
 		//console.log("Valor de debug_activo: ", debug_activo[0]);
-		var idTrans = 0;
+		
 
 		constante = {
 		 	apikey : key+':'+secret,
@@ -63,11 +64,9 @@ Meteor.methods({
 			transferencia : transferencia,
 			HistTradeo : HistTradeo,
 			HistOrdenes : HistOrdenes,
-			cant_traders : cant_traders,
-			cant_transacciones : cant_transacciones,
-			CantTransAtras : CantTransAtras,
-			debug_activo : debug_activo[0].valor,
-			idTrans : idTrans
+			cant_traders : cant_traders[0].valor,
+			CantTransAtras : CantTransAtras[0].valor,
+			debug_activo : debug_activo[0].valor
 		}
 
 		

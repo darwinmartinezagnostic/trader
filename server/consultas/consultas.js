@@ -4,7 +4,7 @@ moment().tz('America/Caracas').format();
 
 Meteor.methods({
 
-    'ConsultarTransaciones':function(){
+    'ConsultarTransaciones':function(TRANSACCIONES){
         var CONSTANTES = Meteor.call("Constantes");
         //para verificar las transaccion solo por monedas especifica se realiza la contruccion parcial de la URL anexando la abreviatura de la monedas ejemp "BTC"
         //const url_transaccion_parcial= ['currency=']+['<abreviatura moneda>']+['&sort=ASC&by=timestamp&limit=']+[cant_transacciones];
@@ -14,7 +14,7 @@ Meteor.methods({
         console.log('############################################');
         Meteor.call("GuardarLogEjecucionTrader", ' Devuelve los datos Historicos de Transacciones realizadas en la cuenta');
         console.log(' ');
-        var url_transaccion_parcial=['sort=ASC&by=timestamp&limit=']+[CONSTANTES.cant_transacciones];
+        var url_transaccion_parcial=['sort=ASC&by=timestamp&limit=']+[TRANSACCIONES];
         var url_transaccion_completa=[CONSTANTES.transacciones]+'?'+[url_transaccion_parcial];
         console.log(' Valor de URL transacciones:', url_transaccion_completa);
 

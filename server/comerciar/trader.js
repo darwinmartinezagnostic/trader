@@ -1,46 +1,6 @@
 import { Meteor } from 'meteor/meteor';
-//var moment = require('moment-timezone');
 moment().tz('America/Caracas').format();
-//var CONSTANTES = Meteor.call("Constantes");
 
-/*
-const autoriza_conexion = Conexion_api.findOne({ casa_cambio : 'hitbtc'}, {_id:0});
-const API_HITBTC2 = autoriza_conexion.api.url;
-
-const publico = API_HITBTC2+"public/";
-const tradeo = API_HITBTC2+"trading/";
-const cuenta = API_HITBTC2+"account/";
-const historial = API_HITBTC2+"history/";
-const ordenes = API_HITBTC2+"order";
-const ZONA_HORARA = "GTC";
-//**************************************************
-//**************************************************
-// API Public
-const monedas = [publico]+"currency";
-const simbolos = [publico]+"symbol";
-// API Trading
-const blc_tradeo = [tradeo]+"balance";
-const comisiones = [tradeo]+"fee";
-// API Account
-const blc_cuenta = [cuenta]+"balance";
-const transacciones = [cuenta]+"transactions";
-const cripto_cuenta= [cuenta]+"crypto/";
-const retiros= [cripto_cuenta]+"withdraw";
-const cart_dep = [cripto_cuenta]+"address";
-const transferencia = [cuenta]+"transfer";
-// API Trading History
-const HistTradeo = [historial]+"trades";
-const HistOrdenes = [historial]+"order";
-// CANTIDADES DE REGISTROS
-const cant_traders = 1;
-const cant_transacciones = 3;
-// CANTIDAD DE REGISTROS ID HACIA ATRÁS
-const CantTransAtras = 300;
-// ACTIVACION DE GUARDADO DEBUG DEL CÓDIGO EN DB
-const debug_activo = 1;
-
-var idTrans = 0;
-*/
 //**************************************************
 
 Meteor.methods({
@@ -845,13 +805,15 @@ Meteor.methods({
         console.log('############################################');
         console.log(' ');
         var url_tradeos_parcial= ['from=0&by=trade_id&sort=DESC&start_index=0&limit=']+[CONSTANTES.cant_traders]+['&format_numbers=number'];
-        var url_tradeos_completa = [CONSTANTES.publico]+['trades/']+[TIPO_CAMBIO]+['?']+[url_tradeos_parcial];        
+        var url_tradeos_completa = [CONSTANTES.publico]+['trades/']+[TIPO_CAMBIO]+['?']+[url_tradeos_parcial];
         var v_tradeos = Meteor.call("ConexionGet", url_tradeos_completa);
         var trad_mon = (v_tradeos.data);
         /*
         var Val_trad = (Meteor.call('ConsultaTraderGuardados', TIPO_CAMBIO));
         var Val_trad_tipo_cambio = (Val_trad);
         */
+
+        
 
 
         for (i = 0, tamanio_trad_mon = trad_mon.length; i < tamanio_trad_mon; i++) {
