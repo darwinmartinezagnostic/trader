@@ -800,7 +800,7 @@ Meteor.methods({
         return Valores_TiposDeCambiosRankear;
     },
 
-    'ListaTradeoActual':function( TIPO_CAMBIO, VALOR_EJEC ){
+    'ListaTradeoActual':function( TIPO_CAMBIO, VALOR_EJEC, MONEDA_SALDO ){
         var CONSTANTES = Meteor.call("Constantes");
         console.log('############################################');
         console.log(' ');
@@ -884,10 +884,12 @@ Meteor.methods({
                                                                 "periodo1.Base.fecha": PeriodoFechaAct,
                                                                 "periodo1.Base.precio" : PeriodoPrecioAct,
                                                                 "periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+                                                                "periodo1.Base.reset": 0,
                                                                 "periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
                                                                 "periodo1.Cotizacion.fecha": PeriodoFechaAct,
                                                                 "periodo1.Cotizacion.precio" : PeriodoPrecioAct,
-                                                                "periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct }},
+                                                                "periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+                                                                "periodo1.Cotizacion.reset": 0 }},
                                                     { "multi" : true,"upsert" : true });
 
                         }else{
@@ -919,16 +921,37 @@ Meteor.methods({
                         var PeriodoCantidadAct = v_TradActDat.quantity;
                         var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
-                        TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
+
+
+                        try{
+                                var ResetTipCamb = TiposDeCambios.aggregate([  { $match : { tipo_cambio : TIPO_CAMBIO }} ]);
+                                var MB = ResetTipCamb.moneda_base;
+                                var MC = ResetTipCamb.moneda_cotizacion;
+                        }
+                        catch (error){
+                                Meteor.call("ValidaError", error, 2);
+                        };
+
+
+
+                        if ( MB === MONEDA_SALDO ) {
+                            TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
                                                     { $set:{    "periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
                                                                 "periodo1.Base.fecha": PeriodoFechaAct,
                                                                 "periodo1.Base.precio" : PeriodoPrecioAct,
                                                                 "periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
-                                                                "periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+                                                                "periodo1.Base.reset": 0 }},
+                                                    { "multi" : true,"upsert" : true });
+                        }
+                        else if ( MC === MONEDA_SALDO ) {
+                            TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
+                                                    { $set:{    "periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
                                                                 "periodo1.Cotizacion.fecha": PeriodoFechaAct,
                                                                 "periodo1.Cotizacion.precio" : PeriodoPrecioAct,
-                                                                "periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct }},
+                                                                "periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+                                                                "periodo1.Cotizacion.reset": 0 }},
                                                     { "multi" : true,"upsert" : true });
+                        };                        
 
                         
                         OperacionesCompraVenta.update(  { tipo_cambio : TIPO_CAMBIO },
@@ -939,6 +962,8 @@ Meteor.methods({
                                                                     tipo_operacion : PeriodoTipoOperacionAct}
                                                             },
                                                             {"multi" : true,"upsert" : true});
+
+
                     break;
                 default:
                     Meteor.call("GuardarLogEjecucionTrader", ' Valor de tipo consulta no definida ');

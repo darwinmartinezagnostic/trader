@@ -180,15 +180,25 @@ Meteor.methods({
     },
 
 	'Prueba':function(){
+
+        var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
+        var V_LimiteApDep = LimiteApDep[0].valor;
          
-        var TIPO_CAMBIO = 'EOSBTC';
-        //var MONEDA_SALDO = 'BTC'
-        var MONEDA_SALDO = 'EOS'
+        
+        //Meteor.call("EjecucionSecuenciaInicial"); 
+
+        var MB='BTC'
+        var MC='USD'
+
+        var TIPO_CAMBIO = MB+MC;
+        var MONEDA_SALDO = MB;
+        //var MONEDA_SALDO = 'EOS'
        
-		//for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
+		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
 			
         	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
-        //}
+            //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
+        }
 
         //Meteor.call("ListaTiposDeCambios", 2);
         //Meteor.call("ListaMonedas");
