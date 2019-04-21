@@ -185,14 +185,33 @@ Meteor.methods({
         var V_LimiteApDep = LimiteApDep[0].valor;
          
         
-        //Meteor.call("EjecucionSecuenciaInicial"); 
+        //Meteor.call("EjecucionInicial"); 
+        
+        /*
+        Meteor.call("ListaTiposDeCambios", 2);
+        Meteor.call("ListaMonedas");
+        Meteor.call("ActualizaSaldoTodasMonedas");
+        Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+        Meteor.call("ActualizaSaldoTodasMonedas");
+        Meteor.call("ValidaSaldoEquivalenteActual");
+        Meteor.call("ConsultarSaldoTodasMonedas");
+        Meteor.call("EquivalenteDolarMinCompra");
+        Meteor.call('ListaTradeoActual', TIPO_CAMBIO, 2);
+        Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
+        */
+        
 
-        var MB='BTC'
-        var MC='USD'
+        //var MB='BTC'
+        var MB='ONT'
+        //var MC='USD'
+        var MC='BTC'
+        
 
         var TIPO_CAMBIO = MB+MC;
-        var MONEDA_SALDO = MB;
-        //var MONEDA_SALDO = 'EOS'
+        //var MONEDA_SALDO = MB;
+        var MONEDA_SALDO = MC;
+
+        //console.log(' Tipo de Cambio TIPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
        
 		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
 			
@@ -200,16 +219,6 @@ Meteor.methods({
             //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
         }
 
-        //Meteor.call("ListaTiposDeCambios", 2);
-        //Meteor.call("ListaMonedas");
-        //Meteor.call("ActualizaSaldoTodasMonedas");
-        //Meteor.call("ValidaMonedasTransfCuentaTRadeo");
-        //Meteor.call("ActualizaSaldoTodasMonedas");
-        //Meteor.call("ValidaSaldoEquivalenteActual");
-        //Meteor.call("ConsultarSaldoTodasMonedas");
-        //Meteor.call("EquivalenteDolarMinCompra");
-        //Meteor.call('ListaTradeoActual', TIPO_CAMBIO, 2);
-        //Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
 
     },
 });

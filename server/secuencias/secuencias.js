@@ -223,11 +223,11 @@ Meteor.methods({
                     Meteor.call("ValidaError", error, 2);
             };
                     if ( V_ResetTipCambMB === undefined ) {
-                        var N_ResetTipCambMB = 0;
+                        var V_ResetTipCambMB = 0;
                     }
 
                     if ( V_ResetTipCambMC === undefined ) {
-                        var N_ResetTipCambMB = 0;
+                        var V_ResetTipCambMC = 0;
                     }
 
             console.log('############################################');
@@ -236,22 +236,24 @@ Meteor.methods({
             console.log('--------------------------------------------');
             console.log(' ');
 
-            if ( MB === MONEDA_SALDO && N_ResetTipCambMB === 0 ) {
+            console.log(' Tipo de Cambio ', TIPO_CAMBIO, " MB: ", MB, " MC: ", MC, " V_ResetTipCambMB: ", V_ResetTipCambMB, " V_ResetTipCambMC: ", V_ResetTipCambMC, " MONEDA_SALDO: ", MONEDA_SALDO);
+
+            if ( MB === MONEDA_SALDO && V_ResetTipCambMB === 0 ) {
                 var V_EJEC = 2
                 //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " V_EJEC: ", V_EJEC, " MONEDA_SALDO: ", MONEDA_SALDO);
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
-            else if ( MB === MONEDA_SALDO && N_ResetTipCambMB === 1 ) {
+            else if ( MB === MONEDA_SALDO && V_ResetTipCambMB === 1 ) {
                 var V_EJEC = 3
                 //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " V_EJEC: ", V_EJEC, " MONEDA_SALDO: ", MONEDA_SALDO);
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
-            else if ( MC === MONEDA_SALDO && N_ResetTipCambMB === 0 ) {
+            else if ( MC === MONEDA_SALDO && V_ResetTipCambMC === 0 ) {
                 var V_EJEC = 2
                 //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " V_EJEC: ", V_EJEC, " MONEDA_SALDO: ", MONEDA_SALDO);
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
-            else if ( MC === MONEDA_SALDO && N_ResetTipCambMB === 1 ) {
+            else if ( MC === MONEDA_SALDO && V_ResetTipCambMC === 1 ) {
                 var V_EJEC = 3
                 //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " V_EJEC: ", V_EJEC, " MONEDA_SALDO: ", MONEDA_SALDO);
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
