@@ -236,7 +236,7 @@ Meteor.methods({
             console.log('--------------------------------------------');
             console.log(' ');
 
-            console.log(' Tipo de Cambio ', TIPO_CAMBIO, " MB: ", MB, " MC: ", MC, " V_ResetTipCambMB: ", V_ResetTipCambMB, " V_ResetTipCambMC: ", V_ResetTipCambMC, " MONEDA_SALDO: ", MONEDA_SALDO);
+            //console.log(' Tipo de Cambio ', TIPO_CAMBIO, " MB: ", MB, " MC: ", MC, " V_ResetTipCambMB: ", V_ResetTipCambMB, " V_ResetTipCambMC: ", V_ResetTipCambMC, " MONEDA_SALDO: ", MONEDA_SALDO);
 
             if ( MB === MONEDA_SALDO && V_ResetTipCambMB === 0 ) {
                 var V_EJEC = 2
