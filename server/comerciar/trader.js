@@ -753,7 +753,7 @@ Meteor.methods({
     },
 
     'TipoCambioDisponibleCompra':function(MONEDA, SALDO_MONEDA_EQUIV){
-        Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_MONEDA_EQUIV: ']+[SALDO_MONEDA_EQUIV]);
+        //Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_MONEDA_EQUIV: ']+[SALDO_MONEDA_EQUIV]);
         var Vset = new Set();
 
         

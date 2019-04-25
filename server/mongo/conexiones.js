@@ -12,10 +12,16 @@ const apikey = key+':'+secret;
 Meteor.methods({
 
     'ConexionGet':function(V_URL) {
-        var CONSTANTES = Meteor.call("Constantes");   
+        var CONSTANTES = Meteor.call("Constantes"); 
+
+
         try {
-            var V_OBTENIDO = HTTP.get( V_URL,{auth:CONSTANTES.apikey});
-            return V_OBTENIDO;
+            var V_OBTENIDO = 0
+
+            while( V_OBTENIDO.statusCode !== 200 ){
+                var V_OBTENIDO = HTTP.get( V_URL,{auth:CONSTANTES.apikey});
+                return V_OBTENIDO;
+            }
         }
         catch (error){
             if ( /url must be absolute and start with http:/.test(error) || /Parameter "url" must be a string, not object/.test(error) ) {
@@ -30,8 +36,12 @@ Meteor.methods({
     'ConexionPost':function(V_URL,datos) {
         var CONSTANTES = Meteor.call("Constantes");   
         try {
-            var V_OBTENIDO = HTTP.post( V_URL,{auth:CONSTANTES.apikey,data:datos});
-            return V_OBTENIDO;
+            var V_OBTENIDO = 0
+
+            while( V_OBTENIDO.statusCode !== 200 ){
+                var V_OBTENIDO = HTTP.post( V_URL,{auth:CONSTANTES.apikey,data:datos});
+                return V_OBTENIDO;
+            }
         }
         catch (error){
             if ( /url must be absolute and start with http:/.test(error) || /Parameter "url" must be a string, not object/.test(error) ) {
@@ -46,8 +56,12 @@ Meteor.methods({
     'ConexionPut':function(V_URL,datos) {
         var CONSTANTES = Meteor.call("Constantes");
         try {
-            var V_OBTENIDO = HTTP.put( V_URL,{auth:CONSTANTES.apikey,data:datos});
-            return V_OBTENIDO;
+            var V_OBTENIDO = 0
+
+            while( V_OBTENIDO.statusCode !== 200 ){
+                var V_OBTENIDO = HTTP.put( V_URL,{auth:CONSTANTES.apikey,data:datos});
+                return V_OBTENIDO;
+            }
         }
         catch (error){
             if ( /url must be absolute and start with http:/.test(error) || /Parameter "url" must be a string, not object/.test(error) ) {
@@ -62,8 +76,13 @@ Meteor.methods({
     'ConexionDel':function(V_URL,datos) {
         var CONSTANTES = Meteor.call("Constantes");
         try {
-            var V_OBTENIDO = HTTP.del( V_URL,{auth:CONSTANTES.apikey,data:datos});
-            return V_OBTENIDO;
+
+            var V_OBTENIDO = 0
+
+            while( V_OBTENIDO.statusCode !== 200 ){
+                var V_OBTENIDO = HTTP.del( V_URL,{auth:CONSTANTES.apikey,data:datos});
+                return V_OBTENIDO;
+            }
         }
         catch (error){
             if ( /url must be absolute and start with http:/.test(error) || /Parameter "url" must be a string, not object/.test(error) ) {
