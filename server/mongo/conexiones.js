@@ -176,7 +176,7 @@ Meteor.methods({
                     return datos
 
                 }catch(e){
-                    Meteor.call('GuardarLogEjecucionTrader', [' ConexionPost: Error: ']+[${e}]);
+                    Meteor.call('GuardarLogEjecucionTrader', [' ConexionPost: Error: ']+[ `${e}` ]);
                     Error(`Error: ${e}`)
                     //console.log('TIMEOUT en ejecución del URL: ', url);
                 }
