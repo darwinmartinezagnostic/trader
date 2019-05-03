@@ -15,17 +15,19 @@ Meteor.methods({
         //HAY 2 TIPOS DE TRANSFERENCIAS
         // "bankToExchange" Del Saldo de la cuenta a el Saldo de Trader
         // "exchangeToBank" Del Saldo de Trader a el Saldo de la cuenta
-
+        /*
         var datos = new Object();
         datos.currency= MONEDA;
         datos.amount = MONTO;
         datos.type = TIPO_TRANSF;
+        */
+        datos=  'currency='+MONEDA+'&amount='+MONTO+'&type='+TIPO_TRANSF;
 
         var url_orden = CONSTANTES.transferencia;
 
         //try{
             var NuevaTransferencia = Meteor.call("ConexionPost", url_orden, datos);
-            //console.log("Valore de NuevaTransferencia", NuevaTransferencia);
+            console.log("Valore de NuevaTransferencia", NuevaTransferencia);
         //}
         /*catch (error){
             Meteor.call("ValidaError", error, 1)

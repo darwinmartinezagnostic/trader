@@ -11,17 +11,11 @@ Meteor.methods({
         console.log(' ');
 
         try{
-            var moneda = Meteor.call("ConexionGet", CONSTANTES.monedas);
-            //var mons_body = (moneda.body);
-            //console.log("Valor de moneda: ", moneda);
-            //var mons = (moneda.data);
-            console.log("Valor de moneda.length: ", moneda.length);
-        }
+            var moneda = Meteor.call("ConexionGet", CONSTANTES.monedas);}
         catch (error){
             Meteor.call("ValidaError", error, 1)
         };
 
-        //for ( a = 0, len = mons.length ; a < len; a++) {
         for ( a = 0, len = moneda.length ; a < len; a++) {
             console.log('############################################');
             //var mon = mons[a]; 
@@ -35,15 +29,7 @@ Meteor.methods({
 
             var v_cartera = Meteor.call("ConexionGet", url_cartera_depositos);
             console.log(' Valor de v_cartera:', v_cartera);
-
-            /*
-            try {
-                var v_cartera = Meteor.call("ConexionGet", url_cartera_depositos);
-                var cartera = (v_cartera.data);
-            }
-        catch (error){
-                Meteor.call("ValidaError", error, 1)
-            };*/
+            
 
             Meteor.call("GuardarLogEjecucionTrader", ['    DIRECCIÓN DE CARTERA: ']+[cartera.address]);
             console.log(' ');
