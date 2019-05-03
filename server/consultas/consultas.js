@@ -19,7 +19,8 @@ Meteor.methods({
         console.log(' Valor de URL transacciones:', url_transaccion_completa);
 
         var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
-        var v_transaccion=(transaccion.data);      
+        //var v_transaccion=(transaccion.data); 
+        var v_transaccion=transaccion
 
         //console.log(v_transaccion);
 

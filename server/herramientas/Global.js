@@ -19,6 +19,7 @@ Meteor.methods({
 		// API Public
 		const monedas = [publico]+"currency";
 		const simbolos = [publico]+"symbol";
+		const ticker = [publico]+"ticker/";
 		// API Trading
 		const blc_tradeo = [tradeo]+"balance";
 		const comisiones = [tradeo]+"fee";
@@ -42,9 +43,13 @@ Meteor.methods({
 		const debug_activo = Parametros.aggregate([  { $match : { dominio : "Ejecucion", nombre : "Depuracion" } },
                                                     { $project : { _id : 0, valor : 1 } }]);;
 		//console.log("Valor de debug_activo: ", debug_activo[0]);
+		const Timeout = Parametros.aggregate([  { $match : { dominio : "limites", nombre : "TimeoutEjecucion" } },
+                                                    { $project : { _id : 0, valor : 1 } }]);;
 		
 
 		constante = {
+			user : key,
+			passwr : secret,
 		 	apikey : key+':'+secret,
 		 	publico : publico,
 			tradeo : tradeo,
@@ -54,6 +59,7 @@ Meteor.methods({
 			ZONA_HORARIA : ZONA_HORARIA,
 			monedas : monedas,
 			simbolos : simbolos,
+			ticker : ticker,
 			blc_tradeo : blc_tradeo,
 			comisiones : comisiones,
 			blc_cuenta : blc_cuenta,
@@ -66,7 +72,8 @@ Meteor.methods({
 			HistOrdenes : HistOrdenes,
 			cant_traders : cant_traders[0].valor,
 			CantTransAtras : CantTransAtras[0].valor,
-			debug_activo : debug_activo[0].valor
+			debug_activo : debug_activo[0].valor,
+			TimeoutEjecucion : Timeout[0].valor
 		}
 
 		

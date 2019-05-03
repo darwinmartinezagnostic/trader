@@ -17,10 +17,12 @@ Meteor.methods({
         // AGREGAR A URL LIMITE DE ORDENES A OBTENER
         Url_VerificarHistOrden = [CONSTANTES.HistOrdenes]+['?clientOrderId=']+[ORDEN];
         v_Estado_Orden = Meteor.call('ConexionGet', Url_VerificarHistOrden );
-        var EstadoOrden=(v_Estado_Orden.data[0]);
+        //var EstadoOrden=(v_Estado_Orden.data[0]);
+        var EstadoOrden=(v_Estado_Orden[0]);
         Url_HistOrdenIdTrdades = [CONSTANTES.HistOrdenes]+['/']+[EstadoOrden.id]+['/trades'];
         V_Desc_Orden = Meteor.call('ConexionGet', Url_HistOrdenIdTrdades );
-        DescOrden = V_Desc_Orden.data[0];
+        //DescOrden = V_Desc_Orden.data[0];
+        DescOrden = V_Desc_Orden[0];
 
 
         /*
@@ -61,7 +63,8 @@ Meteor.methods({
         console.log('Valor de Url_VerificarOrden', Url_VerificarOrden)
         Estado_Orden = Meteor.call('ConexionGet', Url_VerificarOrden );
 
-        var v_Estado_Orden=(Estado_Orden.data);      
+        //var v_Estado_Orden=(Estado_Orden.data);
+        var v_Estado_Orden=Estado_Orden;
 
         //console.log(v_transaccion);
 
@@ -2217,13 +2220,20 @@ Meteor.methods({
     
     //'CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){  //POST
     'CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
+
+    	var IdTran = Meteor.call('CalculaId', 2);
+    	var IdTransaccionActual = Meteor.call("CompletaConCero", IdTran, 10);
     	var CONSTANTES = Meteor.call("Constantes");
     	console.log('############################################');
         Meteor.call("GuardarLogEjecucionTrader", 'Creando una nueva orden');
         console.log("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: ", TIPO_CAMBIO, " T_TRANSACCION: ", T_TRANSACCION, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION);
 
-        //var PRECIO = Meteor.call('LibroDeOrdenes', TIPO_CAMBIO);
+        URL_TIKT = CONSTANTES.ticker+TIPO_CAMBIO
+
+        const MejPrec =  Meteor.call("ConexionGet", URL_TIKT);
+
         var fecha = new Date();
+        console.log("Valor de fecha:", fecha)
 
         switch (T_TRANSACCION){
             case 'buy':
@@ -2234,22 +2244,58 @@ Meteor.methods({
                 break;
         }
 
-        var datos = new Object();
-        datos.symbol = TIPO_CAMBIO;
-        datos.side = T_TRANSACCION;
-        fatos.type = 'market';
-        datos.timeInForce=CONSTANTES.ZONA_HORARIA;
-        datos.quantity = CANT_INVER;
-        //datos.price = PRECIO; // PRECIO ES REQUERIDO, SE NECESITAN LAS ORDENES DE COMPRA PARA SABER EN CUANTO COMPRAR
+        if ( MONEDA_SALDO == MON_C && TP === T_TRANSACCION ) {
+        	var ProcentComisHiBTC =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
+        	var ValProcentComisHiBTC = ProcentComisHiBTC[0];
+	        //console.log("Entré acá")
+	        //console.log("Mejor Valor de Compra: ", MejPrec.bid);
+	        var comision_hbtc = parseFloat(MONTO).toFixed(9) * ValProcentComisHiBTC.comision_hitbtc
+	        //console.log("Valor de comision_hbtc: ", comision_hbtc.toFixed(9) )
+	        var comision_merc = parseFloat(MONTO).toFixed(9) * ValProcentComisHiBTC.comision_mercado
+	        //console.log("Valor de comision_merc: ", comision_merc.toFixed(9) )
+	        var MR_INVER = parseFloat(MONTO).toFixed(9) - comision_hbtc.toFixed(9) - comision_merc.toFixed(9)
+	        //console.log("Valor de MR_INVER: ", MR_INVER.toFixed(9))
+	        var M_INVERTIR = MR_INVER / parseFloat(MejPrec.bid)
+	        var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))
+	        //console.log("Valor de MONT_INVERTIR: ", MONT_INVERTIR.toString());
+	        var MejorPrec = MejPrec.bid.toString()
+	        //console.log("Valor de MejorPrec: ", MejorPrec);
+	    }else if ( MONEDA_SALDO == MON_B && TP === T_TRANSACCION ) {
+	        //console.log("Entré acá ahora")
+	        var MONT_INVERTIR = MONTO
+	        var MejorPrec = MejPrec.ask.toString()
+	        //console.log("Valor de MejorPrec: ", MejorPrec);
+	    }
 
-        var url_orden = ordenes;
+        console.log("Valor de V_TipoOperaciont:", V_TipoOperaciont);
+
+        /*
+		let datos = {
+		        symbol : TIPO_CAMBIO,
+		        side : T_TRANSACCION,
+		        type : 'market', -- limit
+		        timeInForce : CONSTANTES.ZONA_HORARIA,
+		        quantity : CANT_INVER
+		    }
+
+        */
+
+		//let datos = 'clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+MONTO+;
+		datos=  'clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+MONT_INVERTIR+'&price='+MejPrec;
+
+
+        //datos.price = PRECIO; // PRECIO ES REQUERIDO, SE NECESITAN LAS ORDENES DE COMPRA PARA SABER EN CUANTO COMPRAR
+        //console.log("Valor de datos:",  JSON.stringify(datos))
+        var url_orden = CONSTANTES.ordenes;
 
         var Orden = Meteor.call('ConexionPost', url_orden, datos);
+        //var Orden = Meteor.call('OtroConexionPost', url_orden, datos);
+        //var Orden = Meteor.call('ConexionPut', url_orden, datos);
 
 
-        Meteor.call("GuardarLogEjecucionTrader", ["Valor de orden"]+[Orden]);
+        Meteor.call("GuardarLogEjecucionTrader", ["Valor de orden"]+[CONSTANTES.Orden]);
 
-        var Estado_Orden = Meteor.call('VerificarHistoricoEstadoOrden', Orden );
+        var Estado_Orden = Meteor.call('VerificarHistoricoEstadoOrden', CONSTANTES.Orden );
         var Estado_Orden = ValidaEstadoOrden.Estado
 
         Meteor.call("GuardarLogEjecucionTrader", ['Valor de ValidaEstadoOrden']+[ValidaEstadoOrden]);
@@ -2270,7 +2316,7 @@ Meteor.methods({
 
         if ( Estado_Orden === "filled" ) {
 
-            var IdTransaccionActual = Meteor.call('CalculaId', 2);
+            
 
             Meteor.call('GuardarLogEjecucionTrader', ' CrearNuevaOrder: Estoy en: Estado_Orden === "filled"');
 
@@ -2472,7 +2518,6 @@ Meteor.methods({
                     //Meteor.call("GuardarLogEjecucionTrader", [' CrearNuevaOrder: Orden Parcialmente Completada, Status Recibido: "']+[Estado_Orden]+['", Reintentando Verificación ...']);
                     //var Estado_Orden = Meteor.call('VerificarHistoricoEstadoOrden', Orden );
                     if (Estado_Orden === "filled") {
-                        var IdTransaccionActual = Meteor.call('CalculaId', 2);
 
 			            Meteor.call('GuardarLogEjecucionTrader', ' CrearNuevaOrder: Estoy en: Estado_Orden === "filled"');
 

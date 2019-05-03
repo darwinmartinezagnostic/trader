@@ -181,13 +181,14 @@ Meteor.methods({
 
 	'Prueba':function(){
 
+        /*
         var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
         var V_LimiteApDep = LimiteApDep[0].valor;
-         
+         */
         
-        //Meteor.call("EjecucionInicial"); 
         
         /*
+        //Meteor.call("EjecucionInicial"); 
         Meteor.call("ListaTiposDeCambios", 2);
         Meteor.call("ListaMonedas");
         Meteor.call("ActualizaSaldoTodasMonedas");
@@ -200,7 +201,7 @@ Meteor.methods({
         Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
         */
         
-
+        /*
         //var MB='BTC'
         var MB='ONT'
         //var MC='USD'
@@ -218,7 +219,35 @@ Meteor.methods({
         	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
             //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
         }
+        */
 
+
+        //var MB='BTC'
+        var MB='DGTX'
+        //var MC='USD'
+        var MC='BTC'
+        TIPO_CAMBIO = MB+MC
+        MONTO = '0.0191495700'
+        MONSALDO = MC
+        MAPLICOMIS = MC
+        TIPO_OPERACION = 2
+        if ( TIPO_OPERACION === 1 ) {
+            TP = 'sell' // VENTA
+        }else{
+            TP = 'buy' // COMPRA
+        }
+        LOTE = 1
+
+
+
+
+        //Meteor.call("ConsultaCarterasDeposito");
+ 
+
+        //CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
+        //Meteor.call("CrearNuevaOrder", 'ETHBTC', 'sell', '0.0166', 'ETH', 'BTC', 'BTC', 'BTC', 1);
+        Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, TP, MONTO, MB, MC, MONSALDO, MAPLICOMIS, 1);
+ 
 
     },
 });

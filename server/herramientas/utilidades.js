@@ -333,5 +333,25 @@ Meteor.methods({
             }
         }
     },
+
+    'CompletaConCero' : function (numero, tamanio) {
+        var numeroOutput = Math.abs(numero); /* Valor absoluto del número */
+        var length = numero.toString().length; /* Largo del número */ 
+        var cero = "0"; /* String de cero */  
+        
+        if (tamanio <= length) {
+            if (numero < 0) {
+                 return ("-" + numeroOutput.toString()); 
+            } else {
+                 return numeroOutput.toString(); 
+            }
+        } else {
+            if (numero < 0) {
+                return ("-" + (cero.repeat(tamanio - length)) + numeroOutput.toString()); 
+            } else {
+                return ((cero.repeat(tamanio - length)) + numeroOutput.toString()); 
+            }
+        }
+    }
 	
 });

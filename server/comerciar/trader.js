@@ -10,7 +10,8 @@ Meteor.methods({
         console.log('############################################');
         try{
             var moneda = Meteor.call("ConexionGet", CONSTANTES.monedas);
-            var mons = (moneda.data);
+            //var mons = (moneda.data);
+            var mons = moneda
         }
         catch(error){
             Meteor.call("GuardarLogEjecucionTrader", ' Error: No se puedo consultar el api de hitbtc');
@@ -53,9 +54,11 @@ Meteor.methods({
         var CONSTANTES = Meteor.call("Constantes");
         var fecha = new Date();
         var v_blc_tradeo = Meteor.call("ConexionGet", CONSTANTES.blc_tradeo);
-        var BlcMonedasTradeo=(v_blc_tradeo.data);
+        //var BlcMonedasTradeo=(v_blc_tradeo.data);
+        var BlcMonedasTradeo=v_blc_tradeo
         var v_blc_cuenta = Meteor.call("ConexionGet", CONSTANTES.blc_cuenta);
-        var BlcCuenta = (v_blc_cuenta.data);        
+        //var BlcCuenta = (v_blc_cuenta.data);
+        var BlcCuenta = v_blc_cuenta
         var c_vect_BlcCuent = 0;
         var c_vect_BlcTrad = 0;
 
@@ -182,9 +185,11 @@ Meteor.methods({
     'ActualizaSaldoActual':function(MONEDA){
         var CONSTANTES = Meteor.call("Constantes");
         var v_blc_tradeo = Meteor.call("ConexionGet", CONSTANTES.blc_tradeo);
-        var BlcMonedasTradeo=(v_blc_tradeo.data);
+        //var BlcMonedasTradeo=(v_blc_tradeo.data);
+        var BlcMonedasTradeo=v_blc_tradeo
         var v_blc_cuenta = Meteor.call("ConexionGet", CONSTANTES.blc_cuenta);
-        var BlcCuenta = (v_blc_cuenta.data);        
+        //var BlcCuenta = (v_blc_cuenta.data);        
+        var BlcCuenta = v_blc_cuenta
         var c_vect_BlcCuent = 0;
         var c_vect_BlcTrad = 0;
 
@@ -280,8 +285,9 @@ Meteor.methods({
 
         var fecha = moment (new Date());
 
-        if ( EstadoTransaccion.statusCode === 200 ) {
-            var V_EstadoTransaccion = EstadoTransaccion.data;
+        //if ( EstadoTransaccion.statusCode === 200 ) {
+            //var V_EstadoTransaccion = EstadoTransaccion.data;
+            //console.log("Valor de V_EstadoTransaccion: ", V_EstadoTransaccion)
             var FECHA = fecha._d
             var IdTransferencia = V_EstadoTransaccion.id;
             var Indice = V_EstadoTransaccion.index;
@@ -325,11 +331,11 @@ Meteor.methods({
                 HistoralTransferencias.insert({ fecha : FECHA, id : IdTransferencia, indice : Indice, tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : STATUS, fecha_creacion_solicitud : fechaCreacionSol, fecha_ejecucion_solicitud : fechaProcesamientoSol })
             };
 
-
+/*
         }else{
             Meteor.call('ValidaError', EstadoTransaccion.statusCode, 1);
         }
-
+*/
 
 
         //v_EstadoTransaccion = EstadoTransaccion[0].status;
@@ -464,7 +470,9 @@ Meteor.methods({
         var CONSTANTES = Meteor.call("Constantes");
         try{
             var traders = Meteor.call("ConexionGet", CONSTANTES.simbolos);
-            var mon_camb =(traders.data);
+            //var mon_camb =(traders.data);
+            var mon_camb =traders
+            //console.log("Valor de traders: ", traders)
         }
         catch (error){
             Meteor.call("ValidaError", error, 1)
@@ -555,7 +563,8 @@ Meteor.methods({
 
 
         if ( compras_ventas !== undefined ) {
-            var v_compras_ventas = (compras_ventas.data);
+            //var v_compras_ventas = (compras_ventas.data);
+            var v_compras_ventas = compras_ventas
             var ValorOferta = v_compras_ventas.ask;
             var ValorDemanda = v_compras_ventas.bid;
 
@@ -610,7 +619,8 @@ Meteor.methods({
                 Meteor.call('ValidaError', err, 1);
             }else {
                 var moneda = Meteor.call("ConexionGet", CONSTANTES.monedas);
-                var mons = (moneda.data);
+                //var mons = (moneda.data);
+                var mons = moneda
                 var monedasBD = Monedas.find({}).fetch();
                 var aux1 = [];
                 var x;
@@ -653,7 +663,8 @@ Meteor.methods({
                 Meteor.call('ValidaError', err, 1);
             }else {
                 var traders = Meteor.call("ConexionGet", CONSTANTES.simbolos);
-                var mon_camb =(traders.data);
+                //var mon_camb =(traders.data);
+                var mon_camb =traders
                 var tradersBD = TiposDeCambios.find({}).fetch();
                 var aux1 = [];
                 var x;
@@ -807,7 +818,8 @@ Meteor.methods({
         var url_tradeos_parcial= ['from=0&by=trade_id&sort=DESC&start_index=0&limit=']+[CONSTANTES.cant_traders]+['&format_numbers=number'];
         var url_tradeos_completa = [CONSTANTES.publico]+['trades/']+[TIPO_CAMBIO]+['?']+[url_tradeos_parcial];
         var v_tradeos = Meteor.call("ConexionGet", url_tradeos_completa);
-        var trad_mon = (v_tradeos.data);
+        //var trad_mon = (v_tradeos.data);
+        var trad_mon = v_tradeos
         /*
         var Val_trad = (Meteor.call('ConsultaTraderGuardados', TIPO_CAMBIO));
         var Val_trad_tipo_cambio = (Val_trad);

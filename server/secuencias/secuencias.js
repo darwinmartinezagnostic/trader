@@ -104,7 +104,7 @@ Meteor.methods({
             console.log('        ',fecha._d);
             console.log('---------- SECUENCIA PERIODO 1 ------------');
             console.log(' ');
-            Meteor.call("GuardarLogEjecucionTrader", ' Estoy en SecuenciaPeriodo1');
+            //Meteor.call("GuardarLogEjecucionTrader", ' Estoy en SecuenciaPeriodo1');
 
             try {
                 var Monedas_Saldo = Monedas.aggregate([
@@ -139,7 +139,7 @@ Meteor.methods({
                         }
                     };
 
-                    Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Consultando Tipos de Cambio para Moneda: ']+[moneda_saldo.moneda]+[' SALDO_MONEDA: ']+[moneda_saldo.saldo.tradeo.activo]);
+                    //Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Consultando Tipos de Cambio para Moneda: ']+[moneda_saldo.moneda]+[' SALDO_MONEDA: ']+[moneda_saldo.saldo.tradeo.activo]);
 
                     //LIMPIANDO LA COLECCION TEMPORAL "TempTiposCambioXMoneda"
                     TempTiposCambioXMoneda.remove({ moneda_saldo : Monedas_Saldo[0].moneda, });
