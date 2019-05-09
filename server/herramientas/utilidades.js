@@ -3,13 +3,19 @@ moment().tz('America/Caracas').format();
 
 Meteor.methods({
 
-    'sleep':function(milisegundos){
+    'sleep':function(segundos){
+        /*
         var start = new Date().getTime();
         for (var i = 0; i < 1e7; i++) {
             if ((new Date().getTime() - start) > milisegundos) {
                 break;
             }
         }
+        */
+
+        objetivo = (new Date()).getTime() + 1000 * Math.abs(segundos);
+        //objetivo = (new Date()).getTime() * Math.abs(milisegundos);
+        while ( (new Date()).getTime() < objetivo );
     },
 
     'Encabezado':function(){
@@ -117,7 +123,7 @@ Meteor.methods({
     },
 
     'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
-        Meteor.call('sleep', 100);
+        //Meteor.call('sleep', 1);
         var SALDO = parseFloat(S_MOND);
 
         if ( SALDO === 0 ) {
@@ -352,6 +358,39 @@ Meteor.methods({
                 return ((cero.repeat(tamanio - length)) + numeroOutput.toString()); 
             }
         }
-    }
+    },
+
+    'CalcularIversion' : function ( TIPO_CAMBIO, MONEDA_SALDO, INVER){
+        const CONSTANTES = Meteor.call("Constantes");
+        const URL_TIKT = CONSTANTES.ticker+TIPO_CAMBIO;        
+        const precio =  Meteor.call("ConexionGet", URL_TIKT);
+        //const precio = { bid : '2', ask : '2'}
+        var TipoCambio =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
+
+        if ( MONEDA_SALDO == TipoCambio[0].moneda_cotizacion ) {
+            var ValTipoCambio = TipoCambio[0];
+            var comision_hbtc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_hitbtc
+            var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
+            var MR_INVER = parseFloat(INVER).toFixed(9) - comision_hbtc.toFixed(9) - comision_merc.toFixed(9)
+            var M_INVERTIR = MR_INVER / parseFloat(precio.bid)
+            //var M_INVERTIR = MR_INVER / parseFloat(precio.ask)
+            var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))
+            var MejorPrec = precio.bid.toString()
+            //var MejorPrec = precio.ask.toString()
+            resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec }
+            console.log("Valor de comision_hbtc", comision_hbtc)
+            console.log("Valor de comision_merc", comision_merc)
+            console.log("Valor de MR_INVER", MR_INVER)
+            console.log("Valor de M_INVERTIR", M_INVERTIR)
+            console.log("Valor de MONT_INVERTIR", MONT_INVERTIR)
+            return resultados;
+        }else if ( MONEDA_SALDO == TipoCambio[0].moneda_base ) {
+            var MONT_INVERTIR = INVER
+            var MejorPrec = precio.ask.toString()
+            //var MejorPrec = precio.bid.toString()
+            resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec }
+            return resultados;
+        }
+    },
 	
 });

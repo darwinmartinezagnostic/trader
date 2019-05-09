@@ -11,7 +11,6 @@ const apikey = key+':'+secret;
 */
 Meteor.methods({
 
-
     async ConexionGet(V_URL){
 
         global.Headers = fetch.Headers;
@@ -100,8 +99,8 @@ Meteor.methods({
     },
 
     async ConexionPost(V_URL, datos){
-        
-        var request = require('request')
+
+        var request = require('request-promise')
 
         global.Headers = fetch.Headers;
         global.formData = fetch.formData;
@@ -109,8 +108,8 @@ Meteor.methods({
         var CONSTANTES = Meteor.call("Constantes");  
         const MS =  CONSTANTES.TimeoutEjecucion * 60000
         const ak = CONSTANTES.apikey
-        const user = CONSTANTES.key;
-        const pswrd = CONSTANTES.secret;
+        const user = CONSTANTES.user;
+        const pswrd = CONSTANTES.passwr;
         let url = V_URL
         //console.log("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
         var salida = 0;
@@ -145,51 +144,43 @@ Meteor.methods({
               throw Error('Ejcución Cancelada');
             }
         }
-
-        console.log("Revisando ak: ",ak);
+        
         while( salida.status !== 200 ){
-            try{
-               
-                const respuesta = request(parametros)
+            console.log("Estoy en while( salida.status !== 200 )")
+            const respuesta = request(parametros)
                                         .then(function (response) {
-                                            //console.log (response)
-                                            return response
+                                            //console.log ("Valor de response: ",response)
+                                            resp = JSON.parse(response)
+                                            return resp
                                             })
-                                        .catch(function(err) {
-                                            //console.error(err.error);
-                                            return err.error
+                                        .catch(function(error) {
+                                            ErrorConseguido = JSON.parse(error.error)
+                                            //console.error("Valor de catch ErrorConseguido: ", ErrorConseguido);
+                                            return ErrorConseguido
                                             });
+            const tok = token();            
+            const EstadoCancelacion = CancelaEjecucionConexion ( respuesta, tok);            
+            let tpr = await TimeoutEjecucion(EstadoCancelacion, MS)
+            const salida = await respuesta
 
-                const tok = token();
-                const EstadoCancelacion = CancelaEjecucionConexion ( respuesta, tok);
-                try{
-                    let tpr = await TimeoutEjecucion(EstadoCancelacion, MS)
-                    const salida = await respuesta
-                    //console.log("Valor de salida", salida)
-                    
-                    if ( salida.StatusCodeError !== 200 ) {
-                        const datos = salida.message
-                        //console.log("Valor de datos: ", datos)
-                        return datos
-                    }
-
-                    return datos
-
-                }catch(e){
-                    Meteor.call('GuardarLogEjecucionTrader', [' ConexionPost: Error: ']+[ `${e}` ]);
-                    Error(`Error: ${e}`)
-                    //console.log('TIMEOUT en ejecución del URL: ', url);
+            if ( salida.id ) {
+                //console.log ("Valor de salida2", salida)
+                return salida
+            }else if ( salida.error.code !== 200 ) {
+                const mensaje = salida.error.message
+                console.log("Valor de mensaje: ", mensaje)
+                
+                if ( mensaje === "Insufficient funds") {
+                    mensj = { status :"Insufficientfunds"}
+                    return mensj
                 }
-            }catch(error){
-                if ( /url must be absolute and start with http:/.test(error) || /Parameter "url" must be a string, not object/.test(error) || /request to https:/.test(error) ) {
-                    //Meteor.call("ValidaError",'Conexion_api_fallida', 1);
-                    console.log("Conexion_api_fallida")
-                    break;
+                if ( mensaje === "Duplicate clientOrderId") {
+                    mensj = { status :"DuplicateclientOrderId"}
+                    return mensj
                 }
-                else{   
-                    //Meteor.call('ValidaError',error, 1);
-                    console.log("estoy en el else del error:", error);
-                    break;
+                if ( mensaje === "error is not defined") {
+                    mensj = { status :"errorisnotdefined"}
+                    return mensj
                 }
             }
         }

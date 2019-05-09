@@ -182,72 +182,127 @@ Meteor.methods({
 	'Prueba':function(){
 
         /*
-        var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
-        var V_LimiteApDep = LimiteApDep[0].valor;
+            var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
+            var V_LimiteApDep = LimiteApDep[0].valor;
          */
         
         
         /*
-        //Meteor.call("EjecucionInicial"); 
-        Meteor.call("ListaTiposDeCambios", 2);
-        Meteor.call("ListaMonedas");
-        Meteor.call("ActualizaSaldoTodasMonedas");
-        Meteor.call("ValidaMonedasTransfCuentaTRadeo");
-        Meteor.call("ActualizaSaldoTodasMonedas");
-        Meteor.call("ValidaSaldoEquivalenteActual");
-        Meteor.call("ConsultarSaldoTodasMonedas");
-        Meteor.call("EquivalenteDolarMinCompra");
-        Meteor.call('ListaTradeoActual', TIPO_CAMBIO, 2);
-        Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
-        */
+            //Meteor.call("EjecucionInicial"); 
+            Meteor.call("ListaTiposDeCambios", 2);
+            Meteor.call("ListaMonedas");
+            Meteor.call("ActualizaSaldoTodasMonedas");
+            Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+            Meteor.call("ActualizaSaldoTodasMonedas");
+            Meteor.call("ValidaSaldoEquivalenteActual");
+            Meteor.call("ConsultarSaldoTodasMonedas");
+            Meteor.call("EquivalenteDolarMinCompra");
+            Meteor.call('ListaTradeoActual', TIPO_CAMBIO, 2);
+            Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
+        */ 
+
+        //Meteor.call("ActualizaSaldoTodasMonedas");
+        //Meteor.call("ValidaSaldoEquivalenteActual");
+        /*
+        const MON_B='BTC'
+        //var MON_B='BCHSV'
+        const MON_C='USD'
+        //var MON_C='BTC'
+        var TIPO_CAMBIO = MON_B+MON_C
+        var MONEDA_SALDO = MON_B
+        var MONEDA_COMISION = MON_C
+        //var MONEDA_SALDO = MON_C
         
         /*
-        //var MB='BTC'
-        var MB='ONT'
-        //var MC='USD'
-        var MC='BTC'
-        
 
-        var TIPO_CAMBIO = MB+MC;
-        //var MONEDA_SALDO = MB;
-        var MONEDA_SALDO = MC;
-
-        //console.log(' Tipo de Cambio TIPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
-       
-		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
-			
-        	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
-            //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
-        }
-        */
-
-
-        //var MB='BTC'
-        var MB='DGTX'
-        //var MC='USD'
-        var MC='BTC'
-        TIPO_CAMBIO = MB+MC
-        MONTO = '0.0191495700'
-        MONSALDO = MC
-        MAPLICOMIS = MC
-        TIPO_OPERACION = 2
-        if ( TIPO_OPERACION === 1 ) {
-            TP = 'sell' // VENTA
-        }else{
-            TP = 'buy' // COMPRA
-        }
-        LOTE = 1
-
-
-
+            //console.log(' Tipo de Cambio TIPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
+           
+    		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
+    			
+            	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
+                //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
+            }
+        */        
+        /*
+        if (MONEDA_SALDO === MON_B) {
+            //CANT_INVER = '1.782'
+            CANT_INVER = '0.01691398'
+        }else if (MONEDA_SALDO === MON_C) {
+            //CANT_INVER = '0.01696398'
+            CANT_INVER = '101.11288496' 
+        } 
+        /*
+        MAPLICOMIS = MON_C
+        var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);        
 
         //Meteor.call("ConsultaCarterasDeposito");
  
+            console.log("MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
+            //CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, IdTransaccionLoteActual){
+            //Meteor.call("CrearNuevaOrder", 'ETHBTC', 'sell', '0.0166', 'ETH', 'BTC', 'BTC', 'BTC', IdTransaccionLoteActual);
+            Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
+                                        // TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
+     
+         
+        /*
+            var sal = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            console.log("Valor de sal: ", sal);
+        */
 
-        //CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
-        //Meteor.call("CrearNuevaOrder", 'ETHBTC', 'sell', '0.0166', 'ETH', 'BTC', 'BTC', 'BTC', 1);
-        Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, TP, MONTO, MB, MC, MONSALDO, MAPLICOMIS, 1);
- 
+            //Meteor.call("ConsultarHistoricoOrdenes");
+        
+        /*
+            var ORDEN = '00000000000000000000000000000154'
 
+            Meteor.call("ValidaTiempoEspera", ORDEN);
+        */
+        /*
+
+        const ORDEN = { 
+                    id: '125475148146',
+                    clientOrderId: '00000000000000000000000000000308',
+                    symbol: 'BTCUSD',
+                    side: 'sell',
+                    status: 'filled',
+                    type: 'limit',
+                    timeInForce: 'GTC',
+                    quantity: '0.01691',
+                    price: '5977.37',
+                    cumQuantity: '0.01691',
+                    createdAt: '2019-05-08T23:19:21.778Z',
+                    updatedAt: '2019-05-08T23:19:21.778Z',
+                    postOnly: false,
+                    tradesReport: [ {   id: 540001701,
+                                        quantity: '0.00800',
+                                        price: '5977.37',
+                                        fee: '0.095637920000',
+                                        timestamp: '2019-05-08T23:19:21.778Z' },
+                                    {   id: 540001702,
+                                        quantity: '0.00891',
+                                        price: '5977.37',
+                                        fee: '0.106516733400',
+                                        timestamp: '2019-05-08T23:19:21.778Z' }
+                                    ]
+         }
+
+
+        //(TIPO_CAMBIO, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, DATOS, ID_LOTE){
+        Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, 1);
+        /**/
+
+        /*
+        var date = new Date('9 May 2019');
+        date.setMonth(date.getMonth() - 12);
+        console.log(date);
+        */
     },
 });
+
+/*
+switch (){
+    case 0:
+    break;
+    case 1 :
+    break ;
+}
+*/
