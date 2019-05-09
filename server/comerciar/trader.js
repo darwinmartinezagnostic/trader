@@ -407,7 +407,7 @@ Meteor.methods({
                             while( VEstatus === "PENDIENTE" ){
                                 var IdTransVer = EstadoTransferencia[1];
                                 var VEstatus = Meteor.call( 'VerificarTransferencias', IdTransVer);
-                                Meteor.call('sleep',5000);
+                                Meteor.call('sleep',5);
                             };
 
                             Meteor.call( 'ActualizaSaldoActual', MonedaRev);

@@ -193,7 +193,7 @@ Meteor.methods({
 
     'VerificarHistoricoEstadoOrden':function(ORDEN){
         var CONSTANTES = Meteor.call("Constantes");
-        Meteor.call('sleep',5000);
+        Meteor.call('sleep',1);
         //Maximo TiempoEspera = 6000
         TiempoEspera = 6000;
         // AGREGAR A URL LIMITE DE ORDENES A OBTENER
