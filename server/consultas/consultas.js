@@ -80,114 +80,146 @@ Meteor.methods({
     },
 
     'ConsultarHistoricoOrdenes':function(){
-        fecha = moment (new Date());
         var CONSTANTES = Meteor.call("Constantes");
-        console.log('############################################');
-        Meteor.call("GuardarLogEjecucionTrader", ' Devuelve los datos Historicos de Transacciones de Compra/Venta realizadas');
-        console.log(' ');
-        var url_transaccion_completa=[CONSTANTES.HistTradeo]+['?sort=ASC&by=timestamp&from=2018-01-01T00%3A00%3A00.000Z']
-        //var url_transaccion_completa=[CONSTANTES.HistTradeo]+['?sort=ASC&by=id']
-        
-        var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
- 
+        var fechaActual = new Date();
+        var AnioAct = fechaActual.getFullYear();
 
-        for (k = 0, len = transaccion.length; k < len; k++) {
-            trans = transaccion[k];
-            var IdTran = Meteor.call('CalculaId', 2);
-            var IdTransaccionActual = Meteor.call("CompletaConCero", parseFloat(IdTran), 32);            
-            var url_trans_orden=[CONSTANTES.HistOrdenes]+['/']+[trans.orderId]+['/trades']
-            var ComisionTansacion = Meteor.call("ConexionGet", url_trans_orden);
-            
-            var ValorTP = TiposDeCambios.aggregate([  { $match : { tipo_cambio : trans.symbol }} ])
-            
-            var V_IdHitBTC = trans.id
-            var V_Id_Transhitbtc = trans.orderId
-            var clientOrderId = trans.clientOrderId
-            var LOTE = 0
-            var TipoCambio = trans.symbol
-            var MON_B = ValorTP[0].moneda_base
-            var MON_C = ValorTP[0].moneda_cotizacion
-            var status = trans.status
-            var V_FormaOperacion = trans.side        
-            var V_SaldoInversion = trans.quantity;
-            var precio = trans.price
-            var V_SaldoAcumulado = trans.cumQuantity
-            var V_Comision = ComisionTansacion[0].fee
-            var Equiv_V_Comision = 0
-            var FechaCreacion = trans.createdAt
-            var FechaActualizacion = trans.createdAt
-            
 
-            var FechaTradeoAnteriorMC = trans.updatedAt
-            var SaldoTradeoAnteriorMC = 0
-            var FechaTradeoActualMB = trans.createdAt
-            var SaldoTradeoActualMB = 0
-            var V_EquivalenciaTradeoAnteriorMC = 0
-            var V_EquivalenciaTradeoActualMB = 0
-            var Eqv_V_InverSaldAnt = 0
-            var V_EquivSaldoMonedaAdquirida = 0
-            var V_Ganancia = 0
+        var url_transaccion_TrasIni=[CONSTANTES.HistTradeo]+['?sort=ASC&by=id&limit=1']
+        var TrasIni = Meteor.call("ConexionGet", url_transaccion_TrasIni);
+        var FechaTrasIniRecib = TrasIni[0].timestamp;
+        var FTrans = new Date(FechaTrasIniRecib);
+        var ANIO_INICIO = FTrans.getFullYear();
+        var AnioInicio = parseFloat(ANIO_INICIO);        
 
-            
-            if ( V_FormaOperacion == 'sell') {
-                GananciaPerdida.insert({    
-                                            Operacion : {   Id_hitbtc : V_IdHitBTC,
-                                                            Id_Transhitbtc : V_Id_Transhitbtc,
-                                                            ID_LocalAnt : clientOrderId,
-                                                            ID_LocalAct : IdTransaccionActual,
-                                                            Id_Lote: LOTE,
-                                                            Tipo : V_FormaOperacion,
-                                                            TipoCambio : TipoCambio,
-                                                            Precio : precio,
-                                                            Status : status,
-                                                            FechaCreacion : FechaCreacion,
-                                                            FechaActualizacion : FechaActualizacion},
-                                            Comision : {    Valor : V_Comision,
-                                                            Equivalencia : Equiv_V_Comision},
-                                            Moneda : {  emision : { moneda : MON_B,
-                                                                    Fecha : FechaTradeoActualMB,
-                                                                    Saldo : SaldoTradeoActualMB,
-                                                                    Equivalente : V_EquivalenciaTradeoActualMB},
-                                                        Adquirida : { moneda : MON_C,
-                                                                    Fecha : FechaTradeoAnteriorMC,
-                                                                    Saldo : SaldoTradeoAnteriorMC,
-                                                                    Equivalente : V_EquivalenciaTradeoAnteriorMC}},
-                                            Inversion : { SaldoInversion  : V_SaldoInversion,
-                                                            Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                                Final : V_EquivSaldoMonedaAdquirida}},
-                                            Ganancia : { Valor :  V_Ganancia}
-                                        });
-            }else if ( V_FormaOperacion == 'buy') {
-                GananciaPerdida.insert({    
-                                            Operacion : {   Id_hitbtc : V_IdHitBTC,
-                                                            Id_Transhitbtc : V_Id_Transhitbtc,
-                                                            ID_LocalAnt : clientOrderId,
-                                                            ID_LocalAct : IdTransaccionActual,
-                                                            Id_Lote: LOTE,
-                                                            Tipo : V_FormaOperacion,
-                                                            TipoCambio : TipoCambio,
-                                                            Precio : precio,
-                                                            Status : status,
-                                                            FechaCreacion : FechaCreacion,
-                                                            FechaActualizacion : FechaActualizacion},
-                                            Comision : {    Valor : V_Comision,
-                                                            Equivalencia : Equiv_V_Comision},
-                                            Moneda : {  emision : { moneda : MON_C,
-                                                                    Fecha : FechaTradeoAnteriorMC,
-                                                                    Saldo : SaldoTradeoAnteriorMC,
-                                                                    Equivalente : V_EquivalenciaTradeoAnteriorMC},
-                                                        Adquirida : { moneda : MON_B,
-                                                                    Fecha : FechaTradeoActualMB,
-                                                                    Saldo : SaldoTradeoActualMB,
-                                                                    Equivalente : V_EquivalenciaTradeoActualMB}},
-                                            Inversion : { SaldoInversion  : V_SaldoInversion,
-                                                            Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                                Final : V_EquivSaldoMonedaAdquirida}},
-                                            Ganancia : { Valor :  V_Ganancia}
-                                        });
+        while ( AnioInicio <=  parseFloat(AnioAct) ){
+            console.log('############################################');
+            console.log("         Año a Recuperar:", AnioInicio);
+            console.log('############################################'); 
+            var MES = 1;
+            while ( MES < 13 ){
+                V_MES = Meteor.call('CompletaConCero', MES, 2);
+                console.log("            MES:", V_MES);
+
+                var date = new Date(AnioInicio,MES);
+                var primerDia = new Date(date.getFullYear(), date.getMonth(), 1)
+                var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                var PD = Meteor.call('CompletaConCero', primerDia.getDate(), 2);
+                var UD = Meteor.call('CompletaConCero', ultimoDia.getDate(), 2);var FechaInicial = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ PD ]+['T00%3A00%3A00']
+                var UltimoDiaAnio = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ UD ]+['T23%3A59%3A59']                
+
+                console.log("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);
+                Meteor.call("GuardarLogEjecucionTrader", ' Devuelve los datos Historicos de Transacciones de Compra/Venta realizadas');
+                
+                console.log(' ');
+
+                var url_transaccion_completa=[CONSTANTES.HistTradeo]+['?sort=ASC']+['&by=timestamp&from=']+[FechaInicial]+['&by=timestamp&from=']+[UltimoDiaAnio]
+                var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
+                
+                if ( transaccion !== undefined) {
+
+                    for (k = 0, len = transaccion.length; k < len; k++) {
+                        trans = transaccion[k];
+                        var IdTran = Meteor.call('CalculaId', 2);
+                        var IdTransaccionActual = Meteor.call("CompletaConCero", parseFloat(IdTran), 32);            
+                        var url_trans_orden=[CONSTANTES.HistOrdenes]+['/']+[trans.orderId]+['/trades']
+                        var ComisionTansacion = Meteor.call("ConexionGet", url_trans_orden);
+                        
+                        var ValorTP = TiposDeCambios.aggregate([  { $match : { tipo_cambio : trans.symbol }} ])
+                        
+                        var V_IdHitBTC = trans.id
+                        var V_Id_Transhitbtc = trans.orderId
+                        var clientOrderId = trans.clientOrderId
+                        var LOTE = 0
+                        var TipoCambio = trans.symbol
+                        var MON_B = ValorTP[0].moneda_base
+                        var MON_C = ValorTP[0].moneda_cotizacion
+                        var status = trans.status
+                        var V_FormaOperacion = trans.side        
+                        var V_SaldoInversion = trans.quantity;
+                        var precio = trans.price
+                        var V_SaldoAcumulado = trans.cumQuantity
+                        var V_Comision = ComisionTansacion[0].fee
+                        var Equiv_V_Comision = 0
+                        var FechaCreacion = trans.createdAt
+                        var FechaActualizacion = trans.createdAt
+                        
+
+                        var FechaTradeoAnteriorMC = trans.updatedAt
+                        var SaldoTradeoAnteriorMC = 0
+                        var FechaTradeoActualMB = trans.createdAt
+                        var SaldoTradeoActualMB = 0
+                        var V_EquivalenciaTradeoAnteriorMC = 0
+                        var V_EquivalenciaTradeoActualMB = 0
+                        var Eqv_V_InverSaldAnt = 0
+                        var V_EquivSaldoMonedaAdquirida = 0
+                        var V_Ganancia = 0
+
+                        
+                        if ( V_FormaOperacion == 'sell') {
+                            GananciaPerdida.insert({    
+                                                        Operacion : {   Id_hitbtc : V_IdHitBTC,
+                                                                        Id_Transhitbtc : V_Id_Transhitbtc,
+                                                                        ID_LocalAnt : clientOrderId,
+                                                                        ID_LocalAct : IdTransaccionActual,
+                                                                        Id_Lote: LOTE,
+                                                                        Tipo : V_FormaOperacion,
+                                                                        TipoCambio : TipoCambio,
+                                                                        Precio : precio,
+                                                                        Status : status,
+                                                                        FechaCreacion : FechaCreacion,
+                                                                        FechaActualizacion : FechaActualizacion},
+                                                        Comision : {    Valor : V_Comision,
+                                                                        Equivalencia : Equiv_V_Comision},
+                                                        Moneda : {  emision : { moneda : MON_B,
+                                                                                Fecha : FechaTradeoActualMB,
+                                                                                Saldo : SaldoTradeoActualMB,
+                                                                                Equivalente : V_EquivalenciaTradeoActualMB},
+                                                                    Adquirida : { moneda : MON_C,
+                                                                                Fecha : FechaTradeoAnteriorMC,
+                                                                                Saldo : SaldoTradeoAnteriorMC,
+                                                                                Equivalente : V_EquivalenciaTradeoAnteriorMC}},
+                                                        Inversion : { SaldoInversion  : V_SaldoInversion,
+                                                                        Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
+                                                                                            Final : V_EquivSaldoMonedaAdquirida}},
+                                                        Ganancia : { Valor :  V_Ganancia}
+                                                    });
+                        }else if ( V_FormaOperacion == 'buy') {
+                            GananciaPerdida.insert({    
+                                                        Operacion : {   Id_hitbtc : V_IdHitBTC,
+                                                                        Id_Transhitbtc : V_Id_Transhitbtc,
+                                                                        ID_LocalAnt : clientOrderId,
+                                                                        ID_LocalAct : IdTransaccionActual,
+                                                                        Id_Lote: LOTE,
+                                                                        Tipo : V_FormaOperacion,
+                                                                        TipoCambio : TipoCambio,
+                                                                        Precio : precio,
+                                                                        Status : status,
+                                                                        FechaCreacion : FechaCreacion,
+                                                                        FechaActualizacion : FechaActualizacion},
+                                                        Comision : {    Valor : V_Comision,
+                                                                        Equivalencia : Equiv_V_Comision},
+                                                        Moneda : {  emision : { moneda : MON_C,
+                                                                                Fecha : FechaTradeoAnteriorMC,
+                                                                                Saldo : SaldoTradeoAnteriorMC,
+                                                                                Equivalente : V_EquivalenciaTradeoAnteriorMC},
+                                                                    Adquirida : { moneda : MON_B,
+                                                                                Fecha : FechaTradeoActualMB,
+                                                                                Saldo : SaldoTradeoActualMB,
+                                                                                Equivalente : V_EquivalenciaTradeoActualMB}},
+                                                        Inversion : { SaldoInversion  : V_SaldoInversion,
+                                                                        Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
+                                                                                            Final : V_EquivSaldoMonedaAdquirida}},
+                                                        Ganancia : { Valor :  V_Ganancia}
+                                                    });
+                        }
+                    };
+                }
+                MES += 1
             }
-
-        };
+            AnioInicio += 1
+        }
+            
         console.log('############################################');
     },
 

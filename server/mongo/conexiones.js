@@ -111,7 +111,7 @@ Meteor.methods({
         const user = CONSTANTES.user;
         const pswrd = CONSTANTES.passwr;
         let url = V_URL
-        //console.log("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
+        console.log("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
         var salida = 0;
         ordenCliente = "1" 
 
@@ -146,7 +146,7 @@ Meteor.methods({
         }
         
         while( salida.status !== 200 ){
-            console.log("Estoy en while( salida.status !== 200 )")
+            //console.log("Estoy en while( salida.status !== 200 )")
             const respuesta = request(parametros)
                                         .then(function (response) {
                                             //console.log ("Valor de response: ",response)
@@ -173,14 +173,17 @@ Meteor.methods({
                 if ( mensaje === "Insufficient funds") {
                     mensj = { status :"Insufficientfunds"}
                     return mensj
-                }
+                }else 
                 if ( mensaje === "Duplicate clientOrderId") {
                     mensj = { status :"DuplicateclientOrderId"}
                     return mensj
-                }
+                }else 
                 if ( mensaje === "error is not defined") {
                     mensj = { status :"errorisnotdefined"}
                     return mensj
+                }else {
+                    console.log("Valor de salida.error: ", salida.error)
+                    return salida.error
                 }
             }
         }

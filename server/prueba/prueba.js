@@ -249,7 +249,7 @@ Meteor.methods({
             console.log("Valor de sal: ", sal);
         */
 
-            //Meteor.call("ConsultarHistoricoOrdenes");
+            Meteor.call("ConsultarHistoricoOrdenes");
         
         /*
             var ORDEN = '00000000000000000000000000000154'
@@ -288,13 +288,52 @@ Meteor.methods({
 
         //(TIPO_CAMBIO, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, DATOS, ID_LOTE){
         Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, 1);
-        /**/
+        /**/   
 
         /*
-        var date = new Date('9 May 2019');
-        date.setMonth(date.getMonth() - 12);
-        console.log(date);
-        */
+        var AnioInicio = 2019
+        var fechaActual = new Date();
+        var AnioAct = fechaActual.getFullYear();
+
+
+        while ( AnioInicio <=  parseFloat(AnioAct) ){
+
+            var MES = 1;
+            while ( MES < 13 ){
+
+                V_MES = Meteor.call('CompletaConCero', MES, 2);
+                var date = new Date(AnioInicio,MES);
+                console.log("     MES:", MES);
+                //console.log(" Valor de date:", date);
+
+                var primerDia = new Date(date.getFullYear(), date.getMonth(), 1)
+                var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                /*
+                console.log(" Valor de primerDia:", primerDia);
+                console.log(" Valor de ultimoDia:", ultimoDia);
+                *//*
+                PD = Meteor.call('CompletaConCero', primerDia.getDate(), 2);
+                UD = Meteor.call('CompletaConCero', ultimoDia.getDate(), 2);
+                
+                //console.log(" Valor de AnioIncial:", AnioInicio);
+                var FechaInicial = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ PD ]+['T00%3A00%3A00']
+                var UltimoDiaAnio = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ UD ]+['T23%3A59%3A59']
+                console.log("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);
+
+                
+                MES += 1
+            }
+
+
+
+
+            AnioInicio += 1
+        }
+        /**/    
+        
+        //Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+
+        /**/
     },
 });
 
@@ -306,3 +345,4 @@ switch (){
     break ;
 }
 */
+
