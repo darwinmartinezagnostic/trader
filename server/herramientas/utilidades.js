@@ -377,18 +377,23 @@ Meteor.methods({
             var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))
             var MejorPrec = precio.bid.toString()
             //var MejorPrec = precio.ask.toString()
-            resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec }
+            resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
+            /*
             console.log("Valor de comision_hbtc", comision_hbtc)
             console.log("Valor de comision_merc", comision_merc)
             console.log("Valor de MR_INVER", MR_INVER)
             console.log("Valor de M_INVERTIR", M_INVERTIR)
             console.log("Valor de MONT_INVERTIR", MONT_INVERTIR)
+            */
             return resultados;
         }else if ( MONEDA_SALDO == TipoCambio[0].moneda_base ) {
+            var ValTipoCambio = TipoCambio[0];
             var MONT_INVERTIR = INVER
             var MejorPrec = precio.ask.toString()
+            var comision_hbtc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_hitbtc
+            var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
             //var MejorPrec = precio.bid.toString()
-            resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec }
+            resultados = { 'MontIversionCal' : MONT_INVERTIR.toFixed(9), 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc.toFixed(9), 'comision_mercado' : comision_merc.toFixed(9) }
             return resultados;
         }
     },

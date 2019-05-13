@@ -783,11 +783,9 @@ Meteor.methods({
         console.log('############################################');
         console.log(' ');
 
-
         var CPTC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
         var RTDC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 3 } ]);
-
-
+        
 
         if ( CPTC[0] === undefined ){
             var CantPropTipoCambios = 0
@@ -810,348 +808,206 @@ Meteor.methods({
                         CantPropTipoCambiosValidados = 0;
                     break;
                     case 1:
-                        Meteor.call("GuardarLogEjecucionTrader", " ACÁ ESTOY VALIDANDO 1 TIPO DE CAMBIO");
+                        //Meteor.call("GuardarLogEjecucionTrader", " ACÁ ESTOY VALIDANDO 1 TIPO DE CAMBIO");
 
                         //console.log(" VALOR  DE RTDC", RTDC)
 
                         for (CRTC11 = 0, TRTC11 = RTDC.length; CRTC11 < TRTC11; CRTC11++) {
                             TCR = RTDC[CRTC11];
 
-                            SaldoVerificar = TCR.saldo_moneda_tradear
-                            ValorMinimoCompra = TCR.min_compra;
-                            ValorComisionHBTC = TCR.comision_hitbtc;
-                            ValorComisionMerc = TCR.comision_mercado;
-                            ValorMonedaSaldo = TCR.moneda_saldo;
-                            ValorMonedaApCom = TCR.moneda_apli_comision;
+                            var SaldoVerificar = TCR.saldo_moneda_tradear
+                            var MinimoInversion = TCR.min_compra;
+                            var ValorComisionHBTC = TCR.comision_hitbtc;
+                            var ValorComisionMerc = TCR.comision_mercado;
+                            var ValorMonedaSaldo = TCR.moneda_saldo;
+                            var ValorMonedaApCom = TCR.moneda_apli_comision;
+                            var TIPO_CAMBIO = TCR.tipo_cambio;
                             var MonCBas = TCR.moneda_base
                             var MonCoti = TCR.moneda_cotizacion
                             /*
-                            console.log(" Valor de ValorMinimoCompra", ValorMinimoCompra)
-                            console.log(" Valor de ValorComisionHBTC", ValorComisionHBTC)
-                            console.log(" Valor de ValorComisionMerc", ValorComisionMerc)
-                            console.log(" Valor de ValorMonedaSaldo", ValorMonedaSaldo)
-                            console.log(" Valor de ValorMonedaApCom", ValorMonedaApCom)
-                            console.log("Valor de MonCBas", MonCBas);
-                            console.log("Valor de MonCoti", MonCoti);
-                            console.log("Valor de ValorMonedaSaldo", ValorMonedaSaldo);
+                            console.log(" Valor de TCR: ", TCR)
+                            console.log(" Valor de TIPO_CAMBIO: ", TIPO_CAMBIO)
+                            console.log(" Valor de MinimoInversion: ", MinimoInversion)
+                            console.log(" Valor de ValorComisionHBTC: ", ValorComisionHBTC)
+                            console.log(" Valor de ValorComisionMerc: ", ValorComisionMerc)
+                            console.log(" Valor de ValorMonedaSaldo:" , ValorMonedaSaldo)
+                            console.log(" Valor de ValorMonedaApCom:" , ValorMonedaApCom)
+                            console.log("Valor de MonCBas: " , MonCBas);
+                            console.log("Valor de MonCoti: ", MonCoti);
+                            console.log("Valor de ValorMonedaSaldo: ", ValorMonedaSaldo);                            
+                            /*
                             */
-                            if ( MonCBas === ValorMonedaSaldo ) {
-                                var SaldoInvertir = TCR.saldo_moneda_tradear*PTDC.valor.p11;
-                                if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                    CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                    saldoInicial1 = SaldoVerificar
-                                    saldoInversionFinal1 = SaldoInvertir
-                                    NuevoSaldoCalculado1 = NuevoSaldoCalculado
-                                }
-                                Meteor.call("GuardarLogEjecucionTrader", ["Valor de SaldoInvertir"]+[SaldoInvertir]);
-                            } else if ( MonCoti === ValorMonedaSaldo ) {
 
-                                var SaldoInvertir = TCR.saldo_moneda_tradear*PTDC.valor.p11;
-                                Meteor.call("GuardarLogEjecucionTrader", ["Valor de SaldoInvertir"]+[SaldoInvertir]);
-                                var comision1 = ValorComisionHBTC * SaldoInvertir
-                                Meteor.call("GuardarLogEjecucionTrader", ["Valor de comision1"]+[comision1]);
-                                var comision2 = ValorComisionMerc * SaldoInvertir
-                                Meteor.call("GuardarLogEjecucionTrader", ["Valor de comision2"]+[comision2]);
-                                var SaldoInverCalculado =  SaldoInvertir - comision1 - comision2
-                                Meteor.call("GuardarLogEjecucionTrader", ["Valor de SaldoInverCalculado"]+[SaldoInverCalculado]);
+                            var VInversion = TCR.saldo_moneda_tradear*PTDC.valor.p11;
+                            //console.log("Valor de VInversion: ", VInversion);
+                            var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                            var Inversion = RecalcIverPrec.MontIversionCal;
+                            //console.log("Valor de Inversion: ", Inversion);
+                            //Meteor.call("GuardarLogEjecucionTrader", ["% configurado: "]+[PTDC.valor.p11]);
 
-                                if ( SaldoInverCalculado >= ValorMinimoCompra ) {
-                                    CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                    saldoInversionFinal1 = SaldoInverCalculado
-                                    NuevoSaldoCalculado1 = NuevoSaldoCalculado
-                                    COM11 = comision1
-                                    COM21 = comision2
-                                }
-                                Meteor.call("GuardarLogEjecucionTrader", ["Valor de CantPropTipoCambiosValidados"]+[CantPropTipoCambiosValidados]);
+                            if ( Inversion >= MinimoInversion ) {
+                                CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                //Meteor.call("GuardarLogEjecucionTrader", ["Valor de Inversion: "]+[Inversion]);
                             }
                         }
                     break;
                     case 2:
-                        Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY VALIDANDO 2 TIPOS DE CAMBIO');
-                        //console.log("Valor de CantPropTipoCambiosValidados", CantPropTipoCambiosValidados);
-                        //console.log("Valor de RTDC", RTDC);
-
+                        //Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY VALIDANDO 2 TIPOS DE CAMBIO');
                                     
                         for (CRTC12 = 0, TRTC12 = RTDC.length; CRTC12 < TRTC12; CRTC12++) {
                             var TCR = RTDC[CRTC12];
-                            var ValorMinimoCompra = TCR.min_compra;
+                            var MinimoInversion = TCR.min_compra;
                             var ValorComisionHBTC = TCR.comision_hitbtc;
                             var ValorComisionMerc = TCR.comision_mercado;
                             var ValorMonedaSaldo = TCR.moneda_saldo;
                             var ValorMonedaApCom = TCR.moneda_apli_comision;
                             var MonCBas = TCR.moneda_base
                             var MonCoti = TCR.moneda_cotizacion
-
-                            //console.log("Valor de TCR", TCR);
-                            console.log("Valor de CRTC12", CRTC12);
+                            var TIPO_CAMBIO = TCR.tipo_cambio;
 
                             switch (CRTC12){
                                 case 0:
                                     var SaldoVerificar = RTDC[CRTC12].saldo_moneda_tradear
+                                    /*
                                     Meteor.call("GuardarLogEjecucionTrader", " ACÁ ESTOY 1");
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorMinimoCompra"]+[ValorMinimoCompra]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorComisionHBTC"]+[ValorComisionHBTC]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorComisionMerc"]+[ValorComisionMerc]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorMonedaSaldo"]+[ValorMonedaSaldo]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorMonedaApCom"]+[ValorMonedaApCom]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de MonCBas"]+[MonCBas]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de MonCoti"]+[MonCoti]);
-                                    
-                                    if ( MonCBas === ValorMonedaSaldo ) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el if');
-                                        Meteor.call("GuardarLogEjecucionTrader", ["% configurado"]+[PTDC.valor.p13]);
-                                        var SaldoInvertir = TCR.saldo_moneda_tradear*PTDC.valor.p12;
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de MinimoInversion: "]+[MinimoInversion]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorComisionHBTC: "]+[ValorComisionHBTC]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorComisionMerc: "]+[ValorComisionMerc]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorMonedaSaldo: "]+[ValorMonedaSaldo]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorMonedaApCom: "]+[ValorMonedaApCom]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de MonCBas: "]+[MonCBas]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de MonCoti: "]+[MonCoti]);
+                                    */
 
-                                        Meteor.call("GuardarLogEjecucionTrader", ["Valor de SaldoInvertir"]+[SaldoInvertir]);
-                                        NuevoSaldoCalculado = SaldoVerificar - SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", ["Valor de NuevoSaldoCalculado"]+[NuevoSaldoCalculado]);
-                                        if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                            CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                            saldoInicial1 = TCR.saldo_moneda_tradear
-                                            saldoInversionFinal1 = SaldoInvertir
-                                            NuevoSaldoCalculado1 = NuevoSaldoCalculado
-                                        }
-                                    } else if ( MonCoti === ValorMonedaSaldo ) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el ifelse');
-                                        Meteor.call("GuardarLogEjecucionTrader", ["% configurado"]+[PTDC.valor.p13]);
-                                        var SaldoInvertir = TCR.saldo_moneda_tradear*PTDC.valor.p12;
-                                        Meteor.call("GuardarLogEjecucionTrader", ["Valor de SaldoInvertir"]+[SaldoInvertir]);
-                                        var comision1 = ValorComisionHBTC * SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de comision1"]+[comision1]);
-                                        var comision2 = ValorComisionMerc * SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", ["Valor de comision2"]+[comision2]);
-                                        var SaldoInverCalculado =  SaldoInvertir - comision1 - comision2
-                                        Meteor.call("GuardarLogEjecucionTrader", ["Valor de SaldoInverCalculado"]+[SaldoInverCalculado]);
-                                        NuevoSaldoCalculado = SaldoVerificar - SaldoInverCalculado
+                                    var VInversion = TCR.saldo_moneda_tradear*PTDC.valor.p12;
+                                    //console.log("Valor de VInversion: ", VInversion);
+                                    var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                                    var Inversion = RecalcIverPrec.MontIversionCal;
+                                    //console.log("Valor de Inversion: ", Inversion);
+                                    //Meteor.call("GuardarLogEjecucionTrader", ["% configurado: "]+[PTDC.valor.p12]);
 
-                                        if ( SaldoInverCalculado >= ValorMinimoCompra ) {
-                                            CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                            saldoInversionFinal1 = SaldoInverCalculado
-                                            NuevoSaldoCalculado1 = NuevoSaldoCalculado
-                                            COM11 = comision1
-                                            COM21 = comision2
-                                        }
+                                    if ( Inversion >= MinimoInversion ) {
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        //Meteor.call("GuardarLogEjecucionTrader", ["Valor de Inversion: "]+[Inversion]);
+                                        NuevoSaldoCalculado = SaldoVerificar - Inversion
+                                        //Meteor.call("GuardarLogEjecucionTrader", ["Valor de NuevoSaldoCalculado: "]+[NuevoSaldoCalculado]);
                                     }
-                                    
-                                    Meteor.call("GuardarLogEjecucionTrader", ["Valor de CantPropTipoCambiosValidados"]+[CantPropTipoCambiosValidados]);
                                 break;
                                 case 1:
+                                    /*
                                     Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY 2');
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado Recibido"]+[NuevoSaldoCalculado]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorMinimoCompra"]+[ValorMinimoCompra]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorComisionHBTC"]+[ValorComisionHBTC]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorComisionMerc"]+[ValorComisionMerc]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorMonedaSaldo"]+[ValorMonedaSaldo]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorMonedaApCom"]+[ValorMonedaApCom]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de MonCBas"]+[MonCBas]);
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de MonCoti"]+[MonCoti]);
-                                    
-                                    if ( MonCBas === ValorMonedaSaldo ) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el if');
-                                        Meteor.call("GuardarLogEjecucionTrader", ["% configurado"]+[PTDC.valor.p23]);
-                                        var SaldoInvertir = NuevoSaldoCalculado*PTDC.valor.p22;
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInvertir",]+[SaldoInvertir]);
-                                        NuevoSaldoCalculado = NuevoSaldoCalculado - SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado"]+[NuevoSaldoCalculado]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado Recibido: "]+[NuevoSaldoCalculado]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de MinimoInversion: "]+[MinimoInversion]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorComisionHBTC: "]+[ValorComisionHBTC]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorComisionMerc: "]+[ValorComisionMerc]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorMonedaSaldo: "]+[ValorMonedaSaldo]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de ValorMonedaApCom: "]+[ValorMonedaApCom]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de MonCBas: "]+[MonCBas]);
+                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de MonCoti: "]+[MonCoti]);
+                                    */
+                                    var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p22;
+                                    //console.log("Valor de VInversion: ", VInversion);
+                                    var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                                    var Inversion = RecalcIverPrec.MontIversionCal;
+                                    //console.log("Valor de Inversion: ", Inversion);
+                                    //Meteor.call("GuardarLogEjecucionTrader", ["% configurado: "]+[PTDC.valor.p22]);
 
-                                        if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                            CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                            saldoInversionFinal2 = SaldoInvertir
-                                            NuevoSaldoCalculado2 = NuevoSaldoCalculado
-                                        }
-                                    } else if ( MonCoti === ValorMonedaSaldo ) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el ifelse');
-                                        Meteor.call("GuardarLogEjecucionTrader", [" % configurado"]+[PTDC.valor.p23]);
-                                        var SaldoInvertir = NuevoSaldoCalculado*PTDC.valor.p22;
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInvertir"]+[SaldoInvertir]);
-                                        var comision1 = ValorComisionHBTC * SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de comision1"]+[comision1]);
-                                        var comision2 = ValorComisionMerc * SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de comision2"]+[comision2]);
-                                        var SaldoInverCalculado =  SaldoInvertir - comision1 - comision2
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInverCalculado"]+[SaldoInverCalculado]);
-                                        NuevoSaldoCalculado = NuevoSaldoCalculado - SaldoInverCalculado
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado"]+[NuevoSaldoCalculado]);
-
-                                        if ( SaldoInverCalculado >= ValorMinimoCompra ) {
-                                            CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                            saldoInicial2 = NuevoSaldoCalculado
-                                            saldoInversionFinal2 = SaldoInverCalculado
-                                            NuevoSaldoCalculado2 = NuevoSaldoCalculado
-                                            COM12 = comision1
-                                            COM22 = comision2
-                                        }
+                                    if ( Inversion >= MinimoInversion ) {
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        //Meteor.call("GuardarLogEjecucionTrader", ["Valor de Inversion: "]+[Inversion]);
                                     }
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de CantPropTipoCambiosValidados"]+[CantPropTipoCambiosValidados]);
                                 break;
                             }
                         }
                     break;
                     case 3:
-                        Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY VALIDANDO 3 TIPOS DE CAMBIO');
-                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de CantPropTipoCambiosValidados"]+[CantPropTipoCambiosValidados]);
+                        //Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY VALIDANDO 3 TIPOS DE CAMBIO');
 
 
                         for (CRTC13 = 0, TRTC13 = RTDC.length; CRTC13 < TRTC13; CRTC13++) {
                             TCR = RTDC[CRTC13];
                             switch (CRTC13){
                                 case 0:
-                                    Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY 1');
+                                    //Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY 1');
                                     var SaldoVerificar = TCR.saldo_moneda_tradear
-                                    Meteor.call("GuardarLogEjecucionTrader", ["Valor de SaldoVerificar"]+[SaldoVerificar]);
-                                    var ValorMinimoCompra = TCR.min_compra;
+                                    //Meteor.call("GuardarLogEjecucionTrader", ["Valor de SaldoVerificar: "]+[SaldoVerificar]);
+                                    var MinimoInversion = TCR.min_compra;
                                     var ValorComisionHBTC = TCR.comision_hitbtc;
                                     var ValorComisionMerc = TCR.comision_mercado;
                                     var ValorMonedaSaldo = TCR.moneda_saldo;
                                     var ValorMonedaApCom = TCR.moneda_apli_comision;
                                     var MonCBas = TCR.moneda_base
                                     var MonCoti = TCR.moneda_cotizacion
+                                    var TIPO_CAMBIO = TCR.tipo_cambio;
 
-                                    if ( MonCBas === ValorMonedaSaldo ) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el if');
-                                        Meteor.call("GuardarLogEjecucionTrader", [" % configurado"]+[PTDC.valor.p13]);
-                                        var SaldoInvertir = SaldoVerificar*PTDC.valor.p13;
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInvertir"]+[SaldoInvertir]);
-                                        NuevoSaldoCalculado = SaldoVerificar - SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado"]+[NuevoSaldoCalculado]);
-                                        if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                            CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                            saldoInicial1 = TCR.saldo_moneda_tradear
-                                            saldoInversionFinal1 = SaldoInvertir
-                                            NuevoSaldoCalculado1 = NuevoSaldoCalculado
-                                            COM11 = 0
-                                            COM21 = 0
-                                        }
-                                    } else if ( MonCoti === ValorMonedaSaldo ) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el ifelse');
-                                        Meteor.call("GuardarLogEjecucionTrader", [" % configurado"]+[PTDC.valor.p13]);
-                                        var SaldoInvertir = TCR.saldo_moneda_tradear*PTDC.valor.p13;
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInvertir"]+[SaldoInvertir]);
-                                        var comision1 = ValorComisionHBTC * SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de comision1"]+[comision1]);
-                                        var comision2 = ValorComisionMerc * SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de comision2"]+[comision2]);
-                                        var SaldoInverCalculado =  SaldoInvertir - comision1 - comision2;
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInverCalculado"]+[SaldoInverCalculado]);
+                                    var VInversion = SaldoVerificar*PTDC.valor.p13;
+                                    //console.log("Valor de VInversion: ", VInversion);
+                                    var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                                    var Inversion = RecalcIverPrec.MontIversionCal;
+                                    //console.log("Valor de Inversion: ", Inversion);
+                                    //Meteor.call("GuardarLogEjecucionTrader", ["% configurado: "]+[PTDC.valor.p13]);
 
-
-                                        NuevoSaldoCalculado = SaldoVerificar - SaldoInverCalculado
-
-                                        if ( SaldoInverCalculado >= ValorMinimoCompra ) {
-                                            CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                            saldoInversionFinal1 = SaldoInverCalculado
-                                            NuevoSaldoCalculado1 = NuevoSaldoCalculado
-                                            COM11 = comision1
-                                            COM21 = comision2
-                                        }
+                                    if ( Inversion >= MinimoInversion ) {
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        //Meteor.call("GuardarLogEjecucionTrader", ["Valor de Inversion: "]+[Inversion]);
+                                        NuevoSaldoCalculado = SaldoVerificar - Inversion
                                     }
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de CantPropTipoCambiosValidados"]+[CantPropTipoCambiosValidados]);
                                 break;
                                 case 1:
-                                    Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY 2');
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado Recibido"]+[NuevoSaldoCalculado]);
-                                    var ValorMinimoCompra = TCR.min_compra;
-                                    ValorComisionHBTC = TCR.comision_hitbtc;
-                                    ValorComisionMerc = TCR.comision_mercado;
-                                    ValorMonedaSaldo = TCR.moneda_saldo;
-                                    ValorMonedaApCom = TCR.moneda_apli_comision;
+                                    //Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY 2');
+                                    //Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado Recibido: "]+[NuevoSaldoCalculado]);
+                                    var MinimoInversion = TCR.min_compra;
+                                    var ValorComisionHBTC = TCR.comision_hitbtc;
+                                    var ValorComisionMerc = TCR.comision_mercado;
+                                    var ValorMonedaSaldo = TCR.moneda_saldo;
+                                    var ValorMonedaApCom = TCR.moneda_apli_comision;
                                     var MonCBas = TCR.moneda_base
                                     var MonCoti = TCR.moneda_cotizacion
+                                    var TIPO_CAMBIO = TCR.tipo_cambio;
 
-                                    if ( MonCBas === ValorMonedaSaldo ) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el if');
-                                        Meteor.call("GuardarLogEjecucionTrader", [" % configurado"]+[PTDC.valor.p23]);
-                                        var SaldoInvertir = NuevoSaldoCalculado*PTDC.valor.p23;
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInvertir"]+[SaldoInvertir]);
-                                        NuevoSaldoCalculado = NuevoSaldoCalculado - SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado"]+[NuevoSaldoCalculado]);
+                                    var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p23;
+                                    //console.log("Valor de VInversion: ", VInversion);
+                                    var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                                    var Inversion = RecalcIverPrec.MontIversionCal;
+                                    //console.log("Valor de Inversion: ", Inversion);
+                                    //Meteor.call("GuardarLogEjecucionTrader", ["% configurado: "]+[PTDC.valor.p23]);
 
-                                        if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                            CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                            saldoInversionFinal2 = SaldoInvertir
-                                            NuevoSaldoCalculado2 = NuevoSaldoCalculado
-                                            COM12 = 0
-                                            COM22 = 0
-
-                                        }
-                                    } else if ( MonCoti === ValorMonedaSaldo ) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el ifelse');
-                                        Meteor.call("GuardarLogEjecucionTrader", [" % configurado"]+[PTDC.valor.p23]);
-                                        var SaldoInvertir = NuevoSaldoCalculado*PTDC.valor.p23;
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInvertir"]+[SaldoInvertir]);
-                                        var comision1 = ValorComisionHBTC * SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de comision1"]+[comision1]);
-                                        var comision2 = ValorComisionMerc * SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de comision2"]+[comision2]);
-                                        var SaldoInverCalculado =  SaldoInvertir - comision1 - comision2
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInverCalculado"]+[SaldoInverCalculado]);
-                                        NuevoSaldoCalculado = NuevoSaldoCalculado - SaldoInverCalculado
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado"]+[NuevoSaldoCalculado]);
-
-                                        if ( SaldoInverCalculado >= ValorMinimoCompra ) {
-                                            CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                            saldoInicial2 = NuevoSaldoCalculado
-                                            saldoInversionFinal2 = SaldoInverCalculado
-                                            NuevoSaldoCalculado2 = NuevoSaldoCalculado
-                                            COM12 = comision1
-                                            COM22 = comision2
-                                        }
+                                    if ( Inversion >= MinimoInversion ) {
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        //Meteor.call("GuardarLogEjecucionTrader", ["Valor de Inversion: "]+[Inversion]);
+                                        NuevoSaldoCalculado = NuevoSaldoCalculado - Inversion
                                     }
-                                    Meteor.call("GuardarLogEjecucionTrader", ["Valor de CantPropTipoCambiosValidados"]+[CantPropTipoCambiosValidados]);
                                 break;
                                 case 2:
-                                    Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY 3');
-                                    Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado Recibido"]+[NuevoSaldoCalculado]);
-                                    var ValorMinimoCompra = TCR.min_compra;
-                                    ValorComisionHBTC = TCR.comision_hitbtc;
-                                    ValorComisionMerc = TCR.comision_mercado;
-                                    ValorMonedaSaldo = TCR.moneda_saldo;
-                                    ValorMonedaApCom = TCR.moneda_apli_comision;                                    
+                                    //Meteor.call("GuardarLogEjecucionTrader", ' ACÁ ESTOY 3');
+                                    //Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado Recibido: "]+[NuevoSaldoCalculado]);
+                                    var MinimoInversion = TCR.min_compra;
+                                    var ValorComisionHBTC = TCR.comision_hitbtc;
+                                    var ValorComisionMerc = TCR.comision_mercado;
+                                    var ValorMonedaSaldo = TCR.moneda_saldo;
+                                    var ValorMonedaApCom = TCR.moneda_apli_comision;                                    
                                     var MonCBas = TCR.moneda_base
                                     var MonCoti = TCR.moneda_cotizacion
+                                    var TIPO_CAMBIO = TCR.tipo_cambio;
 
-                                    if ( MonCBas === ValorMonedaSaldo ) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el if');
-                                        Meteor.call("GuardarLogEjecucionTrader", [" % configurado"]+[PTDC.valor.p33]);
-                                        var SaldoInvertir = NuevoSaldoCalculado*PTDC.valor.p33;
-                                        Meteor.call("GuardarLogEjecucionTrader", ["Valor de SaldoInvertir"]+[SaldoInvertir]);
-                                        NuevoSaldoCalculado = NuevoSaldoCalculado - SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado"]+[NuevoSaldoCalculado]);
-                                        if ( SaldoInvertir >= ValorMinimoCompra ) {
-                                            CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                            saldoInversionFinal3 = SaldoInvertir
-                                            NuevoSaldoCalculado3 = NuevoSaldoCalculado
-                                        }
-                                    } else if ( MonCoti === ValorMonedaSaldo ) {
-                                        Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el ifelse');
-                                        Meteor.call("GuardarLogEjecucionTrader", [" % configurado"]+[PTDC.valor.p33]);
-                                        var SaldoInvertir = NuevoSaldoCalculado*PTDC.valor.p33;
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInvertir"]+[SaldoInvertir]);
-                                        var comision1 = ValorComisionHBTC * SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de comision1"]+[comision1]);
-                                        var comision2 = ValorComisionMerc * SaldoInvertir
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de comision2"]+[comision2]);
-                                        var SaldoInverCalculado =  SaldoInvertir - comision1 - comision2
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoInverCalculado"]+[SaldoInverCalculado]);
-                                        NuevoSaldoCalculado = NuevoSaldoCalculado - SaldoInverCalculado
-                                        Meteor.call("GuardarLogEjecucionTrader", [" Valor de NuevoSaldoCalculado"]+[NuevoSaldoCalculado]);
+                                    var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p33;
+                                    //console.log("Valor de VInversion: ", VInversion);
+                                    var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                                    var Inversion = RecalcIverPrec.MontIversionCal;
+                                    //console.log("Valor de Inversion: ", Inversion);
+                                    //Meteor.call("GuardarLogEjecucionTrader", ["% configurado: "]+[PTDC.valor.p33]);
 
-                                        if ( SaldoInverCalculado >= ValorMinimoCompra ) {
-                                            CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                            saldoInversionFinal3 = SaldoInverCalculado
-                                            NuevoSaldoCalculado3 = NuevoSaldoCalculado
-                                            COM13 = comision1
-                                            COM23 = comision2
-                                        }
+                                    if ( Inversion >= MinimoInversion ) {
+                                        CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        //Meteor.call("GuardarLogEjecucionTrader", ["Valor de Inversion: "]+[Inversion]);
                                     }
-                                    
-                                    Meteor.call("GuardarLogEjecucionTrader", ["Valor de CantPropTipoCambiosValidados"]+[CantPropTipoCambiosValidados]);
                                 break;
                             }
-                            console.log('--------------------------------------------');
                         }
                     break;
                 }
+                Meteor.call("GuardarLogEjecucionTrader", ["  Cantidad Tipo de Cambios Validados: "]+[CantPropTipoCambiosValidados]);
+                console.log('--------------------------------------------');
 
         Meteor.call('Invertir', MONEDA, LIMITE_AP_DEP, CantPropTipoCambiosValidados );
     },
@@ -1163,9 +1019,10 @@ Meteor.methods({
         var Robot = Parametros.find({ dominio : "robot", estado : true, valor : 0 }).fetch();
         var EstadoRobot = Robot[0].valor
 
+        console.log("Valores recibidos: ", " MONEDA: ", MONEDA, " LIMITE_AP_DEP:", LIMITE_AP_DEP, " CANT_TIP_CAMBIOS_VALIDADOS: " ,CANT_TIP_CAMBIOS_VALIDADOS)
+
         try{ 
-            var RankingTiposDeCambios = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA, estado : "A", habilitado : 1, "tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: CANT_TIP_CAMBIOS_VALIDADOS } ]);
-            
+            var RankingTiposDeCambios = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA, estado : "A", "tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: CANT_TIP_CAMBIOS_VALIDADOS } ]);            
             var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
             var ProporcionTipoCambios = PTC[0];
         }
@@ -1173,9 +1030,8 @@ Meteor.methods({
             Meteor.call("ValidaError", error, 2);
         };
 
-        ///console.log("Valor de RankingTiposDeCambios", RankingTiposDeCambios)
         console.log("--------------------------------------------")
-        Meteor.call("GuardarLogEjecucionTrader", ["  Tipos de cambios que pueden invertirse"]+[CANT_TIP_CAMBIOS_VALIDADOS]);
+        Meteor.call("GuardarLogEjecucionTrader", ["  Tipos de cambios que pueden invertirse: "]+[CANT_TIP_CAMBIOS_VALIDADOS]);
         console.log("--------------------------------------------")
         switch (CANT_TIP_CAMBIOS_VALIDADOS){
             case 0:
@@ -1189,8 +1045,10 @@ Meteor.methods({
             break;
             case 1:
                 console.log('--------------------------------------------');
+                var Tendencia = RankingTiposDeCambios[0].tendencia;
                 Meteor.call("GuardarLogEjecucionTrader", '             **** INVERTIR **** ');
                 Meteor.call("GuardarLogEjecucionTrader", '   | Realizando Calculos de inversión |');
+                Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[Tendencia]);
                 console.log("   |   ............................   |")
                 console.log(' ');
 
@@ -1227,8 +1085,10 @@ Meteor.methods({
             break;
             case 2:
                     console.log('--------------------------------------------');
+                    var Tendencia = RankingTiposDeCambios[0].tendencia;
                     Meteor.call("GuardarLogEjecucionTrader", '             **** INVERTIR **** ');
                     Meteor.call("GuardarLogEjecucionTrader", '   | Realizando Calculos de inversión |');
+                    Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[Tendencia]);
                     console.log("   |   ............................   |")
                     console.log(' ');
 
@@ -1243,7 +1103,7 @@ Meteor.methods({
                         Meteor.call("GuardarLogEjecucionTrader", [' ******** ']+[' TIPO CAMBIO: ']+[TipoCambioRanking.tipo_cambio]+['********']);
                         Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA BASE: ']+[TipoCambioRanking.moneda_base]);
                         Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA COTIZACION: ']+[TipoCambioRanking.moneda_cotizacion]);
-                        Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[TipoCambioRanking.periodo1.Base.tendencia_moneda_base]);
+                        Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[TipoCambioRanking.tendencia]);
                         switch (CRTC2){
                             case 0:
                                 var TipoCambio = TipoCambioRanking.tipo_cambio
@@ -1264,7 +1124,6 @@ Meteor.methods({
 
                             break;
                             case 1:                                    
-                                Meteor.call("GuardarLogEjecucionTrader", [' ActualizaSaldoActual']+[TipoCambioRanking.moneda_saldo]);
                                 var SAM = Monedas.find({ moneda : TipoCambioRanking.moneda_saldo }).fetch()
                                 var SaldoActualMoneda = SAM[0].saldo.tradeo.activo
                                 var TipoCambio = TipoCambioRanking.tipo_cambio
@@ -1274,7 +1133,7 @@ Meteor.methods({
                                 var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
                                 var MonCBas = TipoCambioRanking.moneda_base;
                                 var MonCoti = TipoCambioRanking.moneda_cotizacion;    
-                                var SaldoInverCalculado =  SaldoInvertir - comision1 - comision2                                
+                                var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;                                  
 
                                 Meteor.call("GuardarLogEjecucionTrader", ['     PORCENTAJE A INVERTIR: ']+[PorcentajeInversion*100]+['%']);
                                 Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
@@ -1287,13 +1146,13 @@ Meteor.methods({
                     }
             break;
             case 3:
-
                 console.log('--------------------------------------------');
+                var Tendencia = RankingTiposDeCambios[0].tendencia;
                 Meteor.call("GuardarLogEjecucionTrader", '             **** INVERTIR **** ');
                 Meteor.call("GuardarLogEjecucionTrader", '   | Realizando Calculos de inversión |');
+                Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[Tendencia]);
                 console.log("   |   ............................   |")
                 console.log(' ');
-
 
                 var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);
                 Meteor.call("GuardarLogEjecucionTrader", [" Valor de IdTransaccionLoteActual: "]+[IdTransaccionLoteActual]);
@@ -1306,12 +1165,12 @@ Meteor.methods({
                         Meteor.call("GuardarLogEjecucionTrader", [' ******** ']+[' TIPO CAMBIO: ']+[TipoCambioRanking.tipo_cambio]+['********']);
                         Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA BASE: ']+[TipoCambioRanking.moneda_base]);
                         Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA COTIZACION: ']+[TipoCambioRanking.moneda_cotizacion]);
-                        Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[TipoCambioRanking.periodo1.Base.tendencia_moneda_base]);
+                        Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[TipoCambioRanking.tendencia]);
                         switch (CRTC3){
                             case 0:
                                 var TipoCambio = TipoCambioRanking.tipo_cambio
                                 var Tendencia = TipoCambioRanking.tendencia;
-                                var PorcentajeInversion = ProporcionTipoCambios.valor.p12
+                                var PorcentajeInversion = ProporcionTipoCambios.valor.p13
                                 var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
                                 var MonedaSaldo = TipoCambioRanking.moneda_saldo;
                                 var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
@@ -1327,17 +1186,35 @@ Meteor.methods({
 
                             break;
                             case 1:                                    
-                                Meteor.call("GuardarLogEjecucionTrader", [' ActualizaSaldoActual']+[TipoCambioRanking.moneda_saldo]);
                                 var SAM = Monedas.find({ moneda : TipoCambioRanking.moneda_saldo }).fetch()
                                 var SaldoActualMoneda = SAM[0].saldo.tradeo.activo
                                 var TipoCambio = TipoCambioRanking.tipo_cambio
                                 var Tendencia = TipoCambioRanking.tendencia;
-                                var PorcentajeInversion = ProporcionTipoCambios.valor.p22
+                                var PorcentajeInversion = ProporcionTipoCambios.valor.p23
                                 var MonedaSaldo = TipoCambioRanking.moneda_saldo;
                                 var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
                                 var MonCBas = TipoCambioRanking.moneda_base;
                                 var MonCoti = TipoCambioRanking.moneda_cotizacion;    
-                                var SaldoInverCalculado =  SaldoInvertir - comision1 - comision2                                
+                                var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;                             
+
+                                Meteor.call("GuardarLogEjecucionTrader", ['     PORCENTAJE A INVERTIR: ']+[PorcentajeInversion*100]+['%']);
+                                Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
+                                Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);
+
+                                Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
+                                
+                            break;
+                            case 1:                                    
+                                var SAM = Monedas.find({ moneda : TipoCambioRanking.moneda_saldo }).fetch()
+                                var SaldoActualMoneda = SAM[0].saldo.tradeo.activo
+                                var TipoCambio = TipoCambioRanking.tipo_cambio
+                                var Tendencia = TipoCambioRanking.tendencia;
+                                var PorcentajeInversion = ProporcionTipoCambios.valor.p33
+                                var MonedaSaldo = TipoCambioRanking.moneda_saldo;
+                                var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
+                                var MonCBas = TipoCambioRanking.moneda_base;
+                                var MonCoti = TipoCambioRanking.moneda_cotizacion;    
+                                var SaldoInverCalculado = SaldoActualMoneda*PorcentajeInversion;                             
 
                                 Meteor.call("GuardarLogEjecucionTrader", ['     PORCENTAJE A INVERTIR: ']+[PorcentajeInversion*100]+['%']);
                                 Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
@@ -1491,7 +1368,9 @@ Meteor.methods({
 
             Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
 
-            Meteor.call('ListaTradeoActual',TIPO_CAMBIO, 3 ); 
+            Meteor.call('ListaTradeoActual',TIPO_CAMBIO, 3 );
+            Meteor.call("ValidaSaldoEquivalenteActual", MON_B);
+            Meteor.call("ValidaSaldoEquivalenteActual", MON_C);
         }
 
         HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_cambio : TIPO_CAMBIO, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : CANT_INVER, numero_orden : Orden, precio_operacion : PRECIO, estado : "Exitoso" });

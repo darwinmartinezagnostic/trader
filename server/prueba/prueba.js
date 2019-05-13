@@ -203,15 +203,15 @@ Meteor.methods({
 
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
-        /*
+        
         const MON_B='BTC'
         //var MON_B='BCHSV'
         const MON_C='USD'
         //var MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
-        var MONEDA_SALDO = MON_B
+        //var MONEDA_SALDO = MON_B
         var MONEDA_COMISION = MON_C
-        //var MONEDA_SALDO = MON_C
+        var MONEDA_SALDO = MON_C
         
         /*
 
@@ -249,7 +249,7 @@ Meteor.methods({
             console.log("Valor de sal: ", sal);
         */
 
-            Meteor.call("ConsultarHistoricoOrdenes");
+            //Meteor.call("ConsultarHistoricoOrdenes");
         
         /*
             var ORDEN = '00000000000000000000000000000154'
@@ -331,9 +331,18 @@ Meteor.methods({
         }
         /**/    
         
-        //Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+        Meteor.call("ValidaMonedasTransfCuentaTRadeo");
 
         /**/
+        /*
+        var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo"}).fetch()
+        var V_LimiteMuestreo = LimiteMuestreo[0].valor
+
+        console.log("Valor de V_LimiteMuestreo: ", V_LimiteMuestreo)
+        */
+
+
+        //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO,1);
     },
 });
 

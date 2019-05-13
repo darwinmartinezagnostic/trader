@@ -279,8 +279,7 @@ Meteor.methods({
                                         moneda: v_sald_moneda.moneda
                                         }, {
                                             $set: { "saldo.cuenta.activo": Number(v_BlcCuenta.available),
-                                                    //"saldo.cuenta.equivalencia": Number(V_EquivalenciaSMC),
-                                                    "saldo.cuenta.equivalencia": 1,
+                                                    "saldo.cuenta.equivalencia": Number(V_EquivalenciaSMC),
                                                     "saldo.cuenta.reserva": Number(v_BlcCuenta.reserved)
                                             }
                         }, {"multi" : true,"upsert" : true});
