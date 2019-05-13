@@ -173,7 +173,7 @@ Meteor.methods({
                 var V_LimiteMuestreo = LimiteMuestreo[0].valor
 
                 if ( V_LimiteMuestreo === 0 ) {
-                    var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
+                    var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { moneda_saldo : "$moneda_saldo" } },
                                              { $project: { _id : 1 } }
                                             ]);
 
@@ -181,7 +181,7 @@ Meteor.methods({
                         var V_moneda_verificar = MonedasVerificar[CMV];
                         //console.log("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id);
                                     
-                        Meteor.call("ValidaInversion", V_moneda_verificar._id, tipo_cambio_verificar.accion);
+                        Meteor.call("ValidaInversion", V_moneda_verificar.moneda_saldo);
 
                     }
                 }else{
@@ -280,7 +280,7 @@ Meteor.methods({
 
     'ValidaInversion': function( MONEDA_VERIFICAR ){
         try{
-            //console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
+            console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
 
             if ( JobsInternal.Utilities.collection.find({ name : "JobValidaTendenciaTipoCambio" , state : "pending" }).count() === 0  ) {
                 try{

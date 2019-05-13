@@ -1275,6 +1275,7 @@ Meteor.methods({
         do {
             
             var Orden = Meteor.call('ConexionPost', url_orden, datos);
+            Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi Orden: ']+[Orden]); 
             if ( Orden === undefined ) {
                 Meteor.call('sleep', 4);
             }
