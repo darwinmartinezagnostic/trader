@@ -1269,12 +1269,19 @@ Meteor.methods({
 
 
         console.log("Valor de datos:",  datos)
-        var url_orden = CONSTANTES.ordenes;        
-        
-        var Orden = Meteor.call('ConexionPost', url_orden, datos);
+        var url_orden = CONSTANTES.ordenes;
+
+
+        do {
+            
+            var Orden = Meteor.call('ConexionPost', url_orden, datos);
+            if ( Orden === undefined ) {
+                Meteor.call('sleep', 4);
+            }
+
+        }while( Orden === undefined );
+
         var Estado_Orden = Orden.status
-
-
         Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi estado: ']+[Estado_Orden]); 
 
 
