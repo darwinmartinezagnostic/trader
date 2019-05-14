@@ -331,18 +331,18 @@ Meteor.methods({
         }
         /**/    
         
-        Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+        //Meteor.call("ValidaMonedasTransfCuentaTRadeo");
 
         /**/
         /*
-        var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo"}).fetch()
+        var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
         var V_LimiteMuestreo = LimiteMuestreo[0].valor
 
         console.log("Valor de V_LimiteMuestreo: ", V_LimiteMuestreo)
         */
 
 
-        //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO,1);
+        Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO,1);
     },
 });
 

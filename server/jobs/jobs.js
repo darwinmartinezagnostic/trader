@@ -223,7 +223,7 @@ Jobs.register({
 							Meteor.call('ValidarRanking', moneda_saldo.moneda);
 
 							// VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
-						    var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo"}).fetch()
+						    var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
 						    var V_LimiteMuestreo = LimiteMuestreo[0].valor
 
 						    if ( V_LimiteMuestreo === 0 ) {
@@ -246,7 +246,7 @@ Jobs.register({
 							}else{
 								V_LimiteMuestreo = V_LimiteMuestreo - 1
 								
-								Parametros.update({ "dominio": "limites", "nombre": "CantidasMinimaMuestreo" }, {
+								Parametros.update({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo" }, {
 								    $set: {
 								        "estado": true,
 								        "valor": V_LimiteMuestreo

@@ -39,6 +39,7 @@ Meteor.startup(function (){
                                                     { $project : { _id : 0, valor : 1 } }]);
         
         var ValorModoEjecucion = ModoEjecucion[0].valor
+        //var ValorModoEjecucion = 0
         console.log("Valor de EjecucionInicial: ", ValorModoEjecucion);
 
         switch ( ValorModoEjecucion ){
