@@ -60,7 +60,14 @@ Meteor.methods({
             console.log('############################################');
             console.log(' ');
 
-            Meteor.call( 'VerificarTransferencias', IdTransferencia);
+            var VEstatus = Meteor.call( 'VerificarTransferencias', IdTransferencia);
+
+            var sal = new Set();
+            sal.add( 0 );
+            sal.add( IdTransferencia );
+            sal.add( VEstatus );
+            var salida = Array.from(sal);
+            return salida;
         }else{
             console.log('############################################');
             Meteor.call("GuardarLogEjecucionTrader", '            Status Tranferencia');
@@ -73,6 +80,10 @@ Meteor.methods({
             console.log('############################################');
             console.log(' ');
             Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Sulicitud de Transferencia Fallida'] );
+            var sal = new Set();
+            sal.add( 1 );
+            var salida = Array.from(sal);
+            return salida;
         };       
     },
 

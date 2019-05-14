@@ -331,7 +331,7 @@ Meteor.methods({
         }
         /**/    
         
-        //Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+        Meteor.call("ValidaMonedasTransfCuentaTRadeo");
 
         /**/
         /*
@@ -342,7 +342,7 @@ Meteor.methods({
         */
 
 
-        Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO,1);
+        //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO,1);
     },
 });
 
