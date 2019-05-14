@@ -399,19 +399,7 @@ Meteor.methods({
                         console.log("Estoy en el while( SaldoAntTransf === SaldoActTransf )");
                         console.log("Moneda:", MonedaRev)
                         console.log("Datos a enviar, MonedaRev:", MonedaRev ,"SaldoActTransf", SaldoActTransf, 'bankToExchange');
-
-
-
-                        /////////////////////////// ARREGLAR ESTA PARTE //////////////////////////////////////////////////////
-                        
-
                         var EstadoTransferencia = Meteor.call( 'Transferirfondos', MonedaRev, SaldoActTransf, 'bankToExchange');
-
-
-
-
-
-                        ///////////////////////////////////////////////////////////////////////////////////////////////////////
                         Meteor.call("GuardarLogEjecucionTrader", [' Valor de EstadoTransferencia']+[EstadoTransferencia]);
                         if ( EstadoTransferencia[0] === 0 && EstadoTransferencia[2] === "PENDIENTE" ) {
 
