@@ -700,12 +700,10 @@ Meteor.methods({
         console.log(" PERIODO BASE ID: ", Vid_hitbtc);
         if ( MONEDASALDO === MonBase ){
         	console.log(" PERIODO BASE PRECIO ANTERIOR: ", "== ",ValPrecAntMB," =");
-        	//console.log(" PERIODO BASE PRECIO ACTUAL: ", "= ",VBprecio," =");
         	console.log(" PERIODO BASE PRECIO ACTUAL: ", "= ",ValPrecAct," =");
         	console.log(" PERIODO BASE TENDENCIA: ", "[*** ", VBtendencia ," ***]" );
     	}else{
     		console.log(" PERIODO BASE PRECIO ANTERIOR: ", ValPrecAntMB);
-    		//console.log(" PERIODO BASE PRECIO ACTUAL: ", VBprecio);
     		console.log(" PERIODO BASE PRECIO ACTUAL: ", ValPrecAct);
     		console.log(" PERIODO BASE TENDENCIA: ", VBtendencia);
     	}
@@ -713,12 +711,10 @@ Meteor.methods({
         console.log(" PERIODO COTIZACION ID: ", VCid_hitbtc);
         if ( MONEDASALDO === MonCoti ){
         	console.log(" PERIODO COTIZACION PRECIO ANTERIOR: ", "= ",ValPrecAntMC," =");
-        	//console.log(" PERIODO COTIZACION PRECIO ACTUAL: ", "= ",VCprecio," =");
         	console.log(" PERIODO COTIZACION PRECIO ACTUAL: ", "= ",ValPrecAct," =");
         	console.log(" PERIODO COTIZACION TENDENCIA: ", "[*** ", VCtendencia ," ***]" );
         }else{
         	console.log(" PERIODO COTIZACION PRECIO ANTERIOR: ", ValPrecAntMC);
-        	//console.log(" PERIODO COTIZACION PRECIO ACTUAL: ", VCprecio);
         	console.log(" PERIODO COTIZACION PRECIO ACTUAL: ", ValPrecAct);
     		console.log(" PERIODO COTIZACION TENDENCIA: ", VCtendencia);
         }
@@ -1013,9 +1009,6 @@ Meteor.methods({
     'Invertir': function( MONEDA, LIMITE_AP_DEP, CANT_TIP_CAMBIOS_VALIDADOS ){
     	var idTrans = 0;
         fecha = moment (new Date());
-        
-        var Robot = Parametros.find({ dominio : "robot", estado : true, valor : 0 }).fetch();
-        var EstadoRobot = Robot[0].valor
 
         console.log("Valores recibidos: ", " MONEDA: ", MONEDA, " LIMITE_AP_DEP:", LIMITE_AP_DEP, " CANT_TIP_CAMBIOS_VALIDADOS: " ,CANT_TIP_CAMBIOS_VALIDADOS)
 
@@ -1077,7 +1070,7 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
                     Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);
 
-                    Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
+                    //Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
 
                 };
             break;
@@ -1118,7 +1111,7 @@ Meteor.methods({
                                 Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
                                 Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);
 
-                                Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
+                                //Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
 
                             break;
                             case 1:                                    
@@ -1137,7 +1130,7 @@ Meteor.methods({
                                 Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
                                 Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);
 
-                                Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
+                                //Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
                                 
                             break;
                         }
@@ -1180,7 +1173,7 @@ Meteor.methods({
                                 Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
                                 Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);
 
-                                Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
+                                //Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
 
                             break;
                             case 1:                                    
@@ -1199,7 +1192,7 @@ Meteor.methods({
                                 Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
                                 Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);
 
-                                Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
+                                //Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
                                 
                             break;
                             case 1:                                    
@@ -1218,7 +1211,7 @@ Meteor.methods({
                                 Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
                                 Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);
 
-                                Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
+                                //Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
                                 
                             break;
                         }
@@ -1343,7 +1336,7 @@ Meteor.methods({
                                                             FechaActualizacion : fecha._d}
                                         });
 
-                Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
+                //Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
 
                 break
             }
@@ -1362,7 +1355,7 @@ Meteor.methods({
                                                             FechaActualizacion : fecha._d}
                                         });
 
-                //Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
+                ////Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
 
                 break
             } 

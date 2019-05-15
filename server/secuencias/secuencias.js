@@ -173,7 +173,7 @@ Meteor.methods({
                 var V_LimiteMuestreo = LimiteMuestreo[0].valor
 
                 if ( V_LimiteMuestreo === 0 ) {
-                    var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { moneda_saldo : "$moneda_saldo" } },
+                    var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
                                              { $project: { _id : 1 } }
                                             ]);
 
@@ -181,7 +181,7 @@ Meteor.methods({
                         var V_moneda_verificar = MonedasVerificar[CMV];
                         //console.log("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id);
                                     
-                        Meteor.call("ValidaInversion", V_moneda_verificar.moneda_saldo);
+                        Meteor.call("ValidaInversion", V_moneda_verificar._id);
 
                     }
                 }else{
