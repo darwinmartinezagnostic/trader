@@ -167,19 +167,20 @@ Meteor.methods({
 
                     }
                 }
-                
+                Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAE');
                 // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
                 var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
                 var V_LimiteMuestreo = LimiteMuestreo[0].valor
-
+                Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_LimiteMuestreo: ']+[V_LimiteMuestreo]);
                 if ( V_LimiteMuestreo === 0 ) {
                     var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
                                              { $project: { _id : 1 } }
                                             ]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['  Valor de MonedasVerificar: ']+[MonedasVerificar]);
 
                     for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
                         var V_moneda_verificar = MonedasVerificar[CMV];
-                        //console.log("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id);
+                        Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_moneda_verificar: ']+[V_moneda_verificar._id]);
                                     
                         Meteor.call("ValidaInversion", V_moneda_verificar._id);
 
@@ -280,17 +281,20 @@ Meteor.methods({
 
     'ValidaInversion': function( MONEDA_VERIFICAR ){
         try{
-            console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
+            Meteor.call("GuardarLogEjecucionTrader", [' ValidaInversion: Moneda con Saldo a Verificar: ']+[MONEDA_VERIFICAR]);
 
             if ( JobsInternal.Utilities.collection.find({ name : "JobValidaTendenciaTipoCambio" , state : "pending" }).count() === 0  ) {
+                Meteor.call("GuardarLogEjecucionTrader", [' ValidaInversion: if ( JobsInternal.Utilities.collection.find({ name : "JobValidaTendenciaTipoCambio" , state : "pending" }).count() === 0  ): ']);
                 try{
                     var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
                     var V_LimiteApDep = LimiteApDep[0].valor;
+                    Meteor.call("GuardarLogEjecucionTrader", [' ValidaInversion: Valor de LimiteApDep: ']+[LimiteApDep]);
+                    Meteor.call("GuardarLogEjecucionTrader", [' ValidaInversion: Valor de V_LimiteApDep: ']+[V_LimiteApDep]);
                 }
                 catch (error){
                     Meteor.call("ValidaError", error, 2);
                 };
-
+                Meteor.call("GuardarLogEjecucionTrader", [' ValidaInversion: Se ejecuta Meteor.call("ValidaPropTipoCambiosValidados": ']+[MONEDA_VERIFICAR]+[V_LimiteApDep]);
                 Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep );
             }
             else{
