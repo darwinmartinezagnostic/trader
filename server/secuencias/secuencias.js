@@ -115,9 +115,12 @@ Meteor.methods({
             catch (error){
                 Meteor.call("ValidaError", error, 2);
             };
-
-            Meteor.call("GuardarLogEjecucionTrader", [' Valor de Monedas_Saldo: ']+[Monedas_Saldo[0]]);
-
+            ////////////////////////////////////////////////////////////
+            for (CS = 0, TS = Monedas_Saldo.length; CS < TS; CS++){
+                var moneda_sald =  Monedas_Saldo[CS];
+                Meteor.call("GuardarLogEjecucionTrader", [' Valor de moneda_sald: ']+[moneda_sald]);
+            }
+            ////////////////////////////////////////////////////////////
 
             if ( Monedas_Saldo[0] === undefined ) {
                 Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ninguna moneda con saldo disponible para invertir ']);
