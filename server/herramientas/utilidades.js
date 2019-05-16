@@ -375,7 +375,7 @@ Meteor.methods({
             var M_INVERTIR = MR_INVER / parseFloat(precio.bid)
             //var M_INVERTIR = MR_INVER / parseFloat(precio.ask)
             var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))
-            var MejorPrec = precio.bid.toString()
+            var MejorPrec = ((parseFloat(precio.bid) + parseFloat(precio.ask))/2).toFixed(9).toString()
             //var MejorPrec = precio.ask.toString()
             resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
             /*

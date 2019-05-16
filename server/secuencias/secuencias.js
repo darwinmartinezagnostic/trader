@@ -152,12 +152,8 @@ Meteor.methods({
                     }else {
                         for ( CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++ ){
                             var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
-                            //console.log("Valor de tipo_cambio_verificar.tipo_cambio", tipo_cambio_verificar.tipo_cambio)
-                            //Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar.tipo_cambio]+[' Moneda: ']+[moneda_saldo.moneda]);
-                                
                             Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar.tipo_cambio, moneda_saldo.moneda )
                         }
-                        ///////////////////////////////////////////////////////////////////////////////////////////
                         Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
                         Meteor.call('ValidarRanking', moneda_saldo.moneda);
 
@@ -171,14 +167,8 @@ Meteor.methods({
                             Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_moneda_verificar: ']+[moneda_saldo.moneda]);
                             Meteor.call("ValidaInversion", moneda_saldo.moneda);
                         }
-                        ///////////////////////////////////////////////////////////////////////////////////////////
-                        /*
-                        Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
-                        Meteor.call('ValidarRanking', moneda_saldo.moneda);
-                        /**/
                     }
                 }
-                ///////////////////////////////////////////////////////////////////////////////////////////
                 if ( V_LimiteMuestreo > 0 ) {
                     V_LimiteMuestreo = V_LimiteMuestreo - 1
                                 
@@ -190,43 +180,7 @@ Meteor.methods({
                                                     "fecha_ejecucion" : fecha._d
                                                 }
                         });
-                }
-
-                ///////////////////////////////////////////////////////////////////////////////////////////
-
-                /*
-                Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
-                // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
-                var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
-                var V_LimiteMuestreo = LimiteMuestreo[0].valor
-                Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_LimiteMuestreo: ']+[V_LimiteMuestreo]);
-                if ( V_LimiteMuestreo === 0 ) {
-                    var MonedasVerificar = TempTiposCambioXMoneda.aggregate([ { $group: { _id : "$moneda_saldo" } },
-                                             { $project: { _id : 1 } }
-                                            ]);
-                    Meteor.call("GuardarLogEjecucionTrader", ['  Valor de MonedasVerificar: ']+[MonedasVerificar]);
-
-                    for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
-                        var V_moneda_verificar = MonedasVerificar[CMV];
-                        Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_moneda_verificar: ']+[V_moneda_verificar._id]);
-                                    
-                        Meteor.call("ValidaInversion", V_moneda_verificar._id);
-
-                    }
-                }else{
-                    V_LimiteMuestreo = V_LimiteMuestreo - 1
-                    
-                    fecha = moment (new Date()); 
-                    Parametros.update({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo" }, {
-                                    $set: {
-                                        "estado": true,
-                                        "valor": V_LimiteMuestreo,
-                                        "fecha_ejecucion" : fecha._d
-                                    }
-                                });
-                }
-
-                /**/     
+                }    
             }
             var EjecucionSecuenciaPeriodo1 = 0
             return EjecucionSecuenciaPeriodo1;
