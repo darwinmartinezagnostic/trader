@@ -372,11 +372,10 @@ Meteor.methods({
             var comision_hbtc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_hitbtc
             var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
             var MR_INVER = parseFloat(INVER).toFixed(9) - comision_hbtc.toFixed(9) - comision_merc.toFixed(9)
-            var M_INVERTIR = MR_INVER / parseFloat(precio.bid)
-            //var M_INVERTIR = MR_INVER / parseFloat(precio.ask)
+            var PrecioPromedio = ((parseFloat(precio.bid) + parseFloat(precio.ask))/2).toFixed(9).toString()
+            var MejorPrec = PrecioPromedio
+            var M_INVERTIR = MR_INVER / parseFloat(PrecioPromedio)
             var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))
-            var MejorPrec = ((parseFloat(precio.bid) + parseFloat(precio.ask))/2).toFixed(9).toString()
-            //var MejorPrec = precio.ask.toString()
             resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
             /*
             console.log("Valor de comision_hbtc", comision_hbtc)
@@ -389,7 +388,8 @@ Meteor.methods({
         }else if ( MONEDA_SALDO == TipoCambio[0].moneda_base ) {
             var ValTipoCambio = TipoCambio[0];
             var MONT_INVERTIR = INVER
-            var MejorPrec = precio.ask.toString()
+            var PrecioPromedio = ((parseFloat(precio.bid) + parseFloat(precio.ask))/2).toFixed(9).toString()
+            var MejorPrec = PrecioPromedio
             var comision_hbtc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_hitbtc
             var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
             //var MejorPrec = precio.bid.toString()
