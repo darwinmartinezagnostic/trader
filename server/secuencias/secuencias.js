@@ -116,7 +116,7 @@ Meteor.methods({
                 Meteor.call("ValidaError", error, 2);
             };
 
-            Meteor.call("GuardarLogEjecucionTrader", [' Valor de Monedas_Saldo: ']+[Monedas_Saldo]);
+            Meteor.call("GuardarLogEjecucionTrader", [' Valor de Monedas_Saldo: ']+[Monedas_Saldo[0]]);
 
 
             if ( Monedas_Saldo[0] === undefined ) {
@@ -126,7 +126,8 @@ Meteor.methods({
 
                 for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
                     var moneda_saldo =  Monedas_Saldo[CMS];
-                    //console.log("Valor de Monedas_Saldo", moneda_saldo)
+                    console.log("Valor de Monedas_Saldo", moneda_saldo)
+                    Meteor.call("GuardarLogEjecucionTrader", [' Valor de Monedas_Saldo: ']+[moneda_saldo]);
 
                     if (TiposDeCambios.find().count() === 0){
                         Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ningún tipo de Cambio Guardado en la Base de Datos Local, Solucionando ... ']);
