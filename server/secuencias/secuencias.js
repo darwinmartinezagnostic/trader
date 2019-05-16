@@ -138,7 +138,6 @@ Meteor.methods({
                             Meteor.call("GuardarLogEjecucionTrader", [' Moneda con Saldo: ¡ Listo ! ']);
                         }
                     };
-
                     //Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Consultando Tipos de Cambio para Moneda: ']+[moneda_saldo.moneda]+[' SALDO_MONEDA: ']+[moneda_saldo.saldo.tradeo.activo]);
 
                     //LIMPIANDO LA COLECCION TEMPORAL "TempTiposCambioXMoneda"
@@ -153,21 +152,50 @@ Meteor.methods({
                     }else {
                         for ( CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++ ){
                             var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
-
                             //console.log("Valor de tipo_cambio_verificar.tipo_cambio", tipo_cambio_verificar.tipo_cambio)
-
                             //Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: Valor de tipo_cambio_verificar: ']+[tipo_cambio_verificar.tipo_cambio]+[' Moneda: ']+[moneda_saldo.moneda]);
                                 
                             Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar.tipo_cambio, moneda_saldo.moneda )
                         }
-
+                        ///////////////////////////////////////////////////////////////////////////////////////////
                         Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
                         Meteor.call('ValidarRanking', moneda_saldo.moneda);
 
+                        Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
+                        // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
+                        var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
+                        var V_LimiteMuestreo = LimiteMuestreo[0].valor
+                        Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_LimiteMuestreo: ']+[V_LimiteMuestreo]);
 
+                        if ( V_LimiteMuestreo === 0 ) {                                
+                            Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_moneda_verificar: ']+[moneda_saldo.moneda]);
+                            Meteor.call("ValidaInversion", moneda_saldo.moneda);
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////
+                        /*
+                        Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
+                        Meteor.call('ValidarRanking', moneda_saldo.moneda);
+                        /**/
                     }
                 }
-                Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAE');
+                ///////////////////////////////////////////////////////////////////////////////////////////
+                if ( V_LimiteMuestreo > 0 ) {
+                    V_LimiteMuestreo = V_LimiteMuestreo - 1
+                                
+                    fecha = moment (new Date()); 
+                    Parametros.update({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo" }, {
+                                                $set: {
+                                                    "estado": true,
+                                                    "valor": V_LimiteMuestreo,
+                                                    "fecha_ejecucion" : fecha._d
+                                                }
+                        });
+                }
+
+                ///////////////////////////////////////////////////////////////////////////////////////////
+
+                /*
+                Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
                 // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
                 var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
                 var V_LimiteMuestreo = LimiteMuestreo[0].valor
@@ -196,7 +224,9 @@ Meteor.methods({
                                         "fecha_ejecucion" : fecha._d
                                     }
                                 });
-                }           
+                }
+
+                /**/     
             }
             var EjecucionSecuenciaPeriodo1 = 0
             return EjecucionSecuenciaPeriodo1;
