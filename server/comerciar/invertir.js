@@ -520,7 +520,7 @@ Meteor.methods({
 
         var ValorGuardado = TiposDeCambios.aggregate([  { $match : { tipo_cambio : TIPOCAMBIO }} ]);
 
-        Meteor.call("GuardarLogEjecucionTrader", '-------- TRANSACCION GUARDADA  ---------');
+        console.log('############################################');
         //console.log("Valor de ValorGuardado: ", ValorGuardado);
 
         Vtipo_cambio = ValorGuardado[0].tipo_cambio;
@@ -537,11 +537,13 @@ Meteor.methods({
         VCtendencia = ValorGuardado[0].periodo1.Cotizacion.tendencia;
 
 
-
+        console.log('-------------------------------------------');
+        console.log("         MONEDA SALDO: ", MONEDASALDO);
+        console.log('-------------------------------------------');
+        console.log(" ");
         console.log(" TIPO CAMBIO: ", Vtipo_cambio);
         console.log(" MONEDA BASE: ", Vmoneda_base);
         console.log(" MONEDA COTIZACION: ", Vmoneda_cotizacion);
-        console.log(" MONEDA SALDO: ", MONEDASALDO);
         console.log(" PRECIO ACTUAL: ", PeriodoPrecioAct.toString().replace(".", ",") );
         console.log(" PERIODO BASE FECHA: ", VBfecha);
         console.log(" PERIODO BASE ID: ", Vid_hitbtc);
@@ -1026,7 +1028,8 @@ Meteor.methods({
         var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
         console.log("Valor de RecalcIverPrec: ", RecalcIverPrec);
 
-        datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
+        //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
+        datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+RecalcIverPrec.MontIversionCal;
 
         console.log("Valor de datos:",  datos)
         var url_orden = CONSTANTES.ordenes;
