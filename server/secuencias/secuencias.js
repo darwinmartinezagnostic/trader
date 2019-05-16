@@ -118,7 +118,7 @@ Meteor.methods({
             ////////////////////////////////////////////////////////////
             for (CS = 0, TS = Monedas_Saldo.length; CS < TS; CS++){
                 var moneda_sald =  Monedas_Saldo[CS];
-                Meteor.call("GuardarLogEjecucionTrader", [' Valor de moneda_sald: ']+[moneda_sald]);
+                Meteor.call("GuardarLogEjecucionTrader", [' Valor de moneda_sald: ']+[moneda_sald[0].moneda,]);
             }
             ////////////////////////////////////////////////////////////
 
