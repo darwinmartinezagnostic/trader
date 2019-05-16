@@ -116,7 +116,7 @@ Meteor.methods({
                 Meteor.call("ValidaError", error, 2);
             };
 
-            //console.log("Valor de Monedas_Saldo", Monedas_Saldo)
+            Meteor.call("GuardarLogEjecucionTrader", [' Valor de Monedas_Saldo: ']+[Monedas_Saldo]);
 
 
             if ( Monedas_Saldo[0] === undefined ) {
