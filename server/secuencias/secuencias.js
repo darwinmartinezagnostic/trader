@@ -116,8 +116,8 @@ Meteor.methods({
                 Meteor.call("ValidaError", error, 2);
             };
             ////////////////////////////////////////////////////////////
-            for (CS = 0, TS = Monedas_Saldo.length; CS < TS; CS++){
-                var moneda_sald =  Monedas_Saldo[CS];
+            for (CAS = 0, TAS = Monedas_Saldo.length; CAS < TAS; CAS++){
+                var moneda_sald =  Monedas_Saldo[CAS];
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de moneda_sald: ']+[moneda_sald[0].moneda,]);
             }
             ////////////////////////////////////////////////////////////
