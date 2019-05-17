@@ -772,7 +772,6 @@ Meteor.methods({
             
             var ExisTDat = TempTiposCambioXMoneda.find( { "tipo_cambio": V_TipoCambio, "moneda_saldo" : MONEDA } ).count()
             
-            console.log("Valor de ExisTDat: ", ExisTDat)
             
             if ( ExisTDat === 0 ) {
                 console.log(" estoy en if ( ExisTDat === 0 ) ", ExisTDat)
@@ -801,10 +800,8 @@ Meteor.methods({
                                                 }, 
                                                 {"multi" : true,"upsert" : true});
             }
-            /**/
-            console.log("Valor de V_TiposDeCambiosRankear.tipo_cambio: ", V_TiposDeCambiosRankear.tipo_cambio)
-
-            sal.add( V_TiposDeCambiosRankear.tipo_cambio );
+           
+           sal.add( V_TiposDeCambiosRankear.tipo_cambio );
         };
 
 
