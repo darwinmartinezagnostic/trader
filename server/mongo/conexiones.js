@@ -57,44 +57,17 @@ Meteor.methods({
                                     //console.log (response)
                                     return response
                                     });
-                //console.log("Valor de respuesta: ", respuesta)
                 const tok = token();
                 const EstadoCancelacion = CancelaEjecucionConexion ( respuesta, tok);
                 try{
                     let tpr = await TimeoutEjecucion(EstadoCancelacion, MS)
                     const salida = await respuesta
-                    //console.log("Valor de salida", salida) 
-
-                    /*
-                    if ( salida.status === 200 ) {
-                        console.log("Probando")
-                        const datos = salida.json()
-                        return datos
-                    }else{
-                        const datos = undefined
-                        return datos
-                    }
-                    */
 
                     const datos = salida.json()
                     return datos
-
-
                 }catch(e){
                     console.log('TIMEOUT en ejecución del URL: ', url);
-                }/*
-            }catch(error){
-                if ( /url must be absolute and start with http:/.test(error) || /Parameter "url" must be a string, not object/.test(error) || /request to https:/.test(error) ) {
-                    //Meteor.call("ValidaError",'Conexion_api_fallida', 1);
-                    console.log("Conexion_api_fallida")
-                    break;
                 }
-                else{   
-                    //Meteor.call('ValidaError',error, 1);
-                    console.log("estoy en el else del error:", error);
-                    break;
-                }
-            }*/
         }
     },
 

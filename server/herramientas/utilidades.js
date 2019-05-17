@@ -364,7 +364,6 @@ Meteor.methods({
         const CONSTANTES = Meteor.call("Constantes");
         const URL_TIKT = CONSTANTES.ticker+TIPO_CAMBIO;        
         const precio =  Meteor.call("ConexionGet", URL_TIKT);
-        //const precio = { bid : '2', ask : '2'}
         var TipoCambio =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
 
         if ( MONEDA_SALDO == TipoCambio[0].moneda_cotizacion ) {
@@ -377,13 +376,6 @@ Meteor.methods({
             var M_INVERTIR = MR_INVER / parseFloat(PrecioPromedio)
             var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))
             resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
-            /*
-            console.log("Valor de comision_hbtc", comision_hbtc)
-            console.log("Valor de comision_merc", comision_merc)
-            console.log("Valor de MR_INVER", MR_INVER)
-            console.log("Valor de M_INVERTIR", M_INVERTIR)
-            console.log("Valor de MONT_INVERTIR", MONT_INVERTIR)
-            */
             return resultados;
         }else if ( MONEDA_SALDO == TipoCambio[0].moneda_base ) {
             var ValTipoCambio = TipoCambio[0];

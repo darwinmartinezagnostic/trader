@@ -740,44 +740,82 @@ Meteor.methods({
         };
     },
 
-    'TipoCambioDisponibleCompra':function(MONEDA, SALDO_MONEDA_EQUIV){
-        //Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_MONEDA_EQUIV: ']+[SALDO_MONEDA_EQUIV]);
-        var Vset = new Set();
+    'TipoCambioDisponibleCompra':function(MONEDA, SALDO_INV){
+        Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_INV: ']+[SALDO_INV]);
+        var sal = new Set();
+
 
         try
         {
-            var Valores_TiposDeCambiosRankear = TiposDeCambios.find( { $or : [{"moneda_base" : MONEDA },{ "moneda_cotizacion" : MONEDA }],  "min_compra_equivalente" : { $lt : SALDO_MONEDA_EQUIV }}).fetch();
-            //console.log("Valor de Valores_TiposDeCambiosRankear", Valores_TiposDeCambiosRankear);
-
+            var TiposDeCambiosRankearMB = TiposDeCambios.aggregate([{ $match :  { "moneda_base" : MONEDA  }}, {$sort : { tipo_cambio : 1 } }  ]);
+            var TiposDeCambiosRankearMC = TiposDeCambios.aggregate([{ $match :  { "moneda_cotizacion" : MONEDA  }}, {$sort : { tipo_cambio : 1 } }  ]);
         }
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
 
-        for (CTMCB = 0, tamanio_Valores_TiposDeCambiosRankear = Valores_TiposDeCambiosRankear.length; CTMCB < tamanio_Valores_TiposDeCambiosRankear; CTMCB++) {
-            var V_Valores_TiposDeCambiosRankear = Valores_TiposDeCambiosRankear[CTMCB];
-            //Meteor.call("GuardarLogEjecucionTrader", [' Valore de V_Valores_TiposDeCambiosRankear: ']+[V_Valores_TiposDeCambiosRankear]);
-
-            TempTiposCambioXMoneda.update({ "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio, 
+        for (CTMCB = 0, tamanio_TiposDeCambiosRankearMB = TiposDeCambiosRankearMB.length; CTMCB < tamanio_TiposDeCambiosRankearMB; CTMCB++) {
+            var V_TiposDeCambiosRankearMB = TiposDeCambiosRankearMB[CTMCB];
+            
+            TempTiposCambioXMoneda.update({ "tipo_cambio": V_TiposDeCambiosRankearMB.tipo_cambio, 
                                              "moneda_saldo" : MONEDA }, {    
                                             $set: {
-                                                    "tipo_cambio": V_Valores_TiposDeCambiosRankear.tipo_cambio,
-                                                    "moneda_base": V_Valores_TiposDeCambiosRankear.moneda_base,
-                                                    "moneda_cotizacion" : V_Valores_TiposDeCambiosRankear.moneda_cotizacion, 
-                                                    "saldo_moneda_tradear" : SALDO_MONEDA_EQUIV, 
+                                                    "tipo_cambio": V_TiposDeCambiosRankearMB.tipo_cambio,
+                                                    "moneda_base": V_TiposDeCambiosRankearMB.moneda_base,
+                                                    "moneda_cotizacion" : V_TiposDeCambiosRankearMB.moneda_cotizacion, 
+                                                    "saldo_moneda_tradear" : SALDO_INV, 
                                                     "moneda_saldo" : MONEDA, 
-                                                    "activo" : V_Valores_TiposDeCambiosRankear.activo,
-                                                    "comision_hitbtc" : V_Valores_TiposDeCambiosRankear.comision_hitbtc,
-                                                    "comision_mercado" : V_Valores_TiposDeCambiosRankear.comision_mercado,
-                                                    "min_compra" : V_Valores_TiposDeCambiosRankear.min_compra,
-                                                    "moneda_apli_comision": V_Valores_TiposDeCambiosRankear.moneda_apli_comision,
-                                                    "valor_incremento" : V_Valores_TiposDeCambiosRankear.valor_incremento,
-                                                    "estado" : V_Valores_TiposDeCambiosRankear.estado
+                                                    "activo" : V_TiposDeCambiosRankearMB.activo,
+                                                    "comision_hitbtc" : V_TiposDeCambiosRankearMB.comision_hitbtc,
+                                                    "comision_mercado" : V_TiposDeCambiosRankearMB.comision_mercado,
+                                                    "min_compra" : V_TiposDeCambiosRankearMB.min_compra,
+                                                    "moneda_apli_comision": V_TiposDeCambiosRankearMB.moneda_apli_comision,
+                                                    "valor_incremento" : V_TiposDeCambiosRankearMB.valor_incremento,
+                                                    "estado" : V_TiposDeCambiosRankearMB.estado
                                                 }
                                             }, 
                                             {"multi" : true,"upsert" : true});
+            
+            var VCI =Meteor.call('CalcularIversion', V_TiposDeCambiosRankearMB.tipo_cambio, MONEDA, SALDO_INV)
+            var Inversion = VCI.MontIversionCal;
+            if ( parseFloat(Inversion) > parseFloat(V_TiposDeCambiosRankearMB.valor_incremento) ) {
+                sal.add( V_TiposDeCambiosRankearMB.tipo_cambio );
+            }
         };
-        return Valores_TiposDeCambiosRankear;
+
+        for (CTMCB = 0, tamanio_TiposDeCambiosRankearMC = TiposDeCambiosRankearMC.length; CTMCB < tamanio_TiposDeCambiosRankearMC; CTMCB++) {
+            var V_TiposDeCambiosRankearMC = TiposDeCambiosRankearMC[CTMCB];
+            
+            TempTiposCambioXMoneda.update({ "tipo_cambio": V_TiposDeCambiosRankearMC.tipo_cambio, 
+                                             "moneda_saldo" : MONEDA }, {    
+                                            $set: {
+                                                    "tipo_cambio": V_TiposDeCambiosRankearMC.tipo_cambio,
+                                                    "moneda_base": V_TiposDeCambiosRankearMC.moneda_base,
+                                                    "moneda_cotizacion" : V_TiposDeCambiosRankearMC.moneda_cotizacion, 
+                                                    "saldo_moneda_tradear" : SALDO_INV, 
+                                                    "moneda_saldo" : MONEDA, 
+                                                    "activo" : V_TiposDeCambiosRankearMC.activo,
+                                                    "comision_hitbtc" : V_TiposDeCambiosRankearMC.comision_hitbtc,
+                                                    "comision_mercado" : V_TiposDeCambiosRankearMC.comision_mercado,
+                                                    "min_compra" : V_TiposDeCambiosRankearMC.min_compra,
+                                                    "moneda_apli_comision": V_TiposDeCambiosRankearMC.moneda_apli_comision,
+                                                    "valor_incremento" : V_TiposDeCambiosRankearMC.valor_incremento,
+                                                    "estado" : V_TiposDeCambiosRankearMC.estado
+                                                }
+                                            }, 
+                                            {"multi" : true,"upsert" : true});
+            
+            var VCI =Meteor.call('CalcularIversion', V_TiposDeCambiosRankearMC.tipo_cambio, MONEDA, SALDO_INV)
+            var Inversion = VCI.MontIversionCal;
+            if ( parseFloat(Inversion) > parseFloat(V_TiposDeCambiosRankearMC.valor_incremento) ) {
+                sal.add( V_TiposDeCambiosRankearMC.tipo_cambio );
+            }
+        };
+
+
+        var salida = Array.from(sal);
+        
+        return salida;
     },
 
     'ListaTradeoActual':function( TIPO_CAMBIO, VALOR_EJEC, MONEDA_SALDO ){
@@ -942,7 +980,7 @@ Meteor.methods({
         var CONSTANTES = Meteor.call("Constantes");
         var Negociaciones = ORDEN.tradesReport
         var ComisionTtl = 0
-        
+
         //console.log( "TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER," MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION, " ORDEN: ", ORDEN, " ID_LOTE : ", ID_LOTE);
         //console.log("Valor de ORDEN: ", ORDEN );
         //console.log("Valor de Negociaciones: ", Negociaciones );
