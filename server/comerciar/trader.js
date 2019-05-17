@@ -752,83 +752,62 @@ Meteor.methods({
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
+        //console.log("Valor de TiposDeCambiosRankear: ", TiposDeCambiosRankear)
+        for (CTCR = 0, tamanio_TiposDeCambiosRankear = TiposDeCambiosRankear.length; CTCR < tamanio_TiposDeCambiosRankear; CTCR++) {
+            var V_TiposDeCambiosRankear = TiposDeCambiosRankear[CTCR];
 
-        for (CTMCB = 0, tamanio_TiposDeCambiosRankearMB = TiposDeCambiosRankear.length; CTMCB < tamanio_TiposDeCambiosRankearMB; CTMCB++) {
-            var V_TiposDeCambiosRankear = TiposDeCambiosRankear[CTMCB];
+            //console.log("Valor de V_TiposDeCambiosRankear.tipo_cambio: ", V_TiposDeCambiosRankear)
             
-            TempTiposCambioXMoneda.update({ "tipo_cambio": V_TiposDeCambiosRankear.tipo_cambio, 
-                                             "moneda_saldo" : MONEDA }, {    
-                                            $set: {
-                                                    "tipo_cambio": V_TiposDeCambiosRankear.tipo_cambio,
-                                                    "moneda_base": V_TiposDeCambiosRankear.moneda_base,
-                                                    "moneda_cotizacion" : V_TiposDeCambiosRankear.moneda_cotizacion, 
-                                                    "saldo_moneda_tradear" : SALDO_INV, 
-                                                    "moneda_saldo" : MONEDA, 
-                                                    "activo" : V_TiposDeCambiosRankear.activo,
-                                                    "comision_hitbtc" : V_TiposDeCambiosRankear.comision_hitbtc,
-                                                    "comision_mercado" : V_TiposDeCambiosRankear.comision_mercado,
-                                                    "min_compra" : V_TiposDeCambiosRankear.min_compra,
-                                                    "moneda_apli_comision": V_TiposDeCambiosRankear.moneda_apli_comision,
-                                                    "valor_incremento" : V_TiposDeCambiosRankear.valor_incremento,
-                                                    "estado" : V_TiposDeCambiosRankear.estado
-                                                }
-                                            }, 
-                                            {"multi" : true,"upsert" : true});
+            var V_TipoCambio = V_TiposDeCambiosRankear.tipo_cambio
+            var V_moneda_base = V_TiposDeCambiosRankear.moneda_base
+            var V_moneda_cotizacion = V_TiposDeCambiosRankear.moneda_cotizacion
+            var V_activo = V_TiposDeCambiosRankear.activo
+            var V_comision_hitbtc = V_TiposDeCambiosRankear.comision_hitbtc
+            var V_comision_mercado = V_TiposDeCambiosRankear.comision_mercado
+            var V_min_compra = V_TiposDeCambiosRankear.min_compra
+            var V_moneda_apli_comision = V_TiposDeCambiosRankear.moneda_apli_comision
+            var V_valor_incremento = V_TiposDeCambiosRankear.valor_incremento
+            var V_estado = V_TiposDeCambiosRankear.estado
+            
+            
+            var ExisTDat = TempTiposCambioXMoneda.find( { "tipo_cambio": V_TipoCambio, "moneda_saldo" : MONEDA } ).count()
+            
+            console.log("Valor de ExisTDat: ", ExisTDat)
+            
+            if ( ExisTDat === 0 ) {
+                console.log(" estoy en if ( ExisTDat === 0 ) ", ExisTDat)
+                TempTiposCambioXMoneda.insert({
+                                                "tipo_cambio": V_TipoCambio,
+                                                "moneda_base": V_moneda_base,
+                                                "moneda_cotizacion": V_moneda_cotizacion,
+                                                "activo": V_activo,
+                                                "comision_hitbtc": V_comision_hitbtc,
+                                                "comision_mercado": V_comision_mercado,
+                                                "min_compra": V_min_compra,
+                                                "moneda_apli_comision": V_moneda_apli_comision,
+                                                "valor_incremento": V_valor_incremento,
+                                                "estado": V_estado
+                                            })
+            }else{
+    
+                TempTiposCambioXMoneda.update({ "tipo_cambio": V_TipoCambio, 
+                                                 "moneda_saldo" : MONEDA }, { 
+                                                $set: {
+                                                        "saldo_moneda_tradear" : SALDO_INV,
+                                                        "activo" : V_activo,
+                                                        "valor_incremento" : V_valor_incremento,
+                                                        "estado" : V_estado
+                                                    }
+                                                }, 
+                                                {"multi" : true,"upsert" : true});
+            }
+            /**/
+            console.log("Valor de V_TiposDeCambiosRankear.tipo_cambio: ", V_TiposDeCambiosRankear.tipo_cambio)
 
             sal.add( V_TiposDeCambiosRankear.tipo_cambio );
-        }
-
-        for (CTMCB = 0, tamanio_TiposDeCambiosRankearMB = TiposDeCambiosRankearMB.length; CTMCB < tamanio_TiposDeCambiosRankearMB; CTMCB++) {
-            var V_TiposDeCambiosRankearMB = TiposDeCambiosRankearMB[CTMCB];
-            
-            TempTiposCambioXMoneda.update({ "tipo_cambio": V_TiposDeCambiosRankearMB.tipo_cambio, 
-                                             "moneda_saldo" : MONEDA }, {    
-                                            $set: {
-                                                    "tipo_cambio": V_TiposDeCambiosRankearMB.tipo_cambio,
-                                                    "moneda_base": V_TiposDeCambiosRankearMB.moneda_base,
-                                                    "moneda_cotizacion" : V_TiposDeCambiosRankearMB.moneda_cotizacion, 
-                                                    "saldo_moneda_tradear" : SALDO_INV, 
-                                                    "moneda_saldo" : MONEDA, 
-                                                    "activo" : V_TiposDeCambiosRankearMB.activo,
-                                                    "comision_hitbtc" : V_TiposDeCambiosRankearMB.comision_hitbtc,
-                                                    "comision_mercado" : V_TiposDeCambiosRankearMB.comision_mercado,
-                                                    "min_compra" : V_TiposDeCambiosRankearMB.min_compra,
-                                                    "moneda_apli_comision": V_TiposDeCambiosRankearMB.moneda_apli_comision,
-                                                    "valor_incremento" : V_TiposDeCambiosRankearMB.valor_incremento,
-                                                    "estado" : V_TiposDeCambiosRankearMB.estado
-                                                }
-                                            }, 
-                                            {"multi" : true,"upsert" : true});
-
-            sal.add( V_TiposDeCambiosRankearMB.tipo_cambio );
         };
 
-        for (CTMCB = 0, tamanio_TiposDeCambiosRankearMC = TiposDeCambiosRankearMC.length; CTMCB < tamanio_TiposDeCambiosRankearMC; CTMCB++) {
-            var V_TiposDeCambiosRankearMC = TiposDeCambiosRankearMC[CTMCB];
-            
-            TempTiposCambioXMoneda.update({ "tipo_cambio": V_TiposDeCambiosRankearMC.tipo_cambio, 
-                                             "moneda_saldo" : MONEDA }, { 
-                                            $set: {
-                                                    "tipo_cambio": V_TiposDeCambiosRankearMC.tipo_cambio,
-                                                    "moneda_base": V_TiposDeCambiosRankearMC.moneda_base,
-                                                    "moneda_cotizacion" : V_TiposDeCambiosRankearMC.moneda_cotizacion, 
-                                                    "saldo_moneda_tradear" : SALDO_INV, 
-                                                    "moneda_saldo" : MONEDA, 
-                                                    "activo" : V_TiposDeCambiosRankearMC.activo,
-                                                    "comision_hitbtc" : V_TiposDeCambiosRankearMC.comision_hitbtc,
-                                                    "comision_mercado" : V_TiposDeCambiosRankearMC.comision_mercado,
-                                                    "min_compra" : V_TiposDeCambiosRankearMC.min_compra,
-                                                    "moneda_apli_comision": V_TiposDeCambiosRankearMC.moneda_apli_comision,
-                                                    "valor_incremento" : V_TiposDeCambiosRankearMC.valor_incremento,
-                                                    "estado" : V_TiposDeCambiosRankearMC.estado
-                                                }
-                                            }, 
-                                            {"multi" : true,"upsert" : true});
-            
-            sal.add( V_TiposDeCambiosRankearMC.tipo_cambio );
-        };
 
-        /**/
         var salida = Array.from(sal);
         
         return salida;

@@ -208,9 +208,9 @@ Meteor.methods({
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
         
-        const MON_B='BTC'
+        const MON_B='BCCF'
         //var MON_B='BCHSV'
-        const MON_C='USD'
+        const MON_C='DAI'
         //var MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
         //var MONEDA_SALDO = MON_B
@@ -227,7 +227,7 @@ Meteor.methods({
                 //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
             }
         */        
-        /*
+        
         if (MONEDA_SALDO === MON_B) {
             //CANT_INVER = '1.782'
             CANT_INVER = '0.01691398'
@@ -353,6 +353,7 @@ Meteor.methods({
         //'Invertir': function( MONEDA, LIMITE_AP_DEP, CANT_TIP_CAMBIOS_VALIDADOS ){
         //Meteor.call("ValidaPropTipoCambiosValidados",MONEDA_SALDO, V_LimiteApDep);
 
+        Meteor.call("TipoCambioDisponibleCompra", MONEDA_SALDO,CANT_INVER);
 
 
 
