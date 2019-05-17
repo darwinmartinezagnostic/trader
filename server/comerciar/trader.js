@@ -743,16 +743,40 @@ Meteor.methods({
     'TipoCambioDisponibleCompra':function(MONEDA, SALDO_INV){
         Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_INV: ']+[SALDO_INV]);
         var sal = new Set();
-
-
         try
         {
-            var TiposDeCambiosRankearMB = TiposDeCambios.aggregate([{ $match :  { "moneda_base" : MONEDA  }}, {$sort : { tipo_cambio : 1 } }  ]);
-            var TiposDeCambiosRankearMC = TiposDeCambios.aggregate([{ $match :  { "moneda_cotizacion" : MONEDA  }}, {$sort : { tipo_cambio : 1 } }  ]);
+            //var TiposDeCambiosRankearMB = TiposDeCambios.aggregate([{ $match :  { "moneda_base" : MONEDA  }}, {$sort : { tipo_cambio : 1 } }  ]);
+            //var TiposDeCambiosRankearMC = TiposDeCambios.aggregate([{ $match :  { "moneda_cotizacion" : MONEDA  }}, {$sort : { tipo_cambio : 1 } }  ]);
+            var TiposDeCambiosRankear = TiposDeCambios.aggregate([{ $match : { $or : [ {"moneda_base" : MONEDA },{ "moneda_cotizacion" : MONEDA }] }  },{ $sort : { tipo_cambio : 1 } } ])
         }
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
+
+        for (CTMCB = 0, tamanio_TiposDeCambiosRankearMB = TiposDeCambiosRankear.length; CTMCB < tamanio_TiposDeCambiosRankearMB; CTMCB++) {
+            var V_TiposDeCambiosRankear = TiposDeCambiosRankear[CTMCB];
+            
+            TempTiposCambioXMoneda.update({ "tipo_cambio": V_TiposDeCambiosRankear.tipo_cambio, 
+                                             "moneda_saldo" : MONEDA }, {    
+                                            $set: {
+                                                    "tipo_cambio": V_TiposDeCambiosRankear.tipo_cambio,
+                                                    "moneda_base": V_TiposDeCambiosRankear.moneda_base,
+                                                    "moneda_cotizacion" : V_TiposDeCambiosRankear.moneda_cotizacion, 
+                                                    "saldo_moneda_tradear" : SALDO_INV, 
+                                                    "moneda_saldo" : MONEDA, 
+                                                    "activo" : V_TiposDeCambiosRankear.activo,
+                                                    "comision_hitbtc" : V_TiposDeCambiosRankear.comision_hitbtc,
+                                                    "comision_mercado" : V_TiposDeCambiosRankear.comision_mercado,
+                                                    "min_compra" : V_TiposDeCambiosRankear.min_compra,
+                                                    "moneda_apli_comision": V_TiposDeCambiosRankear.moneda_apli_comision,
+                                                    "valor_incremento" : V_TiposDeCambiosRankear.valor_incremento,
+                                                    "estado" : V_TiposDeCambiosRankear.estado
+                                                }
+                                            }, 
+                                            {"multi" : true,"upsert" : true});
+
+            sal.add( V_TiposDeCambiosRankear.tipo_cambio );
+        }
 
         for (CTMCB = 0, tamanio_TiposDeCambiosRankearMB = TiposDeCambiosRankearMB.length; CTMCB < tamanio_TiposDeCambiosRankearMB; CTMCB++) {
             var V_TiposDeCambiosRankearMB = TiposDeCambiosRankearMB[CTMCB];
@@ -783,7 +807,7 @@ Meteor.methods({
             var V_TiposDeCambiosRankearMC = TiposDeCambiosRankearMC[CTMCB];
             
             TempTiposCambioXMoneda.update({ "tipo_cambio": V_TiposDeCambiosRankearMC.tipo_cambio, 
-                                             "moneda_saldo" : MONEDA }, {    
+                                             "moneda_saldo" : MONEDA }, { 
                                             $set: {
                                                     "tipo_cambio": V_TiposDeCambiosRankearMC.tipo_cambio,
                                                     "moneda_base": V_TiposDeCambiosRankearMC.moneda_base,
@@ -804,7 +828,7 @@ Meteor.methods({
             sal.add( V_TiposDeCambiosRankearMC.tipo_cambio );
         };
 
-
+        /**/
         var salida = Array.from(sal);
         
         return salida;

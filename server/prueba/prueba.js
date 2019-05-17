@@ -181,12 +181,16 @@ Meteor.methods({
 
 	'Prueba':function(){
 
-        /*
+        
             var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
             var V_LimiteApDep = LimiteApDep[0].valor;
-         */
-        
-        
+         
+        /*
+        Meteor.call("ActualizaSaldoTodasMonedas");
+        Meteor.call("ValidaSaldoEquivalenteActual");
+        Meteor.call("ConsultarSaldoTodasMonedas");
+        Meteor.call("EquivalenteDolarMinCompra");
+        */
         /*
             //Meteor.call("EjecucionInicial"); 
             Meteor.call("ListaTiposDeCambios", 2);
@@ -331,18 +335,42 @@ Meteor.methods({
         }
         /**/    
         
-        Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+        //Meteor.call("ValidaMonedasTransfCuentaTRadeo");
 
         /**/
         /*
-        var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
-        var V_LimiteMuestreo = LimiteMuestreo[0].valor
+            var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
+            var V_LimiteMuestreo = LimiteMuestreo[0].valor
 
-        console.log("Valor de V_LimiteMuestreo: ", V_LimiteMuestreo)
+            console.log("Valor de V_LimiteMuestreo: ", V_LimiteMuestreo)
         */
 
 
         //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO,1);
+
+
+
+        //'Invertir': function( MONEDA, LIMITE_AP_DEP, CANT_TIP_CAMBIOS_VALIDADOS ){
+        //Meteor.call("ValidaPropTipoCambiosValidados",MONEDA_SALDO, V_LimiteApDep);
+
+
+
+
+        var resto;
+        var numero1 = 21;
+        var numero2 = 10;
+         
+        resto = numero1%numero2;
+
+        if (resto === 0) {
+            console.log(" es múltiplo de ", numero2);
+        }else{
+            console.log(" No es múltiplo de ", numero2);
+        }
+
+
+
+
     },
 });
 
