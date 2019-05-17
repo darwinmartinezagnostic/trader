@@ -109,7 +109,7 @@ Meteor.methods({
                 var UltimoDiaAnio = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ UD ]+['T23%3A59%3A59']                
 
                 console.log("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);
-                Meteor.call("GuardarLogEjecucionTrader", ' Devuelve los datos Historicos de Transacciones de Compra/Venta realizadas');
+                //Meteor.call("GuardarLogEjecucionTrader", ' Devuelve los datos Historicos de Transacciones de Compra/Venta realizadas');
                 
                 console.log(' ');
 
