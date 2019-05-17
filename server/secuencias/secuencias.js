@@ -74,13 +74,6 @@ Meteor.methods({
                                                     }
                                         });
                 }
-                /*
-                if ( EjecucionSecuencia === 0) {
-                    Meteor.call("GuardarLogEjecucionTrader", ' SECUENCIA EJECUTADA CORRECTAMENTE ');
-                }else{
-                    Meteor.call("GuardarLogEjecucionTrader", ' SECUENCIA NO SE ECECUTÓ CORRECTAMENTE ');
-                }
-                */
                 var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
                 var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
 
