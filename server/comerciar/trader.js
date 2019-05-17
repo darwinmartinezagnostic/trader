@@ -775,12 +775,8 @@ Meteor.methods({
                                                 }
                                             }, 
                                             {"multi" : true,"upsert" : true});
-            
-            var VCI =Meteor.call('CalcularIversion', V_TiposDeCambiosRankearMB.tipo_cambio, MONEDA, SALDO_INV)
-            var Inversion = VCI.MontIversionCal;
-            if ( parseFloat(Inversion) > parseFloat(V_TiposDeCambiosRankearMB.valor_incremento) ) {
-                sal.add( V_TiposDeCambiosRankearMB.tipo_cambio );
-            }
+
+            sal.add( V_TiposDeCambiosRankearMB.tipo_cambio );
         };
 
         for (CTMCB = 0, tamanio_TiposDeCambiosRankearMC = TiposDeCambiosRankearMC.length; CTMCB < tamanio_TiposDeCambiosRankearMC; CTMCB++) {
@@ -805,11 +801,7 @@ Meteor.methods({
                                             }, 
                                             {"multi" : true,"upsert" : true});
             
-            var VCI =Meteor.call('CalcularIversion', V_TiposDeCambiosRankearMC.tipo_cambio, MONEDA, SALDO_INV)
-            var Inversion = VCI.MontIversionCal;
-            if ( parseFloat(Inversion) > parseFloat(V_TiposDeCambiosRankearMC.valor_incremento) ) {
-                sal.add( V_TiposDeCambiosRankearMC.tipo_cambio );
-            }
+            sal.add( V_TiposDeCambiosRankearMC.tipo_cambio );
         };
 
 
