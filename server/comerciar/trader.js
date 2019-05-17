@@ -745,19 +745,14 @@ Meteor.methods({
         var sal = new Set();
         try
         {
-            //var TiposDeCambiosRankearMB = TiposDeCambios.aggregate([{ $match :  { "moneda_base" : MONEDA  }}, {$sort : { tipo_cambio : 1 } }  ]);
-            //var TiposDeCambiosRankearMC = TiposDeCambios.aggregate([{ $match :  { "moneda_cotizacion" : MONEDA  }}, {$sort : { tipo_cambio : 1 } }  ]);
             var TiposDeCambiosRankear = TiposDeCambios.aggregate([{ $match : { $or : [ {"moneda_base" : MONEDA },{ "moneda_cotizacion" : MONEDA }] }  },{ $sort : { tipo_cambio : 1 } } ])
         }
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
-        //console.log("Valor de TiposDeCambiosRankear: ", TiposDeCambiosRankear)
+
         for (CTCR = 0, tamanio_TiposDeCambiosRankear = TiposDeCambiosRankear.length; CTCR < tamanio_TiposDeCambiosRankear; CTCR++) {
             var V_TiposDeCambiosRankear = TiposDeCambiosRankear[CTCR];
-
-            //console.log("Valor de V_TiposDeCambiosRankear.tipo_cambio: ", V_TiposDeCambiosRankear)
-            
             var V_TipoCambio = V_TiposDeCambiosRankear.tipo_cambio
             var V_moneda_base = V_TiposDeCambiosRankear.moneda_base
             var V_moneda_cotizacion = V_TiposDeCambiosRankear.moneda_cotizacion
@@ -774,7 +769,6 @@ Meteor.methods({
             
             
             if ( ExisTDat === 0 ) {
-                console.log(" estoy en if ( ExisTDat === 0 ) ", ExisTDat)
                 TempTiposCambioXMoneda.insert({
                                                 "tipo_cambio": V_TipoCambio,
                                                 "moneda_base": V_moneda_base,
@@ -803,7 +797,6 @@ Meteor.methods({
            
            sal.add( V_TiposDeCambiosRankear.tipo_cambio );
         };
-
 
         var salida = Array.from(sal);
         
