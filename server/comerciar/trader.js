@@ -741,7 +741,7 @@ Meteor.methods({
     },
 
     'TipoCambioDisponibleCompra':function(MONEDA, SALDO_INV){
-        Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_INV: ']+[SALDO_INV]);
+        //Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_INV: ']+[SALDO_INV]);
         var sal = new Set();
         try
         {

@@ -550,22 +550,22 @@ Meteor.methods({
         if ( MONEDASALDO === MonBase ){
         	console.log(" PERIODO BASE PRECIO ANTERIOR: ", "== ",ValPrecAntMB," =");
         	console.log(" PERIODO BASE PRECIO ACTUAL: ", "= ",ValPrecAct," =");
-        	console.log(" PERIODO BASE TENDENCIA: ", "[*** ", VBtendencia ," ***]" );
+        	console.log(" PERIODO BASE TENDENCIA: ", "[*** ", TendenciaMonedaBase ," ***]" );
     	}else{
     		console.log(" PERIODO BASE PRECIO ANTERIOR: ", ValPrecAntMB);
     		console.log(" PERIODO BASE PRECIO ACTUAL: ", ValPrecAct);
-    		console.log(" PERIODO BASE TENDENCIA: ", VBtendencia);
+    		console.log(" PERIODO BASE TENDENCIA: ", TendenciaMonedaBase);
     	}
         console.log(" PERIODO COTIZACION FECHA: ", VCfecha);
         console.log(" PERIODO COTIZACION ID: ", VCid_hitbtc);
         if ( MONEDASALDO === MonCoti ){
         	console.log(" PERIODO COTIZACION PRECIO ANTERIOR: ", "= ",ValPrecAntMC," =");
         	console.log(" PERIODO COTIZACION PRECIO ACTUAL: ", "= ",ValPrecAct," =");
-        	console.log(" PERIODO COTIZACION TENDENCIA: ", "[*** ", VCtendencia ," ***]" );
+        	console.log(" PERIODO COTIZACION TENDENCIA: ", "[*** ", TendenciaMonedaCotizacion ," ***]" );
         }else{
         	console.log(" PERIODO COTIZACION PRECIO ANTERIOR: ", ValPrecAntMC);
         	console.log(" PERIODO COTIZACION PRECIO ACTUAL: ", ValPrecAct);
-    		console.log(" PERIODO COTIZACION TENDENCIA: ", VCtendencia);
+    		console.log(" PERIODO COTIZACION TENDENCIA: ", TendenciaMonedaCotizacion);
         }
     },
 
