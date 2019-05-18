@@ -121,43 +121,44 @@ Meteor.methods({
                     }
                 };
                 //LIMPIANDO LA COLECCION TEMPORAL "TempTiposCambioXMoneda"
-                //TempTiposCambioXMoneda.remove({ moneda_saldo : moneda_saldo.moneda });
+                do{
+                    var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda, moneda_saldo.saldo.tradeo.activo);
+                
 
-                var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda, moneda_saldo.saldo.tradeo.activo);
+                    if ( TiposDeCambioVerificar === undefined ) {
+                        Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible para moneda: ']+[moneda_saldo.moneda]);
+                        //Meteor.call('EjecucionInicial');
+                    }else {
 
-                if ( TiposDeCambioVerificar === undefined ) {
-                    Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible para moneda: ']+[moneda_saldo.moneda]);
-                    //Meteor.call('EjecucionInicial');
-                }else {
+                        for ( CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++ ){
+                            var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
+                            Meteor.call("GuardarLogEjecucionTrader", ['        TIPO DE CAMBIO: ']+[tipo_cambio_verificar]);
+                            Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar, moneda_saldo.moneda )
+                        }
 
-                    for ( CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++ ){
-                        var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
-                        Meteor.call("GuardarLogEjecucionTrader", ['        TIPO DE CAMBIO: ']+[tipo_cambio_verificar]);
-                        Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar, moneda_saldo.moneda )
+                        console.log('-------------------------------------------');
+                        console.log('----- FIN DE VALIDACION DE TENDENCIA ------');
+                        console.log('-------------------------------------------');
+                        console.log(' ');
+                        Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
+                        Meteor.call('ValidarRanking', moneda_saldo.moneda);
+
+                        Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
+                        // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
+                        var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
+                        var V_LimiteMuestreo = LimiteMuestreo[0].valor
+                        Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_LimiteMuestreo: ']+[V_LimiteMuestreo]);
+
+                        if ( V_LimiteMuestreo === 0 ) {                                
+                            Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_moneda_verificar: ']+[moneda_saldo.moneda]);
+                            Meteor.call("ValidaInversion", moneda_saldo.moneda);
+                        }
+                        console.log('-------------------------------------------');
+                        console.log('--- DEBO SEGUIR CON LA SIGUIENTE MONEDA ---');
+                        console.log('-------------------------------------------');
+                        console.log(' ');
                     }
-
-                    console.log('-------------------------------------------');
-                    console.log('----- FIN DE VALIDACION DE TENDENCIA ------');
-                    console.log('-------------------------------------------');
-                    console.log(' ');
-                    Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
-                    Meteor.call('ValidarRanking', moneda_saldo.moneda);
-
-                    Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
-                    // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
-                    var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
-                    var V_LimiteMuestreo = LimiteMuestreo[0].valor
-                    Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_LimiteMuestreo: ']+[V_LimiteMuestreo]);
-
-                    if ( V_LimiteMuestreo === 0 ) {                                
-                        Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_moneda_verificar: ']+[moneda_saldo.moneda]);
-                        Meteor.call("ValidaInversion", moneda_saldo.moneda);
-                    }
-                    console.log('-------------------------------------------');
-                    console.log('--- DEBO SEGUIR CON LA SIGUIENTE MONEDA ---');
-                    console.log('-------------------------------------------');
-                    console.log(' ');
-                }
+                }while(TiposDeCambioVerificar === undefined)
             }
             if ( V_LimiteMuestreo > 0 ) {
                 V_LimiteMuestreo = V_LimiteMuestreo - 1

@@ -210,7 +210,7 @@ Meteor.methods({
         
         const MON_B='BCCF'
         //var MON_B='BCHSV'
-        const MON_C='DAI'
+        const MON_C='XMR'
         //var MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
         //var MONEDA_SALDO = MON_B

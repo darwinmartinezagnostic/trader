@@ -741,7 +741,7 @@ Meteor.methods({
     },
 
     'TipoCambioDisponibleCompra':function(MONEDA, SALDO_INV){
-        //Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_INV: ']+[SALDO_INV]);
+        Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_INV: ']+[SALDO_INV]);
         var sal = new Set();
         try
         {
@@ -750,7 +750,7 @@ Meteor.methods({
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
-
+        console.log("Valor de TiposDeCambiosRankear: ", TiposDeCambiosRankear)
         for (CTCR = 0, tamanio_TiposDeCambiosRankear = TiposDeCambiosRankear.length; CTCR < tamanio_TiposDeCambiosRankear; CTCR++) {
             var V_TiposDeCambiosRankear = TiposDeCambiosRankear[CTCR];
             var V_TipoCambio = V_TiposDeCambiosRankear.tipo_cambio
@@ -764,9 +764,11 @@ Meteor.methods({
             var V_valor_incremento = V_TiposDeCambiosRankear.valor_incremento
             var V_estado = V_TiposDeCambiosRankear.estado
             
+            console.log("Valor de V_TiposDeCambiosRankear: ", V_TiposDeCambiosRankear)
             
             var ExisTDat = TempTiposCambioXMoneda.find( { "tipo_cambio": V_TipoCambio, "moneda_saldo" : MONEDA } ).count()
             
+            console.log("Valor de ExisTDat: ", ExisTDat)
             
             if ( ExisTDat === 0 ) {
                 TempTiposCambioXMoneda.insert({
@@ -801,7 +803,7 @@ Meteor.methods({
         };
 
         var salida = Array.from(sal);
-        
+        console.log("Valor de salida: ", salida)
         return salida;
     },
 
