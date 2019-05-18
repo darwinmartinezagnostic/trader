@@ -126,7 +126,7 @@ Meteor.methods({
                         Meteor.call("GuardarLogEjecucionTrader", [' Moneda con Saldo: ¡ Listo ! ']);
                     }
                 };
-                    //LIMPIANDO LA COLECCION TEMPORAL "TempTiposCambioXMoneda"
+                //LIMPIANDO LA COLECCION TEMPORAL "TempTiposCambioXMoneda"
                 //TempTiposCambioXMoneda.remove({ moneda_saldo : moneda_saldo.moneda });
 
                 var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda, moneda_saldo.saldo.tradeo.activo);
