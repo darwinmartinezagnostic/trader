@@ -773,6 +773,7 @@ Meteor.methods({
                                                 "tipo_cambio": V_TipoCambio,
                                                 "moneda_base": V_moneda_base,
                                                 "moneda_cotizacion": V_moneda_cotizacion,
+                                                "moneda_saldo" : MONEDA,
                                                 "activo": V_activo,
                                                 "comision_hitbtc": V_comision_hitbtc,
                                                 "comision_mercado": V_comision_mercado,
@@ -787,6 +788,7 @@ Meteor.methods({
                                                  "moneda_saldo" : MONEDA }, { 
                                                 $set: {
                                                         "saldo_moneda_tradear" : SALDO_INV,
+                                                        "moneda_saldo" : MONEDA,
                                                         "activo" : V_activo,
                                                         "valor_incremento" : V_valor_incremento,
                                                         "estado" : V_estado
