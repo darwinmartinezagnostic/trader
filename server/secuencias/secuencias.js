@@ -35,58 +35,52 @@ Meteor.methods({
     },
 
     'SecuenciasSecundarias':function(){
-        try{
-            fecha = moment (new Date());
-            console.log('        ',fecha._d);
-            Meteor.call("GuardarLogEjecucionTrader", '--------  SECUENCIAS SECUNDARIAS  ---------');
-            console.log(' ');
+        fecha = moment (new Date());
+        console.log('        ',fecha._d);
+        Meteor.call("GuardarLogEjecucionTrader", '--------  SECUENCIAS SECUNDARIAS  ---------');
+        console.log(' ');
 
 
-            // VALIDA EL LIMITE TOTAL DE EJECUCIÓN DE LA APLICACION SI ESTE ES IGUAL '9999999999' ENTONCES SE EJECUTARÁ DE FORMA INFINITA
-            // SINO ENTONCES ESTE VALOR SERÁ ACTUALIZADO RESTANDO 1 SE EJECUTARA HASTA QUE EL CONTADOR LLEGUE A 0
-            var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
-            var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
+        // VALIDA EL LIMITE TOTAL DE EJECUCIÓN DE LA APLICACION SI ESTE ES IGUAL '9999999999' ENTONCES SE EJECUTARÁ DE FORMA INFINITA
+        // SINO ENTONCES ESTE VALOR SERÁ ACTUALIZADO RESTANDO 1 SE EJECUTARA HASTA QUE EL CONTADOR LLEGUE A 0
+        var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
+        var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
 
 
-            var contador = 1;
-            do{
+        var contador = 1;
+        do{
                 
 
-                Meteor.call("GuardarLogEjecucionTrader", [' ESTOY INICIANDO SECUENCIA']+[' CONTADOR ACTUAL: ']+[contador]);
+            Meteor.call("GuardarLogEjecucionTrader", [' ESTOY INICIANDO SECUENCIA']+[' CONTADOR ACTUAL: ']+[contador]);
 
-                if ( V_LimiteMaximoEjecucion === 9999999999 ) {
+            if ( V_LimiteMaximoEjecucion === 9999999999 ) {
                                     
-                    console.log(' ');
-                    var EjecucionSecuencia = Meteor.call('SecuenciaPeriodo1');
+                console.log(' ');
+                var EjecucionSecuencia = Meteor.call('SecuenciaPeriodo1');
                         
 
-                }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
+            }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
 
-                    console.log(' ');
-                    //var EjecucionSecuencia = Meteor.call('SecuenciaPeriodo1');
-                    Meteor.call('SecuenciaPeriodo1');
-                    V_LimiteMaximoEjecucion = V_LimiteMaximoEjecucion - 1
+                console.log(' ');
+                //var EjecucionSecuencia = Meteor.call('SecuenciaPeriodo1');
+                Meteor.call('SecuenciaPeriodo1');
+                V_LimiteMaximoEjecucion = V_LimiteMaximoEjecucion - 1
                             
-                    Parametros.update({ "dominio": "limites", "nombre": "CantMaximaEjecucion" }, {
+                Parametros.update({ "dominio": "limites", "nombre": "CantMaximaEjecucion" }, {
                                         $set: {
                                                     "estado": true,
                                                     "valor": V_LimiteMaximoEjecucion
                                                     }
                                         });
-                }
-                var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
-                var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
+            }
+            var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
+            var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
 
-                var contador = contador + 1;
-                Meteor.call("GuardarLogEjecucionTrader", [' Valor de V_LimiteMaximoEjecucion ']+[V_LimiteMaximoEjecucion]);
-                Meteor.call("GuardarLogEjecucionTrader", [' FIN DE SECUENCIA - ']+[fecha._d]);
+            var contador = contador + 1;
+            Meteor.call("GuardarLogEjecucionTrader", [' Valor de V_LimiteMaximoEjecucion ']+[V_LimiteMaximoEjecucion]);
+            Meteor.call("GuardarLogEjecucionTrader", [' FIN DE SECUENCIA - ']+[fecha._d]);
 
-            }while( V_LimiteMaximoEjecucion !== 0 );
-            
-        }
-        catch(error){
-            var EjecucionSecuencia = 1
-        }
+        }while( V_LimiteMaximoEjecucion !== 0 );
     },    
 
     'SecuenciaPeriodo1':function(){
