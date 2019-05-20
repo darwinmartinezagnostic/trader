@@ -90,7 +90,8 @@ Meteor.methods({
         var FechaTrasIniRecib = TrasIni[0].timestamp;
         var FTrans = new Date(FechaTrasIniRecib);
         var ANIO_INICIO = FTrans.getFullYear();
-        var AnioInicio = parseFloat(ANIO_INICIO);        
+        //var AnioInicio = parseFloat(ANIO_INICIO);
+        var AnioInicio = parseFloat(2019);
 
         while ( AnioInicio <=  parseFloat(AnioAct) ){
             console.log('############################################');
