@@ -10,7 +10,7 @@ Meteor.methods({
     //#############################################
 
     "SecuenciaInicial": function (){
-        try{
+        do{
             fecha = moment (new Date());
             console.log('        ',fecha._d);
             console.log('');
@@ -20,18 +20,10 @@ Meteor.methods({
             var EjecucionInicial = Meteor.call('EjecucionInicial');
 
             console.log("Valor de EjecucionInicial", EjecucionInicial);
+        }while( EjecucionInicial !== 0 );
 
-            if ( EjecucionInicial === 0 ) {
-                Meteor.call("GuardarLogEjecucionTrader", 'Iniciando las secuencias Secundarías');
-                Meteor.call("SecuenciasSecundarias");
-            }
-            var EjecucionSecuenciaInicial = 0
-            return EjecucionSecuenciaInicial;
-        }
-        catch(error){
-            var EjecucionSecuenciaInicial = 1
-            return EjecucionSecuenciaInicial;
-        }
+        Meteor.call("GuardarLogEjecucionTrader", 'Iniciando las secuencias Secundarías');
+        Meteor.call("SecuenciasSecundarias");
     },
 
     'SecuenciasSecundarias':function(){
