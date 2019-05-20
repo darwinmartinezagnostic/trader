@@ -573,9 +573,12 @@ Meteor.methods({
         TmpTipCambioXMonedaReord.remove({ moneda_saldo : MONEDA });
         try{
             var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: 3 } ]);
+            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_cotizacion" : MONEDA }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
+            console.log(" Valor de TmpTCMB: ", TmpTCMB)
+            console.log(" Valor de TmpTCMC: ", TmpTCMC)
             for (CTMCB = 0, T_TmpTCMB = TmpTCMB.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMB = TmpTCMB[CTMCB];
-                //console.log("Valor de V_TmpTCMB", V_TmpTCMB)
+                console.log("Valor de V_TmpTCMB", V_TmpTCMB)
                 TmpTipCambioXMonedaReord.insert({ "tipo_cambio": V_TmpTCMB.tipo_cambio,
                                                     "moneda_base": V_TmpTCMB.moneda_base,
                                                     "moneda_cotizacion" : V_TmpTCMB.moneda_cotizacion, 
@@ -592,10 +595,10 @@ Meteor.methods({
            
             };
 
-            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
+            
             for (CTMCB = 0, T_TmpTCMB = TmpTCMC.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMC = TmpTCMC[CTMCB];
-                //console.log("Valor de V_TmpTCMC", V_TmpTCMC)
+                console.log("Valor de V_TmpTCMC", V_TmpTCMC)
                 TmpTipCambioXMonedaReord.insert({ "tipo_cambio": V_TmpTCMC.tipo_cambio,
                                                     "moneda_base": V_TmpTCMC.moneda_base,
                                                     "moneda_cotizacion" : V_TmpTCMC.moneda_cotizacion, 

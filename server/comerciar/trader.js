@@ -741,7 +741,7 @@ Meteor.methods({
     },
 
     'TipoCambioDisponibleCompra':function(MONEDA, SALDO_INV){
-        Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_INV: ']+[SALDO_INV]);
+        //Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra -- Valores recibidos, MONEDA: ']+[MONEDA] +[' SALDO_INV: ']+[SALDO_INV]);
         var sal = new Set();
         try
         {
@@ -750,7 +750,7 @@ Meteor.methods({
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
-        console.log("Valor de TiposDeCambiosRankear: ", TiposDeCambiosRankear)
+        //console.log("Valor de TiposDeCambiosRankear: ", TiposDeCambiosRankear)
         for (CTCR = 0, tamanio_TiposDeCambiosRankear = TiposDeCambiosRankear.length; CTCR < tamanio_TiposDeCambiosRankear; CTCR++) {
             var V_TiposDeCambiosRankear = TiposDeCambiosRankear[CTCR];
             var V_TipoCambio = V_TiposDeCambiosRankear.tipo_cambio
@@ -764,13 +764,28 @@ Meteor.methods({
             var V_valor_incremento = V_TiposDeCambiosRankear.valor_incremento
             var V_estado = V_TiposDeCambiosRankear.estado
             
-            console.log("Valor de V_TiposDeCambiosRankear: ", V_TiposDeCambiosRankear)
+            //console.log("Valor de V_TiposDeCambiosRankear: ", V_TiposDeCambiosRankear)
             
             var ExisTDat = TempTiposCambioXMoneda.find( { "tipo_cambio": V_TipoCambio, "moneda_saldo" : MONEDA } ).count()
             
-            console.log("Valor de ExisTDat: ", ExisTDat)
-            
+            //console.log("Valor de ExisTDat: ", ExisTDat)
+
             if ( ExisTDat === 0 ) {
+                /*
+                console.log("Estoy en if ( ExisTDat === 0 ) ")
+                console.log(" Valor de V_TipoCambio: ", V_TipoCambio)
+                console.log(" Valor de V_moneda_base: ", V_moneda_base)
+                console.log(" Valor de V_moneda_cotizacion: ", V_moneda_cotizacion)
+                console.log(" Valor de MONEDA: ", MONEDA)
+                console.log(" Valor de V_activo: ", V_activo)
+                console.log(" Valor de V_comision_hitbtc: ", V_comision_hitbtc)
+                console.log(" Valor de V_comision_mercado: ", V_comision_mercado)
+                console.log(" Valor de V_min_compra: ", V_min_compra)
+                console.log(" Valor de V_moneda_apli_comision: ", V_moneda_apli_comision)
+                console.log(" Valor de V_valor_incremento: ", V_valor_incremento)
+                console.log(" Valor de V_estado: ", V_estado)
+                */
+
                 TempTiposCambioXMoneda.insert({
                                                 "tipo_cambio": V_TipoCambio,
                                                 "moneda_base": V_moneda_base,
@@ -785,7 +800,20 @@ Meteor.methods({
                                                 "estado": V_estado
                                             })
             }else{
-    
+                /*
+                console.log("Estoy en }else{")
+                console.log(" Valor de V_TipoCambio: ", V_TipoCambio)
+                console.log(" Valor de V_moneda_base: ", V_moneda_base)
+                console.log(" Valor de V_moneda_cotizacion: ", V_moneda_cotizacion)
+                console.log(" Valor de MONEDA: ", MONEDA)
+                console.log(" Valor de V_activo: ", V_activo)
+                console.log(" Valor de V_comision_hitbtc: ", V_comision_hitbtc)
+                console.log(" Valor de V_comision_mercado: ", V_comision_mercado)
+                console.log(" Valor de V_min_compra: ", V_min_compra)
+                console.log(" Valor de V_moneda_apli_comision: ", V_moneda_apli_comision)
+                console.log(" Valor de V_valor_incremento: ", V_valor_incremento)
+                console.log(" Valor de V_estado: ", V_estado)
+                */
                 TempTiposCambioXMoneda.update({ "tipo_cambio": V_TipoCambio, 
                                                  "moneda_saldo" : MONEDA }, { 
                                                 $set: {
@@ -803,7 +831,7 @@ Meteor.methods({
         };
 
         var salida = Array.from(sal);
-        console.log("Valor de salida: ", salida)
+        //console.log("Valor de salida: ", salida)
         return salida;
     },
 
