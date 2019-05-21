@@ -550,22 +550,22 @@ Meteor.methods({
         if ( MONEDASALDO === MonBase ){
         	console.log(" PERIODO BASE PRECIO ANTERIOR: ", "== ",ValPrecAntMB," =");
         	console.log(" PERIODO BASE PRECIO ACTUAL: ", "= ",ValPrecAct," =");
-        	console.log(" PERIODO BASE TENDENCIA: ", "[*** ", TendenciaMonedaBase.toFixed(4) ," ***]" );
+        	console.log(" PERIODO BASE TENDENCIA: ", "[*** ", TendenciaMonedaBase ," ***]" );
     	}else{
     		console.log(" PERIODO BASE PRECIO ANTERIOR: ", ValPrecAntMB);
     		console.log(" PERIODO BASE PRECIO ACTUAL: ", ValPrecAct);
-    		console.log(" PERIODO BASE TENDENCIA: ", TendenciaMonedaBase.toFixed(4));
+    		console.log(" PERIODO BASE TENDENCIA: ", TendenciaMonedaBase);
     	}
         console.log(" PERIODO COTIZACION FECHA: ", VCfecha);
         console.log(" PERIODO COTIZACION ID: ", VCid_hitbtc);
         if ( MONEDASALDO === MonCoti ){
         	console.log(" PERIODO COTIZACION PRECIO ANTERIOR: ", "= ",ValPrecAntMC," =");
         	console.log(" PERIODO COTIZACION PRECIO ACTUAL: ", "= ",ValPrecAct," =");
-        	console.log(" PERIODO COTIZACION TENDENCIA: ", "[*** ", TendenciaMonedaCotizacion.toFixed(4) ," ***]" );
+        	console.log(" PERIODO COTIZACION TENDENCIA: ", "[*** ", TendenciaMonedaCotizacion ," ***]" );
         }else{
         	console.log(" PERIODO COTIZACION PRECIO ANTERIOR: ", ValPrecAntMC);
         	console.log(" PERIODO COTIZACION PRECIO ACTUAL: ", ValPrecAct);
-    		console.log(" PERIODO COTIZACION TENDENCIA: ", TendenciaMonedaCotizacion.toFixed(4));
+    		console.log(" PERIODO COTIZACION TENDENCIA: ", TendenciaMonedaCotizacion);
         }
     },
 
@@ -591,7 +591,7 @@ Meteor.methods({
                                                     "moneda_apli_comision": V_TmpTCMB.moneda_apli_comision,
                                                     "valor_incremento" : V_TmpTCMB.valor_incremento,
                                                     "estado" : V_TmpTCMB.estado,
-                                                    "tendencia" : V_TmpTCMB.periodo1.Base.tendencia.toFixed(4) });
+                                                    "tendencia" : V_TmpTCMB.periodo1.Base.tendencia });
            
             };
 
@@ -611,7 +611,7 @@ Meteor.methods({
                                                     "moneda_apli_comision": V_TmpTCMC.moneda_apli_comision,
                                                     "valor_incremento" : V_TmpTCMC.valor_incremento,
                                                     "estado" : V_TmpTCMC.estado,
-                                                    "tendencia" : V_TmpTCMC.periodo1.Cotizacion.tendencia.toFixed(4) });
+                                                    "tendencia" : V_TmpTCMC.periodo1.Cotizacion.tendencia });
             };
 
         }
