@@ -1046,7 +1046,7 @@ Meteor.methods({
         var Estado_Orden = Orden.status
         Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi estado: ']+[Estado_Orden]); 
 
-
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         while( Estado_Orden !== "filled" ){
             console.log('Estoy en el while')
             fecha = moment (new Date());
@@ -1125,13 +1125,14 @@ Meteor.methods({
                                                             FechaActualizacion : fecha._d}
                                         });
 
+
                 //Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
 
                 break
             } 
         }
-        //console.log('Estoy fuera del while')
-
+        console.log('Estoy fuera del while')
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if ( Estado_Orden === "filled" ) {
             console.log('Voy a guardar mis datos de transacción')
 
