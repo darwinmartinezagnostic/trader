@@ -574,8 +574,8 @@ Meteor.methods({
         try{
             var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: 3 } ]);
             var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_cotizacion" : MONEDA }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
-            console.log(" Valor de TmpTCMB: ", TmpTCMB)
-            console.log(" Valor de TmpTCMC: ", TmpTCMC)
+            //console.log(" Valor de TmpTCMB: ", TmpTCMB)
+            //console.log(" Valor de TmpTCMC: ", TmpTCMC)
             for (CTMCB = 0, T_TmpTCMB = TmpTCMB.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMB = TmpTCMB[CTMCB];
                 //console.log("Valor de V_TmpTCMB", V_TmpTCMB)
