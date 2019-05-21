@@ -588,7 +588,7 @@ Meteor.methods({
             var Existencia = 0;
         }
         PromedioObtenido = { 'Promedio': ValFinPromedio, 'Existe': Existencia };
-        //console.log("Valor de PromedioObtenido", PromedioObtenido);
+        console.log("Valor de PromedioObtenido", PromedioObtenido);
         
         return PromedioObtenido;
     },
