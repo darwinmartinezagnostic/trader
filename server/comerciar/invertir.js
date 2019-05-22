@@ -1073,12 +1073,10 @@ Meteor.methods({
 
     	var CONSTANTES = Meteor.call("Constantes");
         var IdTran = Meteor.call('CalculaId', 2);
-        //var IdTran = 113
         var IdTransaccionActual = Meteor.call("CompletaConCero", IdTran, 32);
     	console.log('############################################');
         Meteor.call("GuardarLogEjecucionTrader", 'Creando una nueva orden');
         console.log("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION);
-
 
         var fecha = new Date();
         console.log("Valor de fecha:", fecha)
@@ -1118,7 +1116,6 @@ Meteor.methods({
         var Estado_Orden = Orden.status
         Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi estado: ']+[Estado_Orden]); 
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         while( Estado_Orden !== "filled" ){
             console.log('Estoy en el while')
             fecha = moment (new Date());
@@ -1126,16 +1123,12 @@ Meteor.methods({
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);                
                 Meteor.call('sleep', 4);
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FIN ESPERA: ']+[fecha._d]);
-
                 const Resultado = Meteor.call("ValidarEstadoOrden", ORDEN)
-                console.log('Valor de Resultado', Resultado)
-
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
                 Estado_Orden = Resultado;                        
             }
 
             if ( Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" ) {
-                //console.log('Dedo Guardar el fallo y salir')
                 GananciaPerdida.insert({    
                                             Operacion : {   ID_LocalAct : IdTransaccionActual,
                                                             Id_Lote: ID_LOTE,
@@ -1149,7 +1142,6 @@ Meteor.methods({
                 break
             }
             if ( Estado_Orden === "canceled" ) {
-                //console.log('Dedo Guardar el estado de la cancelacion y salir')
                 GananciaPerdida.insert({    
                                             Operacion : {   ID_LocalAct : IdTransaccionActual,
                                                             Id_Lote: ID_LOTE,
@@ -1160,12 +1152,11 @@ Meteor.methods({
                                                             FechaCreacion : fecha._d,
                                                             FechaActualizacion : fecha._d}
                                         });
+
                 Meteor.call("GuardarLogEjecucionTrader", [' CrearNuevaOrder: Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
                 break
             }
             if ( Estado_Orden === "DuplicateclientOrderId" ) {
-                //console.log('Dedo Guardar el fallo y reiniciar la ejecucion')
-                
                 GananciaPerdida.insert({    
                                             Operacion : {   ID_LocalAct : IdTransaccionActual,
                                                             Id_Lote: ID_LOTE,
@@ -1179,12 +1170,9 @@ Meteor.methods({
                                         });
 
                 Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
-
                 break
             }
             if ( Estado_Orden === "Insufficientfunds" ) {
-                //console.log('Dedo Guardar el fallo y salgo')
-                
                 GananciaPerdida.insert({    
                                             Operacion : {   ID_LocalAct : IdTransaccionActual,
                                                             Id_Lote: ID_LOTE,
@@ -1196,26 +1184,17 @@ Meteor.methods({
                                                             FechaCreacion : fecha._d,
                                                             FechaActualizacion : fecha._d}
                                         });
-
-
-                //Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
-
                 break
             } 
         }
-        console.log('Estoy fuera del while')
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         if ( Estado_Orden === "filled" ) {
-            console.log('Voy a guardar mis datos de transacción')
-
             Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
-
             Meteor.call('ListaTradeoActual',TIPO_CAMBIO, 3 );
             Meteor.call("ValidaSaldoEquivalenteActual", MON_B);
             Meteor.call("ValidaSaldoEquivalenteActual", MON_C);
+            HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_cambio : TIPO_CAMBIO, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : CANT_INVER, numero_orden : Orden, precio_operacion : PRECIO, estado : "Exitoso" });
         }
-
-        HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_cambio : TIPO_CAMBIO, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : CANT_INVER, numero_orden : Orden, precio_operacion : PRECIO, estado : "Exitoso" });
     },
 
 });
