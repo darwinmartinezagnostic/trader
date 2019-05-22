@@ -358,7 +358,7 @@ Meteor.methods({
                     console.log("Estoy en el if ( SaldoActTransf >= ValMinTranf )");
                     var Repeticiones = 1
                     do {
-                        console.log("Estoy en el while( SaldoAntTransf === SaldoActTransf )");
+                        //console.log("Estoy en el while( SaldoAntTransf === SaldoActTransf )");
                         console.log("Moneda:", MonedaRev)
                         console.log("Datos a enviar, MonedaRev:", MonedaRev ,"SaldoActTransf", SaldoActTransf, 'bankToExchange');
                         var EstadoTransferencia = Meteor.call( 'Transferirfondos', MonedaRev, SaldoActTransf, 'bankToExchange');
@@ -391,7 +391,7 @@ Meteor.methods({
                                 console.log('             STATUS: ',"EXITOSO" );
                                 console.log('############################################');*/
                                 var NuevoValMinTransf = Meteor.call('ReemplazaNumeroACero', SaldoActTransf);
-                                Meteor.call("GuardarLogEjecucionTrader", [' Valor de NuevoValMinTransf']+[NuevoValMinTransf]);
+                                //Meteor.call("GuardarLogEjecucionTrader", [' Valor de NuevoValMinTransf']+[NuevoValMinTransf]);
                                 Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }}, {"multi" : true,"upsert" : true});
                                 var ValMinTranf = NuevoValMinTransf
                                 //HistoralTransferencias.update({ id : EstadoTransferencia[1] }, {$set: { estado: "Exitoso" }});
@@ -575,10 +575,10 @@ Meteor.methods({
                 Meteor.call("GuardarLogEjecucionTrader", [' Marca de tiempo: ']+[v_compras_ventas.timestamp]);
                 console.log('############################################');
                 if (EquivalenciasDol.find({ tipo_cambio : TIPO_CAMBIO }).count() === 0) {
-                    EquivalenciasDol.insert({ fecha : fecha._d, tipo_cambio : v_compras_ventas.symbol, ValorOfertaVenta : v_compras_ventas.ask, ValorOfertaCompra : v_compras_ventas.bid, Promedio : ValFinPromedio, Existe : Existencia })
+                    EquivalenciasDol.insert({ fecha : fecha._d, tipo_cambio : TIPO_CAMBIO, ValorOfertaVenta : v_compras_ventas.ask, ValorOfertaCompra : v_compras_ventas.bid, Promedio : ValFinPromedio, Existe : Existencia })
                 }
                 else{
-                    EquivalenciasDol.update({ tipo_cambio : v_compras_ventas.symbol },{$set:{ fecha : fecha._d, ValorOfertaVenta : v_compras_ventas.ask, ValorOfertaCompra : v_compras_ventas.bid, Promedio : ValFinPromedio, Existe : Existencia }}, {"multi" : true,"upsert" : true});
+                    EquivalenciasDol.update({ tipo_cambio : TIPO_CAMBIO },{$set:{ fecha : fecha._d, ValorOfertaVenta : v_compras_ventas.ask, ValorOfertaCompra : v_compras_ventas.bid, Promedio : ValFinPromedio, Existe : Existencia }}, {"multi" : true,"upsert" : true});
                 }
             }
 
@@ -1090,9 +1090,7 @@ Meteor.methods({
 
         console.log('--------------------------------------------');
         Meteor.call("GuardarLogEjecucionTrader", '   VALORES INVERSION');
-
-
-        //var V_SaldoInversion = CANT_INVER;
+        
         var Eqv_V_InverSaldAct = Meteor.call('EquivalenteDolar', MONEDA_SALDO, parseFloat(CANT_INVER), 2);
         console.log("Valor de Eqv_V_InverSaldAct", Eqv_V_InverSaldAct)
         var V_Comision = Comision;
@@ -1104,7 +1102,6 @@ Meteor.methods({
                         
         if ( MONEDA_SALDO == MON_B ) {
             var V_MonedaAdquirida = MON_C
-            //var V_Ganancia = V_EquivSaldoMonedaAdquirida - V_EquivalenciaTradeoAnteriorMB;
             console.log( 'Eqv_V_InverSaldAnt = ' , parseFloat(Eqv_V_InverSaldAct), ' * ', parseFloat(V_EquivalenciaTradeoAnteriorMB) , ' / ', parseFloat(SaldoTradeoActualMB));
             var Eqv_V_InverSaldAnt = ( parseFloat(Eqv_V_InverSaldAct) * parseFloat(V_EquivalenciaTradeoAnteriorMB) ) / parseFloat(SaldoTradeoActualMB);
             console.log("Valor de Eqv_V_InverSaldAnt", Eqv_V_InverSaldAnt)
@@ -1145,7 +1142,6 @@ Meteor.methods({
 
         }else if ( MONEDA_SALDO == MON_C ){
                 var V_MonedaAdquirida = MON_B
-                //var V_Ganancia = V_EquivSaldoMonedaAdquirida - V_EquivalenciaTradeoAnteriorMC;
                 var Eqv_V_InverSaldAnt = ( parseFloat(Eqv_V_InverSaldAct) * parseFloat(V_EquivalenciaTradeoAnteriorMC) ) / parseFloat(SaldoTradeoActualMC);
                 var V_Ganancia = parseFloat(V_EquivSaldoMonedaAdquirida) - Eqv_V_InverSaldAnt;
 

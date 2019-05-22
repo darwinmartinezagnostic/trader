@@ -208,16 +208,16 @@ Meteor.methods({
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
         
-        const MON_B='BCCF'
-        //var MON_B='BCHSV'
-        const MON_C='XMR'
+        //const MON_B='XMR'
+        var MON_B='BTC'
+        const MON_C='DAI'
         //var MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
         //var MONEDA_SALDO = MON_B
         var MONEDA_COMISION = MON_C
         var MONEDA_SALDO = MON_C
         
-        /*
+        /* 
 
             //console.log(' Tipo de Cambio TIPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
            
@@ -353,22 +353,84 @@ Meteor.methods({
         //'Invertir': function( MONEDA, LIMITE_AP_DEP, CANT_TIP_CAMBIOS_VALIDADOS ){
         //Meteor.call("ValidaPropTipoCambiosValidados",MONEDA_SALDO, V_LimiteApDep);
 
-        Meteor.call("TipoCambioDisponibleCompra", MONEDA_SALDO,CANT_INVER);
+        //Meteor.call("TipoCambioDisponibleCompra", MONEDA_SALDO,CANT_INVER);
+
+        //Meteor.call("ValidarRanking", MONEDA_SALDO)
+
+        //Meteor.call(ConsultarHistoricoOrdenes)
+
+        var LIMITE_AP_DEP= 1
+
+        var CANT_TIP_CAMBIOS_VALIDADOS =1
+        var RankingTiposDeCambios = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA_SALDO, estado : "A", "tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: CANT_TIP_CAMBIOS_VALIDADOS } ]);
+        var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
+        var ProporcionTipoCambios = PTC[0];
+        //console.log("Valor de RankingTiposDeCambios: ", RankingTiposDeCambios)
+        var CRTC2=1;        
+
+            for ( CTCV = 0, TTCV = RankingTiposDeCambios.length; CTCV <= TTCV; CTCV++ ) {
+                while ( CRTC2 <= CANT_TIP_CAMBIOS_VALIDADOS ) {
+                    TipoCambioRanking = RankingTiposDeCambios[CTCV];
+                    var TipoCambio = TipoCambioRanking.tipo_cambio
+                    console.log("Valor de TipoCambio: ", TipoCambio)
+                    var Tendencia = TipoCambioRanking.tendencia;
+                    console.log("Valor de Tendencia: ", Tendencia)
+                    var PorcInv=[CRTC2]+[CANT_TIP_CAMBIOS_VALIDADOS]
+                    console.log("Valor de PorcInv: ", PorcInv)
+                    switch ( parseFloat(PorcInv)){
+                        case 11:
+                            var PorcentajeInversion = ProporcionTipoCambios.valor.p11
+                        break;
+                        case 12:
+                            var PorcentajeInversion = ProporcionTipoCambios.valor.p12
+                        break;
+                        case 22:
+                            var PorcentajeInversion = ProporcionTipoCambios.valor.p22
+                        break;
+                        case 13:
+                            var PorcentajeInversion = ProporcionTipoCambios.valor.p13
+                        break;
+                        case 23:
+                            var PorcentajeInversion = ProporcionTipoCambios.valor.p23
+                        break;
+                        case 33:
+                            var PorcentajeInversion = ProporcionTipoCambios.valor.p33
+                        break;
+                    }
+
+                    
+                    
+                    
+                    console.log("Valor de PorcentajeInversion: ", PorcentajeInversion)
+                    var SaldoActualMoneda = TipoCambioRanking.saldo_moneda_tradear
+                    console.log("Valor de SaldoActualMoneda: ", SaldoActualMoneda)
+                    var MonedaSaldo = TipoCambioRanking.moneda_saldo;
+                    console.log("Valor de MonedaSaldo: ", MonedaSaldo)
+                    var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
+                    console.log("Valor de MonedaApCom: ", MonedaApCom)
+                    var MonCBas = TipoCambioRanking.moneda_base;
+                    console.log("Valor de MonCBas: ", MonCBas)
+                    var MonCoti = TipoCambioRanking.moneda_cotizacion;
+                    console.log("Valor de MonCoti: ", MonCoti)
 
 
-
-        var resto;
-        var numero1 = 21;
-        var numero2 = 10;
-         
-        resto = numero1%numero2;
-
-        if (resto === 0) {
-            console.log(" es múltiplo de ", numero2);
-        }else{
-            console.log(" No es múltiplo de ", numero2);
-        }
-
+                    var SaldoInverCalculado = parseFloat(SaldoActualMoneda)*parseFloat(PorcentajeInversion)
+                    console.log("Valor de SaldoInverCalculado: ", SaldoInverCalculado)
+                            /*
+                    console.log('--------------------------------------------');
+                    Meteor.call("GuardarLogEjecucionTrader", ['                  POSICIÓN:']+[CRTC1+1]);
+                    Meteor.call("GuardarLogEjecucionTrader", [' ******** ']+[' TIPO CAMBIO: ']+[TipoCambio]+[' ********']);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA BASE: ']+[MonCBas]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA COTIZACION: ']+[MonCoti]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[Tendencia]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     PORCENTAJE A INVERTIR: ']+[PorcentajeInversion*100]+['%']);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);*/
+                    
+                    //Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
+                    CRTC2 = CRTC2+1;
+                }
+            }
 
 
 

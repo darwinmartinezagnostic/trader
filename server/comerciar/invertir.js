@@ -36,10 +36,6 @@ Meteor.methods({
         };
         var RegAnt = TradAnt;
         var RegAct = TransProcesar[0];
-
-        //console.log("Valores Conseguidos de RegAnt: ", RegAnt);
-        //console.log("Valores Conseguidos de RegAct: ", RegAct);
-
         var MonBase =  RegAnt.moneda_base;
         var MonCoti =  RegAnt.moneda_cotizacion;
 
@@ -521,7 +517,6 @@ Meteor.methods({
         var ValorGuardado = TiposDeCambios.aggregate([  { $match : { tipo_cambio : TIPOCAMBIO }} ]);
 
         console.log('############################################');
-        //console.log("Valor de ValorGuardado: ", ValorGuardado);
 
         Vtipo_cambio = ValorGuardado[0].tipo_cambio;
         Vmoneda_base = ValorGuardado[0].moneda_base;
@@ -1095,7 +1090,6 @@ Meteor.methods({
         console.log("Valore de V_TipoOperaciont: ", V_TipoOperaciont)
 
         var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-        console.log("Valor de RecalcIverPrec: ", RecalcIverPrec);
 
         //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
         datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+RecalcIverPrec.MontIversionCal;
@@ -1103,14 +1097,12 @@ Meteor.methods({
         console.log("Valor de datos:",  datos)
         var url_orden = CONSTANTES.ordenes;
 
-        do {
-            
+        do {            
             var Orden = Meteor.call('ConexionPost', url_orden, datos);
             Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi Orden: ']+[Orden]); 
             if ( Orden === undefined ) {
                 Meteor.call('sleep', 4);
             }
-
         }while( Orden === undefined );
 
         var Estado_Orden = Orden.status
