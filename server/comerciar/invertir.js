@@ -841,12 +841,10 @@ Meteor.methods({
                     var MonedaApCom = TipoCambioRanking.moneda_apli_comision;
                     var MonCBas = TipoCambioRanking.moneda_base;
                     var MonCoti = TipoCambioRanking.moneda_cotizacion;
-
-
                     var SaldoInverCalculado = parseFloat(SaldoActualMoneda)*parseFloat(PorcentajeInversion)
                     
                     console.log('--------------------------------------------');
-                    Meteor.call("GuardarLogEjecucionTrader", ['                  POSICIÓN:']+[CRTC1+1]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['                  POSICIÓN:']+[CRTC2]);
                     Meteor.call("GuardarLogEjecucionTrader", [' ******** ']+[' TIPO CAMBIO: ']+[TipoCambio]+[' ********']);
                     Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA BASE: ']+[MonCBas]);
                     Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA COTIZACION: ']+[MonCoti]);
@@ -855,6 +853,7 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
                     Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);
                     
+                    var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);
                     Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
                     CRTC2 = CRTC2+1;
                 }
