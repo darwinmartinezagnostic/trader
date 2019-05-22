@@ -148,27 +148,26 @@ Meteor.methods({
                         var precioAux = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).fetch();
                         //console.log("Valor de precioAux", precioAux);
                         var TipoCambioObtenido = precioAux[0].tipo_cambio;
-                        //console.log("Valor de TipoCambio", TipoCambioObtenido);
-                        //console.log("Valor de TipoCambio", TipoCambio);
+                        console.log("Valor de TipoCambio", TipoCambioObtenido);
                         //
                         switch (TIPO_ACCION){
                             case 1:
-                                //console.log("Estoy en el case 1")
+                                console.log("Estoy en el case 1")
                                 var ValorObtenido = EquivalenciasDol.aggregate([    { $match: { tipo_cambio : TipoCambioObtenido }}, 
                                                                                     { $project: { _id : 0, Promedio : 1 , Existe : 1 } }
                                                                                 ]);
                                 var ValorPromedio = ValorObtenido[0]
 
-                                //console.log("Valor de ValorPromedio", ValorPromedio);
+                                console.log("Valor de ValorPromedio", ValorPromedio);
 
                                 if ( ValorPromedio === undefined ) {
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                                 }
                             break;
                             case 2:
-                                //console.log("Estoy en el case 2");
+                                console.log("Estoy en el case 2");
                                 var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
-                                //console.log("Valor de ValorPromedio", ValorPromedio);
+                                console.log("Valor de ValorPromedio", ValorPromedio);
                             break;
                         }
 
@@ -187,14 +186,13 @@ Meteor.methods({
                                                             }
                                                         }, {"multi" : true,"upsert" : true});
                         }else{
-                            //console.log("Valor de ValorPromedio", ValorPromedio.Promedio);
+                            console.log("Valor de ValorPromedio", ValorPromedio.Promedio);
                             var EquivalenciaActual = (parseFloat(SALDO) * ValorPromedio.Promedio ) / 1;
-                            //console.log("Valor de EquivalenciaActual", EquivalenciaActual);
+                            console.log("Valor de EquivalenciaActual", EquivalenciaActual);
                         }
                     }else {
-                        //console.log("ESTOY EN EL ELSE DE if ( DIRECTO !== 0 ");
+                        console.log("ESTOY EN EL ELSE DE if ( DIRECTO !== 0 ");
 
-                            //precioAux = TiposDeCambios.find({moneda_base:MONEDA,moneda_cotizacion:'BTC'}).fetch();
                         var TiposCambiosMoneda = TiposDeCambios.find({ $or: [ { moneda_base : MONEDA }, { moneda_cotizacion : MONEDA }]},{}).fetch();
                         //console.log("Valor de TiposCambiosMoneda", TiposCambiosMoneda);
 
@@ -204,14 +202,11 @@ Meteor.methods({
                             var MBase = V_TiposCambiosMoneda.moneda_base;
                             var MCotizacion = V_TiposCambiosMoneda.moneda_cotizacion;
                             var TipoCambioObtenido = V_TiposCambiosMoneda.tipo_cambio;
-                            //console.log("Valor de TipoCambioObtenido", TipoCambioObtenido);
-                            /*
+                            console.log("Valor de TipoCambioObtenido", TipoCambioObtenido);
+                            
                             console.log("Valor de MBase", MBase);
                             console.log("Valor de MCotizacion", MCotizacion);
                             console.log("Valor de MONEDA", MONEDA);
-                            */
-
-                            //var ValorPromedioObtenido = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
 
                             switch (TIPO_ACCION){
                                 case 1:
