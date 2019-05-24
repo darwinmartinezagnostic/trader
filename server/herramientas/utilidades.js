@@ -128,8 +128,7 @@ Meteor.methods({
 
         if ( SALDO === 0 ) {
             var EquivalenciaActual = 0;
-        }else{            
-           //console.log("Valores recibidos: MONEDA", [MONEDA]+[' SALDO:']+[SALDO]+[' TIPO_ACCION: ']+[TIPO_ACCION]);
+        }else{
 
             if ( MONEDA == 'USD' ) {
                 var EquivalenciaActual = parseFloat(SALDO);
