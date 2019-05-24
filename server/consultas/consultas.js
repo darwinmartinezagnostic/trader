@@ -59,9 +59,6 @@ Meteor.methods({
     'ConsultarSaldoTodasMonedas':function(){
         var MonedasSaldoActual = Monedas.find( { $or : [{"saldo.tradeo.activo" : { $gt : 0 }},{ "saldo.cuenta.activo" : { $gt : 0 } }]}).fetch()
 
-        //console.log("Valor de MonedasSaldoActual", MonedasSaldoActual);
-
-
         for ( cmsa = 0, tmsa = MonedasSaldoActual.length; cmsa < tmsa; cmsa++ ) {
             var v_BMonedasSaldoActual = MonedasSaldoActual[cmsa];
             console.log('############################################');
@@ -109,9 +106,7 @@ Meteor.methods({
                 var UD = Meteor.call('CompletaConCero', ultimoDia.getDate(), 2);var FechaInicial = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ PD ]+['T00%3A00%3A00']
                 var UltimoDiaAnio = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ UD ]+['T23%3A59%3A59']                
 
-                console.log("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);
-                //Meteor.call("GuardarLogEjecucionTrader", ' Devuelve los datos Historicos de Transacciones de Compra/Venta realizadas');
-                
+                console.log("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);                
                 console.log(' ');
 
                 var url_transaccion_completa=[CONSTANTES.HistTradeo]+['?sort=ASC']+['&by=timestamp&from=']+[FechaInicial]+['&by=timestamp&from=']+[UltimoDiaAnio]
@@ -269,7 +264,8 @@ Meteor.methods({
         //var Estado_Orden = 'suspended'
         //var Estado_Orden = 'canceled'
         //var Estado_Orden = 'expired'
-        var Estado_Orden = "DuplicateclientOrderId"
+        //var Estado_Orden = "DuplicateclientOrderId"
+        var Estado_Orden = ORDEN
 
         console.log('Voy anetrar en el while')
         while( Estado_Orden !== "filled" ){
@@ -277,27 +273,10 @@ Meteor.methods({
             fecha = moment (new Date());
             if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);
-                //const Resultado = () => Meteor.call("ValidarEstadoOrden", ORDEN)
-                //const Resultado = requiere ('ValidarEstadoOrden') 
-
-
-                //setTimeout (  `Resultado(ORDEN)` , 1000);
-                //setTimeout (  `Resultado(ORDEN)` , 300);
-                //setTimeout (  `Meteor.call("ValidarEstadoOrden", ORDEN)` , 300);
-                //const Resultado =  setTimeout (  Meteor.call("ValidarEstadoOrden", ORDEN) , 300);
-                
                 const Resultado = Meteor.call("ValidarEstadoOrden", ORDEN)
-                
-                //Meteor.call("sleep", 300)
                 Meteor.call("sleep", 2)
-
-
-
-                console.log('Valor de Resultado', Resultado)
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL: ']+[fecha._d]);
-                Estado_Orden = Resultado;
-
-                
+                Estado_Orden = Resultado;                
             }
 
             if ( Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" ) {
