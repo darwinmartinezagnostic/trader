@@ -16,6 +16,10 @@ Meteor.methods({
         
         try{
         	var TradAnt = TiposDeCambios.findOne({ tipo_cambio : TIPOCAMBIO });
+            var V_Saldo_Moneda = Monedas.aggregate([
+                        { $match : {"moneda" : MONEDASALDO}},
+                        { $project : { _id : 0, "saldo.tradeo.activo": 1, "saldo.tradeo.equivalencia": 1 } }
+                    ]);
         }
         catch (error){    
         	Meteor.call("ValidaError", error, 2);
@@ -522,6 +526,8 @@ Meteor.methods({
         Vmoneda_base = ValorGuardado[0].moneda_base;
         Vmoneda_cotizacion = ValorGuardado[0].moneda_cotizacion;
         VMONEDASALDO = MONEDASALDO;
+        SALDO_ACTUAL = V_Saldo_Moneda[0].saldo.tradeo.activo
+        SALDO_EQUIV = V_Saldo_Moneda[0].saldo.tradeo.equivalencia
         VBfecha = ValorGuardado[0].periodo1.Base.fecha;
         Vid_hitbtc = ValorGuardado[0].periodo1.Base.id_hitbtc;
         VBprecio = ValorGuardado[0].periodo1.Base.precio.toString().replace("." , ",");
@@ -533,7 +539,9 @@ Meteor.methods({
 
 
         console.log('-------------------------------------------');
-        console.log("         MONEDA SALDO: ", MONEDASALDO);
+        console.log("           MONEDA: ", MONEDASALDO);
+        console.log("            SALDO: ", SALDO_ACTUAL.toString());
+        console.log("      EQUIVALENTE: ", SALDO_EQUIV.toString());
         console.log('-------------------------------------------');
         console.log(" ");
         console.log(" TIPO CAMBIO: ", Vtipo_cambio);
@@ -893,8 +901,8 @@ Meteor.methods({
 
         var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
 
-        //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
-        datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+RecalcIverPrec.MontIversionCal;
+        datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
+        //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+RecalcIverPrec.MontIversionCal;
 
         console.log("Valor de datos:",  datos)
         var url_orden = CONSTANTES.ordenes;
@@ -917,7 +925,7 @@ Meteor.methods({
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);                
                 Meteor.call('sleep', 4);
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FIN ESPERA: ']+[fecha._d]);
-                const Resultado = Meteor.call("ValidarEstadoOrden", ORDEN)
+                const Resultado = Meteor.call("ValidarEstadoOrden", IdTransaccionActual)
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
                 Estado_Orden = Resultado;                        
             }
@@ -983,11 +991,26 @@ Meteor.methods({
         }
 
         if ( Estado_Orden === "filled" ) {
+            console.log(" if ( Estado_Orden === filled ) : Voy a Guardar")
             Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+            console.log(" if ( Estado_Orden === filled ) : Ya guardé")
+            console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ListaTradeoActual',TIPO_CAMBIO, 3)
             Meteor.call('ListaTradeoActual',TIPO_CAMBIO, 3 );
+            console.log(" if ( Estado_Orden === filled ) : ListaTradeoActual Ya terminé")
+            console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ValidaSaldoEquivalenteActual',MON_B)
             Meteor.call("ValidaSaldoEquivalenteActual", MON_B);
+            console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ValidaSaldoEquivalenteActual',MON_C)
             Meteor.call("ValidaSaldoEquivalenteActual", MON_C);
-            HistoralTransacciones.insert({ fecha : fecha, id : N_ID__ORDEN_CLIENT, tipo_cambio : TIPO_CAMBIO, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : CANT_INVER, numero_orden : Orden, precio_operacion : PRECIO, estado : "Exitoso" });
+            console.log(" if ( Estado_Orden === filled ) : Voy a Cacular nuevo ID para collecion HistoralTransacciones")
+            var IdTraccion = Meteor.call('CalculaId', 4);
+            console.log(" if ( Estado_Orden === filled ) : Listo")
+            console.log(" if ( Estado_Orden === filled ) : Voy a Guardar en HistoralTransacciones")
+            try{
+                HistoralTransacciones.insert({ _id : IdTraccion, ID_LocalAct : IdTransaccionActual, Id_Lote: ID_LOTE, fecha : fecha._d , tipo_cambio : TIPO_CAMBIO, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : CANT_INVER, precio_operacion : RecalcIverPrec.MejorPrecCal, estado : "Exitoso" });
+                console.log(" if ( Estado_Orden === filled ) : Listo ya guardé")
+            }catch(e){
+                console.log(" if ( Estado_Orden === filled ) : Fallé al guardar")
+            }
         }
     },
 

@@ -241,13 +241,10 @@ Meteor.methods({
 
     'ValidarEstadoOrden': function(ORDEN){
         var CONSTANTES = Meteor.call("Constantes");
-
-        //console.log('Estoy en ValidarEstadoOrden')
-        //cont += 1;
-        //Meteor.call('GuardarLogEjecucionTrader', ' CrearNuevaOrder: Estoy en:  else if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled"');
-        //var url_transaccion=[CONSTANTES.HistOrdenes]+['/']+[ORDEN]+['/trades']
+        console.log('Estoy en ValidarEstadoOrden')
         var url_transaccion=[CONSTANTES.HistOrdenes]+['?clientOrderId=']+[ORDEN]
-        //console.log('Valor de url_transaccion', url_transaccion)
+        //var url_transaccion=[CONSTANTES.HistOrdenes]+['?clientOrderId=']+[ORDEN]
+        console.log('Valor de url_transaccion', url_transaccion)
 
         const Trns = Meteor.call("ConexionGet", url_transaccion)     
         var trans = Trns[0];

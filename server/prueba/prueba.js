@@ -185,12 +185,14 @@ Meteor.methods({
             var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
             var V_LimiteApDep = LimiteApDep[0].valor;
          
-        /*
         Meteor.call("ActualizaSaldoTodasMonedas");
         Meteor.call("ValidaSaldoEquivalenteActual");
         Meteor.call("ConsultarSaldoTodasMonedas");
         Meteor.call("EquivalenteDolarMinCompra");
-        */
+        /*
+        Meteor.call("ActualizaSaldoActual", 'TNT');
+        Meteor.call("ActualizaSaldoActual", 'USD');
+        /**/
         /*
             //Meteor.call("EjecucionInicial"); 
             Meteor.call("ListaTiposDeCambios", 2);
@@ -431,9 +433,10 @@ Meteor.methods({
             //USDEOSDT
             //EURSUSD
             //'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
-            var MONEDA='EOSDT'
+            /*var MONEDA='EOSDT'
             var prueba = Meteor.call("EquivalenteDolar", MONEDA, 1, 2);
             console.log("Valor de prueba ", prueba);/**/
+            
     },
 });
 

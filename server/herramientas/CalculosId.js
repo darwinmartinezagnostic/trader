@@ -40,6 +40,17 @@ Meteor.methods({
                             var nuevo_id = id_act+1;
                         };
                 break;
+                case 4:
+                        if (HistoralTransacciones.find({ _id : {$exists: true } }).count() === 0){
+                            var nuevo_id = 1;
+                        }
+                        else {
+                            var maximo_id = HistoralTransacciones.aggregate([{ $group: { _id: "MAX_ID", max_id : { $max: "$_id"}}}]);
+                            var v_val_id = maximo_id[0];
+                            var id_act = parseFloat(v_val_id.max_id);
+                            var nuevo_id = id_act+1;
+                        };
+                break;
             }
 
         
