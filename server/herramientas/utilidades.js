@@ -353,24 +353,19 @@ Meteor.methods({
         const URL_TIKT = CONSTANTES.ticker+TIPO_CAMBIO;        
         const precio =  Meteor.call("ConexionGet", URL_TIKT);
         var TipoCambio =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
-
+        
         if ( MONEDA_SALDO == TipoCambio[0].moneda_cotizacion ) {
             var ValTipoCambio = TipoCambio[0];
             var comision_hbtc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_hitbtc
             var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
             var MR_INVER = parseFloat(INVER).toFixed(9) - comision_hbtc.toFixed(9) - comision_merc.toFixed(9)
             var PrecioPromedio = ((parseFloat(precio.bid) + parseFloat(precio.ask))/2).toFixed(9).toString()
-            ////////////////////////////////////////////////////////////////////////////7
             var MejorPrecProm = PrecioPromedio
             var MejorPrecask = precio.ask.toString()
             var MejorPrecbid = precio.bid.toString()
             var M_INVERTIRPrecioPromedio = MR_INVER / parseFloat(MejorPrecProm)
             var M_INVERTIRMejorPrecask = MR_INVER / parseFloat(MejorPrecask)
             var M_INVERTIRMejorPrecbid = MR_INVER / parseFloat(MejorPrecbid)
-            console.log("Valor de M_INVERTIRPrecioPromedio: ", M_INVERTIRPrecioPromedio)
-            console.log("Valor de M_INVERTIRMejorPrecask: ", M_INVERTIRMejorPrecask)
-            console.log("Valor de M_INVERTIRMejorPrecbid: ", M_INVERTIRMejorPrecbid)
-            ////////////////////////////////////////////////////////////////////////////7
             var MejorPrec = MejorPrecask
             var M_INVERTIR = MR_INVER / parseFloat(MejorPrec)
             var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))
@@ -379,12 +374,10 @@ Meteor.methods({
         }else if ( MONEDA_SALDO == TipoCambio[0].moneda_base ) {
             var ValTipoCambio = TipoCambio[0];
             var MONT_INVERTIR = INVER
-            var PrecioPromedio = ((parseFloat(precio.bid) + parseFloat(precio.ask))/2).toFixed(9).toString()
-            //var MejorPrec = PrecioPromedio
             var comision_hbtc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_hitbtc
             var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
             var MejorPrec = precio.bid.toString()
-            resultados = { 'MontIversionCal' : MONT_INVERTIR.toFixed(9), 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc.toFixed(9), 'comision_mercado' : comision_merc.toFixed(9) }
+            resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
             return resultados;
         }
     },

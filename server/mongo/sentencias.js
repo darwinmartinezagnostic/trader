@@ -7,7 +7,7 @@ Meteor.methods({
 	'ActualizaTiposDeCambios':function( TMA, TC, EST, VA, CTCP, CTCA, IDM, FM, PM, TOM, TM ){
 		if ( TMA == 1 ) {
 			//console.log("Valores ecibidos: TMA: ",[TMA]+[", TC: "]+[TC]+[", EST: "]+[EST]+[", VA: "]+[VA]+[", CTCP: "]+[CTCP]);
-			//console.log([", CTCA: "]+[CTCA]+[", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]);
+			//console.log([", CTCA: "]+[CTCA]+[", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]+[TM]); 
 			TiposDeCambios.update(	{ tipo_cambio : TC },
 			                        { $set:{ 	estado: EST,
 			                        			activo : VA,
@@ -17,7 +17,7 @@ Meteor.methods({
 			                                    "periodo1.Base.fecha": FM,
 			                                    "periodo1.Base.precio" : PM,
 			                                    "periodo1.Base.tipo_operacion": TOM,
-			                                    "periodo1.Base.tendencia" : parseFloat(TM.toFixed(4)) }},
+			                                    "periodo1.Base.tendencia" : TM }},
 			                        { "multi" : true,"upsert" : true });
 		}
 		else {
@@ -32,7 +32,7 @@ Meteor.methods({
 			                                    "periodo1.Cotizacion.fecha": FM,
 			                                    "periodo1.Cotizacion.precio" : PM,
 			                                    "periodo1.Cotizacion.tipo_operacion": TOM,
-			                                    "periodo1.Cotizacion.tendencia" : parseFloat(TM.toFixed(4)) }},
+			                                    "periodo1.Cotizacion.tendencia" : TM }},
 			                        { "multi" : true,"upsert" : true });
 		}
 	},
@@ -60,7 +60,7 @@ Meteor.methods({
 			                                    	"periodo1.Base.fecha": FM,
 			                                    	"periodo1.Base.precio" : PM,
 			                                    	"periodo1.Base.tipo_operacion": TOM,
-			                                     	"periodo1.Base.tendencia" : parseFloat(TM.toFixed(4))}},
+			                                     	"periodo1.Base.tendencia" : TM}},
 			                                { "multi" : true,"upsert" : true });
 		}
 		else {
@@ -85,7 +85,7 @@ Meteor.methods({
 			                                    	"periodo1.Cotizacion.fecha": FM,
 			                                    	"periodo1.Cotizacion.precio" : PM,
 			                                    	"periodo1.Cotizacion.tipo_operacion": TOM,
-			                                     	"periodo1.Cotizacion.tendencia" : parseFloat(TM.toFixed(4))}},
+			                                     	"periodo1.Cotizacion.tendencia" : TM }},
 			                                { "multi" : true,"upsert" : true });
 		}
 	}

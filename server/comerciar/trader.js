@@ -656,7 +656,7 @@ Meteor.methods({
         });
     },
 
-    'borrarOrden':function(TIPO_CAMBIO){  //DELETE
+    'CancelarOrden':function(TIPO_CAMBIO){  //DELETE
         var CONSTANTES = Meteor.call("Constantes");
         var url = [CONSTANTES.ordenes];
         console.log('############################################');
@@ -664,6 +664,8 @@ Meteor.methods({
 
         var datos = new Object();
         datos.symbol=TIPO_CAMBIO;
+
+        //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
 
         OrdenBorrada = Meteor.call('ConexionDel',url, datos);
 
@@ -871,7 +873,6 @@ Meteor.methods({
                     }
                     break;
                     case 3:
-                    
                         var PeriodoFechaAct = v_TradActDat.timestamp;
                         var PeriodoId_hitbtcAct = v_TradActDat.id;
                         var PeriodoPrecioAct = Number(v_TradActDat.price);
@@ -880,12 +881,13 @@ Meteor.methods({
 
                         try{
                                 var ResetTipCamb = TiposDeCambios.aggregate([  { $match : { tipo_cambio : TIPO_CAMBIO }} ]);
-                                var MB = ResetTipCamb.moneda_base;
-                                var MC = ResetTipCamb.moneda_cotizacion;
+                                var MB = ResetTipCamb[0].moneda_base;
+                                var MC = ResetTipCamb[0].moneda_cotizacion;
                         }
                         catch (error){
                                 Meteor.call("ValidaError", error, 2);
                         };
+                        console.log(" Valor de MB: ", MB)
 
                         if ( MB === MONEDA_SALDO ) {
                             TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
@@ -923,7 +925,7 @@ Meteor.methods({
     },
     
     'GuardarOrden': function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE){
-        
+        console.log(" Valores recibidos: ", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE)
         var CONSTANTES = Meteor.call("Constantes");
         var Negociaciones = ORDEN.tradesReport
         var ComisionTtl = 0
@@ -932,6 +934,7 @@ Meteor.methods({
             var Reporte = Negociaciones[CRPT];
             ComisionTtl +=  parseFloat(Reporte.fee)
         }
+        console.log(" Valor de Reporte: ", Reporte)
 
         var Comision = ComisionTtl.toString()
         var precio = ORDEN.price
@@ -950,6 +953,7 @@ Meteor.methods({
         var Transaccion = Meteor.call("ConexionGet", url_transaccion);
         var transa = Transaccion[0];
         var V_Id_Transhitbtc = transa.orderId
+        console.log(" Valor de transa: ", transa)
 
         Meteor.call('GuardarLogEjecucionTrader', ' CrearNuevaOrder: Estoy en: Estado_Orden === "filled"');
 

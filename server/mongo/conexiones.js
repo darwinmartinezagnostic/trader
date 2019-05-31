@@ -251,23 +251,94 @@ Meteor.methods({
         }
     },
 
-    'ConexionDel':function(V_URL,datos) {
-        var CONSTANTES = Meteor.call("Constantes");
-        try {
+    async ConexionDel (V_URL,datos) {       
 
-            var V_OBTENIDO = 0
+        var request = require('request-promise')
 
-            while( V_OBTENIDO.statusCode !== 200 ){
-                var V_OBTENIDO = HTTP.del( V_URL,{auth:CONSTANTES.apikey,data:datos});
-                return V_OBTENIDO;
+        global.Headers = fetch.Headers;
+        global.formData = fetch.formData;
+
+        var CONSTANTES = Meteor.call("Constantes");  
+        const MS =  CONSTANTES.TimeoutEjecucion * 60000
+        const ak = CONSTANTES.apikey
+        const user = CONSTANTES.user;
+        const pswrd = CONSTANTES.passwr;
+        let url = V_URL
+        console.log("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
+        var salida = 0;
+        ordenCliente = "1" 
+
+        var parametros = {
+                        url: V_URL,
+                        method: 'DEL',
+                        body: datos,
+                        auth: {
+                            'user': user,
+                            'pass': pswrd
+                        }
+                    };
+
+        const token = function() { 
+            return {
+                cancel: function () {this.cancelado = true},
+                cancelado: false
             }
         }
-        catch (error){
-            if ( /url must be absolute and start with http:/.test(error) || /Parameter "url" must be a string, not object/.test(error) ) {
-                Meteor.call('ValidaError','Conexion_api_fallida', 1);
+
+        async function TimeoutEjecucion (pr, MS) {
+        await Promise.race([pr, new Promise((_, rej) =>
+                setTimeout(rej, MS)
+            )])
+        }
+
+        async function CancelaEjecucionConexion (iterf, token){
+            await iterf;
+            if (token.cancelado)  {
+              throw Error('Ejcución Cancelada');
             }
-            else{
-                Meteor.call('ValidaError',error, 1);
+        }
+        
+        while( salida.status !== 200 ){
+            console.log("Estoy en while( salida.status !== 200 )")
+            const respuesta = request(parametros)
+                                        .then(function (response) {
+                                            console.log ("Valor de response: ",response)
+                                            resp = JSON.parse(response)
+                                            return resp
+                                            })
+                                        .catch(function(error) {
+                                            ErrorConseguido = JSON.parse(error.error)
+                                            console.error("Valor de catch ErrorConseguido: ", ErrorConseguido);
+                                            return ErrorConseguido
+                                            });
+            const tok = token();            
+            const EstadoCancelacion = CancelaEjecucionConexion ( respuesta, tok);            
+            let tpr = await TimeoutEjecucion(EstadoCancelacion, MS)
+            const salida = await respuesta
+
+            if ( salida.id ) {
+                console.log ("Valor de salida2", salida)
+                return salida
+            }else if ( salida.error.code !== 200 ) {
+                console.log ("Valor de salida3", salida)
+                const mensaje = salida.error.message
+                console.log("Valor de mensaje: ", mensaje)
+                
+                if ( mensaje === "Insufficient funds") {
+                    mensj = { status :"Insufficientfunds"}
+                    return mensj
+                }else 
+                if ( mensaje === "Duplicate clientOrderId") {
+                    mensj = { status :"DuplicateclientOrderId"}
+                    return mensj
+                }else 
+                if ( mensaje === "error is not defined") {
+                    mensj = { status :"errorisnotdefined"}
+                    return mensj
+                }else {
+                    console.log("Valor de salida.error: ", salida.error)
+                    return salida.error
+                }
             }
         }
     },

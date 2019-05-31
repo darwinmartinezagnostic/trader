@@ -443,7 +443,7 @@ Jobs.register({
 	    	Meteor.call("validaMonedasActivas");
 	    	Meteor.call("ListaTiposDeCambios",2);
 	    	Meteor.call("validaTiposDeCambiosActivos");
-	    	Meteor.call("EquivalenteDolarMinCompra");
+	    	//Meteor.call("EquivalenteDolarMinCompra");
 
 
 	    	Jobs.run("JobsFrecuenciaDiaria", { 
@@ -467,6 +467,115 @@ Jobs.register({
     	}
     	else {
     		this.failure(ejecucionJobsFrecuenciaDiaria);
+    	}
+    },
+
+    "JobsValidaEstadoGuardaOrden": function( TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, IdTransaccionActual, ID_LOTE, TP, ESTADO, CAL_INVER, Orden ){
+    	try{
+    		var Estado_Orden = ESTADO
+    		var RecalcIverPrec = CAL_INVER
+
+    		console.log(" JobsValidaEstadoGuardaOrden - Recibí valores: ", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, IdTransaccionActual, ID_LOTE, TP, ESTADO, CAL_INVER, Orden)
+	    	while( Estado_Orden !== "filled" ){
+	            console.log('Estoy en el while')
+	            console.log(' Valor de Estado_Orden: ', Estado_Orden)
+	            fecha = moment (new Date());
+	            if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" || Estado_Orden === "errorisnotdefined" ) {
+	            	console.log(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" || Estado_Orden === "errorisnotdefined" )')
+	                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);                
+	                Meteor.call('sleep', 4);
+	                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FIN ESPERA: ']+[fecha._d]);
+	                const Resultado = Meteor.call("ValidarEstadoOrden", IdTransaccionActual)
+	                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
+	                GananciaPerdida.insert({
+	                                            Operacion : {   ID_LocalAct : IdTransaccionActual,
+	                                                            Id_Lote: ID_LOTE,
+	                                                            Tipo : TP,
+	                                                            TipoCambio : TIPO_CAMBIO,
+	                                                            Precio : RecalcIverPrec.MejorPrecCal,
+	                                                            Status : 'En seguimiento',
+	                                                            Razon : Estado_Orden,
+	                                                            FechaCreacion : fecha._d,
+	                                                            FechaActualizacion : fecha._d}
+	                                        });
+
+	                Monedas.update({ "moneda": MONEDA_SALDO , "activo": "S"}, {    
+								$set: {
+								        "activo": "N"
+								    }
+								});
+
+	                var Estado_Orden = Resultado;                  
+	            }
+
+	            if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" ) {
+	                console.log(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )')
+	                GananciaPerdida.insert({
+	                                            Operacion : {   ID_LocalAct : IdTransaccionActual,
+	                                                            Id_Lote: ID_LOTE,
+	                                                            Tipo : TP,
+	                                                            TipoCambio : TIPO_CAMBIO,
+	                                                            Precio : RecalcIverPrec.MejorPrecCal,
+	                                                            Status : 'Fallido',
+	                                                            Razon : Estado_Orden,
+	                                                            FechaCreacion : fecha._d,
+	                                                            FechaActualizacion : fecha._d}
+	                                        });
+	                if ( Estado_Orden === "DuplicateclientOrderId") {	
+	                	console.log(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")')
+		                Meteor.call("GuardarLogEjecucionTrader", [' CrearNuevaOrder: Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
+		                Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
+	                }
+	                break
+	            }
+	            if ( Estado_Orden === "Insufficientfunds" ) {
+
+	                const VerifOrdenAbierta = Meteor.call("ValidarEstadoOrden", IdTransaccionActual)
+	                var Estado_Orden = VerifOrdenAbierta;
+	            } 
+	        }
+
+	        if ( Estado_Orden === "filled" ) {
+	            console.log(" if ( Estado_Orden === filled ) : Voy a Guardar")
+	            console.log(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+	            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+	            console.log(" if ( Estado_Orden === filled ) : Ya guardé")
+	            console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ListaTradeoActual',TIPO_CAMBIO, 3)
+	            Meteor.call('ListaTradeoActual',TIPO_CAMBIO, 3 );
+	            console.log(" if ( Estado_Orden === filled ) : ListaTradeoActual Ya terminé")
+	            console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ValidaSaldoEquivalenteActual',MON_B)
+	            Meteor.call("ValidaSaldoEquivalenteActual", MON_B);
+	            console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ValidaSaldoEquivalenteActual',MON_C)
+	            Meteor.call("ValidaSaldoEquivalenteActual", MON_C);
+	            console.log(" if ( Estado_Orden === filled ) : Voy a Cacular nuevo ID para collecion HistoralTransacciones")
+	            var IdTraccion = Meteor.call('CalculaId', 4);
+	            console.log(" if ( Estado_Orden === filled ) : Listo")
+	            console.log(" if ( Estado_Orden === filled ) : Voy a Guardar en HistoralTransacciones")
+	            try{
+	                HistoralTransacciones.insert({ _id : IdTraccion, ID_LocalAct : IdTransaccionActual, Id_Lote: ID_LOTE, fecha : fecha._d , tipo_cambio : TIPO_CAMBIO, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : CANT_INVER, precio_operacion : RecalcIverPrec.MejorPrecCal, estado : "Exitoso" });
+	                Monedas.update({ "moneda": MONEDA_SALDO , "activo": "N"}, {    
+								$set: {
+								        "activo": "S"
+								    }
+								});
+	                
+	                console.log(" if ( Estado_Orden === filled ) : Listo ya guardé")
+	            }catch(e){
+	                console.log(" if ( Estado_Orden === filled ) : Fallé al guardar")
+	            }
+	        }
+
+			var ejecucionJobsValidaEstadoGuardaOrden = 0
+		}
+		catch(error){
+			var ejecucionJobsValidaEstadoGuardaOrden = 1
+		}
+
+		if ( ejecucionJobsValidaEstadoGuardaOrden === 0) {
+    		return this.success(ejecucionJobsValidaEstadoGuardaOrden);
+    	}
+    	else {
+    		this.failure(ejecucionJobsValidaEstadoGuardaOrden);
     	}
     }
 

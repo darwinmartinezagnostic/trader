@@ -43,17 +43,22 @@ Meteor.methods({
 
     'ConsultaOrdenesAbiertas':function(TIPO_CAMBIO){
         var CONSTANTES = Meteor.call("Constantes");
-        var url_orden = [CONSTANTES.ordenes];
+        var url_orden = [CONSTANTES.ordenes]+['?symbol=']+[TIPO_CAMBIO]
         var OrdeneAbiertas = Meteor.call("ConexionGet",url_orden);
+        var OrdAbi = OrdeneAbiertas[0]
 
-        if ( OrdeneAbiertas === undefined ) {
+        if ( OrdAbi === undefined ) {
             console.log('--------------------------------------------');
             Meteor.call("GuardarLogEjecucionTrader", "     --- No hay ordenes Abiertas ---");
             console.log('--------------------------------------------');
+            var Estado_Orden ='Fallido'
         }
         else{
             console.log("Ordenes Activas: ", OrdeneAbiertas)
+            var Estado_Orden = OrdAbi.status
+            console.log('Valor de Estado_Orden', Estado_Orden)
         }
+        return Estado_Orden
     },
 
     'ConsultarSaldoTodasMonedas':function(){
@@ -242,14 +247,17 @@ Meteor.methods({
     'ValidarEstadoOrden': function(ORDEN){
         var CONSTANTES = Meteor.call("Constantes");
         console.log('Estoy en ValidarEstadoOrden')
-        var url_transaccion=[CONSTANTES.HistOrdenes]+['?clientOrderId=']+[ORDEN]
-        //var url_transaccion=[CONSTANTES.HistOrdenes]+['?clientOrderId=']+[ORDEN]
+        var url_transaccion=[CONSTANTES.ordenes]+['?clientOrderId=']+[ORDEN]+['?wait=300']
         console.log('Valor de url_transaccion', url_transaccion)
 
         const Trns = Meteor.call("ConexionGet", url_transaccion)     
         var trans = Trns[0];
-        //console.log('Valor de trans', trans)
-        var Estado_Orden = trans.status
+        console.log('Valor de trans', trans)
+        if ( trans === undefined ) {
+            var Estado_Orden = 'Fallido'
+        }else{
+            var Estado_Orden = trans.status
+        }
         console.log('Valor de Estado_Orden', Estado_Orden)
         return Estado_Orden
     },

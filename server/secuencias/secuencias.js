@@ -85,19 +85,18 @@ Meteor.methods({
 
         try {
             var Monedas_Saldo = Monedas.aggregate([
-                        { $match : {"saldo.tradeo.activo" : { $gt : 0 }}},
+                        { $match : {"saldo.tradeo.activo" : { $gt : 0 }, "activo" : "S"}},
                         { $sort : {"saldo.tradeo.equivalencia":-1} }
                     ]);
         }
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
-            
+
         if ( Monedas_Saldo[0] === undefined ) {
             Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ninguna moneda con saldo disponible para invertir ']);
         }
         else{
-
             for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
                 var moneda_saldo =  Monedas_Saldo[CMS];
                 Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[moneda_saldo.moneda]);
@@ -112,7 +111,6 @@ Meteor.methods({
                         Meteor.call("GuardarLogEjecucionTrader", [' Moneda con Saldo: ¡ Listo ! ']);
                     }
                 };
-                //LIMPIANDO LA COLECCION TEMPORAL "TempTiposCambioXMoneda"
                 do{
                     var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda, moneda_saldo.saldo.tradeo.activo);
                 
@@ -183,13 +181,14 @@ Meteor.methods({
             catch (error){
                     Meteor.call("ValidaError", error, 2);
             };
-                    if ( V_ResetTipCambMB === undefined ) {
-                        var V_ResetTipCambMB = 0;
-                    }
 
-                    if ( V_ResetTipCambMC === undefined ) {
-                        var V_ResetTipCambMC = 0;
-                    }
+            if ( V_ResetTipCambMB === undefined ) {
+                var V_ResetTipCambMB = 0;
+            }
+
+            if ( V_ResetTipCambMC === undefined ) {
+                var V_ResetTipCambMC = 0;
+            }
 
             console.log('############################################');
             console.log('--------------------------------------------');
@@ -201,25 +200,22 @@ Meteor.methods({
 
             if ( MB === MONEDA_SALDO && V_ResetTipCambMB === 0 ) {
                 var V_EJEC = 2
-                //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " V_EJEC: ", V_EJEC, " MONEDA_SALDO: ", MONEDA_SALDO);
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
             else if ( MB === MONEDA_SALDO && V_ResetTipCambMB === 1 ) {
-                var V_EJEC = 3
-                //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " V_EJEC: ", V_EJEC, " MONEDA_SALDO: ", MONEDA_SALDO);
+                //var V_EJEC = 3
+                var V_EJEC = 2
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
             else if ( MC === MONEDA_SALDO && V_ResetTipCambMC === 0 ) {
                 var V_EJEC = 2
-                //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " V_EJEC: ", V_EJEC, " MONEDA_SALDO: ", MONEDA_SALDO);
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
             else if ( MC === MONEDA_SALDO && V_ResetTipCambMC === 1 ) {
-                var V_EJEC = 3
-                //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " V_EJEC: ", V_EJEC, " MONEDA_SALDO: ", MONEDA_SALDO);
+                //var V_EJEC = 3
+                var V_EJEC = 2
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
-
 
             Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
                 
