@@ -82,13 +82,22 @@ Meteor.methods({
         console.log('        ',fecha._d);
         console.log('---------- SECUENCIA PERIODO 1 ------------');
         console.log(' ');
-
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*
         try {
             var Monedas_Saldo = Monedas.aggregate([
                         { $match : {"saldo.tradeo.activo" : { $gt : 0 }, "activo" : "S"}},
                         { $sort : {"saldo.tradeo.equivalencia":-1} }
                     ]);
         }
+        /**/
+        try {
+            var Monedas_Saldo = Monedas.aggregate([
+                        { $match : {"saldo.tradeo.equivalencia" : { $gt : 0 }, "activo" : "S"}},
+                        { $sort : {"saldo.tradeo.equivalencia":-1} }
+                    ]);
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
