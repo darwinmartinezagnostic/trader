@@ -549,6 +549,8 @@ Meteor.methods({
 
             console.log("Valor de ValorOferta", ValorOferta);
             console.log("Valor de ValorDemanda", ValorDemanda);
+            console.log("Valor de ValorOferta", parseFloat(ValorOferta));
+            console.log("Valor de ValorDemanda", parseFloat(ValorDemanda));
 
             if ( ValorOferta === null || ValorDemanda === null ) {
                 Meteor.call("GuardarLogEjecucionTrader", "Entre por if ( ValorOferta === null || ValorDemanda === null ");
@@ -556,7 +558,10 @@ Meteor.methods({
                 var Existencia = 0;
             }else{
                 var sumatoria = parseFloat(ValorOferta) + parseFloat(ValorDemanda);
-                var promedio = sumatoria/2;
+                var promedio = (sumatoria/2).toString();
+                console.log("Valor de promedio", promedio);
+                var prueba = Meteor.call( "CombierteNumeroExpStr", promedio)
+                console.log("Valor de prueba", prueba); 
                 var CantPromedio = ValorOferta.toString().trim().length ;
                 var ValStrnPromedio = promedio.toString().substr(0, CantPromedio);
                 var ValFinPromedio = parseFloat(ValStrnPromedio);

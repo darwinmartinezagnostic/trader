@@ -459,13 +459,17 @@ Meteor.methods({
             //Meteor.call('EquivalenteDolar', 'KRWB', parseFloat(1397.00), 2)
             //MONEDA = 'KRWB'
             /*
-            MONEDA = 'GUSD'
+            VALOR = 4.2405e-8
+            var prueba = Meteor.call('CombierteNumeroExpStr', VALOR) 
+            console.log("Valor de prueba: ", prueba)
+            /**/
+            MONEDA = 'PITCH'
             var DatosMoneda = Monedas.find( { moneda : MONEDA }).fetch()
             var SaldoMoneda = DatosMoneda[0].saldo.tradeo.activo
-            var prueba = Meteor.call('EquivalenteDolar', MONEDA, parseFloat(SaldoMoneda), 2) 
-            console.log("Valor de prueba: ", prueba) 
+            var prueba1 = Meteor.call('EquivalenteDolar', MONEDA, parseFloat(SaldoMoneda), 2) 
+            console.log("Valor de prueba1: ", prueba1) 
             /**/
-            /*
+            /* 
             MONEDAS = Monedas.aggregate([
                         { $match : {"saldo.tradeo.activo" : { $gt : 0 }, "activo" : "S"}},
                         { $sort : {"saldo.tradeo.equivalencia":-1} }

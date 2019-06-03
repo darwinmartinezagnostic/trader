@@ -44,13 +44,20 @@ Meteor.methods({
         if(VALOR.toString().indexOf('e') != -1){
             if(VALOR.toString().indexOf('.') != -1){
                 NuevoVALOR = VALOR.toString().replace(".", "");
-                //console.log("Valor de NuevoVALOR", NuevoVALOR);
+                console.log("Valor de VALOR", VALOR);
+                console.log("Valor de NuevoVALOR", NuevoVALOR);
                 separador = "-"
                 V_separador = NuevoVALOR.toString().split(separador);
-                //console.log("Valor de V_separador", V_separador);
+                console.log("Valor de V_separador", V_separador);
                 valor_exp = parseFloat(V_separador[1]);
                 ValorAnalizar = parseFloat(NuevoVALOR).toFixed(valor_exp);
-                //console.log("Valor de ValorAnalizar", ValorAnalizar);
+                console.log("Valor de ValorAnalizar", ValorAnalizar);
+
+
+
+                ver = VALOR.toString()
+                console.log("Valor de ver", ver);
+
             }else{
                 separador = "-"
                 V_separador = VALOR.toString().split(separador);
@@ -123,7 +130,7 @@ Meteor.methods({
     },
 
     'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
-        //console.log(" EquivalenteDolar: Val recib: ", "MONEDA: -",  MONEDA, "- ,S_MOND: -", S_MOND, "- ,TIPO_ACCION: ", TIPO_ACCION)        
+        console.log(" EquivalenteDolar: Val recib: ", "MONEDA: -",  MONEDA, "- ,S_MOND: -", S_MOND, "- ,TIPO_ACCION: ", TIPO_ACCION)        
         var SALDO = parseFloat(S_MOND);
         if ( SALDO === 0 ) {
             var EquivalenciaActual = 0;
@@ -133,9 +140,10 @@ Meteor.methods({
                 var EquivalenciaActual = parseFloat(SALDO);
             }else{
                 var ExisteTipoCambio = TiposDeCambios.find({ $or: [ { moneda_base : MONEDA }, { moneda_cotizacion : MONEDA }]},{ _id : 0, tipo_cambio : 1}).count();
-                
+                console.log(" Valor de ExisteTipoCambio", ExisteTipoCambio)
                 if ( ExisteTipoCambio !== 0 ) {
                     var DIRECTO = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).count();
+                    console.log(" Valor de DIRECTO", DIRECTO)
                     if ( DIRECTO !== 0 ) {
                         var PrecioDirecto = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).fetch();
                         var TipoCambioObtenido = PrecioDirecto[0].tipo_cambio;
@@ -235,32 +243,49 @@ Meteor.methods({
                                 }else if ( MONEDA === MCotizacion ) {
                                     var SaldEquivActualAux = ( parseFloat(SALDO) / ValorPromedioObtenido.Promedio );
                                 }
-
-
                             break;
                             case 2:
                                 var ValorPromedioObtenido = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
 
                                 if ( MONEDA === MBase ) {
-                                    var SaldEquivActualAux = ( parseFloat(SALDO) * ValorPromedioObtenido.Promedio ) ;
+                                    console.log(" Estoy en  MONEDA === MBase ")
+                                    var SaldEquivActualAux = ( parseFloat(SALDO) * parseFloat(ValorPromedioObtenido.Promedio) ) ;
+                                    console.log(" Valor de SaldEquivActualAux",  SaldEquivActualAux, "= (", parseFloat(SALDO)  ,"*", parseFloat(ValorPromedioObtenido.Promedio) )
                                 }else if ( MONEDA === MCotizacion ) {
-                                    var SaldEquivActualAux = ( parseFloat(SALDO)  / ValorPromedioObtenido.Promedio);
+                                    console.log(" Estoy en  MONEDA === MCotizacion ")
+                                    var SaldEquivActualAux = ( parseFloat(SALDO)  / parseFloat(ValorPromedioObtenido.Promedio) );
+                                    console.log(" Valor de SaldEquivActualAux",  SaldEquivActualAux, "= (", parseFloat(SALDO)  ,"/", parseFloat(ValorPromedioObtenido.Promedio) )
                                 }
                             break;
                         }
+
                         var TCUSDAux = TiposDeCambios.findOne({ $and: [{ $or: [ { moneda_base : MonedaEquivalenteAux}, { moneda_cotizacion : MonedaEquivalenteAux }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] })
                         var TipoCambioObtenidoAux = TCUSDAux.tipo_cambio
-                        var ValorPromedioObtenidoAux = Meteor.call('LibroDeOrdenes', TipoCambioObtenidoAux);
-
+                        var MBaseAux = TCUSDAux.moneda_base
+                        var MCotiAux = TCUSDAux.moneda_cotizacion
                         var MinInvAux=TCUSDAux.valor_incremento;
-                        var TMinInvAux = MinInvAux.toString().trim().length
-                        var SaldoMinTCAux= SaldEquivActualAux.toString().trim().substr(0, TMinInv)
 
-                        if ( MonedaEquivalenteAux === MBase ) {
-                            var EquivalenciaActual = ( parseFloat(SaldoMinTCAux * ValorPromedioObtenidoAux.Promedio) ) ;
-                            console.log(" Calculando: ", EquivalenciaActual, "= (" ,parseFloat(SaldoMinTCAux), "*" ,ValorPromedioObtenidoAux.Promedio )
-                        }else if ( MonedaEquivalenteAux === MCotizacion ) {
-                            var EquivalenciaActual = ( parseFloat(SaldoMinTCAux) / ValorPromedioObtenidoAux.Promedio );
+                        var ValorPromedioObtenidoAux = Meteor.call('LibroDeOrdenes', TipoCambioObtenidoAux);
+                        console.log(" Valor de TipoCambioObtenidoAux: ", TipoCambioObtenidoAux)
+
+                        var TMinInvAux = MinInvAux.toString().trim().length
+                        console.log(" Valor de MinInvAux: ", MinInvAux)
+                        var SaldoMinTCAux= SaldEquivActualAux.toString().trim().substr(0, TMinInv)
+                        console.log(" Valor de SaldEquivActualAux: ", SaldEquivActualAux)
+                        console.log(" Valor de SaldoMinTCAux: ", SaldoMinTCAux)
+
+                        console.log(" Valor de MonedaEquivalenteAux: ", MonedaEquivalenteAux)
+
+                        if ( MonedaEquivalenteAux === MBaseAux ) {
+                            console.log(" Estoy en  MONEDA === MBase ")
+                            var EquivalenciaActual = ( parseFloat(SaldEquivActualAux) * parseFloat(ValorPromedioObtenidoAux.Promedio) ) ;
+                            console.log(" Calculando: ", EquivalenciaActual.toString(), "= (" ,parseFloat(SaldEquivActualAux), "*" ,ValorPromedioObtenidoAux.Promedio )
+                        }else if ( MonedaEquivalenteAux === MCotiAux ) {
+                            console.log(" Estoy en  MONEDA === MCotizacion ")
+                            var EquivalenciaActual = ( parseFloat(SaldEquivActualAux) / parseFloat(ValorPromedioObtenidoAux.Promedio) );
+                            console.log(" Calculando: ", EquivalenciaActual.toString(), "= (" ,parseFloat(SaldEquivActualAux), "/" ,ValorPromedioObtenidoAux.Promedio )
+                            var prueba = Meteor.call('CombierteNumeroExpStr', EquivalenciaActual) 
+                            console.log("Valor de prueba: ", prueba) 
                         }                   
                     }
                 }else if ( ExisteTipoCambio === 0 ){
