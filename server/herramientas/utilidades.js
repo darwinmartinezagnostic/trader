@@ -123,35 +123,27 @@ Meteor.methods({
     },
 
     'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
-        //Meteor.call('sleep', 1);
-        console.log(" EquivalenteDolar: Val recib: ", "MONEDA: -",  MONEDA, "- ,S_MOND: -", S_MOND, "- ,TIPO_ACCION: ", TIPO_ACCION)
-        
+        //console.log(" EquivalenteDolar: Val recib: ", "MONEDA: -",  MONEDA, "- ,S_MOND: -", S_MOND, "- ,TIPO_ACCION: ", TIPO_ACCION)        
         var SALDO = parseFloat(S_MOND);
-        console.log(" Valor de DATO: ", SALDO)
         if ( SALDO === 0 ) {
-            console.log(" Estoy en 1")
             var EquivalenciaActual = 0;
-            console.log(" Valor de EquivalenciaActual 1:", EquivalenciaActual)
         }else{
 
             if ( MONEDA == 'USD' ) {
-                console.log(" Estoy en 2")
                 var EquivalenciaActual = parseFloat(SALDO);
-                console.log(" Valor de EquivalenciaActual 2:", EquivalenciaActual)
             }else{
-                console.log(" Estoy en 3")
                 var ExisteTipoCambio = TiposDeCambios.find({ $or: [ { moneda_base : MONEDA }, { moneda_cotizacion : MONEDA }]},{ _id : 0, tipo_cambio : 1}).count();
-                console.log("Valor de ExisteTipoCambio", ExisteTipoCambio);
-
+                
                 if ( ExisteTipoCambio !== 0 ) {
-                    console.log(" Estoy en 4")
                     var DIRECTO = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).count();
-                    console.log(" Valor de DIRECTO:", DIRECTO)
                     if ( DIRECTO !== 0 ) {
-                        console.log(" Estoy en 5")
-                        var precioAux = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).fetch();
-                        var TipoCambioObtenido = precioAux[0].tipo_cambio;
-                        console.log(" Valor de TipoCambioObtenido: ", TipoCambioObtenido)
+                        var PrecioDirecto = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).fetch();
+                        var TipoCambioObtenido = PrecioDirecto[0].tipo_cambio;
+                        var MB = PrecioDirecto[0].moneda_base;
+                        var MC = PrecioDirecto[0].moneda_cotizacion;
+                        var MinInv=PrecioDirecto[0].valor_incremento;
+                        var TMinInv = MinInv.toString().trim().length
+                        var SaldoMinTC= SALDO.toString().trim().substr(0, TMinInv)
                         switch (TIPO_ACCION){
                             case 1:
                                 console.log(" Estoy en 6")
@@ -175,141 +167,110 @@ Meteor.methods({
                             break;
                         }
 
-
                         var TipoCambioValido = ValorPromedio.Existe
                         console.log(" Valor de TipoCambioValido: ", TipoCambioValido)
                         if ( TipoCambioValido !== 1 ) {
-                            console.log(" Estoy en 9")
-                            console.log('############################################');
-                            Meteor.call("GuardarLogEjecucionTrader", ['   TIPO DE CAMBIO NO SE TOMARÁ EN CUENTA: ']+[TipoCambioObtenido]);
-                            console.log('############################################');
                             var EquivalenciaActual = 0;
-                            console.log(" Valor de EquivalenciaActual 3: ", EquivalenciaActual)
                             TiposDeCambios.update({ tipo_cambio: TipoCambioObtenido }, {    
                                                         $set: {
                                                                 habilitado: 0
                                                             }
                                                         }, {"multi" : true,"upsert" : true});
                         }else{
-                            console.log(" Estoy en 10")
-                            var EquivalenciaActual = (parseFloat(SALDO) * ValorPromedio.Promedio ) / 1;
-                            console.log(" Valor de EquivalenciaActual 4: ", EquivalenciaActual)
+                            if ( MONEDA === MB ) {
+                                console.log(" Estoy en ( MONEDA === MB )")
+                                var EquivalenciaActual = ( parseFloat(SaldoMinTC) * parseFloat(ValorPromedio.Promedio) ) ;
+                                console.log(" Calculando: ", EquivalenciaActual, "= (" , parseFloat(SaldoMinTC) , "*" ,parseFloat(ValorPromedio.Promedio) )
+                            }else if ( MONEDA === MC ) {
+                                console.log(" Estoy en ( MONEDA === MC )")
+                                var EquivalenciaActual = ( parseFloat(SaldoMinTC) / parseFloat(ValorPromedio.Promedio) );
+                                console.log(" Calculando: ", EquivalenciaActual, "= (" , parseFloat(SaldoMinTC), "/" , parseFloat(ValorPromedio.Promedio))
+                            }
                         }
                     }else {
-                        console.log("ESTOY EN EL ELSE DE if ( DIRECTO !== 0 ");
-
-                        var TiposCambiosMoneda = TiposDeCambios.find({ $or: [ { moneda_base : MONEDA }, { moneda_cotizacion : MONEDA }]},{}).fetch();
-                        console.log(" Estoy en TiposCambiosMoneda: ", TiposCambiosMoneda)
+                        var TiposCambiosMoneda = TiposDeCambios.find({ $or: [ { moneda_base : MONEDA }, { moneda_cotizacion : MONEDA } ]},{}).fetch();
+                        
                         for ( CTCDM = 0, TTCDM = TiposCambiosMoneda.length; CTCDM < TTCDM; CTCDM++ ) {
-                            console.log(" Estoy en 11")
-                            V_TiposCambiosMoneda = TiposCambiosMoneda[CTCDM];
-                            var MBase = V_TiposCambiosMoneda.moneda_base;
-                            console.log(" Valor de MBase: ", MBase)
+                            var V_TiposCambiosMoneda = TiposCambiosMoneda[CTCDM];
                             var MCotizacion = V_TiposCambiosMoneda.moneda_cotizacion;
-                            console.log(" Valor de MCotizacion: ", MCotizacion)
+                            var MBase = V_TiposCambiosMoneda.moneda_base;
                             var TipoCambioObtenido = V_TiposCambiosMoneda.tipo_cambio;
-                            console.log(" Valor de TipoCambioObtenido: ", TipoCambioObtenido)
 
-                            switch (TIPO_ACCION){
-                                case 1:
-                                    console.log(" Estoy en 12")
-                                    var ValorObtenido = EquivalenciasDol.aggregate([    { $match: { tipo_cambio : TipoCambioObtenido }}, 
-                                                                                        { $project: { _id : 0, Promedio : 1 , Existe : 1 } }
-                                                                                    ]);
-                                    var ValorPromedioObtenido = ValorObtenido[0]
-                                    console.log(" Valor de ValorPromedioObtenido 1: ", ValorPromedioObtenido)
+                            var MinInv=V_TiposCambiosMoneda.valor_incremento;
+                            var TMinInv = MinInv.toString().trim().length
+                            var SaldoMinTC= SALDO.toString().trim().substr(0, TMinInv)
 
-                                    if ( ValorPromedio === undefined ) {
-                                        console.log(" Estoy en 13")
-                                        var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
-                                        console.log(" Valor de ValorPromedio 4: ", ValorPromedio)
-                                    }
-                                break;
-                                case 2:
-                                    console.log(" Estoy en 14")
-                                    var ValorPromedioObtenido = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
-                                    console.log(" Valor de ValorPromedioObtenido 2: ", ValorPromedioObtenido)
-                                break;
-                            }
 
-                            var TipoCambioValido = ValorPromedioObtenido.Existe
-                            console.log(" Valor de TipoCambioValido: ", TipoCambioValido)
-
-                            if ( TipoCambioValido === 0 ) {
-                                console.log(" Estoy en 15")
-                                console.log('############################################');
-                                Meteor.call("GuardarLogEjecucionTrader", ['   TIPO DE CAMBIO NO SE TOMARÁ EN CUENTA: ']+[TipoCambioObtenido]);
-                                console.log('############################################');
-                                var EquivalenciaActual = 0;
-
-                                TiposDeCambios.update({ tipo_cambio: TipoCambioObtenido }, {    
-                                                        $set: {
-                                                                habilitado: 0
-                                                            }
-                                                        }, {"multi" : true,"upsert" : true});
-                            }else{
-                                console.log(" Estoy en 16")
-                                var EquivalenciaSaldoMonedaAuxi = (parseFloat(SALDO)  * parseFloat(ValorPromedioObtenido.Promedio) ) / 1;
-                                console.log(" Valor de EquivalenciaSaldoMonedaAuxi: ", EquivalenciaSaldoMonedaAuxi)
-                                var ExistMBUSD = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MBase}, { moneda_cotizacion : MBase }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).count();
-                                console.log(" Valor de ExistMBUSD: ", ExistMBUSD)
-                                var ExistMCUSD = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MCotizacion}, { moneda_cotizacion : MCotizacion }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).count();
-                                console.log(" Valor de ExistMCUSD: ", ExistMCUSD)
-                                var ExistMBBTC = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MBase}, { moneda_cotizacion : MBase }]}, { $or: [ { moneda_base : 'BTC' }, { moneda_cotizacion : 'BTC' }]} ] }).count();
-                                console.log(" Valor de ExistMBBTC: ", ExistMBBTC)
-                                var ExistMCBTC = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MCotizacion}, { moneda_cotizacion : MCotizacion }]}, { $or: [ { moneda_base : 'BTC' }, { moneda_cotizacion : 'BTC' }]} ] }).count();
-                                console.log(" Valor de ExistMCBTC: ", ExistMCBTC)
-
-                                if ( ExistMBUSD !== 0 && ValorPromedioObtenido.Promedio === 1 ) {
-                                    console.log(" Estoy en 17")
-                                    precioAux = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MBase }, { moneda_cotizacion : MBase }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).fetch();
-                                    var TipoCambio = precioAux[0].tipo_cambio;
-                                    console.log(" Valor de TipoCambio: ", TipoCambio)
-                                    var ValorPromedioFinal = parseFloat( Meteor.call('LibroDeOrdenes', TipoCambio) );
-                                    console.log(" Valor de ValorPromedioFinal: ", ValorPromedioFinal)
-                                    var EquivalenciaActual = ( EquivalenciaSaldoMonedaAuxi * ValorPromedioFinal ) / 1;
-                                    console.log(" Valor de EquivalenciaActual 5: ", EquivalenciaActual)
-                                }else if ( ExistMCUSD !== 0 ) {
-                                    console.log(" Estoy e 18")
-                                    precioAux = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MCotizacion }, { moneda_cotizacion : MCotizacion }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).fetch();
-                                    var TipoCambio = precioAux[0].tipo_cambio;
-                                    console.log(" Valor de TipoCambio: ", TipoCambio)
-                                    var ValorPromedioFinal = Meteor.call('LibroDeOrdenes', TipoCambio);
-                                    console.log(" Valor de ValorPromedioFinal: ", ValorPromedioFinal)
-                                    var EquivalenciaActual = ( EquivalenciaSaldoMonedaAuxi * ValorPromedioFinal.Promedio ) / 1;
-                                    console.log(" Valor de EquivalenciaActual 6: ", EquivalenciaActual)
-                                }else if ( ExistMBBTC !== 0 && ValorPromedioObtenido.Promedio === 1 ) {
-                                    console.log(" Estoy en 19")
-                                    precioAux = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MBase }, { moneda_cotizacion : MBase }]}, { $or: [ { moneda_base : 'BTC' }, { moneda_cotizacion : 'BTC' }]} ] }).fetch();
-                                    var TipoCambio = precioAux[0].tipo_cambio;
-                                    console.log(" Valor de TipoCambio: ", TipoCambio)
-                                    var ValorPromedioFinal = Meteor.call('LibroDeOrdenes', TipoCambio);
-                                    console.log(" Valor de ValorPromedioFinal: ", ValorPromedioFinal)
-                                    var EquivalenciaActual = ( EquivalenciaSaldoMonedaAuxi * ValorPromedioFinal.Promedio ) / 1;
-                                    console.log(" Valor de EquivalenciaActual 7: ", EquivalenciaActual)
-                                }else if ( ExistMCBTC !== 0 && ValorPromedioObtenido.Promedio === 1 ) {
-                                    console.log(" Estoy en 20")
-                                    precioAux = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MBase }, { moneda_cotizacion : MBase }]}, { $or: [ { moneda_base : 'BTC' }, { moneda_cotizacion : 'BTC' }]} ] }).fetch();
-                                    var TipoCambio = precioAux[0].tipo_cambio;
-                                    console.log(" Valor de TipoCambio: ", TipoCambio)
-                                    var ValorPromedioFinal = Meteor.call('LibroDeOrdenes', TipoCambio);
-                                    console.log(" Valor de ValorPromedioFinal: ", ValorPromedioFinal)
-                                    var EquivalenciaActual = ( EquivalenciaSaldoMonedaAuxi * ValorPromedioFinal.Promedio ) / 1;
-                                    console.log(" Valor de EquivalenciaActual 8: ", EquivalenciaActual)
+                            var ExistMCUSD = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MCotizacion}, { moneda_cotizacion : MCotizacion }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).count();
+                            var ExistMBUSD = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MBase}, { moneda_cotizacion : MBase }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).count();
+                            
+                            if ( ExistMCUSD !== 0 ) {
+                                if ( MBase === MONEDA ) {
+                                    MonedaEquivalenteAux = MCotizacion
+                                }else if ( MCotizacion === MONEDA ) {
+                                    MonedaEquivalenteAux = MBase
                                 }
+                                break
+                            }else if ( ExistMBUSD !== 0 ) {
+                                if ( MBase === MONEDA ) {
+                                    MonedaEquivalenteAux = MCotizacion
+                                }else if ( MCotizacion === MONEDA ) {
+                                    MonedaEquivalenteAux = MBase
+                                }
+                                break
                             }
+
                         }
+
+                        switch (TIPO_ACCION){
+                            case 1:
+                                console.log(" Estoy en 12")
+                                var ValorObtenido = EquivalenciasDol.aggregate([    { $match: { tipo_cambio : TipoCambioObtenido }}, 
+                                                                                    { $project: { _id : 0, Promedio : 1 , Existe : 1 } }
+                                                                                ]);
+                                var ValorPromedioObtenido = ValorObtenido[0]
+
+                                if ( MONEDA === MBase ) {
+                                    var SaldEquivActualAux =  ( parseFloat(SALDO) * ValorPromedioObtenido.Promedio ) ;
+                                }else if ( MONEDA === MCotizacion ) {
+                                    var SaldEquivActualAux = ( parseFloat(SALDO) / ValorPromedioObtenido.Promedio );
+                                }
+
+
+                            break;
+                            case 2:
+                                var ValorPromedioObtenido = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
+
+                                if ( MONEDA === MBase ) {
+                                    var SaldEquivActualAux = ( parseFloat(SALDO) * ValorPromedioObtenido.Promedio ) ;
+                                }else if ( MONEDA === MCotizacion ) {
+                                    var SaldEquivActualAux = ( parseFloat(SALDO)  / ValorPromedioObtenido.Promedio);
+                                }
+                            break;
+                        }
+                        var TCUSDAux = TiposDeCambios.findOne({ $and: [{ $or: [ { moneda_base : MonedaEquivalenteAux}, { moneda_cotizacion : MonedaEquivalenteAux }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] })
+                        var TipoCambioObtenidoAux = TCUSDAux.tipo_cambio
+                        var ValorPromedioObtenidoAux = Meteor.call('LibroDeOrdenes', TipoCambioObtenidoAux);
+
+                        var MinInvAux=TCUSDAux.valor_incremento;
+                        var TMinInvAux = MinInvAux.toString().trim().length
+                        var SaldoMinTCAux= SaldEquivActualAux.toString().trim().substr(0, TMinInv)
+
+                        if ( MonedaEquivalenteAux === MBase ) {
+                            var EquivalenciaActual = ( parseFloat(SaldoMinTCAux * ValorPromedioObtenidoAux.Promedio) ) ;
+                            console.log(" Calculando: ", EquivalenciaActual, "= (" ,parseFloat(SaldoMinTCAux), "*" ,ValorPromedioObtenidoAux.Promedio )
+                        }else if ( MonedaEquivalenteAux === MCotizacion ) {
+                            var EquivalenciaActual = ( parseFloat(SaldoMinTCAux) / ValorPromedioObtenidoAux.Promedio );
+                        }                   
                     }
                 }else if ( ExisteTipoCambio === 0 ){
-                    console.log(" Estoy en 21")
                     var EquivalenciaActual = 0;
-                    console.log(" Valor de EquivalenciaActual 9:", EquivalenciaActual)
                 }
             }
         }
-        console.log(" Valor de EquivalenciaActual 10:", EquivalenciaActual)
 
-        return EquivalenciaActual.toFixed(8);
+        EquivAct = parseFloat(EquivalenciaActual.toFixed(4))
+        return EquivAct        
     },
 
     'EquivalenteDolarMinCompra':function(){

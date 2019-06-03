@@ -99,6 +99,7 @@ Meteor.methods({
         else{
             for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
                 var moneda_saldo =  Monedas_Saldo[CMS];
+                var V_LimiteMuestreo = moneda_saldo.CantidadMinimaMuestreo
                 Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[moneda_saldo.moneda]);
 
                 if (TiposDeCambios.find().count() === 0){
@@ -134,7 +135,9 @@ Meteor.methods({
                         Meteor.call('ValidarRanking', moneda_saldo.moneda);
 
                         Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
+                        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
+                        /*
                         var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
                         var V_LimiteMuestreo = LimiteMuestreo[0].valor
                         Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_LimiteMuestreo: ']+[V_LimiteMuestreo]);
@@ -143,6 +146,31 @@ Meteor.methods({
                             Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_moneda_verificar: ']+[moneda_saldo.moneda]);
                             Meteor.call("ValidaInversion", moneda_saldo.moneda);
                         }
+                        /**/
+
+                        
+
+                        if ( V_LimiteMuestreo === 0 ) { 
+
+                            Jobs.run("JobValidaInversion", moneda_saldo.moneda, {
+                                            in: {
+                                                second: 1
+                                            }
+                                        })
+
+                        }else if ( V_LimiteMuestreo > 0 ) {
+                            V_LimiteMuestreo = V_LimiteMuestreo - 1
+                                        
+                            fecha = moment (new Date());
+                            Monedas.update({ "moneda": moneda_saldo.moneda }, {
+                                                        $set: {
+                                                            "CantidadMinimaMuestreo": V_LimiteMuestreo,
+                                                            "fecha_actualizacion" : fecha._d
+                                                        }
+                                });
+                        }
+
+                        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         console.log('-------------------------------------------');
                         console.log('--- DEBO SEGUIR CON LA SIGUIENTE MONEDA ---');
                         console.log('-------------------------------------------');
@@ -150,6 +178,7 @@ Meteor.methods({
                     }
                 }while(TiposDeCambioVerificar === undefined)
             }
+            /*
             if ( V_LimiteMuestreo > 0 ) {
                 V_LimiteMuestreo = V_LimiteMuestreo - 1
                             
@@ -162,6 +191,7 @@ Meteor.methods({
                                             }
                     });
             }
+            /**/
         }
     },
 
@@ -234,7 +264,7 @@ Meteor.methods({
             return ejecucionValidaTendenciaTipoCambio
         }
     },
-
+    /*
     'ValidaInversion': function( MONEDA_VERIFICAR ){
         Meteor.call("GuardarLogEjecucionTrader", [' ValidaInversion: Moneda con Saldo a Verificar: ']+[MONEDA_VERIFICAR]);
 
@@ -244,7 +274,7 @@ Meteor.methods({
         Meteor.call("GuardarLogEjecucionTrader", [' ValidaInversion: Se ejecuta Meteor.call("ValidaPropTipoCambiosValidados": ']+[MONEDA_VERIFICAR]+[' ']+[V_LimiteApDep]);
         Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep );
     },
-
+    /**/
     'ReinicioSecuencia':function(){
         try{
             fecha = moment (new Date());
