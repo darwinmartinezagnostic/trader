@@ -822,7 +822,7 @@ Meteor.methods({
             console.log(' ');
             Meteor.call("GuardarLogEjecucionTrader", ["   Valor Mínimo Actual Configurado: "]+[LIMITE_AP_DEP]);
 
-            if ( MONEDA !=== 'BTC') {
+            if ( MONEDA !== 'BTC') {
                 var DatosMoneda = Monedas.findOne( { "moneda" : MONEDA })
                 var ContMonedaEstable = DatosMoneda.c_estable
                 var MonedaEstable = DatosMoneda.MonedaEstable
