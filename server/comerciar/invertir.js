@@ -821,32 +821,35 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", ["   |   limites Mínimos configurados   |"]);
             console.log(' ');
             Meteor.call("GuardarLogEjecucionTrader", ["   Valor Mínimo Actual Configurado: "]+[LIMITE_AP_DEP]);
-            var DatosMoneda = Monedas.findOne( { "moneda" : MONEDA })
-            var ContMonedaEstable = DatosMoneda.c_estable
-            var MonedaEstable = DatosMoneda.MonedaEstable
-            if ( MonedaEstable === "S") {
-                var TipoCambioVerEstab = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : 'BTC',"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
-                if ( TipoCambioVerEstab > 0 ) {
-                    Meteor.call("InvertirEnMonedaInestable", MONEDA );
-                }
-            }
 
-            if ( ContMonedaEstable=== undefined || parseFloat(ContMonedaEstable) === 0 ) {
-                Monedas.update( { moneda : MONEDA },
-                                {$set:{ c_estable : 1 , 
-                                        MonedaEstable : 'N' }}, 
-                                {"multi" : true,"upsert" : true});
-            }else if (parseFloat(ContMonedaEstable)> 0 &&parseFloat(ContMonedaEstable)< 10 ){
-                var NuevValor = parseFloat(ContMonedaEstable) +1
-                Monedas.update( { moneda : MONEDA },
-                                {$set:{ c_estable : NuevValor,
-                                        MonedaEstable : 'N' }}, 
-                                {"multi" : true,"upsert" : true});
-            }else if (parseFloat(ContMonedaEstable) === 10 ){
-                var NuevValor = parseFloat(ContMonedaEstable) +1
-                Monedas.update( { moneda : MONEDA , MonedaEstable : 'N' },
-                                {$set:{ MonedaEstable : 'S' }}, 
-                                {"multi" : true,"upsert" : true});
+            if ( MONEDA !=== 'BTC') {
+                var DatosMoneda = Monedas.findOne( { "moneda" : MONEDA })
+                var ContMonedaEstable = DatosMoneda.c_estable
+                var MonedaEstable = DatosMoneda.MonedaEstable
+                if ( MonedaEstable === "S") {
+                    var TipoCambioVerEstab = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : 'BTC',"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
+                    if ( TipoCambioVerEstab > 0 ) {
+                        Meteor.call("InvertirEnMonedaInestable", MONEDA );
+                    }
+                }
+
+                if ( ContMonedaEstable=== undefined || parseFloat(ContMonedaEstable) === 0 ) {
+                    Monedas.update( { moneda : MONEDA },
+                                    {$set:{ c_estable : 1 , 
+                                            MonedaEstable : 'N' }}, 
+                                    {"multi" : true,"upsert" : true});
+                }else if (parseFloat(ContMonedaEstable)> 0 &&parseFloat(ContMonedaEstable)< 10 ){
+                    var NuevValor = parseFloat(ContMonedaEstable) +1
+                    Monedas.update( { moneda : MONEDA },
+                                    {$set:{ c_estable : NuevValor,
+                                            MonedaEstable : 'N' }}, 
+                                    {"multi" : true,"upsert" : true});
+                }else if (parseFloat(ContMonedaEstable) === 10 ){
+                    var NuevValor = parseFloat(ContMonedaEstable) +1
+                    Monedas.update( { moneda : MONEDA , MonedaEstable : 'N' },
+                                    {$set:{ MonedaEstable : 'S' }}, 
+                                    {"multi" : true,"upsert" : true});
+                }
             }
             
             console.log('--------------------------------------------');
