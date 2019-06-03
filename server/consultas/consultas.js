@@ -244,21 +244,46 @@ Meteor.methods({
         return Estado;
     },
 
-    'ValidarEstadoOrden': function(ORDEN){
+    'ValidarEstadoOrden': function(ORDEN, ID, TIPO_CAMBIO){
         var CONSTANTES = Meteor.call("Constantes");
-        console.log('Estoy en ValidarEstadoOrden')
-        var url_transaccion=[CONSTANTES.ordenes]+['?clientOrderId=']+[ORDEN]+['?wait=300']
-        console.log('Valor de url_transaccion', url_transaccion)
+        var url_tranOA=[CONSTANTES.ordenes]+['?clientOrderId=']+[ORDEN]+['?wait=300']
+        var Url_TransTP=[CONSTANTES.HistOrdenes]+['?symbol=']+[TIPO_CAMBIO]+['&limit=3']
+        var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[ID]+['/trades']
+        console.log('Valor de url_tranOA', url_tranOA)
+        console.log('Valor de Url_TransTP', Url_TransTP)
+        console.log('Valor de Url_TransID', Url_TransID)
 
-        const Trns = Meteor.call("ConexionGet", url_transaccion)     
-        var trans = Trns[0];
-        console.log('Valor de trans', trans)
-        if ( trans === undefined ) {
-            var Estado_Orden = 'Fallido'
+        const TrnsOA = Meteor.call("ConexionGet", url_tranOA)   
+        var transOA = TrnsOA[0];
+        const TrnsTP = Meteor.call("ConexionGet", Url_TransTP)
+        const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
+        var transID = TrnsID[0];
+        if ( transID === undefined ) {
+            HistIdOrden = 0
+        }else{
+            HistIdOrden = 1
+        }
+        if ( transOA === undefined ) {
+            for ( CTrnsOA = 0, TTrnsOA = TrnsTP.length; CTrnsOA < TTrnsOA; CTrnsOA++ ) {
+                var HTrnsTP = TrnsTP[CTrnsOA];
+                IdOdenClient = HTrnsTP.clientOrderId
+                if ( IdOdenClient !== ORDEN ) {
+                    HistIdOrdenExiste = 0
+                }else{
+                    StatusOrden = HTrnsTP.status
+                    HistIdOrdenExiste = 1
+                    break                    
+                }
+            }
+
+            if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 ) {
+                var Estado_Orden = StatusOrden
+            }else{
+                var Estado_Orden = 'Fallido'
+            }
         }else{
             var Estado_Orden = trans.status
         }
-        console.log('Valor de Estado_Orden', Estado_Orden)
         return Estado_Orden
     },
 

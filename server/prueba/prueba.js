@@ -210,8 +210,8 @@ Meteor.methods({
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
         
-        const MON_B='DAI'
-        const MON_C='TUSD'
+        const MON_B='BTC'
+        const MON_C='GUSD'
         var TIPO_CAMBIO = MON_B+MON_C
         //var MONEDA_SALDO = MON_B
         var MONEDA_COMISION = MON_C
@@ -219,7 +219,17 @@ Meteor.methods({
         var MONEDASALDO = MONEDA_SALDO
         /* 
 
-            //console.log(' Tipo de Cambio TIPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
+            //console.log(' Tipo de Cambio T
+
+
+
+
+
+
+
+
+
+            IPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
            
     		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
     			
@@ -237,7 +247,7 @@ Meteor.methods({
         } 
         
         MAPLICOMIS = MON_C
-        var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);        
+        //var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);        
 
         //Meteor.call("ConsultaCarterasDeposito");
  
@@ -490,7 +500,14 @@ Meteor.methods({
             */
 
             //Meteor.call("InvertirEnMonedaInestable", MONEDASALDO );
-            
+            /*
+            var ID = "133360067589";
+            //var ORDEN= "00000000000000000000000000001280";
+            var ORDEN= "00000000000000000000000000000001";
+
+            var prueba = Meteor.call('ValidarEstadoOrden', ORDEN, ID, TIPO_CAMBIO)
+            console.log("Valor de prueba: ", prueba)
+            */
     },
 });
 
