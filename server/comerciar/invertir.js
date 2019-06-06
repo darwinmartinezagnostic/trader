@@ -988,6 +988,7 @@ Meteor.methods({
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FIN ESPERA: ']+[fecha._d]);
                 const Resultado = Meteor.call("ValidarEstadoOrden", IdTransaccionActual, V_IdHitBTC, TIPO_CAMBIO)
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
+                /*
                 GananciaPerdida.insert({
                                             Operacion : {   
                                                             Id_hitbtc : V_IdHitBTC,
@@ -1000,11 +1001,33 @@ Meteor.methods({
                                                             Razon : Estado_Orden,
                                                             FechaCreacion : fecha._d,
                                                             FechaActualizacion : fecha._d},
-                                            Moneda : {  emision : { moneda : MON_C },
+                                            Moneda : {  Emitida : { moneda : MON_C },
                                                         Adquirida : { moneda : MON_B }
                                                      },
                                             Inversion : { SaldoInversion  : CANT_INVER }
                                         });
+                */
+                GananciaPerdida.update({    ID_LocalAct : IdTransaccionActual, 
+                                            Id_Lote: ID_LOTE }, {
+                                                                    $set: {
+                                                                            Operacion : {   
+                                                                                            Id_hitbtc : V_IdHitBTC,
+                                                                                            ID_LocalAct : IdTransaccionActual,
+                                                                                            Id_Lote: ID_LOTE,
+                                                                                            Tipo : TP,
+                                                                                            TipoCambio : TIPO_CAMBIO,
+                                                                                            Precio : RecalcIverPrec.MejorPrecCal,
+                                                                                            Status : 'En seguimiento',
+                                                                                            Razon : Estado_Orden,
+                                                                                            FechaCreacion : fecha._d,
+                                                                                            FechaActualizacion : fecha._d},
+                                                                            Moneda : {  Emitida : { moneda : MON_C },
+                                                                                        Adquirida : { moneda : MON_B }
+                                                                                     },
+                                                                            Inversion : { SaldoInversion  : CANT_INVER }
+                                                                        }
+                                            }, 
+                                           
 
                 Monedas.update({ "moneda": MONEDA_SALDO , "activo": "S"}, {    
                             $set: {
@@ -1018,7 +1041,8 @@ Meteor.methods({
             if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" ) {
                 console.log(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )')
                 var V_IdHitBTC = ORDEN.id
-                GananciaPerdida.insert({
+                /*
+                GananciaPerdida.update({
                                             Operacion : {   
                                                             Id_hitbtc : V_IdHitBTC,
                                                             ID_LocalAct : IdTransaccionActual,
@@ -1030,11 +1054,34 @@ Meteor.methods({
                                                             Razon : Estado_Orden,
                                                             FechaCreacion : fecha._d,
                                                             FechaActualizacion : fecha._d},
-                                            Moneda : {  emision : { moneda : MON_C },
+                                            Moneda : {  emitida : { moneda : MON_C },
                                                         Adquirida : { moneda : MON_B }
                                                      },
                                             Inversion : { SaldoInversion  : CANT_INVER }
                                         });
+                */
+                GananciaPerdida.update({    ID_LocalAct : IdTransaccionActual, 
+                                            Id_Lote: ID_LOTE }, {
+                                                                    $set: {
+                                                                            Operacion : {   
+                                                                                            Id_hitbtc : V_IdHitBTC,
+                                                                                            ID_LocalAct : IdTransaccionActual,
+                                                                                            Id_Lote: ID_LOTE,
+                                                                                            Tipo : TP,
+                                                                                            TipoCambio : TIPO_CAMBIO,
+                                                                                            Precio : RecalcIverPrec.MejorPrecCal,
+                                                                                            Status : 'Fallido',
+                                                                                            Razon : Estado_Orden,
+                                                                                            FechaCreacion : fecha._d,
+                                                                                            FechaActualizacion : fecha._d},
+                                                                            Moneda : {  emitida : { moneda : MON_C },
+                                                                                        Adquirida : { moneda : MON_B }
+                                                                                     },
+                                                                            Inversion : { SaldoInversion  : CANT_INVER }
+                                                                        }
+                                            }, 
+                                            {"upsert" : true}
+                                        );
                 
                 if ( Estado_Orden === "DuplicateclientOrderId") {   
                     console.log(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")')
@@ -1044,6 +1091,7 @@ Meteor.methods({
                 break
             }
             if ( Estado_Orden === "errorisnotdefined" ) {
+                /*
                 GananciaPerdida.insert({
                                             Operacion : {   ID_LocalAct : IdTransaccionActual,
                                                             Id_Lote: ID_LOTE,
@@ -1054,11 +1102,33 @@ Meteor.methods({
                                                             Razon : Estado_Orden,
                                                             FechaCreacion : fecha._d,
                                                             FechaActualizacion : fecha._d},
-                                            Moneda : {  emision : { moneda : MON_C },
+                                            Moneda : {  Emitida : { moneda : MON_C },
                                                         Adquirida : { moneda : MON_B }
                                                      },
                                             Inversion : { SaldoInversion  : CANT_INVER }
                                         });
+                */
+                GananciaPerdida.update({    ID_LocalAct : IdTransaccionActual, 
+                                            Id_Lote: ID_LOTE }, {
+                                                                    $set: {
+                                                                            Operacion : {   
+                                                                                            ID_LocalAct : IdTransaccionActual,
+                                                                                            Id_Lote: ID_LOTE,
+                                                                                            Tipo : TP,
+                                                                                            TipoCambio : TIPO_CAMBIO,
+                                                                                            Precio : RecalcIverPrec.MejorPrecCal,
+                                                                                            Status : 'Fallido',
+                                                                                            Razon : Estado_Orden,
+                                                                                            FechaCreacion : fecha._d,
+                                                                                            FechaActualizacion : fecha._d},
+                                                                            Moneda : {  Emitida : { moneda : MON_C },
+                                                                                        Adquirida : { moneda : MON_B }
+                                                                                     },
+                                                                            Inversion : { SaldoInversion  : CANT_INVER }
+                                                                        }
+                                            }, 
+                                            {"upsert" : true}
+                                        );
             }
 
             if ( Estado_Orden === "Insufficientfunds" ) {
