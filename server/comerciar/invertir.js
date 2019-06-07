@@ -837,12 +837,12 @@ Meteor.methods({
                     Monedas.update( { moneda : MONEDA },
                                     {$set:{ c_estable : 1 , 
                                             MonedaEstable : 'N' }});
-                }else if (parseFloat(ContMonedaEstable)> 0 &&parseFloat(ContMonedaEstable)< 10 ){
+                }else if (parseFloat(ContMonedaEstable) > 0 && parseFloat(ContMonedaEstable) < 10 ){
                     var NuevValor = parseFloat(ContMonedaEstable) +1
                     Monedas.update( { moneda : MONEDA },
                                     {$set:{ c_estable : NuevValor,
                                             MonedaEstable : 'N' }});
-                }else if (parseFloat(ContMonedaEstable) === 10 ){
+                }else if ( parseFloat(ContMonedaEstable) === 10 ){
                     Monedas.update( { moneda : MONEDA },
                                     {$set:{ MonedaEstable : 'S' }});
                 }
