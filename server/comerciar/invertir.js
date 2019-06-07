@@ -1027,6 +1027,8 @@ Meteor.methods({
                                                                             Inversion : { SaldoInversion  : CANT_INVER }
                                                                         }
                                             }, 
+                                            {"upsert" : true}
+                                        );
                                            
 
                 Monedas.update({ "moneda": MONEDA_SALDO , "activo": "S"}, {    
