@@ -30,7 +30,7 @@ Meteor.methods({
                         };
                 break;
                 case 3:
-                        if (GananciaPerdida.find({ id_lote : {$exists: true } }).count() === 0){
+                        if (GananciaPerdida.find({ "Operacion.Id_Lote" : {$exists: true } }).count() === 0){
                             var nuevo_id = 1;
                         }
                         else {
