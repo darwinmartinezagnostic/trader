@@ -130,7 +130,7 @@ Meteor.methods({
     },
 
     'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
-        console.log(" EquivalenteDolar: Val recib: ", "MONEDA: -",  MONEDA, "- ,S_MOND: -", S_MOND, "- ,TIPO_ACCION: ", TIPO_ACCION)        
+        //console.log(" EquivalenteDolar: Val recib: ", "MONEDA: -",  MONEDA, "- ,S_MOND: -", S_MOND, "- ,TIPO_ACCION: ", TIPO_ACCION)        
         var SALDO = parseFloat(S_MOND);
         if ( SALDO === 0 ) {
             var EquivalenciaActual = 0;
@@ -140,10 +140,8 @@ Meteor.methods({
                 var EquivalenciaActual = parseFloat(SALDO);
             }else{
                 var ExisteTipoCambio = TiposDeCambios.find({ $or: [ { moneda_base : MONEDA }, { moneda_cotizacion : MONEDA }]},{ _id : 0, tipo_cambio : 1}).count();
-                console.log(" Valor de ExisteTipoCambio", ExisteTipoCambio)
                 if ( ExisteTipoCambio !== 0 ) {
                     var DIRECTO = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).count();
-                    console.log(" Valor de DIRECTO", DIRECTO)
                     if ( DIRECTO !== 0 ) {
                         var PrecioDirecto = TiposDeCambios.find({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] }).fetch();
                         var TipoCambioObtenido = PrecioDirecto[0].tipo_cambio;
@@ -154,29 +152,22 @@ Meteor.methods({
                         var SaldoMinTC= SALDO.toString().trim().substr(0, TMinInv)
                         switch (TIPO_ACCION){
                             case 1:
-                                console.log(" Estoy en 6")
                                 var ValorObtenido = EquivalenciasDol.aggregate([    { $match: { tipo_cambio : TipoCambioObtenido }}, 
                                                                                     { $project: { _id : 0, Promedio : 1 , Existe : 1 } }
                                                                                 ]);
                                 var ValorPromedio = ValorObtenido[0]
-                                console.log(" Valor de ValorPromedio 1: ", ValorPromedio)
 
                                 if ( ValorPromedio === undefined ) {
-                                    console.log(" Estoy en 7")
                                     var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
-                                    console.log(" Valor de  ValorPromedio 2: ", ValorPromedio)
                                 }
 
                             break;
                             case 2:
-                                console.log(" Estoy en 8")
                                 var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
-                                console.log(" Valor de ValorPromedio 3: ", ValorPromedio)
                             break;
                         }
 
                         var TipoCambioValido = ValorPromedio.Existe
-                        console.log(" Valor de TipoCambioValido: ", TipoCambioValido)
                         if ( TipoCambioValido !== 1 ) {
                             var EquivalenciaActual = 0;
                             TiposDeCambios.update({ tipo_cambio: TipoCambioObtenido }, {    
@@ -186,13 +177,9 @@ Meteor.methods({
                                                         }, {"multi" : true,"upsert" : true});
                         }else{
                             if ( MONEDA === MB ) {
-                                console.log(" Estoy en ( MONEDA === MB )")
                                 var EquivalenciaActual = ( parseFloat(SaldoMinTC) * parseFloat(ValorPromedio.Promedio) ) ;
-                                console.log(" Calculando: ", EquivalenciaActual, "= (" , parseFloat(SaldoMinTC) , "*" ,parseFloat(ValorPromedio.Promedio) )
                             }else if ( MONEDA === MC ) {
-                                console.log(" Estoy en ( MONEDA === MC )")
                                 var EquivalenciaActual = ( parseFloat(SaldoMinTC) / parseFloat(ValorPromedio.Promedio) );
-                                console.log(" Calculando: ", EquivalenciaActual, "= (" , parseFloat(SaldoMinTC), "/" , parseFloat(ValorPromedio.Promedio))
                             }
                         }
                     }else {
@@ -232,7 +219,6 @@ Meteor.methods({
 
                         switch (TIPO_ACCION){
                             case 1:
-                                console.log(" Estoy en 12")
                                 var ValorObtenido = EquivalenciasDol.aggregate([    { $match: { tipo_cambio : TipoCambioObtenido }}, 
                                                                                     { $project: { _id : 0, Promedio : 1 , Existe : 1 } }
                                                                                 ]);
@@ -248,13 +234,10 @@ Meteor.methods({
                                 var ValorPromedioObtenido = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
 
                                 if ( MONEDA === MBase ) {
-                                    console.log(" Estoy en  MONEDA === MBase ")
                                     var SaldEquivActualAux = ( parseFloat(SALDO) * parseFloat(ValorPromedioObtenido.Promedio) ) ;
-                                    console.log(" Valor de SaldEquivActualAux",  SaldEquivActualAux, "= (", parseFloat(SALDO)  ,"*", parseFloat(ValorPromedioObtenido.Promedio) )
                                 }else if ( MONEDA === MCotizacion ) {
                                     console.log(" Estoy en  MONEDA === MCotizacion ")
                                     var SaldEquivActualAux = ( parseFloat(SALDO)  / parseFloat(ValorPromedioObtenido.Promedio) );
-                                    console.log(" Valor de SaldEquivActualAux",  SaldEquivActualAux, "= (", parseFloat(SALDO)  ,"/", parseFloat(ValorPromedioObtenido.Promedio) )
                                 }
                             break;
                         }
@@ -266,26 +249,14 @@ Meteor.methods({
                         var MinInvAux=TCUSDAux.valor_incremento;
 
                         var ValorPromedioObtenidoAux = Meteor.call('LibroDeOrdenes', TipoCambioObtenidoAux);
-                        console.log(" Valor de TipoCambioObtenidoAux: ", TipoCambioObtenidoAux)
 
                         var TMinInvAux = MinInvAux.toString().trim().length
-                        console.log(" Valor de MinInvAux: ", MinInvAux)
                         var SaldoMinTCAux= SaldEquivActualAux.toString().trim().substr(0, TMinInv)
-                        console.log(" Valor de SaldEquivActualAux: ", SaldEquivActualAux)
-                        console.log(" Valor de SaldoMinTCAux: ", SaldoMinTCAux)
-
-                        console.log(" Valor de MonedaEquivalenteAux: ", MonedaEquivalenteAux)
 
                         if ( MonedaEquivalenteAux === MBaseAux ) {
-                            console.log(" Estoy en  MONEDA === MBase ")
                             var EquivalenciaActual = ( parseFloat(SaldEquivActualAux) * parseFloat(ValorPromedioObtenidoAux.Promedio) ) ;
-                            console.log(" Calculando: ", EquivalenciaActual.toString(), "= (" ,parseFloat(SaldEquivActualAux), "*" ,ValorPromedioObtenidoAux.Promedio )
                         }else if ( MonedaEquivalenteAux === MCotiAux ) {
-                            console.log(" Estoy en  MONEDA === MCotizacion ")
                             var EquivalenciaActual = ( parseFloat(SaldEquivActualAux) / parseFloat(ValorPromedioObtenidoAux.Promedio) );
-                            console.log(" Calculando: ", EquivalenciaActual.toString(), "= (" ,parseFloat(SaldEquivActualAux), "/" ,ValorPromedioObtenidoAux.Promedio )
-                            var prueba = Meteor.call('CombierteNumeroExpStr', EquivalenciaActual) 
-                            console.log("Valor de prueba: ", prueba) 
                         }                   
                     }
                 }else if ( ExisteTipoCambio === 0 ){
