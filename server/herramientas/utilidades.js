@@ -236,7 +236,6 @@ Meteor.methods({
                                 if ( MONEDA === MBase ) {
                                     var SaldEquivActualAux = ( parseFloat(SALDO) * parseFloat(ValorPromedioObtenido.Promedio) ) ;
                                 }else if ( MONEDA === MCotizacion ) {
-                                    console.log(" Estoy en  MONEDA === MCotizacion ")
                                     var SaldEquivActualAux = ( parseFloat(SALDO)  / parseFloat(ValorPromedioObtenido.Promedio) );
                                 }
                             break;
