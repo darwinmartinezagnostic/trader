@@ -833,22 +833,18 @@ Meteor.methods({
                     }
                 }
 
-                if ( ContMonedaEstable=== undefined || parseFloat(ContMonedaEstable) === 0 ) {
+                if ( ContMonedaEstable === undefined || parseFloat(ContMonedaEstable) === 0 ) {
                     Monedas.update( { moneda : MONEDA },
                                     {$set:{ c_estable : 1 , 
-                                            MonedaEstable : 'N' }}, 
-                                    {"multi" : true,"upsert" : true});
+                                            MonedaEstable : 'N' }});
                 }else if (parseFloat(ContMonedaEstable)> 0 &&parseFloat(ContMonedaEstable)< 10 ){
                     var NuevValor = parseFloat(ContMonedaEstable) +1
                     Monedas.update( { moneda : MONEDA },
                                     {$set:{ c_estable : NuevValor,
-                                            MonedaEstable : 'N' }}, 
-                                    {"multi" : true,"upsert" : true});
+                                            MonedaEstable : 'N' }});
                 }else if (parseFloat(ContMonedaEstable) === 10 ){
-                    var NuevValor = parseFloat(ContMonedaEstable) +1
-                    Monedas.update( { moneda : MONEDA , MonedaEstable : 'N' },
-                                    {$set:{ MonedaEstable : 'S' }}, 
-                                    {"multi" : true,"upsert" : true});
+                    Monedas.update( { moneda : MONEDA },
+                                    {$set:{ MonedaEstable : 'S' }});
                 }
             }
             

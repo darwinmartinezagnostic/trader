@@ -20,6 +20,7 @@ Meteor.methods({
 
         for ( a = 0, len = mons.length ; a < len; a++) {
             var mon = mons[a];
+            /*
             if (Monedas.find({ moneda : mon.id }).count() !== 0) {
                 try{
                     Monedas.update({ moneda : mon.id },{$set:{ nombre_moneda : mon.fullName, activo : "S" }}, {"multi" : true,"upsert" : true});
@@ -33,14 +34,18 @@ Meteor.methods({
                 var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
                 var V_LimiteMuestreo = LimiteMuestreo[0].valor
                 fecha = moment (new Date());
-                Monedas.insert({    moneda : mon.id, 
-                                    nombre_moneda : mon.fullName, 
-                                    activo : "S", 
-                                    min_transferencia : 0.0000000001,
-                                    CantidadMinimaMuestreo : V_LimiteMuestreo,
-                                    MonedaEstable : 'N',
-                                    c_estable : 0,
-                                    fecha_actualizacion : fecha._d });
+                Monedas.update( { moneda : mon.id },
+                                { $set:{    moneda : mon.id, 
+                                            nombre_moneda : mon.fullName, 
+                                            activo : "S", 
+                                            min_transferencia : 0.0000000001,
+                                            CantidadMinimaMuestreo : V_LimiteMuestreo,
+                                            MonedaEstable : 'N',
+                                            c_estable : 0,
+                                            fecha_actualizacion : fecha._d }
+                                },
+                                { "upsert" : true }
+                                );
 
                 console.log('--------------------------------------------');
                 Meteor.call("GuardarLogEjecucionTrader", ' **** Detectada Nueva Moneda en HITBTC ****');
@@ -52,6 +57,33 @@ Meteor.methods({
                 Meteor.call("GuardarLogEjecucionTrader", ['           Datos Insertados']);
                 console.log(' ');
             }
+            */
+
+            var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
+            var V_LimiteMuestreo = LimiteMuestreo[0].valor
+            fecha = moment (new Date());
+            Monedas.update( { moneda : mon.id },
+                            { $set:{    moneda : mon.id, 
+                                        nombre_moneda : mon.fullName, 
+                                        activo : "S", 
+                                        min_transferencia : 0.0000000001,
+                                        CantidadMinimaMuestreo : V_LimiteMuestreo,
+                                        MonedaEstable : 'N',
+                                        c_estable : 0,
+                                        fecha_actualizacion : fecha._d }
+                            },
+                            { "upsert" : true }
+                            );
+
+            console.log('--------------------------------------------');
+            Meteor.call("GuardarLogEjecucionTrader", ' **** Detectada Nueva Moneda en HITBTC ****');
+            console.log('--------------------------------------------');
+            console.log(' ');
+            Meteor.call("GuardarLogEjecucionTrader", ['    NOMENCLATURA: ']+[mon.id]);
+            Meteor.call("GuardarLogEjecucionTrader", ['    NOMBRE DE MONEDA: ']+[mon.fullName]);
+            console.log(' ');
+            Meteor.call("GuardarLogEjecucionTrader", ['           Datos Insertados']);
+            console.log(' ');
         };
         console.log('############################################');
     },
