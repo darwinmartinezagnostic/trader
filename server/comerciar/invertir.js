@@ -1136,6 +1136,7 @@ Meteor.methods({
             }
 
             if ( Estado_Orden === "Insufficientfunds" ) {
+                console.log(" Insufficientfunds: Valor de ORDEN: ", ORDEN)
                 var V_IdHitBTC = ORDEN.id
                 const VerifOrdenAbierta = Meteor.call("ValidarEstadoOrden", V_IdHitBTC, TIPO_CAMBIO)
                 var Estado_Orden = VerifOrdenAbierta;
