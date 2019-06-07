@@ -1181,38 +1181,6 @@ Meteor.methods({
             console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ValidaSaldoEquivalenteActual',MON_C)
             Meteor.call("ValidaSaldoEquivalenteActual", MON_C);
             console.log(" if ( Estado_Orden === filled ) : Voy a Cacular nuevo ID para collecion HistorialTransacciones")
-            var IdTraccion = Meteor.call('CalculaId', 4);
-            console.log(" if ( Estado_Orden === filled ) : Listo")
-            console.log(" if ( Estado_Orden === filled ) : Voy a Guardar en HistorialTransacciones")
-            var fecha = new Date();
-            console.log("Valor de fecha:", fecha)
-            try{
-                HistorialTransacciones.insert({ _id : IdTraccion, 
-                                                ID_LocalAct : IdTransaccionActual, 
-                                                Id_Lote: ID_LOTE, 
-                                                fecha : fecha._d , 
-                                                tipo_cambio : TIPO_CAMBIO, 
-                                                tipo_transaccion : V_TipoOperaciont, 
-                                                moneda_base : MON_B, 
-                                                moneda_cotizacion : MON_C, 
-                                                monto : CANT_INVER, 
-                                                precio_operacion : RecalcIverPrec.MejorPrecCal, 
-                                                estado : "Exitoso" });
-                console.log(" if ( Estado_Orden === filled ) : Listo ya guardé en HistorialTransacciones")
-            }catch(e){
-                console.log(" if ( Estado_Orden === filled ) : Fallé al guardar en HistorialTransacciones")
-            }
-            try{
-                Monedas.update({ "moneda": MONEDA_SALDO , "activo": "N" }, {    
-                            $set: {
-                                    "activo": "S"
-                                }
-                            });
-                
-                console.log(" if ( Estado_Orden === filled ) : Listo ya atualicé en Monedas")
-            }catch(e){
-                console.log(" if ( Estado_Orden === filled ) : Fallé al guardé en Monedas")
-            }
         }
         /**/
     },

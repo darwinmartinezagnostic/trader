@@ -1247,6 +1247,12 @@ Meteor.methods({
                 TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
                                         { $set:{  "periodo1.Cotizacion.reset": 1 }}
                                     );
+
+                Monedas.update({ "moneda": MONEDA_SALDO }, {    
+                            $set: {
+                                    "activo": "S"
+                                }
+                            });
         }
 
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_IdHitBTC: "]+[V_IdHitBTC]);
