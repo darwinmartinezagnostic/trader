@@ -40,8 +40,8 @@ Meteor.methods({
 
 
         var contador = 1;
-        do{
-                
+
+        while( V_LimiteMaximoEjecucion !== 0 ){ 
 
             Meteor.call("GuardarLogEjecucionTrader", [' ESTOY INICIANDO SECUENCIA']+[' CONTADOR ACTUAL: ']+[contador]);
 
@@ -72,7 +72,7 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", [' Valor de V_LimiteMaximoEjecucion ']+[V_LimiteMaximoEjecucion]);
             Meteor.call("GuardarLogEjecucionTrader", [' FIN DE SECUENCIA - ']+[fecha._d]);
 
-        }while( V_LimiteMaximoEjecucion !== 0 );
+        }
     },    
 
     'SecuenciaPeriodo1':function(){
