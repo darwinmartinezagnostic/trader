@@ -512,6 +512,32 @@ Meteor.methods({
             var prueba = Meteor.call('ValidarEstadoOrden', ORDEN, ID, TIPO_CAMBIO)
             console.log("Valor de prueba: ", prueba)
             */
+
+
+
+
+            Prueba.update( {    "Operacion.ID_LocalAct" : 1, "Operacion.Id_Lote": 1 },
+                                        {
+                                            $set: {
+                                                    Operacion : {   
+                                                                            Id_hitbtc : 1,
+                                                                            ID_LocalAct : 1,
+                                                                            Id_Lote: 1,
+                                                                            Tipo : 'TP',
+                                                                            TipoCambio : 'TIPO_CAMBIO',
+                                                                            Precio : 1,
+                                                                            Status : 'En seguimiento',
+                                                                            Razon : 'Estado_Orden',
+                                                                            FechaCreacion : 'fecha._d',
+                                                                            FechaActualizacion : 'fecha._d}',
+                                                            Moneda : {  Emitida : { moneda : 'MON_C' },
+                                                                        Adquirida : { moneda : 'MON_B' }
+                                                                     },
+                                                            Inversion : { SaldoInversion  : 1 }
+                                                    }
+                                        }}, 
+                                        {"upsert" : true}
+                                        );
     },
 });
 
