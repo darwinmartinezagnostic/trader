@@ -118,8 +118,9 @@ Meteor.methods({
                                                             "fecha_actualizacion" : fecha._d
                                                         }
                                 });
-                    var V_LimiteMuestreo == V_LimiteGeneral;
+                    var V_LimiteMuestreo = V_LimiteGeneral;
                 }
+
                 Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[moneda_saldo.moneda]);
 
                 if (TiposDeCambios.find().count() === 0){
