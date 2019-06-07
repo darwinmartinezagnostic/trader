@@ -1138,6 +1138,31 @@ Meteor.methods({
             if ( Estado_Orden === "Insufficientfunds" ) {
                 console.log(" Insufficientfunds: Valor de ORDEN: ", ORDEN)
                 var V_IdHitBTC = ORDEN.id
+
+                GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
+                                        {
+                                            $set: {
+                                                    Operacion : {   
+                                                                    ID_LocalAct : IdTransaccionActual,
+                                                                    Id_Lote: ID_LOTE,
+                                                                    Tipo : TP,
+                                                                    TipoCambio : TIPO_CAMBIO,
+                                                                    Precio : RecalcIverPrec.MejorPrecCal,
+                                                                    Status : 'Fallido',
+                                                                    Razon : Estado_Orden,
+                                                                    FechaCreacion : fecha._d,
+                                                                    FechaActualizacion : fecha._d},
+                                                    Moneda : {  Emitida : { moneda : MON_C },
+                                                                Adquirida : { moneda : MON_B }
+                                                             },
+                                                    Inversion : { SaldoInversion  : CANT_INVER }
+                                                    }
+                                        }, 
+                                        {"upsert" : true}
+                                        );
+
+
+                
                 const VerifOrdenAbierta = Meteor.call("ValidarEstadoOrden", V_IdHitBTC, TIPO_CAMBIO)
                 var Estado_Orden = VerifOrdenAbierta;
             } 
