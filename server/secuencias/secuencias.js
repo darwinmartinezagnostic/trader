@@ -109,6 +109,17 @@ Meteor.methods({
             for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
                 var moneda_saldo =  Monedas_Saldo[CMS];
                 var V_LimiteMuestreo = moneda_saldo.CantidadMinimaMuestreo
+                if ( V_LimiteMuestreo == undefined ) {
+                    var LimiteGeneral= Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
+                    var V_LimiteGeneral = LimiteGeneral[0].valor
+                    Monedas.update({ "moneda": moneda_saldo.moneda }, {
+                                                        $set: {
+                                                            "CantidadMinimaMuestreo": V_LimiteGeneral,
+                                                            "fecha_actualizacion" : fecha._d
+                                                        }
+                                });
+                    var V_LimiteMuestreo == V_LimiteGeneral;
+                }
                 Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[moneda_saldo.moneda]);
 
                 if (TiposDeCambios.find().count() === 0){
