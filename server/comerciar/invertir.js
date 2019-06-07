@@ -1162,7 +1162,7 @@ Meteor.methods({
                                         );
 
 
-                
+
                 const VerifOrdenAbierta = Meteor.call("ValidarEstadoOrden", V_IdHitBTC, TIPO_CAMBIO)
                 var Estado_Orden = VerifOrdenAbierta;
             } 
@@ -1180,21 +1180,38 @@ Meteor.methods({
             Meteor.call("ValidaSaldoEquivalenteActual", MON_B);
             console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ValidaSaldoEquivalenteActual',MON_C)
             Meteor.call("ValidaSaldoEquivalenteActual", MON_C);
-            console.log(" if ( Estado_Orden === filled ) : Voy a Cacular nuevo ID para collecion HistoralTransacciones")
+            console.log(" if ( Estado_Orden === filled ) : Voy a Cacular nuevo ID para collecion HistorialTransacciones")
             var IdTraccion = Meteor.call('CalculaId', 4);
             console.log(" if ( Estado_Orden === filled ) : Listo")
-            console.log(" if ( Estado_Orden === filled ) : Voy a Guardar en HistoralTransacciones")
+            console.log(" if ( Estado_Orden === filled ) : Voy a Guardar en HistorialTransacciones")
+            var fecha = new Date();
+            console.log("Valor de fecha:", fecha)
             try{
-                HistoralTransacciones.insert({ _id : IdTraccion, ID_LocalAct : IdTransaccionActual, Id_Lote: ID_LOTE, fecha : fecha._d , tipo_cambio : TIPO_CAMBIO, tipo_transaccion : V_TipoOperaciont, moneda_base : MON_B, moneda_cotizacion : MON_C, monto : CANT_INVER, precio_operacion : RecalcIverPrec.MejorPrecCal, estado : "Exitoso" });
-                Monedas.update({ "moneda": MONEDA_SALDO , "activo": "N"}, {    
+                HistorialTransacciones.insert({ _id : IdTraccion, 
+                                                ID_LocalAct : IdTransaccionActual, 
+                                                Id_Lote: ID_LOTE, 
+                                                fecha : fecha._d , 
+                                                tipo_cambio : TIPO_CAMBIO, 
+                                                tipo_transaccion : V_TipoOperaciont, 
+                                                moneda_base : MON_B, 
+                                                moneda_cotizacion : MON_C, 
+                                                monto : CANT_INVER, 
+                                                precio_operacion : RecalcIverPrec.MejorPrecCal, 
+                                                estado : "Exitoso" });
+                console.log(" if ( Estado_Orden === filled ) : Listo ya guardé en HistorialTransacciones")
+            }catch(e){
+                console.log(" if ( Estado_Orden === filled ) : Fallé al guardar en HistorialTransacciones")
+            }
+            try{
+                Monedas.update({ "moneda": MONEDA_SALDO , "activo": "N" }, {    
                             $set: {
                                     "activo": "S"
                                 }
                             });
                 
-                console.log(" if ( Estado_Orden === filled ) : Listo ya guardé")
+                console.log(" if ( Estado_Orden === filled ) : Listo ya atualicé en Monedas")
             }catch(e){
-                console.log(" if ( Estado_Orden === filled ) : Fallé al guardar")
+                console.log(" if ( Estado_Orden === filled ) : Fallé al guardé en Monedas")
             }
         }
         /**/

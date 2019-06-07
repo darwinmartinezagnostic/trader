@@ -345,12 +345,12 @@ Meteor.methods({
         console.log('############################################');
         console.log(' ');
 
-        var TransExist = HistoralTransferencias.find( { id : IdTransferencia }).fetch().length
+        var TransExist = HistorialTransferencias.find( { id : IdTransferencia }).fetch().length
 
         if ( TransExist > 0 ) {
-            HistoralTransferencias.update({ id : IdTransferencia }, {$set: { estado: STATUS }}, {"multi" : true,"upsert" : true});
+            HistorialTransferencias.update({ id : IdTransferencia }, {$set: { estado: STATUS }}, {"multi" : true,"upsert" : true});
         }else{
-            HistoralTransferencias.insert({ fecha : FECHA, id : IdTransferencia, indice : Indice, tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : STATUS, fecha_creacion_solicitud : fechaCreacionSol, fecha_ejecucion_solicitud : fechaProcesamientoSol })
+            HistorialTransferencias.insert({ fecha : FECHA, id : IdTransferencia, indice : Indice, tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : STATUS, fecha_creacion_solicitud : fechaCreacionSol, fecha_ejecucion_solicitud : fechaProcesamientoSol })
         };
 
         return STATUS;
@@ -414,7 +414,7 @@ Meteor.methods({
                                 //Meteor.call("GuardarLogEjecucionTrader", [' Valor de NuevoValMinTransf']+[NuevoValMinTransf]);
                                 Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }}, {"multi" : true,"upsert" : true});
                                 var ValMinTranf = NuevoValMinTransf
-                                //HistoralTransferencias.update({ id : EstadoTransferencia[1] }, {$set: { estado: "Exitoso" }});
+                                //HistorialTransferencias.update({ id : EstadoTransferencia[1] }, {$set: { estado: "Exitoso" }});
                                 break;
                             }else{
                                 //console.log("Estoy en el else de - if ( SaldoActTransf !== SaldoAntTransf)");
@@ -440,7 +440,7 @@ Meteor.methods({
                                 var ValMinTranf = NuevoValMinTransf
                                 //console.log("Valor de NuevoValMinTransf", NuevoValMinTransf)
                                 Monedas.update({ moneda : MonedaRev }, {$set: { min_transferencia: NuevoValMinTransf }}, {"multi" : true,"upsert" : true});                            
-                                //HistoralTransferencias.update({ id : EstadoTransferencia[1] }, {$set: { estado: "Fallo" }});
+                                //HistorialTransferencias.update({ id : EstadoTransferencia[1] }, {$set: { estado: "Fallo" }});
                             }
                         }else if ( EstadoTransferencia[0] === 0 && EstadoTransferencia[2] === "FALLIDO" || EstadoTransferencia[0] === 1 ){
                             Meteor.call("GuardarLogEjecucionTrader", [' Estoy en el else de - if ( EstadoTransferencia[0] === 0 )']);
