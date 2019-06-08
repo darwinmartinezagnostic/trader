@@ -40,6 +40,7 @@ Meteor.methods({
 
 
         var contador = 1;
+        //var V_LimiteMaximoEjecucion = 1
 
         while( V_LimiteMaximoEjecucion !== 0 ){ 
 
@@ -82,22 +83,20 @@ Meteor.methods({
         console.log('        ',fecha._d);
         console.log('---------- SECUENCIA PERIODO 1 ------------');
         console.log(' ');
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*
         try {
-            var Monedas_Saldo = Monedas.aggregate([
-                        { $match : {"saldo.tradeo.activo" : { $gt : 0 }, "activo" : "S"}},
-                        { $sort : {"saldo.tradeo.equivalencia":-1} }
-                    ]);
-        }
-        /**/
-        try {
+            
             var Monedas_Saldo = Monedas.aggregate([
                         { $match : { $or : [{"saldo.tradeo.equivalencia" : { $gt : 0 }},{ "moneda" : 'BTC' }] , "activo" : "S"}},
-                        { $sort : {"saldo.tradeo.equivalencia":-1} }
+                        { $sort : {"saldo.tradeo.equivalencia":-1} }, { $limit: 2 }
                     ]);
+            
+            /*
+            var Monedas_Saldo = Monedas.aggregate([
+                        { $match : {  "moneda" : 'CCL' , "activo" : "S"}},
+                        { $sort : {"saldo.tradeo.equivalencia":-1} }, { $limit: 2 }
+                    ]);
+            /**/
         }
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
