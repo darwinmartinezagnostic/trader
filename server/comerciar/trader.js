@@ -1140,7 +1140,7 @@ Meteor.methods({
                                         }, 
                                         {"upsert" : true}
                                         );
-            
+
             Monedas.update({ "moneda": MONEDA_SALDO }, {    
                             $set: {
                                     "activo": "S"
@@ -1148,7 +1148,11 @@ Meteor.methods({
                             });
 
 
-            var TiposDeCambiosResetear = TiposDeCambios.aggregate([{ $match : { $or : [ {"moneda_base" : MONEDA_SALDO },{ "moneda_cotizacion" : MONEDA_SALDO }] }  },{ $sort : { tipo_cambio : 1 } } ])
+            var TiposDeCambiosResetear = TiposDeCambios.aggregate([ { $match : { $or : [    {"moneda_base" : MON_B },
+                                                                                            { "moneda_cotizacion" : MON_B }, 
+                                                                                            {"moneda_base" : MON_C }, 
+                                                                                            { "moneda_cotizacion" : MON_C } ] }  },
+                                                                    { $sort : { tipo_cambio : 1 } } ])
 
             for (CTCR = 0, T_TiposDeCambiosResetear = TiposDeCambiosResetear.length; CTCR < T_TiposDeCambiosResetear; CTCR++) {
                 var V_TiposDeCambiosResetear= TiposDeCambiosResetear[CTCR];
@@ -1205,7 +1209,11 @@ Meteor.methods({
                                 }
                             });
 
-                var TiposDeCambiosResetear = TiposDeCambios.aggregate([{ $match : { $or : [ {"moneda_base" : MONEDA_SALDO },{ "moneda_cotizacion" : MONEDA_SALDO }] }  },{ $sort : { tipo_cambio : 1 } } ])
+                var TiposDeCambiosResetear = TiposDeCambios.aggregate([ { $match : { $or : [    {"moneda_base" : MON_B },
+                                                                                                { "moneda_cotizacion" : MON_B }, 
+                                                                                                {"moneda_base" : MON_C }, 
+                                                                                                { "moneda_cotizacion" : MON_C } ] }  },
+                                                                        { $sort : { tipo_cambio : 1 } } ])
 
                 for (CTCR = 0, T_TiposDeCambiosResetear = TiposDeCambiosResetear.length; CTCR < T_TiposDeCambiosResetear; CTCR++) {
                     var V_TiposDeCambiosResetear= TiposDeCambiosResetear[CTCR];
