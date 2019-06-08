@@ -391,31 +391,21 @@ Jobs.register({
 
 	*/
     "JobValidaInversion": function( MONEDA_VERIFICAR ){
-    	try{
-    		console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
+    	
+		console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
 
-	    	Meteor.call("GuardarLogEjecucionTrader", [' JobValidaInversion: Moneda con Saldo a Verificar: ']+[MONEDA_VERIFICAR]);
+    	Meteor.call("GuardarLogEjecucionTrader", [' JobValidaInversion: Moneda con Saldo a Verificar: ']+[MONEDA_VERIFICAR]);
 
-	        var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
-	        var V_LimiteApDep = LimiteApDep[0].valor;
-	            
-	        Meteor.call("GuardarLogEjecucionTrader", [' JobValidaInversion: Se ejecuta Meteor.call("ValidaPropTipoCambiosValidados": ']+[MONEDA_VERIFICAR]+[' ']+[V_LimiteApDep]);
-	        Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep );
+        var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
+        var V_LimiteApDep = LimiteApDep[0].valor;
+            
+        Meteor.call("GuardarLogEjecucionTrader", [' JobValidaInversion: Se ejecuta Meteor.call("ValidaPropTipoCambiosValidados": ']+[MONEDA_VERIFICAR]+[' ']+[V_LimiteApDep]);
+        Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep );
 
-	        
-			var ejecucionJobValidaInversion = 0
-		}
-		catch(error){
-			var ejecucionJobValidaInversion = 1
-		}
-
-		if ( ejecucionJobValidaInversion === 0) {
-
-    		return this.success(ejecucionJobValidaInversion);
-    	}
-    	else {
-    		this.failure(ejecucionJobValidaInversion);
-    	}
+        
+		var ejecucionJobValidaInversion = 0
+		
+		return this.success(ejecucionJobValidaInversion);
     },
 
 	
