@@ -133,7 +133,7 @@ Meteor.methods({
                         Meteor.call("GuardarLogEjecucionTrader", [' Moneda con Saldo: ¡ Listo ! ']);
                     }
                 };
-                do{
+                //do{
                     var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda, moneda_saldo.saldo.tradeo.activo);
                 
 
@@ -157,27 +157,18 @@ Meteor.methods({
 
                         Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
                         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION
-                        /*
-                        var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
-                        var V_LimiteMuestreo = LimiteMuestreo[0].valor
-                        Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_LimiteMuestreo: ']+[V_LimiteMuestreo]);
-
-                        if ( V_LimiteMuestreo === 0 ) {                                
-                            Meteor.call("GuardarLogEjecucionTrader", ['  Valor de V_moneda_verificar: ']+[moneda_saldo.moneda]);
-                            Meteor.call("ValidaInversion", moneda_saldo.moneda);
-                        }
-                        /**/
-
-                        
+                        // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION                        
 
                         if ( V_LimiteMuestreo === 0 ) { 
 
+                            Meteor.call('ValidaInversion', moneda_saldo.moneda);
+                            /*
                             Jobs.run("JobValidaInversion", moneda_saldo.moneda, {
                                             in: {
                                                 second: 1
                                             }
                                         })
+                                        */
 
                         }else if ( V_LimiteMuestreo > 0 ) {
                             V_LimiteMuestreo = V_LimiteMuestreo - 1
@@ -197,23 +188,22 @@ Meteor.methods({
                         console.log('-------------------------------------------');
                         console.log(' ');
                     }
-                }while(TiposDeCambioVerificar === undefined)
+                //}while(TiposDeCambioVerificar === undefined)
             }
-            /*
-            if ( V_LimiteMuestreo > 0 ) {
-                V_LimiteMuestreo = V_LimiteMuestreo - 1
-                            
-                fecha = moment (new Date()); 
-                Parametros.update({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo" }, {
-                                            $set: {
-                                                "estado": true,
-                                                "valor": V_LimiteMuestreo,
-                                                "fecha_ejecucion" : fecha._d
-                                            }
-                    });
-            }
-            /**/
         }
+    },
+
+    "ValidaInversion": function( MONEDA_VERIFICAR ){
+        
+        console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
+
+        Meteor.call("GuardarLogEjecucionTrader", [' JobValidaInversion: Moneda con Saldo a Verificar: ']+[MONEDA_VERIFICAR]);
+
+        var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
+        var V_LimiteApDep = LimiteApDep[0].valor;
+            
+        Meteor.call("GuardarLogEjecucionTrader", [' JobValidaInversion: Se ejecuta Meteor.call("ValidaPropTipoCambiosValidados": ']+[MONEDA_VERIFICAR]+[' ']+[V_LimiteApDep]);
+        Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep );
     },
 
     'ValidaTendenciaTipoCambio': function ( TIPO_CAMBIO, MONEDA_SALDO ){
