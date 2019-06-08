@@ -1107,35 +1107,6 @@ Meteor.methods({
             var Eqv_V_InverSaldAnt = (( parseFloat(Eqv_V_InverSaldAct) * parseFloat(V_EquivalenciaTradeoAnteriorMB) ) / parseFloat(SaldoTradeoActualMB)).toString;
             console.log("Valor de Eqv_V_InverSaldAnt", Eqv_V_InverSaldAnt)
             var V_Ganancia = (parseFloat(V_EquivSaldoMonedaAdquirida) - parseFloat(Eqv_V_InverSaldAnt)).toString;
-            /*             
-            GananciaPerdida.insert({    
-                                        Operacion : {   Id_hitbtc : V_IdHitBTC,
-                                                        Id_Transhitbtc : V_Id_Transhitbtc,
-                                                        ID_LocalAnt : IdTransaccionActual,
-                                                        ID_LocalAct : IdTransaccionActual,
-                                                        Id_Lote: ID_LOTE,
-                                                        Tipo : V_FormaOperacion,
-                                                        TipoCambio : TIPO_CAMBIO,
-                                                        Precio : precio,
-                                                        Status : status,
-                                                        FechaCreacion : FechaCreacion,
-                                                        FechaActualizacion : FechaActualizacion},
-                                        Comision : {    Valor : V_Comision,
-                                                        Equivalencia : Equiv_V_Comision},
-                                        Moneda : {  emision : {     moneda : MON_B,
-                                                                    Fecha : FechaTradeoAnteriorMB,
-                                                                    Saldo : SaldoTradeoAnteriorMB,
-                                                                    Equivalente : V_EquivalenciaTradeoAnteriorMB},
-                                                    Adquirida : {   moneda : MON_C,
-                                                                    Fecha : FechaTradeoActualMC,
-                                                                    Saldo : SaldoTradeoActualMC,
-                                                                    Equivalente : V_EquivalenciaTradeoActualMC}},
-                                        Inversion : {   SaldoInversion  : CANT_INVER,
-                                                        Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                            Final : V_EquivSaldoMonedaAdquirida}},
-                                        Ganancia : {    Valor : V_Ganancia }
-                                    });
-            */
 
             GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
@@ -1169,11 +1140,24 @@ Meteor.methods({
                                         }, 
                                         {"upsert" : true}
                                         );
+            
+            Monedas.update({ "moneda": MONEDA_SALDO }, {    
+                            $set: {
+                                    "activo": "S"
+                                }
+                            });
 
 
-            TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
-                                    { $set:{  "periodo1.Base.reset": 1 }}
-                                );
+            var TiposDeCambiosResetear = TiposDeCambios.aggregate([{ $match : { $or : [ {"moneda_base" : MONEDA_SALDO },{ "moneda_cotizacion" : MONEDA_SALDO }] }  },{ $sort : { tipo_cambio : 1 } } ])
+
+            for (CTCR = 0, T_TiposDeCambiosResetear = TiposDeCambiosResetear.length; CTCR < T_TiposDeCambiosResetear; CTCR++) {
+                var V_TiposDeCambiosResetear= TiposDeCambiosResetear[CTCR];
+                var V_TipoCambio = V_TiposDeCambiosResetear.tipo_cambio
+
+                TiposDeCambios.update(  { tipo_cambio : V_TipoCambio },
+                                        { $set:{  "periodo1.Base.reset": 1 }}
+                                    );
+            }
 
         }else if ( MONEDA_SALDO == MON_C ){
                 var V_MonedaAdquirida = MON_B
@@ -1181,35 +1165,6 @@ Meteor.methods({
                 var V_EquivSaldoMonedaAdquirida = (Meteor.call('EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2)).toString;
                 var Eqv_V_InverSaldAnt = (( parseFloat(Eqv_V_InverSaldAct) * parseFloat(V_EquivalenciaTradeoAnteriorMC) ) / parseFloat(SaldoTradeoActualMC)).toString;
                 var V_Ganancia = (parseFloat(V_EquivSaldoMonedaAdquirida) - Eqv_V_InverSaldAnt).toString;
-                /*
-                GananciaPerdida.insert({    
-                                            Operacion : {   Id_hitbtc : V_IdHitBTC,
-                                                            Id_Transhitbtc : V_Id_Transhitbtc,
-                                                            ID_LocalAnt : IdTransaccionActual,
-                                                            ID_LocalAct : IdTransaccionActual,
-                                                            Id_Lote: ID_LOTE,
-                                                            Tipo : V_FormaOperacion,
-                                                            TipoCambio : TIPO_CAMBIO,
-                                                            Precio : precio,
-                                                            Status : status,
-                                                            FechaCreacion : FechaCreacion,
-                                                            FechaActualizacion : FechaActualizacion},
-                                            Comision : {    Valor : V_Comision,
-                                                            Equivalencia : Equiv_V_Comision},
-                                            Moneda : {  emision : { moneda : MON_C,
-                                                                    Fecha : FechaTradeoAnteriorMC,
-                                                                    Saldo : SaldoTradeoAnteriorMC,
-                                                                    Equivalente : V_EquivalenciaTradeoAnteriorMC},
-                                                        Adquirida : { moneda : MON_B,
-                                                                    Fecha : FechaTradeoActualMB,
-                                                                    Saldo : SaldoTradeoActualMB,
-                                                                    Equivalente : V_EquivalenciaTradeoActualMB}},
-                                            Inversion : { SaldoInversion  : CANT_INVER,
-                                                            Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                                Final : V_EquivSaldoMonedaAdquirida}},
-                                            Ganancia : { Valor :  V_Ganancia}
-                                        });
-                */
 
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
@@ -1244,15 +1199,22 @@ Meteor.methods({
                                         {"upsert" : true}
                                         );
 
-                TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
-                                        { $set:{  "periodo1.Cotizacion.reset": 1 }}
-                                    );
-
                 Monedas.update({ "moneda": MONEDA_SALDO }, {    
                             $set: {
                                     "activo": "S"
                                 }
                             });
+
+                var TiposDeCambiosResetear = TiposDeCambios.aggregate([{ $match : { $or : [ {"moneda_base" : MONEDA_SALDO },{ "moneda_cotizacion" : MONEDA_SALDO }] }  },{ $sort : { tipo_cambio : 1 } } ])
+
+                for (CTCR = 0, T_TiposDeCambiosResetear = TiposDeCambiosResetear.length; CTCR < T_TiposDeCambiosResetear; CTCR++) {
+                    var V_TiposDeCambiosResetear= TiposDeCambiosResetear[CTCR];
+                    var V_TipoCambio = V_TiposDeCambiosResetear.tipo_cambio
+
+                    TiposDeCambios.update(  { tipo_cambio : V_TipoCambio },
+                                            { $set:{  "periodo1.Base.reset": 1 }}
+                                        );
+                }
         }
 
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_IdHitBTC: "]+[V_IdHitBTC]);
