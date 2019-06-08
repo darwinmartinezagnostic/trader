@@ -255,15 +255,21 @@ Meteor.methods({
 
         const TrnsOA = Meteor.call("ConexionGet", url_tranOA)   
         var transOA = TrnsOA[0];
+        console.log('Valor de transOA', transOA)
         const TrnsTP = Meteor.call("ConexionGet", Url_TransTP)
+        console.log('Valor de TrnsTP', TrnsTP)
         const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
         var transID = TrnsID[0];
+        console.log('Valor de transID', transID)
         if ( transID === undefined ) {
             HistIdOrden = 0
+            console.log('Valor de HistIdOrden', HistIdOrden)
         }else{
             HistIdOrden = 1
+            console.log('Valor de HistIdOrden', HistIdOrden)
         }
         if ( transOA === undefined ) {
+            console.log(' Estoy en if ( transOA === undefined )')
             for ( CTrnsOA = 0, TTrnsOA = TrnsTP.length; CTrnsOA < TTrnsOA; CTrnsOA++ ) {
                 var HTrnsTP = TrnsTP[CTrnsOA];
                 IdOdenClient = HTrnsTP.clientOrderId
@@ -275,15 +281,20 @@ Meteor.methods({
                     break                    
                 }
             }
+            console.log('Valor de HistIdOrdenExiste', HistIdOrdenExiste)
+
 
             if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 ) {
+                console.log(' Estoy en if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
                 var Estado_Orden = StatusOrden
             }else{
+                console.log(' Estoy en else de if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
                 var Estado_Orden = 'Fallido'
             }
         }else{
             var Estado_Orden = trans.status
         }
+        console.log('Valor de Estado_Orden', Estado_Orden)
         return Estado_Orden
     },
 
