@@ -40,9 +40,8 @@ Meteor.methods({
 
 
         var contador = 1;
-        //var V_LimiteMaximoEjecucion = 1
-
-        while( V_LimiteMaximoEjecucion !== 0 ){ 
+        do{
+                
 
             Meteor.call("GuardarLogEjecucionTrader", [' ESTOY INICIANDO SECUENCIA']+[' CONTADOR ACTUAL: ']+[contador]);
 
@@ -73,7 +72,7 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", [' Valor de V_LimiteMaximoEjecucion ']+[V_LimiteMaximoEjecucion]);
             Meteor.call("GuardarLogEjecucionTrader", [' FIN DE SECUENCIA - ']+[fecha._d]);
 
-        }
+        }while( V_LimiteMaximoEjecucion !== 0 );
     },    
 
     'SecuenciaPeriodo1':function(){
@@ -83,20 +82,22 @@ Meteor.methods({
         console.log('        ',fecha._d);
         console.log('---------- SECUENCIA PERIODO 1 ------------');
         console.log(' ');
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*
         try {
-            
+            var Monedas_Saldo = Monedas.aggregate([
+                        { $match : {"saldo.tradeo.activo" : { $gt : 0 }, "activo" : "S"}},
+                        { $sort : {"saldo.tradeo.equivalencia":-1} }
+                    ]);
+        }
+        /**/
+        try {
             var Monedas_Saldo = Monedas.aggregate([
                         { $match : { $or : [{"saldo.tradeo.equivalencia" : { $gt : 0 }},{ "moneda" : 'BTC' }] , "activo" : "S"}},
-                        { $sort : {"saldo.tradeo.equivalencia":-1} }, { $limit: 2 }
+                        { $sort : {"saldo.tradeo.equivalencia":-1} }
                     ]);
-            
-            /*
-            var Monedas_Saldo = Monedas.aggregate([
-                        { $match : {  "moneda" : 'CCL' , "activo" : "S"}},
-                        { $sort : {"saldo.tradeo.equivalencia":-1} }, { $limit: 2 }
-                    ]);
-            /**/
         }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
