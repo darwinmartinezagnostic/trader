@@ -166,6 +166,7 @@ Meteor.methods({
                                 var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                             break;
                         }
+                        console.log(" EquivalenteDolar: Valor de ValorPromedio: ", ValorPromedio)
 
                         var TipoCambioValido = ValorPromedio.Existe
                         if ( TipoCambioValido !== 1 ) {
