@@ -184,6 +184,7 @@ Meteor.methods({
         
             var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
             var V_LimiteApDep = LimiteApDep[0].valor;
+            var CONSTANTES = Meteor.call("Constantes");
          
         //Meteor.call("ActualizaSaldoTodasMonedas");
         /*
@@ -195,10 +196,10 @@ Meteor.methods({
         /**/
             //Meteor.call("ValidaSaldoEquivalenteActual");
         /*
-            //Meteor.call("EjecucionInicial"); 
-            Meteor.call("ListaTiposDeCambios", 2);
             Meteor.call("ListaMonedas");
             Meteor.call("ActualizaSaldoTodasMonedas");
+            //Meteor.call("EjecucionInicial"); 
+            Meteor.call("ListaTiposDeCambios", 2);
             Meteor.call("ValidaMonedasTransfCuentaTRadeo");
             Meteor.call("ActualizaSaldoTodasMonedas");
             Meteor.call("ConsultarSaldoTodasMonedas");
@@ -210,8 +211,8 @@ Meteor.methods({
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
         
-        const MON_B='BTC'
-        const MON_C='GUSD'
+        const MON_B='CCL'
+        const MON_C='USD'
         var TIPO_CAMBIO = MON_B+MON_C
         //var MONEDA_SALDO = MON_B
         var MONEDA_COMISION = MON_C
@@ -240,14 +241,14 @@ Meteor.methods({
         
         if (MONEDA_SALDO === MON_B) {
             //CANT_INVER = '1.782'
-            CANT_INVER = '0.0023275'
+            CANT_INVER = '10000'
         }else if (MONEDA_SALDO === MON_C) {
             //CANT_INVER = '0.01696398'
-            CANT_INVER = '90.0674088854' 
+            CANT_INVER = '30000000' 
         } 
         
         MAPLICOMIS = MON_C
-        //var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);        
+        var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);        
 
         //Meteor.call("ConsultaCarterasDeposito");
  
@@ -441,8 +442,9 @@ Meteor.methods({
             //USDEOSDT
             //EURSUSD
             //'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
-            /*var MONEDA='EOSDT'
-            var prueba = Meteor.call("EquivalenteDolar", MONEDA, 1, 2);
+            /**
+            var MONEDA='ETH'
+            var prueba = Meteor.call("EquivalenteDolar", MONEDA, 1e-10, 1);
             console.log("Valor de prueba ", prueba);/**/
 
             //Meteor.call("SecuenciaPeriodo1")
@@ -462,18 +464,21 @@ Meteor.methods({
             VALOR = 4.2405e-8
             var prueba = Meteor.call('CombierteNumeroExpStr', VALOR) 
             console.log("Valor de prueba: ", prueba)
-            /**/
+            /*
             MONEDA = 'PITCH'
             var DatosMoneda = Monedas.find( { moneda : MONEDA }).fetch()
             var SaldoMoneda = DatosMoneda[0].saldo.tradeo.activo
             var prueba1 = Meteor.call('EquivalenteDolar', MONEDA, parseFloat(SaldoMoneda), 2) 
             console.log("Valor de prueba1: ", prueba1) 
-            /**/
-            /* 
+
+            /*
+            
             MONEDAS = Monedas.aggregate([
                         { $match : {"saldo.tradeo.activo" : { $gt : 0 }, "activo" : "S"}},
                         { $sort : {"saldo.tradeo.equivalencia":-1} }
                     ]);
+
+
 
             console.log("Valor de MONEDAS: ", MONEDAS) 
             
@@ -513,31 +518,38 @@ Meteor.methods({
             console.log("Valor de prueba: ", prueba)
             */
 
+            //DATOS = [{ id: '134731069733',clientOrderId: '00000000000000000000000000001547', symbol: 'GETBTC', side: 'buy',status: 'partiallyFilled',type: 'limit',timeInForce: 'GTC', quantity: '410', price: '0.00000692800', cumQuantity: '130',createdAt: '2019-06-08T13:45:12.616Z', updatedAt: '2019-06-08T13:45:12.616Z', postOnly: false, tradesReport: [ { id: 576327398, quantity: '130', price: '0.00000692800', fee: '0.000001801280', timestamp: '2019-06-08T13:45:12.616Z' } ] }]
+            
+            /*
+            DATOS = [{ id: '134746692991', clientOrderId: '00000000000000000000000000001562', ymbol: 'GETBTC', side: 'buy', status: 'new', type: 'limit', imeInForce: 'GTC', quantity: '150', price: '0.00000674577', cumQuantity: '0', createdAt: '2019-06-08T15:15:20.441Z', updatedAt: '2019-06-08T15:15:20.441Z', postOnly: false }]
+
+            ORDEN  = DATOS[0]
+            //console.log("Valor de ORDEN: ", ORDEN.tradesReport)
+            ID = ORDEN.id
+
+            //existe = {ORDEN.tradesReport: exists}
+
+            if ( ORDEN.tradesReport ) {
+                var Negociaciones = ORDEN.tradesReport
+                var ComisionTtl = 0
+                console.log("Valor de ORDEN: ", ORDEN.tradesReport)
+
+            }else {
+                console.log(' Estoy acá')
+                var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[ID]+['/trades']
+                console.log('Valor de Url_TransID', Url_TransID)
+                const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
+                var transID = TrnsID[0];
+                //console.log('Valor de transID', transID)
+                var ComisionTtl = transID.fee
+                console.log('Valor de ComisionTtl', ComisionTtl)
+            }
+
+            */
 
 
+            Meteor.call("ConsultarHistoricoOrdenes");
 
-            Prueba.update( {    "Operacion.ID_LocalAct" : 1, "Operacion.Id_Lote": 1 },
-                                        {
-                                            $set: {
-                                                    Operacion : {   
-                                                                            Id_hitbtc : 1,
-                                                                            ID_LocalAct : 1,
-                                                                            Id_Lote: 1,
-                                                                            Tipo : 'TP',
-                                                                            TipoCambio : 'TIPO_CAMBIO',
-                                                                            Precio : 1,
-                                                                            Status : 'En seguimiento',
-                                                                            Razon : 'Estado_Orden',
-                                                                            FechaCreacion : 'fecha._d',
-                                                                            FechaActualizacion : 'fecha._d}',
-                                                            Moneda : {  Emitida : { moneda : 'MON_C' },
-                                                                        Adquirida : { moneda : 'MON_B' }
-                                                                     },
-                                                            Inversion : { SaldoInversion  : 1 }
-                                                    }
-                                        }}, 
-                                        {"upsert" : true}
-                                        );
     },
 });
 

@@ -4,6 +4,7 @@ moment().tz('America/Caracas').format();
 Meteor.methods({
 
     'CalculaId':function(VALOR_EJEC){
+        var CONSTANTES = Meteor.call("Constantes");
         // OPTIMIZAR EL CODIGO -- PUEDE QUE SE PUEDA REDUCIR
         switch(VALOR_EJEC){
                 case 1:
