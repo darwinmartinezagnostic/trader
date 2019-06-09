@@ -20,7 +20,10 @@ Meteor.methods({
                 break;
                 case 2:
                         if (GananciaPerdida.find().count() === 0){
-                            var nuevo_id = 1;
+                            var url_transaccion_completa=[CONSTANTES.HistTradeo]+['?sort=DESC&by=timestamp&limit=1']
+                            var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
+                            var nuevo_id = parseFloat(transaccion[0].clientOrderId);
+                            //var nuevo_id = 1;
                         }
                         else {
                             var maximo_id = GananciaPerdida.aggregate([{ $group: { _id: "MAX_ID", max_id : { $max: "$Operacion.ID_LocalAct"}}}]);
