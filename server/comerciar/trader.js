@@ -578,33 +578,33 @@ Meteor.methods({
             var v_compras_ventas = compras_ventas
             var ValorOferta = v_compras_ventas.ask;
             var ValorDemanda = v_compras_ventas.bid;
-
+            /*
             console.log("Valor de ValorOferta", ValorOferta);
             console.log("Valor de ValorDemanda", ValorDemanda);
             console.log("Valor de ValorOferta", parseFloat(ValorOferta));
             console.log("Valor de ValorDemanda", parseFloat(ValorDemanda));
-
+            /**/
             if ( ValorOferta === null || ValorDemanda === null ) {
-                Meteor.call("GuardarLogEjecucionTrader", "Entre por if ( ValorOferta === null || ValorDemanda === null ");
+                //Meteor.call("GuardarLogEjecucionTrader", "Entre por if ( ValorOferta === null || ValorDemanda === null ");
                 var ValFinPromedio = 0;
                 var Existencia = 0;
             }else{
                 var sumatoria = parseFloat(ValorOferta) + parseFloat(ValorDemanda);
                 var promedio = (sumatoria/2).toString();
-                console.log("Valor de promedio", promedio);
-                var prueba = Meteor.call( "CombierteNumeroExpStr", promedio)
-                console.log("Valor de prueba", prueba); 
+                //console.log("Valor de promedio", promedio);
                 var CantPromedio = ValorOferta.toString().trim().length ;
                 var ValStrnPromedio = promedio.toString().substr(0, CantPromedio);
                 var ValFinPromedio = parseFloat(ValStrnPromedio);
                 var Existencia = 1;
                 console.log('\n ');
                 console.log('############################################');
+                /*
                 Meteor.call("GuardarLogEjecucionTrader", [' Verificando Tipo de Cambio: ']+[v_compras_ventas.symbol]);
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de Oferta en Venta: ']+[ValorOferta]);
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de Oferta de Compra: ']+[ValorDemanda]);
                 Meteor.call("GuardarLogEjecucionTrader", [' Promedio: ']+[ValFinPromedio]);
                 Meteor.call("GuardarLogEjecucionTrader", [' Marca de tiempo: ']+[v_compras_ventas.timestamp]);
+                */
                 console.log('############################################');
                 if (EquivalenciasDol.find({ tipo_cambio : TIPO_CAMBIO }).count() === 0) {
                     EquivalenciasDol.insert({ fecha : fecha._d, tipo_cambio : TIPO_CAMBIO, ValorOfertaVenta : v_compras_ventas.ask, ValorOfertaCompra : v_compras_ventas.bid, Promedio : ValFinPromedio, Existe : Existencia })
@@ -615,12 +615,12 @@ Meteor.methods({
             }
 
         }else{
-            Meteor.call("GuardarLogEjecucionTrader", "Entre por compras_ventas === undefined ");
+            //Meteor.call("GuardarLogEjecucionTrader", "Entre por compras_ventas === undefined ");
             var ValFinPromedio = 0;
             var Existencia = 0;
         }
         PromedioObtenido = { 'Promedio': ValFinPromedio, 'Existe': Existencia };
-        console.log("Valor de PromedioObtenido", PromedioObtenido);
+        //console.log("Valor de PromedioObtenido", PromedioObtenido);
         
         return PromedioObtenido;
     },

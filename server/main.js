@@ -13,7 +13,7 @@ Meteor.methods({
         Meteor.call("ValidaMonedasTransfCuentaTRadeo");
         Meteor.call("ActualizaSaldoTodasMonedas");
         Meteor.call("ValidaSaldoEquivalenteActual");
-        Meteor.call("ConsultarSaldoTodasMonedas");
+        Meteor.call("ActualizaSaldoTodasMonedas");
         Meteor.call("EquivalenteDolarMinCompra");
         Meteor.call("ConsultarHistoricoOrdenes");
         try {
