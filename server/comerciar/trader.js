@@ -998,7 +998,7 @@ Meteor.methods({
                 ComisionTtl +=  parseFloat(Reporte.fee)
             }
         }else {
-            var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[ID]+['/trades']
+            var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[ORDEN.id]+['/trades']
             const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
             var transID = TrnsID[0];
             var ComisionTtl = transID.fee

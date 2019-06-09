@@ -211,12 +211,12 @@ Meteor.methods({
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
         
-        const MON_B='CCL'
-        const MON_C='USD'
+        const MON_B='ORMEUS'
+        const MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
-        //var MONEDA_SALDO = MON_B
+        var MONEDA_SALDO = MON_B
         var MONEDA_COMISION = MON_C
-        var MONEDA_SALDO = MON_C
+        //var MONEDA_SALDO = MON_C
         var MONEDASALDO = MONEDA_SALDO
         /* 
 
@@ -241,7 +241,7 @@ Meteor.methods({
         
         if (MONEDA_SALDO === MON_B) {
             //CANT_INVER = '1.782'
-            CANT_INVER = '10000'
+            CANT_INVER = '8'
         }else if (MONEDA_SALDO === MON_C) {
             //CANT_INVER = '0.01696398'
             CANT_INVER = '30000000' 
@@ -271,38 +271,24 @@ Meteor.methods({
 
             Meteor.call("ValidaTiempoEspera", ORDEN);
         */
-        /*
+        
 
-        const ORDEN = { 
-                    id: '125475148146',
-                    clientOrderId: '00000000000000000000000000000308',
-                    symbol: 'BTCUSD',
-                    side: 'sell',
-                    status: 'filled',
-                    type: 'limit',
-                    timeInForce: 'GTC',
-                    quantity: '0.01691',
-                    price: '5977.37',
-                    cumQuantity: '0.01691',
-                    createdAt: '2019-05-08T23:19:21.778Z',
-                    updatedAt: '2019-05-08T23:19:21.778Z',
-                    postOnly: false,
-                    tradesReport: [ {   id: 540001701,
-                                        quantity: '0.00800',
-                                        price: '5977.37',
-                                        fee: '0.095637920000',
-                                        timestamp: '2019-05-08T23:19:21.778Z' },
-                                    {   id: 540001702,
-                                        quantity: '0.00891',
-                                        price: '5977.37',
-                                        fee: '0.106516733400',
-                                        timestamp: '2019-05-08T23:19:21.778Z' }
-                                    ]
-         }
+        const ORDEN = { id: 134980877254,
+                        clientOrderId: '00000000000000000000000000001676',
+                        symbol: 'ORMEUSBTC',
+                        side: 'sell',
+                        status: 'filled',
+                        type: 'limit',
+                        timeInForce: 'GTC',
+                        quantity: '8.0',
+                        price: '0.000010200',
+                        cumQuantity: '8.0',
+                        createdAt: '2019-06-09T13:42:02.598Z',
+                        updatedAt: '2019-06-09T13:48:54.599Z' }
 
 
         //(TIPO_CAMBIO, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, DATOS, ID_LOTE){
-        Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, 1);
+        Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, 13);
         /**/   
 
         /*
@@ -548,7 +534,7 @@ Meteor.methods({
             */
 
 
-            Meteor.call("ConsultarHistoricoOrdenes");
+            //Meteor.call("ConsultarHistoricoOrdenes");
 
     },
 });

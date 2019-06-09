@@ -980,13 +980,17 @@ Meteor.methods({
         Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi estado: ']+[Estado_Orden]); 
         ContpartiallyFilled = 0;
 
+        console.log(' Valor de Orden 1: ', Orden)
+
         while( Estado_Orden !== "filled" ){
             console.log('Estoy en el while')
+            console.log(' Valor de Orden 2: ', Orden)
             console.log(' Valor de Estado_Orden: ', Estado_Orden)
             fecha = moment (new Date());
             if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
                 var V_IdHitBTC = Orden.id
-                console.log(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" || Estado_Orden === "errorisnotdefined" )')
+                console.log(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" )')
+                console.log(' Valor de Orden 3: ', Orden)
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);                
                 Meteor.call('sleep', 4);
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FIN ESPERA: ']+[fecha._d]);
@@ -1023,16 +1027,19 @@ Meteor.methods({
                 //const Resultado = Meteor.call("ValidarEstadoOrden", IdTransaccionActual, V_IdHitBTC, TIPO_CAMBIO, Orden)
                 const Resultado = Meteor.call("ValidarEstadoOrden", Orden)
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
-                Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado]);
+                console.log(' Valor de Orden 4: ', Orden)
+                Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
 
                 var Orden = Resultado
                 var Estado_Orden = Resultado.status;
+                console.log(' Valor de Orden 5: ', Orden)
                 //var Estado_Orden = Resultado;                  
             }
 
             if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" ) {
                 console.log(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )')
                 var V_IdHitBTC = Orden.id
+                console.log(' Valor de Orden 6: ', Orden)
 
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
@@ -1062,10 +1069,12 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", [' CrearNuevaOrder: Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
                     Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
                 }
+                console.log(' Valor de Orden 7: ', Orden)
                 break
             }
 
             if ( Estado_Orden === "errorisnotdefined" ) {
+                console.log(' Valor de Orden 8: ', Orden)
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
                                             $set: {
@@ -1087,10 +1096,12 @@ Meteor.methods({
                                         }, 
                                         {"upsert" : true}
                                         );
+                console.log(' Valor de Orden 9: ', Orden)
+                break
             }
 
             if ( Estado_Orden === "Insufficientfunds" ) {
-                //console.log(" Insufficientfunds: Valor de Orden: ", Orden)
+                console.log(" Insufficientfunds: Valor de Orden 10: ", Orden)
                 //var V_IdHitBTC = Orden.id
 
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
@@ -1120,24 +1131,28 @@ Meteor.methods({
                 //const VerifOrdenAbierta = Meteor.call("ValidarEstadoOrden", V_IdHitBTC, TIPO_CAMBIO, Orden)
                 const Resultado = Meteor.call("ValidarEstadoOrden", Orden)
                 var Orden = Resultado
+                console.log(' Valor de Orden 11: ', Orden)
                 var Estado_Orden = Resultado.status;
                 console.log(" Insufficientfunds: Valor de Estado_Orden: ", Estado_Orden)
+                Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
             } 
         }
 
+        console.log(' Valor de Orden 12: ', Orden)
+
         if ( Estado_Orden === "filled" ) {
             console.log(" if ( Estado_Orden === filled ) : Voy a Guardar")
+            console.log(' Valor de Orden 13: ', Orden)
             console.log(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
             Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
             console.log(" if ( Estado_Orden === filled ) : Ya guardé")
             console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ListaTradeoActual',TIPO_CAMBIO, 3)
             Meteor.call('ListaTradeoActual',TIPO_CAMBIO, 3 );
             console.log(" if ( Estado_Orden === filled ) : ListaTradeoActual Ya terminé")
-            console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ValidaSaldoEquivalenteActual',MON_B)
-            Meteor.call("ValidaSaldoEquivalenteActual", MON_B);
-            console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ValidaSaldoEquivalenteActual',MON_C)
-            Meteor.call("ValidaSaldoEquivalenteActual", MON_C);
-            console.log(" if ( Estado_Orden === filled ) : Voy a Cacular nuevo ID para collecion HistorialTransacciones")
+            console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ActualizaSaldoActual',MON_B)
+            Meteor.call("ActualizaSaldoActual", MON_B);
+            console.log(" if ( Estado_Orden === filled ) : Voy a ", 'ActualizaSaldoActual',MON_C)
+            Meteor.call("ActualizaSaldoActual", MON_C);
         }
         /**/
     },
