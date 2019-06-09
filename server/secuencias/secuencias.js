@@ -244,8 +244,7 @@ Meteor.methods({
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
             else if ( MB === MONEDA_SALDO && V_ResetTipCambMB === 1 ) {
-                //var V_EJEC = 3
-                var V_EJEC = 2
+                var V_EJEC = 3
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
             else if ( MC === MONEDA_SALDO && V_ResetTipCambMC === 0 ) {
@@ -253,8 +252,7 @@ Meteor.methods({
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
             else if ( MC === MONEDA_SALDO && V_ResetTipCambMC === 1 ) {
-                //var V_EJEC = 3
-                var V_EJEC = 2
+                var V_EJEC = 3
                 Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, MONEDA_SALDO);
             }
 
