@@ -983,7 +983,6 @@ Meteor.methods({
         while( Estado_Orden !== "filled" ){
             console.log('Estoy en el while')
             console.log(' Valor de Estado_Orden: ', Estado_Orden)
-            console.log(' Valor de Estado_Orden: ', Estado_Orden)
             fecha = moment (new Date());
             if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
                 var V_IdHitBTC = Orden.id
@@ -991,27 +990,6 @@ Meteor.methods({
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);                
                 Meteor.call('sleep', 4);
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FIN ESPERA: ']+[fecha._d]);
-                const Resultado = Meteor.call("ValidarEstadoOrden", IdTransaccionActual, V_IdHitBTC, TIPO_CAMBIO)
-                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
-                /*
-                GananciaPerdida.insert({
-                                            Operacion : {   
-                                                            Id_hitbtc : V_IdHitBTC,
-                                                            ID_LocalAct : IdTransaccionActual,
-                                                            Id_Lote: ID_LOTE,
-                                                            Tipo : TP,
-                                                            TipoCambio : TIPO_CAMBIO,
-                                                            Precio : RecalcIverPrec.MejorPrecCal,
-                                                            Status : 'En seguimiento',
-                                                            Razon : Estado_Orden,
-                                                            FechaCreacion : fecha._d,
-                                                            FechaActualizacion : fecha._d},
-                                            Moneda : {  Emitida : { moneda : MON_C },
-                                                        Adquirida : { moneda : MON_B }
-                                                     },
-                                            Inversion : { SaldoInversion  : CANT_INVER }
-                                        });
-                */
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE }, 
                                         {
                                             $set: {
@@ -1036,37 +1014,26 @@ Meteor.methods({
                                         );
                                            
 
-                Monedas.update({ "moneda": MONEDA_SALDO , "activo": "S"}, {    
+                Monedas.update({ "moneda": MONEDA_SALDO }, {    
                             $set: {
                                     "activo": "N"
                                 }
                             });
 
-                var Estado_Orden = Resultado;                  
+                //const Resultado = Meteor.call("ValidarEstadoOrden", IdTransaccionActual, V_IdHitBTC, TIPO_CAMBIO, Orden)
+                const Resultado = Meteor.call("ValidarEstadoOrden", Orden)
+                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
+                Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado]);
+
+                var Orden = Resultado
+                var Estado_Orden = Resultado.status;
+                //var Estado_Orden = Resultado;                  
             }
 
             if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" ) {
                 console.log(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )')
                 var V_IdHitBTC = Orden.id
-                /*
-                GananciaPerdida.update({
-                                            Operacion : {   
-                                                            Id_hitbtc : V_IdHitBTC,
-                                                            ID_LocalAct : IdTransaccionActual,
-                                                            Id_Lote: ID_LOTE,
-                                                            Tipo : TP,
-                                                            TipoCambio : TIPO_CAMBIO,
-                                                            Precio : RecalcIverPrec.MejorPrecCal,
-                                                            Status : 'Fallido',
-                                                            Razon : Estado_Orden,
-                                                            FechaCreacion : fecha._d,
-                                                            FechaActualizacion : fecha._d},
-                                            Moneda : {  emitida : { moneda : MON_C },
-                                                        Adquirida : { moneda : MON_B }
-                                                     },
-                                            Inversion : { SaldoInversion  : CANT_INVER }
-                                        });
-                */
+
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
                                             $set: {
@@ -1099,24 +1066,6 @@ Meteor.methods({
             }
 
             if ( Estado_Orden === "errorisnotdefined" ) {
-                /*
-                GananciaPerdida.insert({
-                                            Operacion : {   ID_LocalAct : IdTransaccionActual,
-                                                            Id_Lote: ID_LOTE,
-                                                            Tipo : TP,
-                                                            TipoCambio : TIPO_CAMBIO,
-                                                            Precio : RecalcIverPrec.MejorPrecCal,
-                                                            Status : 'Fallido',
-                                                            Razon : Estado_Orden,
-                                                            FechaCreacion : fecha._d,
-                                                            FechaActualizacion : fecha._d},
-                                            Moneda : {  Emitida : { moneda : MON_C },
-                                                        Adquirida : { moneda : MON_B }
-                                                     },
-                                            Inversion : { SaldoInversion  : CANT_INVER }
-                                        });
-                */
-
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
                                             $set: {
@@ -1141,8 +1090,8 @@ Meteor.methods({
             }
 
             if ( Estado_Orden === "Insufficientfunds" ) {
-                console.log(" Insufficientfunds: Valor de Orden: ", Orden)
-                var V_IdHitBTC = Orden.id
+                //console.log(" Insufficientfunds: Valor de Orden: ", Orden)
+                //var V_IdHitBTC = Orden.id
 
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
@@ -1168,8 +1117,10 @@ Meteor.methods({
 
 
 
-                const VerifOrdenAbierta = Meteor.call("ValidarEstadoOrden", V_IdHitBTC, TIPO_CAMBIO)
-                var Estado_Orden = VerifOrdenAbierta;
+                //const VerifOrdenAbierta = Meteor.call("ValidarEstadoOrden", V_IdHitBTC, TIPO_CAMBIO, Orden)
+                const Resultado = Meteor.call("ValidarEstadoOrden", Orden)
+                var Orden = Resultado
+                var Estado_Orden = Resultado.status;
                 console.log(" Insufficientfunds: Valor de Estado_Orden: ", Estado_Orden)
             } 
         }

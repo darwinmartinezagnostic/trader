@@ -991,6 +991,7 @@ Meteor.methods({
         if ( ORDEN.tradesReport ) {
             var Negociaciones = ORDEN.tradesReport
             console.log("Valor de ORDEN: ", ORDEN.tradesReport)
+            var status = ORDEN.status
 
             for (CRPT = 0, TRPT = Negociaciones.length; CRPT < TRPT; CRPT++) {
                 var Reporte = Negociaciones[CRPT];
@@ -1001,6 +1002,7 @@ Meteor.methods({
             const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
             var transID = TrnsID[0];
             var ComisionTtl = transID.fee
+            var status = ORDEN.status
             console.log('Valor de ComisionTtl', ComisionTtl)
         }
 
@@ -1013,7 +1015,6 @@ Meteor.methods({
         var IdHBTC = ORDEN.id
         var IdTransaccionActual = ORDEN.clientOrderId
         var FormaDeOperacion = ORDEN.side
-        var status = ORDEN.status
         var FechaCreacion = ORDEN.createdAt
         var FechaActualizacion = ORDEN.updatedAt
         var V_AnterioresMB = Monedas.aggregate([{ $match: { 'moneda' : MON_B }}]);

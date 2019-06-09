@@ -244,14 +244,37 @@ Meteor.methods({
         return Estado;
     },
 
-    'ValidarEstadoOrden': function(ORDEN, ID, TIPO_CAMBIO){
+    //'ValidarEstadoOrden': function(ORDEN, ID, TIPO_CAMBIO, VAL_ORDEN){
+    'ValidarEstadoOrden': function( VAL_ORDEN){
         var CONSTANTES = Meteor.call("Constantes");
-        var url_tranOA=[CONSTANTES.ordenes]+['?clientOrderId=']+[ORDEN]+['?wait=300']
-        var Url_TransTP=[CONSTANTES.HistOrdenes]+['?symbol=']+[TIPO_CAMBIO]+['&limit=3']
-        var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[ID]+['/trades']
+        /////////////////////////////////////////////////////
+
+        T_id = VAL_ORDEN.id
+        T_clientOrderId = VAL_ORDEN.clientOrderId
+        T_symbol = VAL_ORDEN.symbol
+        T_side = VAL_ORDEN.side
+        T_status = VAL_ORDEN.status
+        T_type = VAL_ORDEN.type
+        T_timeInForce = VAL_ORDEN.timeInForce
+        T_quantity = VAL_ORDEN.quantity
+        T_price = VAL_ORDEN.price
+        T_cumQuantity = VAL_ORDEN.cumQuantity
+        T_createdAt = VAL_ORDEN.createdAt
+        T_updatedAt = VAL_ORDEN.updatedAt
+        T_postOnly = VAL_ORDEN.postOnly
+
+        /////////////////////////////////////////////////////
+        //var url_tranOA=[CONSTANTES.ordenes]+['?clientOrderId=']+[ORDEN]+['?wait=300']
+        //var Url_TransTP=[CONSTANTES.HistOrdenes]+['?symbol=']+[TIPO_CAMBIO]+['&limit=3']
+        //var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[ID]+['/trades']
+
+        var url_tranOA=[CONSTANTES.ordenes]+['?clientOrderId=']+[T_clientOrderId]+['?wait=300']
+        var Url_TransTP=[CONSTANTES.HistOrdenes]+['?symbol=']+[T_symbol]+['&limit=3']
+        var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[T_id]+['/trades']
         console.log('Valor de url_tranOA', url_tranOA)
         console.log('Valor de Url_TransTP', Url_TransTP)
         console.log('Valor de Url_TransID', Url_TransID)
+
 
         const TrnsOA = Meteor.call("ConexionGet", url_tranOA)   
         var transOA = TrnsOA[0];
@@ -273,10 +296,12 @@ Meteor.methods({
             for ( CTrnsOA = 0, TTrnsOA = TrnsTP.length; CTrnsOA < TTrnsOA; CTrnsOA++ ) {
                 var HTrnsTP = TrnsTP[CTrnsOA];
                 IdOdenClient = HTrnsTP.clientOrderId
-                if ( IdOdenClient !== ORDEN ) {
+                //if ( IdOdenClient !== ORDEN ) {
+                if ( IdOdenClient !== T_clientOrderId ) {
                     HistIdOrdenExiste = 0
                 }else{
-                    StatusOrden = HTrnsTP.status
+                    //StatusOrden = HTrnsTP.status
+                    NuValOrden = HTrnsTP
                     HistIdOrdenExiste = 1
                     break                    
                 }
@@ -286,73 +311,17 @@ Meteor.methods({
 
             if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 ) {
                 console.log(' Estoy en if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
-                var Estado_Orden = StatusOrden
+                //var Estado_Orden = StatusOrden
+                var Estado_Orden = NuValOrden
             }else{
                 console.log(' Estoy en else de if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
-                var Estado_Orden = 'Fallido'
+                var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: 'Fallido', type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
             }
         }else{
-            var Estado_Orden = trans.status
+            var Estado_Orden = transOA
         }
         console.log('Valor de Estado_Orden', Estado_Orden)
         return Estado_Orden
     },
-
-    'ValidaTiempoEspera': function(ORDEN){
-        //var Estado_Orden = 'filled'
-        //var Estado_Orden = 'new'
-        //var Estado_Orden = 'partiallyFilled'
-        //var Estado_Orden = 'suspended'
-        //var Estado_Orden = 'canceled'
-        //var Estado_Orden = 'expired'
-        //var Estado_Orden = "DuplicateclientOrderId"
-        var Estado_Orden = ORDEN
-
-        console.log('Voy anetrar en el while')
-        while( Estado_Orden !== "filled" ){
-            console.log('Estoy en el while')
-            fecha = moment (new Date());
-            if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
-                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);
-                const Resultado = Meteor.call("ValidarEstadoOrden", ORDEN)
-                Meteor.call("sleep", 2)
-                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL: ']+[fecha._d]);
-                Estado_Orden = Resultado;                
-            }
-
-            if ( Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" ) {
-                console.log('Dedo Guardar el fallo y salir')
-                break
-            }
-            if ( Estado_Orden === "canceled" ) {
-                console.log('Dedo Guardar el estado de la cancelacion y salir')
-                break
-            }
-            if ( Estado_Orden === "DuplicateclientOrderId" ) {
-                console.log('Dedo Guardar el fallo y reiniciar la ejecucion')
-                /*
-                GananciaPerdida.insert({    
-                                            Operacion : {   ID_LocalAct : IdTransaccionActual,
-                                                            Id_Lote: ID_LOTE,
-                                                            Tipo : TP,
-                                                            TipoCambio : TIPO_CAMBIO,
-                                                            Precio : RecalcIverPrec.MejorPrecCal,
-                                                            Status : 'Fallido',
-                                                            FechaCreacion : fecha._d,
-                                                            FechaActualizacion : fecha._d}
-                                        });
-
-                Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
-                */
-                break
-            } 
-        }
-        console.log('Estoy fuera del while')
-
-        if ( Estado_Orden === "filled" ) {
-            console.log('Dedo Guardar')
-        }
-    }
-
     
 });
