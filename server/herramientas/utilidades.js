@@ -130,7 +130,7 @@ Meteor.methods({
     },
 
     'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
-        console.log(" EquivalenteDolar: Val recib: ", "MONEDA: -",  MONEDA, "- ,S_MOND: -", S_MOND, "- ,TIPO_ACCION: ", TIPO_ACCION)        
+        //console.log(" EquivalenteDolar: Val recib: ", "MONEDA: -",  MONEDA, "- ,S_MOND: -", S_MOND, "- ,TIPO_ACCION: ", TIPO_ACCION)        
         var SALDO = parseFloat(S_MOND);
         if ( SALDO === 0 ) {
             var EquivalenciaActual = 0;
@@ -166,7 +166,7 @@ Meteor.methods({
                                 var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                             break;
                         }
-                        console.log(" EquivalenteDolar: Valor de ValorPromedio: ", ValorPromedio)
+                        //console.log(" EquivalenteDolar: Valor de ValorPromedio: ", ValorPromedio)
 
                         var TipoCambioValido = ValorPromedio.Existe
                         if ( TipoCambioValido !== 1 ) {

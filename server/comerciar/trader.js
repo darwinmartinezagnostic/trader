@@ -363,8 +363,8 @@ Meteor.methods({
         var ContAtCar = 0
 
         if ( CantMonedasSaldoATransferir > 0 ) {
-            Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el if MonedasSaldoATransferir');
-            console.log("Valor de CantMonedasSaldoATransferir: ", CantMonedasSaldoATransferir);
+            //Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el if MonedasSaldoATransferir');
+            //console.log("Valor de CantMonedasSaldoATransferir: ", CantMonedasSaldoATransferir);
             //console.log("Valor de MonedasSaldoATransferir: ", MonedasSaldoATransferir);
             for ( cmsat = 0, tmsat = CantMonedasSaldoATransferir; cmsat < tmsat; cmsat++ ) {
                 //console.log("Estoy en el for");
@@ -375,14 +375,14 @@ Meteor.methods({
                 var ValMinTranf = v_MonedasSaldoATransferir.min_transferencia
 
                 if ( SaldoActTransf >= ValMinTranf ) {
-                    console.log("Estoy en el if ( SaldoActTransf >= ValMinTranf )");
+                    //console.log("Estoy en el if ( SaldoActTransf >= ValMinTranf )");
                     var Repeticiones = 1
                     do {
                         //console.log("Estoy en el while( SaldoAntTransf === SaldoActTransf )");
-                        console.log("Moneda:", MonedaRev)
-                        console.log("Datos a enviar, MonedaRev:", MonedaRev ,"SaldoActTransf", SaldoActTransf, 'bankToExchange');
+                        //console.log("Moneda:", MonedaRev)
+                        //console.log("Datos a enviar, MonedaRev:", MonedaRev ,"SaldoActTransf", SaldoActTransf, 'bankToExchange');
                         var EstadoTransferencia = Meteor.call( 'Transferirfondos', MonedaRev, SaldoActTransf, 'bankToExchange');
-                        Meteor.call("GuardarLogEjecucionTrader", [' Valor de EstadoTransferencia']+[EstadoTransferencia]);
+                        //Meteor.call("GuardarLogEjecucionTrader", [' Valor de EstadoTransferencia']+[EstadoTransferencia]);
                         if ( EstadoTransferencia[0] === 0 && EstadoTransferencia[2] === "PENDIENTE" ) {
 
                             while( VEstatus === "PENDIENTE" ){
@@ -443,7 +443,7 @@ Meteor.methods({
                                 //HistorialTransferencias.update({ id : EstadoTransferencia[1] }, {$set: { estado: "Fallo" }});
                             }
                         }else if ( EstadoTransferencia[0] === 0 && EstadoTransferencia[2] === "FALLIDO" || EstadoTransferencia[0] === 1 ){
-                            Meteor.call("GuardarLogEjecucionTrader", [' Estoy en el else de - if ( EstadoTransferencia[0] === 0 )']);
+                            //Meteor.call("GuardarLogEjecucionTrader", [' Estoy en el else de - if ( EstadoTransferencia[0] === 0 )']);
                             console.log('############################################');
                             Meteor.call("GuardarLogEjecucionTrader", ['       Status Tranferencia ']+[MonedaRev]);
                             console.log('############################################');

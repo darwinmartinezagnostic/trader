@@ -44,8 +44,8 @@ Meteor.methods({
         if ( VStatusEjecucion === 0 ) {
             
             var IdTransferencia = NuevaTransferencia.id;
-            Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Solicitud de Transferencia Realizada Exitosamente']);
-            Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Transacción: ']+[ IdTransferencia ]);
+            //Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Solicitud de Transferencia Realizada Exitosamente']);
+            //Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Transacción: ']+[ IdTransferencia ]);
             HistoralTransferencias.insert({ fecha : FECHA, id : IdTransferencia ,tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : "Verificando" })
 
             console.log('############################################');
@@ -79,7 +79,7 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", ['    STATUS: ']+["FALLIDO"]);
             console.log('############################################');
             console.log(' ');
-            Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Sulicitud de Transferencia Fallida'] );
+            //Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Sulicitud de Transferencia Fallida'] );
             var sal = new Set();
             sal.add( 1 );
             var salida = Array.from(sal);
