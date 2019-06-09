@@ -82,22 +82,12 @@ Meteor.methods({
         console.log('        ',fecha._d);
         console.log('---------- SECUENCIA PERIODO 1 ------------');
         console.log(' ');
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*
-        try {
-            var Monedas_Saldo = Monedas.aggregate([
-                        { $match : {"saldo.tradeo.activo" : { $gt : 0 }, "activo" : "S"}},
-                        { $sort : {"saldo.tradeo.equivalencia":-1} }
-                    ]);
-        }
-        /**/
         try {
             var Monedas_Saldo = Monedas.aggregate([
                         { $match : { $or : [{"saldo.tradeo.equivalencia" : { $gt : 0 }},{ "moneda" : 'BTC' }] , "activo" : "S"}},
                         { $sort : {"saldo.tradeo.equivalencia":-1} }
                     ]);
         }
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
         catch (error){
             Meteor.call("ValidaError", error, 2);
         };
@@ -160,15 +150,15 @@ Meteor.methods({
                         // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION                        
 
                         if ( V_LimiteMuestreo === 0 ) { 
-
-                            Meteor.call('ValidaInversion', moneda_saldo.moneda);
                             /*
+                            Meteor.call('ValidaInversion', moneda_saldo.moneda);
+                            /**/
                             Jobs.run("JobValidaInversion", moneda_saldo.moneda, {
                                             in: {
                                                 second: 1
                                             }
                                         })
-                                        */
+                            /**/
 
                         }else if ( V_LimiteMuestreo > 0 ) {
                             V_LimiteMuestreo = V_LimiteMuestreo - 1
