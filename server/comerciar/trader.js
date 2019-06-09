@@ -883,7 +883,7 @@ Meteor.methods({
 
                     console.log('############################################');
                     console.log(' ');
-                    break;
+                break;
                 case 2:
                     if ( v_TradActDat === undefined ) {
                         Meteor.call("GuardarLogEjecucionTrader", ' ListaTradeoActual: Paso 1 ');
@@ -931,53 +931,52 @@ Meteor.methods({
                                                             {"multi" : true,"upsert" : true});
                         }
                     }
-                    break;
-                    case 3:
-                        var PeriodoFechaAct = v_TradActDat.timestamp;
-                        var PeriodoId_hitbtcAct = v_TradActDat.id;
-                        var PeriodoPrecioAct = Number(v_TradActDat.price);
-                        var PeriodoCantidadAct = v_TradActDat.quantity;
-                        var PeriodoTipoOperacionAct = v_tipo_operacion_act;
+                break;
+                case 3:
+                    var PeriodoFechaAct = v_TradActDat.timestamp;
+                    var PeriodoId_hitbtcAct = v_TradActDat.id;
+                    var PeriodoPrecioAct = Number(v_TradActDat.price);
+                    var PeriodoCantidadAct = v_TradActDat.quantity;
+                    var PeriodoTipoOperacionAct = v_tipo_operacion_act;
 
-                        try{
-                                var ResetTipCamb = TiposDeCambios.aggregate([  { $match : { tipo_cambio : TIPO_CAMBIO }} ]);
-                                var MB = ResetTipCamb[0].moneda_base;
-                                var MC = ResetTipCamb[0].moneda_cotizacion;
-                        }
-                        catch (error){
-                                Meteor.call("ValidaError", error, 2);
-                        };
-                        console.log(" Valor de MB: ", MB)
+                    try{
+                            var ResetTipCamb = TiposDeCambios.aggregate([  { $match : { tipo_cambio : TIPO_CAMBIO }} ]);
+                            var MB = ResetTipCamb[0].moneda_base;
+                            var MC = ResetTipCamb[0].moneda_cotizacion;
+                    }
+                    catch (error){
+                            Meteor.call("ValidaError", error, 2);
+                    };
+                    console.log(" Valor de MB: ", MB)
 
-                        if ( MB === MONEDA_SALDO ) {
-                            TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
-                                                    { $set:{    "periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
-                                                                "periodo1.Base.fecha": PeriodoFechaAct,
-                                                                "periodo1.Base.precio" : PeriodoPrecioAct,
-                                                                "periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
-                                                                "periodo1.Base.reset": 0 }},
-                                                    { "multi" : true,"upsert" : true });
-                        }
-                        else if ( MC === MONEDA_SALDO ) {
-                            TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
-                                                    { $set:{    "periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
-                                                                "periodo1.Cotizacion.fecha": PeriodoFechaAct,
-                                                                "periodo1.Cotizacion.precio" : PeriodoPrecioAct,
-                                                                "periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
-                                                                "periodo1.Cotizacion.reset": 0 }},
-                                                    { "multi" : true,"upsert" : true });
-                        };
-                        
-                        OperacionesCompraVenta.update(  { tipo_cambio : TIPO_CAMBIO },
-                                                            {$set:{ id_hitbtc: PeriodoId_hitbtcAct, 
-                                                                    fecha : PeriodoFechaAct,
-                                                                    precio : PeriodoPrecioAct, 
-                                                                    cantidad : PeriodoCantidadAct,
-                                                                    tipo_operacion : PeriodoTipoOperacionAct}
-                                                            },
-                                                            {"multi" : true,"upsert" : true});
-
-                    break;
+                    if ( MB === MONEDA_SALDO ) {
+                        TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
+                                                { $set:{    "periodo1.Base.id_hitbtc": PeriodoId_hitbtcAct,
+                                                            "periodo1.Base.fecha": PeriodoFechaAct,
+                                                            "periodo1.Base.precio" : PeriodoPrecioAct,
+                                                            "periodo1.Base.tipo_operacion": PeriodoTipoOperacionAct,
+                                                            "periodo1.Base.reset": 0 }},
+                                                { "multi" : true,"upsert" : true });
+                    }
+                    else if ( MC === MONEDA_SALDO ) {
+                        TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
+                                                { $set:{    "periodo1.Cotizacion.id_hitbtc": PeriodoId_hitbtcAct,
+                                                            "periodo1.Cotizacion.fecha": PeriodoFechaAct,
+                                                            "periodo1.Cotizacion.precio" : PeriodoPrecioAct,
+                                                            "periodo1.Cotizacion.tipo_operacion": PeriodoTipoOperacionAct,
+                                                            "periodo1.Cotizacion.reset": 0 }},
+                                                { "multi" : true,"upsert" : true });
+                    };
+                    
+                    OperacionesCompraVenta.update(  { tipo_cambio : TIPO_CAMBIO },
+                                                        {$set:{ id_hitbtc: PeriodoId_hitbtcAct, 
+                                                                fecha : PeriodoFechaAct,
+                                                                precio : PeriodoPrecioAct, 
+                                                                cantidad : PeriodoCantidadAct,
+                                                                tipo_operacion : PeriodoTipoOperacionAct}
+                                                        },
+                                                        {"multi" : true,"upsert" : true});
+                break;
                 default:
                     Meteor.call("GuardarLogEjecucionTrader", ' Valor de tipo consulta no definida ');
             }
@@ -987,14 +986,26 @@ Meteor.methods({
     'GuardarOrden': function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE){
         console.log(" Valores recibidos: ", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE)
         var CONSTANTES = Meteor.call("Constantes");
-        var Negociaciones = ORDEN.tradesReport
         var ComisionTtl = 0
 
-        for (CRPT = 0, TRPT = Negociaciones.length; CRPT < TRPT; CRPT++) {
-            var Reporte = Negociaciones[CRPT];
-            ComisionTtl +=  parseFloat(Reporte.fee)
+        if ( ORDEN.tradesReport ) {
+            var Negociaciones = ORDEN.tradesReport
+            console.log("Valor de ORDEN: ", ORDEN.tradesReport)
+
+            for (CRPT = 0, TRPT = Negociaciones.length; CRPT < TRPT; CRPT++) {
+                var Reporte = Negociaciones[CRPT];
+                ComisionTtl +=  parseFloat(Reporte.fee)
+            }
+        }else {
+            var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[ID]+['/trades']
+            const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
+            var transID = TrnsID[0];
+            var ComisionTtl = transID.fee
+            console.log('Valor de ComisionTtl', ComisionTtl)
         }
-        console.log(" Valor de Reporte: ", Reporte)
+
+
+
 
         var Comision = ComisionTtl.toString()
         var precio = ORDEN.price
@@ -1220,7 +1231,7 @@ Meteor.methods({
                     var V_TipoCambio = V_TiposDeCambiosResetear.tipo_cambio
 
                     TiposDeCambios.update(  { tipo_cambio : V_TipoCambio },
-                                            { $set:{  "periodo1.Base.reset": 1 }}
+                                            { $set:{  "periodo1.Cotizacion.reset": 1 }}
                                         );
                 }
         }
