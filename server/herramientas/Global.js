@@ -20,6 +20,7 @@ Meteor.methods({
 		const monedas = [publico]+"currency";
 		const simbolos = [publico]+"symbol";
 		const ticker = [publico]+"ticker/";
+		const LibOrdenes = [publico]+"orderbook/";
 		// API Trading
 		const blc_tradeo = [tradeo]+"balance";
 		const comisiones = [tradeo]+"fee";
@@ -60,6 +61,7 @@ Meteor.methods({
 			monedas : monedas,
 			simbolos : simbolos,
 			ticker : ticker,
+			LibOrdenes : LibOrdenes,
 			blc_tradeo : blc_tradeo,
 			comisiones : comisiones,
 			blc_cuenta : blc_cuenta,
