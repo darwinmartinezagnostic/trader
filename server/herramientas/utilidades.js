@@ -178,9 +178,11 @@ Meteor.methods({
                                                         }, {"multi" : true,"upsert" : true});
                         }else{
                             if ( MONEDA === MB ) {
-                                var EquivalenciaActual = ( parseFloat(SaldoMinTC) * parseFloat(ValorPromedio.Promedio) ) ;
+                                var EquivalenciaActual = ( parseFloat(SALDO) * parseFloat(ValorPromedio.Promedio) ) ;
+                                //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," * ",parseFloat(ValorPromedio.Promedio) )
                             }else if ( MONEDA === MC ) {
-                                var EquivalenciaActual = ( parseFloat(SaldoMinTC) / parseFloat(ValorPromedio.Promedio) );
+                                var EquivalenciaActual = ( parseFloat(SALDO) / parseFloat(ValorPromedio.Promedio) );
+                                //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," / ",parseFloat(ValorPromedio.Promedio) )
                             }
                         }
                     }else {
@@ -236,8 +238,10 @@ Meteor.methods({
 
                                 if ( MONEDA === MBase ) {
                                     var SaldEquivActualAux = ( parseFloat(SALDO) * parseFloat(ValorPromedioObtenido.Promedio) ) ;
+                                    //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," * ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
                                 }else if ( MONEDA === MCotizacion ) {
                                     var SaldEquivActualAux = ( parseFloat(SALDO)  / parseFloat(ValorPromedioObtenido.Promedio) );
+                                    //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," / ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
                                 }
                             break;
                         }
@@ -255,8 +259,10 @@ Meteor.methods({
 
                         if ( MonedaEquivalenteAux === MBaseAux ) {
                             var EquivalenciaActual = ( parseFloat(SaldEquivActualAux) * parseFloat(ValorPromedioObtenidoAux.Promedio) ) ;
+                            //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SaldEquivActualAux)," * ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
                         }else if ( MonedaEquivalenteAux === MCotiAux ) {
                             var EquivalenciaActual = ( parseFloat(SaldEquivActualAux) / parseFloat(ValorPromedioObtenidoAux.Promedio) );
+                            //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SaldEquivActualAux)," / ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
                         }                   
                     }
                 }else if ( ExisteTipoCambio === 0 ){
