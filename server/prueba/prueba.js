@@ -194,10 +194,10 @@ Meteor.methods({
         Meteor.call("ActualizaSaldoActual", 'TNT');
         Meteor.call("ActualizaSaldoActual", 'USD');
         /**/
-            //Meteor.call("ValidaSaldoEquivalenteActual");
         /*
             Meteor.call("ListaMonedas");
             Meteor.call("ActualizaSaldoTodasMonedas");
+            Meteor.call("ValidaSaldoEquivalenteActual");
             //Meteor.call("EjecucionInicial"); 
             Meteor.call("ListaTiposDeCambios", 2);
             Meteor.call("ValidaMonedasTransfCuentaTRadeo");
@@ -208,8 +208,8 @@ Meteor.methods({
             Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
         */   
 
-        //Meteor.call("ActualizaSaldoTodasMonedas");
-        //Meteor.call("ValidaSaldoEquivalenteActual");
+        Meteor.call("ActualizaSaldoTodasMonedas");
+        Meteor.call("ValidaSaldoEquivalenteActual");
         
         const MON_B='ORMEUS'
         const MON_C='BTC'
