@@ -44,19 +44,16 @@ Meteor.methods({
         if(VALOR.toString().indexOf('e') != -1){
             if(VALOR.toString().indexOf('.') != -1){
                 NuevoVALOR = VALOR.toString().replace(".", "");
-                console.log("Valor de VALOR", VALOR);
-                console.log("Valor de NuevoVALOR", NuevoVALOR);
+                //console.log("Valor de VALOR", VALOR);
+                //console.log("Valor de NuevoVALOR", NuevoVALOR);
                 separador = "-"
                 V_separador = NuevoVALOR.toString().split(separador);
-                console.log("Valor de V_separador", V_separador);
+                //console.log("Valor de V_separador", V_separador);
                 valor_exp = parseFloat(V_separador[1]);
                 ValorAnalizar = parseFloat(NuevoVALOR).toFixed(valor_exp);
-                console.log("Valor de ValorAnalizar", ValorAnalizar);
-
-
-
+                //console.log("Valor de ValorAnalizar", ValorAnalizar);
                 ver = VALOR.toString()
-                console.log("Valor de ver", ver);
+                //console.log("Valor de ver", ver);
 
             }else{
                 separador = "-"
