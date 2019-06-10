@@ -319,10 +319,6 @@ Meteor.methods({
             var PrecioPromedio = ((parseFloat(precio.bid) + parseFloat(precio.ask))/2).toFixed(9).toString()
             var MejorPrecProm = PrecioPromedio
             var MejorPrecask = precio.ask.toString()
-            var MejorPrecbid = precio.bid.toString()
-            var M_INVERTIRPrecioPromedio = MR_INVER / parseFloat(MejorPrecProm)
-            var M_INVERTIRMejorPrecask = MR_INVER / parseFloat(MejorPrecask)
-            var M_INVERTIRMejorPrecbid = MR_INVER / parseFloat(MejorPrecbid)
             var MejorPrec = MejorPrecask
             var M_INVERTIR = MR_INVER / parseFloat(MejorPrec)
             var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))

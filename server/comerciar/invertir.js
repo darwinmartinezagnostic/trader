@@ -1055,7 +1055,7 @@ Meteor.methods({
                                                                     Razon : Estado_Orden,
                                                                     FechaCreacion : fecha._d,
                                                                     FechaActualizacion : fecha._d},
-                                                    Moneda : {  emitida : { moneda : MON_C },
+                                                    Moneda : {  Emitida : { moneda : MON_C },
                                                                 Adquirida : { moneda : MON_B }
                                                              },
                                                     Inversion : { SaldoInversion  : CANT_INVER }
