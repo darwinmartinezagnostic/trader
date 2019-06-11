@@ -830,6 +830,9 @@ Meteor.methods({
                     var TipoCambioVerEstab = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : 'BTC',"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 3 }, { $count: "CantidadDeTiposDeCambios" } ]);
                     if ( TipoCambioVerEstab > 0 ) {
                         Meteor.call("InvertirEnMonedaInestable", MONEDA );
+                        Monedas.update( { moneda : MONEDA },
+                                    {$set:{ c_estable : 0 , 
+                                            MonedaEstable : 'N' }});
                     }
                 }
 
