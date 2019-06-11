@@ -112,6 +112,7 @@ Meteor.methods({
                 }
 
                 Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[moneda_saldo.moneda]);
+                Meteor.call("GuardarLogEjecucionTrader", ['      MONEDA: ']+[moneda_saldo.moneda]+[' HORA INICIO: ']+[fecha._d]);
 
                 if (TiposDeCambios.find().count() === 0){
                     Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ningún tipo de Cambio Guardado en la Base de Datos Local, Solucionando ... ']);
@@ -133,6 +134,7 @@ Meteor.methods({
                     }else {
 
                         for ( CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++ ){
+                        	fecha = moment (new Date());
                             var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
                             Meteor.call("GuardarLogEjecucionTrader", ['        TIPO DE CAMBIO: ']+[tipo_cambio_verificar]);
                             Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar, moneda_saldo.moneda )
@@ -173,6 +175,7 @@ Meteor.methods({
                         }
 
                         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        Meteor.call("GuardarLogEjecucionTrader", ['      MONEDA: ']+[moneda_saldo.moneda]+[' HORA FIN: ']+[fecha._d]);
                         console.log('-------------------------------------------');
                         console.log('--- DEBO SEGUIR CON LA SIGUIENTE MONEDA ---');
                         console.log('-------------------------------------------');
