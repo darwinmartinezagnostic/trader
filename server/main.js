@@ -31,6 +31,7 @@ Meteor.methods({
 Meteor.startup(function (){
     // código que se ejecuta al iniciar la aplicación en el servidor
     JobsInternal.Utilities.collection.remove({  });
+    TmpTipCambioXMonedaReord.remove({ });
     LogEjecucionTrader.remove({  });
     
     try {

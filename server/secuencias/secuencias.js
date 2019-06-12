@@ -87,7 +87,6 @@ Meteor.methods({
                         { $match : { $or : [{"saldo.tradeo.equivalencia" : { $gt : 0 }},{ "moneda" : 'BTC' }] , "activo" : "S"}},
                         { $sort : {"saldo.tradeo.equivalencia":-1} }
                     ]);
-            TmpTipCambioXMonedaReord.remove({});
         }
         catch (error){
             Meteor.call("ValidaError", error, 2);

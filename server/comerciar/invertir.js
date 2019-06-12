@@ -587,7 +587,6 @@ Meteor.methods({
     },
 
     'ValidarRanking': function(MONEDA){
-        TmpTipCambioXMonedaReord.remove({ moneda_saldo : MONEDA });
         try{
             var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: 3 } ]);
             var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_cotizacion" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
@@ -914,6 +913,8 @@ Meteor.methods({
                     CRTC2 = CRTC2+1;
                 }
             }
+
+            TmpTipCambioXMonedaReord.remove({ moneda_saldo : MONEDA });
         }
         console.log('--------------------------------------------');
         console.log('############################################');
