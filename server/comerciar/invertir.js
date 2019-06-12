@@ -954,24 +954,28 @@ Meteor.methods({
         console.log("Valore de V_TipoOperaciont: ", V_TipoOperaciont)
 
         var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-        datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
-        
+        if ( parseFloat(RecalcIverPrec.MontIversionCal) >= parseFloat(MinimoInversion) ) {
+            datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
+
 
 
         //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+'100000000'+'&price='+'0.000001';
         //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+RecalcIverPrec.MontIversionCal;
 
 
-        var url_orden = CONSTANTES.ordenes;
+            var url_orden = CONSTANTES.ordenes;
 
-        do {            
-            var Orden = Meteor.call('ConexionPost', url_orden, datos);
-            Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi Orden: ']+[Orden]); 
-            if ( Orden === undefined ) {
-                Meteor.call('sleep', 4);
-            }
-        }while( Orden === undefined );
+            do {            
+                var Orden = Meteor.call('ConexionPost', url_orden, datos);
+                Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi Orden: ']+[Orden]); 
+                if ( Orden === undefined ) {
+                    Meteor.call('sleep', 4);
+                }
+            }while( Orden === undefined );
 
+        }else{
+            var Orden = {  status: 'Quantity too low'}
+        }
 
 
 
@@ -1035,7 +1039,7 @@ Meteor.methods({
                 //var Estado_Orden = Resultado;                  
             }
 
-            if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" ) {
+            if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Quantity too low" ) {
                 console.log(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )')
                 var V_IdHitBTC = Orden.id
                 console.log(' Valor de Orden 6: ', Orden)
