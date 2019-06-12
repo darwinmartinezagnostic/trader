@@ -695,7 +695,7 @@ Meteor.methods({
                     case 2:   
                         console.log("  ACÁ ESTOY VALIDANDO 2 TIPO DE CAMBIO")                                
                         for (CRTC12 = 0, TRTC12 = RTDC.length; CRTC12 < TRTC12; CRTC12++) {
-                            console.log("  ACÁ ESTOY CONTADOR: ", CRTC12) 
+                            console.log("  ACÁ ESTOY CONTADOR: ", CRTC12)
                             var TCR = RTDC[CRTC12];
                             var MinimoInversion = TCR.valor_incremento;
                             var ValorComisionHBTC = TCR.comision_hitbtc;
@@ -710,12 +710,19 @@ Meteor.methods({
                                 case 0:
                                     console.log("  ACÁ ESTOY switch (CRTC12): case 0:") 
                                     var SaldoVerificar = RTDC[CRTC12].saldo_moneda_tradear
+                                    console.log("  Valor de SaldoVerificar: ", SaldoVerificar)
                                     var VInversion = TCR.saldo_moneda_tradear*PTDC.valor.p12;
+                                    console.log("  Valor de VInversion: ", VInversion)
                                     var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                                    console.log("  Valor de RecalcIverPrec: ", RecalcIverPrec)
                                     var Inversion = RecalcIverPrec.MontIversionCal;
+                                    console.log("  Valor de Inversion: ", Inversion)
                                     if ( Inversion >= MinimoInversion ) {
+                                        console.log("  ACÁ ESTOY if ( Inversion >= MinimoInversion )")
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                        console.log("  Valor de CantPropTipoCambiosValidados: ", CantPropTipoCambiosValidados)
                                         NuevoSaldoCalculado = SaldoVerificar - Inversion
+                                        console.log("  Valor de NuevoSaldoCalculado: ", NuevoSaldoCalculado)
                                     }
                                 break;
                                 case 1:
