@@ -208,10 +208,10 @@ Meteor.methods({
             Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
         */   
 
-        Meteor.call("ActualizaSaldoTodasMonedas");
-        Meteor.call("ValidaSaldoEquivalenteActual");
+        //Meteor.call("ActualizaSaldoTodasMonedas");
+        //Meteor.call("ValidaSaldoEquivalenteActual");
         
-        const MON_B='ORMEUS'
+        const MON_B='STEEM'
         const MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
         var MONEDA_SALDO = MON_B
@@ -221,15 +221,6 @@ Meteor.methods({
         /* 
 
             //console.log(' Tipo de Cambio T
-
-
-
-
-
-
-
-
-
             IPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
            
     		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
@@ -241,10 +232,10 @@ Meteor.methods({
         
         if (MONEDA_SALDO === MON_B) {
             //CANT_INVER = '1.782'
-            CANT_INVER = '8'
+            CANT_INVER = '80'
         }else if (MONEDA_SALDO === MON_C) {
             //CANT_INVER = '0.01696398'
-            CANT_INVER = '30000000' 
+            CANT_INVER = '1' 
         } 
         
         MAPLICOMIS = MON_C
@@ -259,10 +250,10 @@ Meteor.methods({
                                         // TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){ 
      
          
-        /*
-            var sal = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-            console.log("Valor de sal: ", sal);
-        */
+        
+            //var sal = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            //console.log("Valor de sal: ", sal);
+        /**/
 
             //Meteor.call("ConsultarHistoricoOrdenes");
         
@@ -272,7 +263,7 @@ Meteor.methods({
             Meteor.call("ValidaTiempoEspera", ORDEN);
         */
         
-
+        /*
         const ORDEN = { id: 134980877254,
                         clientOrderId: '00000000000000000000000000001676',
                         symbol: 'ORMEUSBTC',
@@ -288,7 +279,7 @@ Meteor.methods({
 
 
         //(TIPO_CAMBIO, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, DATOS, ID_LOTE){
-        Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, 13);
+        //Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, 13);
         /**/   
 
         /*
@@ -428,10 +419,11 @@ Meteor.methods({
             //USDEOSDT
             //EURSUSD
             //'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
-            /**
+            /*
             var MONEDA='ETH'
             var prueba = Meteor.call("EquivalenteDolar", MONEDA, 1e-10, 1);
-            console.log("Valor de prueba ", prueba);/**/
+            console.log("Valor de prueba ", prueba);
+            /**/
 
             //Meteor.call("SecuenciaPeriodo1")
             /*
@@ -450,19 +442,19 @@ Meteor.methods({
             VALOR = 4.2405e-8
             var prueba = Meteor.call('CombierteNumeroExpStr', VALOR) 
             console.log("Valor de prueba: ", prueba)
-            /*
-            MONEDA = 'PITCH'
+            /**/
+
+            MONEDA = 'BTC'
             var DatosMoneda = Monedas.find( { moneda : MONEDA }).fetch()
             var SaldoMoneda = DatosMoneda[0].saldo.tradeo.activo
             var prueba1 = Meteor.call('EquivalenteDolar', MONEDA, parseFloat(SaldoMoneda), 2) 
             console.log("Valor de prueba1: ", prueba1) 
 
-            /*
-            
+            /*            
             MONEDAS = Monedas.aggregate([
                         { $match : {"saldo.tradeo.activo" : { $gt : 0 }, "activo" : "S"}},
                         { $sort : {"saldo.tradeo.equivalencia":-1} }
-                    ]);
+                    ]); 
 
 
 
