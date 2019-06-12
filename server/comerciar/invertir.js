@@ -954,13 +954,15 @@ Meteor.methods({
         console.log("Valore de V_TipoOperaciont: ", V_TipoOperaciont)
 
         var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+        var TC = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO })
+        var MinimoInversion = TC.valor_incremento
         if ( parseFloat(RecalcIverPrec.MontIversionCal) >= parseFloat(MinimoInversion) ) {
             datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
 
 
 
-        //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+'100000000'+'&price='+'0.000001';
-        //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+RecalcIverPrec.MontIversionCal;
+            //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+'100000000'+'&price='+'0.000001';
+            //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+RecalcIverPrec.MontIversionCal;
 
 
             var url_orden = CONSTANTES.ordenes;
@@ -974,7 +976,7 @@ Meteor.methods({
             }while( Orden === undefined );
 
         }else{
-            var Orden = {  status: 'Quantity too low'}
+            var Orden = {  status: 'Quantity too low' }
         }
 
 
