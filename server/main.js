@@ -50,8 +50,6 @@ Meteor.startup(function (){
                 Meteor.call('SecuenciaInicial');
             break;
             case 2:
-                Meteor.call("ListaTiposDeCambios", 2);
-                Meteor.call("ListaMonedas");
                 Meteor.call("ActualizaSaldoTodasMonedas");
                 Meteor.call("ValidaSaldoEquivalenteActual");
                 Meteor.call('SecuenciasSecundarias');
