@@ -667,50 +667,29 @@ Meteor.methods({
                         CantPropTipoCambiosValidados = 0;
                     break;
                     case 1:
-                        Meteor.call("GuardarLogEjecucionTrader", " ACÁ ESTOY VALIDANDO 1 TIPO DE CAMBIO");
-
-                        //console.log(" VALOR  DE RTDC", RTDC)
-
                         for (CRTC11 = 0, TRTC11 = RTDC.length; CRTC11 < TRTC11; CRTC11++) {
-                            console.log("  ACÁ ESTOY CONTADOR: ", CRTC11)
                             TCR = RTDC[CRTC11];
 
                             var SaldoVerificar = TCR.saldo_moneda_tradear
-                            console.log("  Valor de SaldoVerificar: ", SaldoVerificar)
                             var MinimoInversion = TCR.valor_incremento;
-                            console.log("  Valor de MinimoInversion: ", MinimoInversion)
                             var ValorComisionHBTC = TCR.comision_hitbtc;
-                            console.log("  Valor de ValorComisionHBTC: ", ValorComisionHBTC)
                             var ValorComisionMerc = TCR.comision_mercado;
-                            console.log("  Valor de ValorComisionMerc: ", ValorComisionMerc)
                             var ValorMonedaSaldo = TCR.moneda_saldo;
-                            console.log("  Valor de ValorMonedaSaldo: ", ValorMonedaSaldo)
                             var ValorMonedaApCom = TCR.moneda_apli_comision;
-                            console.log("  Valor de ValorMonedaApCom: ", ValorMonedaApCom)
                             var TIPO_CAMBIO = TCR.tipo_cambio;
-                            console.log("  Valor de TIPO_CAMBIO: ", TIPO_CAMBIO)
                             var MonCBas = TCR.moneda_base
-                            console.log("  Valor de MonCBas: ", MonCBas)
                             var MonCoti = TCR.moneda_cotizacion
-                            console.log("  Valor de MonCoti: ", MonCoti)
                             var VInversion = TCR.saldo_moneda_tradear*PTDC.valor.p11;
-                            console.log("  Valor de VInversion: ", VInversion)
                             var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
-                            console.log("  Valor de RecalcIverPrec: ", RecalcIverPrec)
                             var Inversion = RecalcIverPrec.MontIversionCal;
-                            console.log("  Valor de Inversion: ", Inversion)
 
                             if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
-                                console.log("  ACÁ ESTOY if ( ",parseFloat(Inversion)," >= ",parseFloat(MinimoInversion)," )")
                                 CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                console.log("  Valor de CantPropTipoCambiosValidados: ", CantPropTipoCambiosValidados)
                             }
                         }
                     break;
-                    case 2:   
-                        console.log("  ACÁ ESTOY VALIDANDO 2 TIPO DE CAMBIO")                                
+                    case 2:                              
                         for (CRTC12 = 0, TRTC12 = RTDC.length; CRTC12 < TRTC12; CRTC12++) {
-                            console.log("  ACÁ ESTOY CONTADOR: ", CRTC12)
                             var TCR = RTDC[CRTC12];
                             var MinimoInversion = TCR.valor_incremento;
                             var ValorComisionHBTC = TCR.comision_hitbtc;
@@ -723,27 +702,17 @@ Meteor.methods({
 
                             switch (CRTC12){
                                 case 0:
-                                    console.log("  ACÁ ESTOY switch (CRTC12): case 0:") 
                                     var SaldoVerificar = RTDC[CRTC12].saldo_moneda_tradear
-                                    console.log("  Valor de SaldoVerificar: ", SaldoVerificar)
                                     var VInversion = TCR.saldo_moneda_tradear*PTDC.valor.p12;
-                                    console.log("  Valor de VInversion: ", VInversion)
                                     var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
-                                    console.log("  Valor de RecalcIverPrec: ", RecalcIverPrec)
                                     var Inversion = RecalcIverPrec.MontIversionCal;
-                                    console.log("  Valor de Inversion: ", Inversion)
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
-                                        console.log("  ACÁ ESTOY if ( ",parseFloat(Inversion)," >= ",parseFloat(MinimoInversion)," )")
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
-                                        console.log("  Valor de CantPropTipoCambiosValidados: ", CantPropTipoCambiosValidados)
                                         NuevoSaldoCalculado = SaldoVerificar - Inversion
-                                        console.log("  Valor de NuevoSaldoCalculado: ", NuevoSaldoCalculado)
                                     }
                                 break;
                                 case 1:
-                                    console.log("  ACÁ ESTOY switch (CRTC12): case 1:") 
                                     var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p22;
-                                    var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
                                     var Inversion = RecalcIverPrec.MontIversionCal;
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
