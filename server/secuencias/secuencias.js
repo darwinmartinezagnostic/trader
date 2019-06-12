@@ -153,9 +153,9 @@ Meteor.methods({
                         // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION                        
 
                         if ( V_LimiteMuestreo === 0 ) { 
-                            
-                            Meteor.call('ValidaInversion', moneda_saldo.moneda);
                             /*
+                            Meteor.call('ValidaInversion', moneda_saldo.moneda);
+                            /**/
                             Jobs.run("JobValidaInversion", moneda_saldo.moneda, {
                                             in: {
                                                 second: 1
