@@ -692,8 +692,10 @@ Meteor.methods({
                             }
                         }
                     break;
-                    case 2:                                    
+                    case 2:   
+                        console.log("  ACÁ ESTOY VALIDANDO 2 TIPO DE CAMBIO")                                
                         for (CRTC12 = 0, TRTC12 = RTDC.length; CRTC12 < TRTC12; CRTC12++) {
+                            console.log("  ACÁ ESTOY CONTADOR: ", CRTC12) 
                             var TCR = RTDC[CRTC12];
                             var MinimoInversion = TCR.valor_incremento;
                             var ValorComisionHBTC = TCR.comision_hitbtc;
@@ -706,6 +708,7 @@ Meteor.methods({
 
                             switch (CRTC12){
                                 case 0:
+                                    console.log("  ACÁ ESTOY switch (CRTC12): case 0:") 
                                     var SaldoVerificar = RTDC[CRTC12].saldo_moneda_tradear
                                     var VInversion = TCR.saldo_moneda_tradear*PTDC.valor.p12;
                                     var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
@@ -716,6 +719,7 @@ Meteor.methods({
                                     }
                                 break;
                                 case 1:
+                                    console.log("  ACÁ ESTOY switch (CRTC12): case 1:") 
                                     var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p22;
                                     var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
                                     var Inversion = RecalcIverPrec.MontIversionCal;
