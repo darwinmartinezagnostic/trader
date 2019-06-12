@@ -54,7 +54,6 @@ Meteor.startup(function (){
                 Meteor.call("ListaMonedas");
                 Meteor.call("ActualizaSaldoTodasMonedas");
                 Meteor.call("ValidaSaldoEquivalenteActual");
-                Meteor.call("ListaTiposDeCambios", 2);
                 Meteor.call('SecuenciasSecundarias');
             break;                
         }
