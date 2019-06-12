@@ -688,7 +688,9 @@ Meteor.methods({
                             var Inversion = RecalcIverPrec.MontIversionCal;
 
                             if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
+                                console.log("  ACÁ ESTOY if ( ",parseFloat(Inversion)," >= ",parseFloat(MinimoInversion)," )")
                                 CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
+                                console.log("  Valor de CantPropTipoCambiosValidados: ", CantPropTipoCambiosValidados)
                             }
                         }
                     break;
@@ -718,7 +720,7 @@ Meteor.methods({
                                     var Inversion = RecalcIverPrec.MontIversionCal;
                                     console.log("  Valor de Inversion: ", Inversion)
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
-                                        console.log("  ACÁ ESTOY if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) )")
+                                        console.log("  ACÁ ESTOY if ( ",parseFloat(Inversion)," >= ",parseFloat(MinimoInversion)," )")
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                         console.log("  Valor de CantPropTipoCambiosValidados: ", CantPropTipoCambiosValidados)
                                         NuevoSaldoCalculado = SaldoVerificar - Inversion
