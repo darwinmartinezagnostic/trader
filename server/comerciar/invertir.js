@@ -687,7 +687,7 @@ Meteor.methods({
                             var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
                             var Inversion = RecalcIverPrec.MontIversionCal;
 
-                            if ( Inversion >= MinimoInversion ) {
+                            if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                 CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                             }
                         }
@@ -717,8 +717,8 @@ Meteor.methods({
                                     console.log("  Valor de RecalcIverPrec: ", RecalcIverPrec)
                                     var Inversion = RecalcIverPrec.MontIversionCal;
                                     console.log("  Valor de Inversion: ", Inversion)
-                                    if ( Inversion >= MinimoInversion ) {
-                                        console.log("  ACÁ ESTOY if ( Inversion >= MinimoInversion )")
+                                    if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
+                                        console.log("  ACÁ ESTOY if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) )")
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                         console.log("  Valor de CantPropTipoCambiosValidados: ", CantPropTipoCambiosValidados)
                                         NuevoSaldoCalculado = SaldoVerificar - Inversion
@@ -730,7 +730,7 @@ Meteor.methods({
                                     var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p22;
                                     var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
                                     var Inversion = RecalcIverPrec.MontIversionCal;
-                                    if ( Inversion >= MinimoInversion ) {
+                                    if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                 break;
@@ -755,7 +755,7 @@ Meteor.methods({
                                     var VInversion = SaldoVerificar*PTDC.valor.p13;
                                     var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
                                     var Inversion = RecalcIverPrec.MontIversionCal;
-                                    if ( Inversion >= MinimoInversion ) {
+                                    if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                         NuevoSaldoCalculado = SaldoVerificar - Inversion
                                     }
@@ -773,7 +773,7 @@ Meteor.methods({
                                     var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p23;
                                     var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
                                     var Inversion = RecalcIverPrec.MontIversionCal;
-                                    if ( Inversion >= MinimoInversion ) {
+                                    if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                         NuevoSaldoCalculado = NuevoSaldoCalculado - Inversion
                                     }
@@ -791,7 +791,7 @@ Meteor.methods({
                                     var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p33;
                                     var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
                                     var Inversion = RecalcIverPrec.MontIversionCal;
-                                    if ( Inversion >= MinimoInversion ) {
+                                    if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
                                 break;
