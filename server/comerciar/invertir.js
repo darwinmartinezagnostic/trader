@@ -543,10 +543,10 @@ Meteor.methods({
 
         console.log('-------------------------------------------');
         console.log("           MONEDA: ", MONEDASALDO);
-        console.log("           ESTADO: ", VEstado);
         console.log("            SALDO: ", SALDO_ACTUAL.toString());
         console.log("      EQUIVALENTE: ", SALDO_EQUIV.toString());
         console.log("      TIPO CAMBIO: ", Vtipo_cambio);
+        console.log("           ESTADO: ", VEstado);
         console.log("    PRECIO ACTUAL: ", PeriodoPrecioAct.toString().replace(".", ",") );
         console.log('-------------------------------------------');
         console.log(" ");
