@@ -84,7 +84,7 @@ Meteor.methods({
         console.log(' ');
         try {
             var Monedas_Saldo = Monedas.aggregate([
-                        { $match : { $or : [{"saldo.tradeo.equivalencia" : { $gt : 0 }},{ "moneda" : 'BTC' }] , "activo" : "S"}},
+                        { $match : { $or : [{"saldo.tradeo.activo" : { $gt : 0 }},{ "moneda" : 'BTC' }] , "activo" : "S"}},
                         { $sort : {"saldo.tradeo.equivalencia":-1} }
                     ]);
         }
