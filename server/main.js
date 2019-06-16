@@ -7,34 +7,35 @@ Meteor.methods({
     'EjecucionInicial':function(){
         var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
 
-        Meteor.call("Encabezado");
-        Meteor.call("ListaTiposDeCambios", 2);
-        Meteor.call("ListaMonedas");
-        if ( Robot.valor !== 1 ) {
+        if ( Robot.valor === 0 ) {
+            Meteor.call("Encabezado");
+            Meteor.call("ListaTiposDeCambios", 2);
+            Meteor.call("ListaMonedas");
             Meteor.call("ActualizaSaldoTodasMonedas");
-        }else if ( Robot.valor === 1 ) {
-            Meteor.call("ActualizaSaldoTodasMonedasRobot");
-        }
-        Meteor.call("ValidaMonedasTransfCuentaTRadeo");
-        if ( Robot.valor !== 1 ) {
+            Meteor.call("ValidaMonedasTransfCuentaTRadeo");
             Meteor.call("ActualizaSaldoTodasMonedas");
-        }else if ( Robot.valor === 1 ) {
-            Meteor.call("ActualizaSaldoTodasMonedasRobot");
-        }
-        Meteor.call("ValidaSaldoEquivalenteActual");
-        if ( Robot.valor !== 1 ) {
+            Meteor.call("ValidaSaldoEquivalenteActual");
             Meteor.call("ActualizaSaldoTodasMonedas");
+            Meteor.call("EquivalenteDolarMinCompra");
+            Meteor.call("ConsultarHistoricoOrdenes");
         }else if ( Robot.valor === 1 ) {
+            Meteor.call("Encabezado");
+            Meteor.call("ListaTiposDeCambios", 2);
+            Meteor.call("ListaMonedas");
             Meteor.call("ActualizaSaldoTodasMonedasRobot");
+            Meteor.call("ValidaSaldoEquivalenteActual");
+            Meteor.call("EquivalenteDolarMinCompra");
+            Meteor.call("ConsultarHistoricoOrdenes");
         }
-        Meteor.call("EquivalenteDolarMinCompra");
-        Meteor.call("ConsultarHistoricoOrdenes");
+
         try {
             Parametros.update({ dominio : "Ejecucion", nombre : "ModoEjecucion", "valor" : 1 },{ $set :{ "valor" : 2 , fecha_ejecucion : new Date() }});
         }
         catch (error){
             Meteor.call("ValidaError", error, 2);
         }
+
+
         Meteor.call("FinEjecucion");
         
         return 0;
@@ -63,6 +64,7 @@ Meteor.startup(function (){
                 Meteor.call("PruebasUnitarias");
             break;
             case 1:
+                console.log(" Estoy acá")
                 Meteor.call('SecuenciaInicial');
             break;
             case 2:
