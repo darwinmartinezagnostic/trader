@@ -64,7 +64,6 @@ Meteor.startup(function (){
                 Meteor.call("PruebasUnitarias");
             break;
             case 1:
-                console.log(" Estoy acá")
                 Meteor.call('SecuenciaInicial');
             break;
             case 2:
