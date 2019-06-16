@@ -11,7 +11,6 @@ Meteor.methods({
 
     "SecuenciaInicial": function (){
         
-                console.log(" Estoy acá")
         do{
             fecha = moment (new Date());
             console.log('        ',fecha._d);
