@@ -5,15 +5,28 @@ import { Meteor } from 'meteor/meteor';
 Meteor.methods({
 
     'EjecucionInicial':function(){
+        var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
 
         Meteor.call("Encabezado");
         Meteor.call("ListaTiposDeCambios", 2);
         Meteor.call("ListaMonedas");
-        Meteor.call("ActualizaSaldoTodasMonedas");
+        if ( Robot.valor !== 1 ) {
+            Meteor.call("ActualizaSaldoTodasMonedas");
+        }else if ( Robot.valor === 1 ) {
+            Meteor.call("ActualizaSaldoTodasMonedasRobot");
+        }
         Meteor.call("ValidaMonedasTransfCuentaTRadeo");
-        Meteor.call("ActualizaSaldoTodasMonedas");
+        if ( Robot.valor !== 1 ) {
+            Meteor.call("ActualizaSaldoTodasMonedas");
+        }else if ( Robot.valor === 1 ) {
+            Meteor.call("ActualizaSaldoTodasMonedasRobot");
+        }
         Meteor.call("ValidaSaldoEquivalenteActual");
-        Meteor.call("ActualizaSaldoTodasMonedas");
+        if ( Robot.valor !== 1 ) {
+            Meteor.call("ActualizaSaldoTodasMonedas");
+        }else if ( Robot.valor === 1 ) {
+            Meteor.call("ActualizaSaldoTodasMonedasRobot");
+        }
         Meteor.call("EquivalenteDolarMinCompra");
         Meteor.call("ConsultarHistoricoOrdenes");
         try {
@@ -38,6 +51,8 @@ Meteor.startup(function (){
         // Verificamos si la aplicación es su ejecución Inicial o no
         var ModoEjecucion = Parametros.aggregate([  { $match : { dominio : "Ejecucion", nombre : "ModoEjecucion" } },
                                                     { $project : { _id : 0, valor : 1 } }]);
+
+        var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
         
         var ValorModoEjecucion = ModoEjecucion[0].valor
         //var ValorModoEjecucion = 0
@@ -45,13 +60,15 @@ Meteor.startup(function (){
 
         switch ( ValorModoEjecucion ){
             case 0:
-                Meteor.call("Prueba");
+                Meteor.call("PruebasUnitarias");
             break;
             case 1:
                 Meteor.call('SecuenciaInicial');
             break;
             case 2:
-                Meteor.call("ActualizaSaldoTodasMonedas");
+                if ( Robot.valor === 0 ) {
+                    Meteor.call("ActualizaSaldoTodasMonedas");
+                }
                 Meteor.call("ValidaSaldoEquivalenteActual");
                 Meteor.call('SecuenciasSecundarias');
             break;                

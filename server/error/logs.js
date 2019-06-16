@@ -5,8 +5,8 @@ Meteor.methods({
 
     'GuardarLogEjecucionTrader':function ( MENSAJE ) {
 		Nfecha = moment(new Date())
-        var nuevo_id_ejecucion = Meteor.call('CalculaId', 1);
-        LogEjecucionTrader.insert({fecha: Nfecha._d , id : nuevo_id_ejecucion ,descripcion : MENSAJE});
+        var nuevo_id_ejecucion = Meteor.call("SecuenciasGBL", 'IdLog')
+        LogEjecucionTrader.insert({  _id : nuevo_id_ejecucion.toString() , fecha: Nfecha._d ,descripcion : MENSAJE});
         console.log( MENSAJE);
         console.log(' ');
     },

@@ -60,5 +60,44 @@ Meteor.methods({
         
         return nuevo_id;
     },
+
+    'SecuenciasGBL':function(NOMBRE){
+        var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
+        if ( Robot.valor === 0 ) {
+            if ( NOMBRE === 'IdGanPerdLocal' ) {
+                if ( SecuenciasGlobales.find({ _id: NOMBRE, secuencia: { $gt : 0 } }).count() === 0){                
+                    var url_transaccion_completa=[CONSTANTES.HistTradeo]+['?sort=DESC&by=timestamp&limit=1']
+                    var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
+                    var UltIdOrden = parseFloat(transaccion[0].clientOrderId);
+                    SecuenciasGlobales.update({ _id: NOMBRE }, {    
+                                                            $set: {
+                                                                    secuencia: UltIdOrden
+                                                                }
+                                                            }, {"upsert" : true});
+
+                    var nuevo_id = SecuenciasGlobales.findAndModify({
+                                                                        query: { _id: NOMBRE },
+                                                                        update: { $inc: { secuencia: 1 } },
+                                                                        new: true
+                                                                    });
+
+                }
+            }else{            
+                var nuevo_id = SecuenciasGlobales.findAndModify({
+                                                                    query: { _id: NOMBRE },
+                                                                    update: { $inc: { secuencia: 1 } },
+                                                                    new: true
+                                                                });
+            }
+        }else{
+            var nuevo_id = SecuenciasGlobales.findAndModify({
+                                                                    query: { _id: NOMBRE },
+                                                                    update: { $inc: { secuencia: 1 } },
+                                                                    new: true
+                                                                });
+        }
+
+        return nuevo_id.secuencia;
+    },
 	
 });

@@ -32,7 +32,16 @@ Meteor.methods({
                                         CantidadMinimaMuestreo : V_LimiteMuestreo,
                                         MonedaEstable : 'N',
                                         c_estable : 0,
-                                        fecha_actualizacion : fecha._d }
+                                        fecha_actualizacion : fecha._d,
+                                        saldo: {tradeo: { activo: 0,
+                                                         reserva: 0,
+                                                         equivalencia: 0,
+                                                         fecha: fecha._d },
+                                                cuenta:{ activo: 0,
+                                                         reserva: 0,
+                                                         equivalencia: 0,
+                                                         fecha: fecha._d } 
+                                                } }
                             },
                             { "upsert" : true }
                             );
@@ -483,45 +492,38 @@ Meteor.methods({
                 case 2:
                     // ESTO ES PARA VERIFICAR LA TENDENCIA DE LOS TIPOS DE CAMBIO
 
-                    if (TiposDeCambios.find({ tipo_cambio : mon_c.id }).count() !== 0) {
-                        try{
-                            TiposDeCambios.update({ tipo_cambio : LTCTipoCambio },{$set:{ tipo_cambio : LTCTipoCambio, moneda_base :  LTCMonedaBase, moneda_cotizacion : LTCMonedaCotizacion, activo : "S", habilitado : 1 , comision_hitbtc : LTCComisionCasaCambio, comision_mercado : LTCComisionMercado, min_compra : LTCMontoMinCompra, moneda_apli_comision : LTCMonedaAplicacionComision, valor_incremento : LTCValorIncremento, c_estado_p: 0, c_estado_a: 0  }}, {"multi" : true,"upsert" : true});
-                        }
-                        catch(error){
-                            Meteor.call("GuardarLogEjecucionTrader", ' Error: los datos no pudieron ser actualizados');
-                            Meteor.call('ValidaError', error, 1);
-                        }
-                    }
-                    else {
-                        TiposDeCambios.insert({ tipo_cambio : LTCTipoCambio, 
-                                                moneda_base :  LTCMonedaBase, 
-                                                moneda_cotizacion : LTCMonedaCotizacion, 
-                                                activo : "S", 
-                                                habilitado : 1 , 
-                                                comision_hitbtc : LTCComisionCasaCambio, 
-                                                comision_mercado : LTCComisionMercado, 
-                                                min_compra : LTCMontoMinCompra, 
-                                                moneda_apli_comision : LTCMonedaAplicacionComision, 
-                                                valor_incremento : LTCValorIncremento, 
-                                                estado : "V" , 
-                                                c_estado_p: 0, 
-                                                c_estado_a: 0});
+                    TiposDeCambios.update(  { tipo_cambio : LTCTipoCambio },
+                                                    { $set:{    tipo_cambio : LTCTipoCambio, 
+                                                                moneda_base :  LTCMonedaBase, 
+                                                                moneda_cotizacion : LTCMonedaCotizacion, 
+                                                                activo : "S", 
+                                                                habilitado : 1 , 
+                                                                comision_hitbtc : LTCComisionCasaCambio, 
+                                                                comision_mercado : LTCComisionMercado, 
+                                                                min_compra : LTCMontoMinCompra, 
+                                                                moneda_apli_comision : LTCMonedaAplicacionComision, 
+                                                                valor_incremento : LTCValorIncremento, 
+                                                                estado : "V",
+                                                                c_estado_p: 0, 
+                                                                c_estado_a: 0  }
+                                                    }, 
+                                                    {"multi" : true,"upsert" : true}
+                                                )
 
-                        console.log('--------------------------------------------');
-                        Meteor.call("GuardarLogEjecucionTrader", ' ** Detectado nuevo Tipo de Cambio en HITBTC **');
-                        console.log('--------------------------------------------');
-                        console.log(' ');
-                        Meteor.call("GuardarLogEjecucionTrader", '    ********* ', LTCTipoCambio, '********* ');
-                        Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA BASE: ']+[LTCMonedaBase]);
-                        Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA DE COTIZACIÓN: ']+[LTCMonedaCotizacion]);
-                        Meteor.call("GuardarLogEjecucionTrader", ['     MONTO MIN DE COMPRA: ']+[LTCMontoMinCompra]);
-                        Meteor.call("GuardarLogEjecucionTrader", ['     VALOR DE INCREMENTO: ']+[LTCValorIncremento]);
-                        console.log(' ');
-                        console.log(' *******    VALORES DE COMISIONES    *******');
-                        Meteor.call("GuardarLogEjecucionTrader", ['     COMISION HITBTC: ']+[LTCComisionCasaCambio]);
-                        Meteor.call("GuardarLogEjecucionTrader", ['     COMISION DE MERCADO: ']+[LTCComisionMercado]);
-                        Meteor.call("GuardarLogEjecucionTrader", ['     APLICACION DE COMISION A MONEDA: ']+[LTCMonedaAplicacionComision]);
-                    }
+                    console.log('--------------------------------------------');
+                    Meteor.call("GuardarLogEjecucionTrader", ' ** Detectado nuevo Tipo de Cambio en HITBTC **');
+                    console.log('--------------------------------------------');
+                    console.log(' ');
+                    Meteor.call("GuardarLogEjecucionTrader", '    ********* ', LTCTipoCambio, '********* ');
+                    Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA BASE: ']+[LTCMonedaBase]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA DE COTIZACIÓN: ']+[LTCMonedaCotizacion]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     MONTO MIN DE COMPRA: ']+[LTCMontoMinCompra]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     VALOR DE INCREMENTO: ']+[LTCValorIncremento]);
+                    console.log(' ');
+                    console.log(' *******    VALORES DE COMISIONES    *******');
+                    Meteor.call("GuardarLogEjecucionTrader", ['     COMISION HITBTC: ']+[LTCComisionCasaCambio]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     COMISION DE MERCADO: ']+[LTCComisionMercado]);
+                    Meteor.call("GuardarLogEjecucionTrader", ['     APLICACION DE COMISION A MONEDA: ']+[LTCMonedaAplicacionComision]);
                 break;
                 default:
                     Meteor.call("GuardarLogEjecucionTrader", ' Valor de tipo consulta no definida ');
@@ -997,13 +999,11 @@ Meteor.methods({
         Meteor.call("GuardarLogEjecucionTrader", '   VALORES ANTERIORES MB');
         Meteor.call("GuardarLogEjecucionTrader", ['  ']+[MON_B]);
         console.log('--------------------------------------------');
+
         var FechaTradeoAnteriorMB = ValoresAnterioresMB.saldo.tradeo.fecha;
         var SaldoTradeoAnteriorMB = ValoresAnterioresMB.saldo.tradeo.activo;
-        if (V_EquivalenciaTradeoAnteriorMB !== undefined ) {
-            var V_EquivalenciaTradeoAnteriorMB = ValoresAnterioresMB.saldo.tradeo.equivalencia;
-        }else{
-            var V_EquivalenciaTradeoAnteriorMB = 0
-        }
+        var V_EquivalenciaTradeoAnteriorMB = ValoresAnterioresMB.saldo.tradeo.equivalencia;
+
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de FechaTradeoAnteriorMB: "]+[FechaTradeoAnteriorMB]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoTradeoAnteriorMB: "]+[SaldoTradeoAnteriorMB]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_EquivalenciaTradeoAnteriorMB: "]+[V_EquivalenciaTradeoAnteriorMB]);
@@ -1014,11 +1014,8 @@ Meteor.methods({
         console.log('--------------------------------------------');
         var FechaTradeoAnteriorMC = ValoresAnterioresMC.saldo.tradeo.fecha;
         var SaldoTradeoAnteriorMC = ValoresAnterioresMC.saldo.tradeo.activo;
-        if (V_EquivalenciaTradeoAnteriorMC !== undefined ) {
-            var V_EquivalenciaTradeoAnteriorMC = ValoresAnterioresMC.saldo.tradeo.equivalencia;
-        }else{
-            var V_EquivalenciaTradeoAnteriorMC = 0
-        }
+        var V_EquivalenciaTradeoAnteriorMC = ValoresAnterioresMC.saldo.tradeo.equivalencia;
+
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de FechaTradeoAnteriorMC: "]+[FechaTradeoAnteriorMC]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoTradeoAnteriorMC: "]+[SaldoTradeoAnteriorMC]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_EquivalenciaTradeoAnteriorMC: "]+[V_EquivalenciaTradeoAnteriorMC]);
@@ -1199,6 +1196,8 @@ Meteor.methods({
                 }
         }
 
+        TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO})
+
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_IdHitBTC: "]+[V_IdHitBTC]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de IdTransaccionActual: "]+[IdTransaccionActual]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_SaldoInversion: "]+[CANT_INVER]);
@@ -1251,7 +1250,8 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
             Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);
             
-            var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);
+            //var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);
+            var IdTransaccionLoteActual = Meteor.call("IdGanPerdLote", 'IdGanPerdLocal')
             Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
         }
     },

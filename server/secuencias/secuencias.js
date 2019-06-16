@@ -147,11 +147,11 @@ Meteor.methods({
                         Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
                         Meteor.call('ValidarRanking', moneda_saldo.moneda);
 
-                        Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
                         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION                        
 
                         if ( V_LimiteMuestreo === 0 ) { 
+                            Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
                             
                             Meteor.call('ValidaInversion', moneda_saldo.moneda);
                             /*

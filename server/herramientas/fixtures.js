@@ -1,7 +1,7 @@
 if (Usuarios.find().count() === 0){
-	Usuarios.insert({fecha_ingreso: new Date(), nombres:'Carmen Teresa', apellidos:'Aparicio Aldana', ci:12345, tip_usuario:'inversionista', monederos:{ xmr:'ABDC', btc:'AB', bcn:'CDFBGFB'}});
-	Usuarios.insert({fecha_ingreso: new Date(), nombres:'Jarruiz Jesús', apellidos:'Ruiz Silvera', ci:12345, tip_usuario:'inversionista', monederos:{ xmr:'ABDC', btc:'AB', bcn:'CDFBGFB'}});
-	Usuarios.insert({fecha_ingreso: new Date(), nombres:'Darwin Joel', apellidos:'Martinez Lugo', ci:12345, tip_usuario:'inversionista', monederos:{ xmr:'ABDC', btc:'AB', bcn:'CDFBGFB'}});
+	Usuarios.insert({ _id : '1', fecha_ingreso: new Date(), nombres:'Carmen Teresa', apellidos:'Aparicio Aldana', ci:12345, tip_usuario:'inversionista', monederos:{ xmr:'ABDC', btc:'AB', bcn:'CDFBGFB'}});
+	Usuarios.insert({ _id : '2', fecha_ingreso: new Date(), nombres:'Jarruiz Jesús', apellidos:'Ruiz Silvera', ci:12345, tip_usuario:'inversionista', monederos:{ xmr:'ABDC', btc:'AB', bcn:'CDFBGFB'}});
+	Usuarios.insert({ _id : '3', fecha_ingreso: new Date(), nombres:'Darwin Joel', apellidos:'Martinez Lugo', ci:12345, tip_usuario:'inversionista', monederos:{ xmr:'ABDC', btc:'AB', bcn:'CDFBGFB'}});
 };
 
 
@@ -20,12 +20,15 @@ else {
 };
 
 if (PeriodoMuestreo.find().count() === 0){
-	PeriodoMuestreo.insert({fecha_ingreso: new Date(), periodo1 :'5 minutos', periodo2 : 'Hora', periodo3 : 'Diario', periodo4 : 'Semanal', periodo5 : 'Mensual', periodo6 : 'Anual'});
+	PeriodoMuestreo.insert({ _id : '1', fecha_ingreso: new Date(), periodo1 :'5 minutos', periodo2 : 'Hora', periodo3 : 'Diario', periodo4 : 'Semanal', periodo5 : 'Mensual', periodo6 : 'Anual'});
 };
 
-if (Parametros.find().count() === 0){
+if (Parametros.find({ dominio : 'Ejecucion' }).count() === 0){
 	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'ModoEjecucion', estado : true, valor: 1 ,descripcion : 'Modo de Ejecucíón del Trader, 0 = Pruebas, 1 = EjecucionInicial, 2 = SecuenciasSecundarias' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'Depuracion', estado : true, valor: 1 ,descripcion : 'Activar o desactivar las banderas creadas para rasterar errores de ejecución en los diferentes módulos' });
+};
+
+if (Parametros.find({ dominio : 'limites' }).count() === 0){
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'MaxApDep', estado : true, valor: 1 ,descripcion : 'Límite de Apreción (Moneda a comprar) o Depreciación (Moneda en Venta)' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'TimeoutEjecucion', estado : true, valor: 3 ,descripcion : 'Límite de Timeout de consultas al API de HitBTC' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadTraders', estado : true, valor: 1 ,descripcion : 'Máximo de Registros Traders consultados a HitBTC' });
@@ -38,6 +41,31 @@ if (Parametros.find().count() === 0){
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContAuxiliarEstadoActivo", estado : true, valor : 2 , descripcion : "Valor máximo de Contador Auxiliar de estado Activo" });
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContEstadoVerificando", estado : true, valor : 10 , descripcion : "Valor máximo de Contador de estado Verificando" });
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContAuxiliarEstadoVerificando", estado : true, valor : 3 , descripcion : "Valor máximo de Contador Auxiliar de estado Verificando" });
-	Parametros.insert({ fecha : new Date(), dominio : "robot", nombre : "test", estado : true, valor : 0, descripcion : "Simula la compra de monedas" });
-	Parametros.insert({ fecha : new Date(), dominio : "prueba", nombre : "saldo", estado : true, valor : 0, descripcion : "Saldo ficticio para ciertas monedas" });
 };
+
+if (Parametros.find({ dominio : 'Prueba' }).count() === 0){
+	Parametros.insert({ fecha : new Date(), dominio : "Prueba", nombre : "robot", estado : true, valor : 1, descripcion : "Simula la compra de monedas" });
+	Parametros.insert({ fecha : new Date(), dominio : "Prueba", nombre : "saldo", estado : true, valor : 1, descripcion : "Saldo ficticio" });
+};
+
+if (Parametros.find({ dominio : 'Periodos' }).count() === 0){
+	Parametros.insert({ fecha : new Date(), dominio : 'Periodos', nombre : 'PeriodoMuestreo', estado : true, valor: { periodo : { '1' : '5 minutos', '2' : 'Hora', '3' : 'Diario', '4' : 'Semanal', '5' : 'Mensual', '6' : 'Anual'} }, descripcion : 'Periodos de consultas de tendencias' });
+};
+
+const NombresSecuenciasRobot = ['IdOrdenHBTC']
+
+for ( CSR = 0, TSR = NombresSecuenciasRobot.length; CSR < TSR; CSR++ ) {
+	NombreSecuenciasRobot = NombresSecuenciasRobot[CSR]
+	if ( SecuenciasRobot.find({ _id: NombreSecuenciasRobot}).count() === 0){
+		SecuenciasRobot.insert({ _id: NombreSecuenciasRobot, secuencia: 0 });
+	};
+}
+
+const NombresSecuenciasGlobales = ['IdGanPerdLocal', 'IdGanPerdLote', 'IdHistTrans', 'IdLog']
+
+for ( CSG = 0, TSG = NombresSecuenciasGlobales.length; CSG < TSG; CSG++ ) {
+	NOMBRE = NombresSecuenciasGlobales[CSG]
+	if ( SecuenciasGlobales.find({ _id: NOMBRE}).count() === 0){
+		SecuenciasGlobales.insert({ _id: NOMBRE, secuencia: 0 });
+	};
+}

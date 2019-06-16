@@ -163,7 +163,7 @@ Meteor.methods({
                                 var ValorPromedio = Meteor.call('LibroDeOrdenes', TipoCambioObtenido);
                             break;
                         }
-                        //console.log(" EquivalenteDolar: Valor de ValorPromedio: ", ValorPromedio)
+                        console.log(" EquivalenteDolar: Valor de ValorPromedio: ", ValorPromedio)
 
                         var TipoCambioValido = ValorPromedio.Existe
                         if ( TipoCambioValido !== 1 ) {
@@ -176,10 +176,10 @@ Meteor.methods({
                         }else{
                             if ( MONEDA === MB ) {
                                 var EquivalenciaActual = ( parseFloat(SALDO) * parseFloat(ValorPromedio.Promedio) ) ;
-                                //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," * ",parseFloat(ValorPromedio.Promedio) )
+                                console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," * ",parseFloat(ValorPromedio.Promedio) )
                             }else if ( MONEDA === MC ) {
                                 var EquivalenciaActual = ( parseFloat(SALDO) / parseFloat(ValorPromedio.Promedio) );
-                                //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," / ",parseFloat(ValorPromedio.Promedio) )
+                                console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," / ",parseFloat(ValorPromedio.Promedio) )
                             }
                         }
                     }else {
@@ -235,10 +235,10 @@ Meteor.methods({
 
                                 if ( MONEDA === MBase ) {
                                     var SaldEquivActualAux = ( parseFloat(SALDO) * parseFloat(ValorPromedioObtenido.Promedio) ) ;
-                                    //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," * ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
+                                    console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," * ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
                                 }else if ( MONEDA === MCotizacion ) {
                                     var SaldEquivActualAux = ( parseFloat(SALDO)  / parseFloat(ValorPromedioObtenido.Promedio) );
-                                    //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," / ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
+                                    console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SALDO)," / ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
                                 }
                             break;
                         }
@@ -251,15 +251,17 @@ Meteor.methods({
 
                         var ValorPromedioObtenidoAux = Meteor.call('LibroDeOrdenes', TipoCambioObtenidoAux);
 
+                        console.log(" EquivalenteDolar: Valor de ValorPromedioObtenidoAux: ", ValorPromedioObtenidoAux)
+
                         var TMinInvAux = MinInvAux.toString().trim().length
                         var SaldoMinTCAux= SaldEquivActualAux.toString().trim().substr(0, TMinInv)
 
                         if ( MonedaEquivalenteAux === MBaseAux ) {
                             var EquivalenciaActual = ( parseFloat(SaldEquivActualAux) * parseFloat(ValorPromedioObtenidoAux.Promedio) ) ;
-                            //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SaldEquivActualAux)," * ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
+                            console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SaldEquivActualAux)," * ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
                         }else if ( MonedaEquivalenteAux === MCotiAux ) {
                             var EquivalenciaActual = ( parseFloat(SaldEquivActualAux) / parseFloat(ValorPromedioObtenidoAux.Promedio) );
-                            //console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SaldEquivActualAux)," / ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
+                            console.log(" Vaor de EquivalenciaActual: ", EquivalenciaActual," = (", parseFloat(SaldEquivActualAux)," / ",parseFloat(ValorPromedioObtenidoAux.Promedio) )
                         }                   
                     }
                 }else if ( ExisteTipoCambio === 0 ){

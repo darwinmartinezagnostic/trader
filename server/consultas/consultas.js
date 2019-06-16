@@ -348,7 +348,6 @@ Meteor.methods({
         return Estado;
     },
 
-    //'ValidarEstadoOrden': function(ORDEN, ID, TIPO_CAMBIO, VAL_ORDEN){
     'ValidarEstadoOrden': function( VAL_ORDEN){
         var CONSTANTES = Meteor.call("Constantes");
         /////////////////////////////////////////////////////
@@ -375,28 +374,29 @@ Meteor.methods({
         var url_tranOA=[CONSTANTES.ordenes]+['?clientOrderId=']+[T_clientOrderId]+['?wait=300']
         var Url_TransTP=[CONSTANTES.HistOrdenes]+['?symbol=']+[T_symbol]+['&limit=3']
         var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[T_id]+['/trades']
+        /*
         console.log('Valor de url_tranOA', url_tranOA)
         console.log('Valor de Url_TransTP', Url_TransTP)
         console.log('Valor de Url_TransID', Url_TransID)
-
+        */
 
         const TrnsOA = Meteor.call("ConexionGet", url_tranOA)   
         var transOA = TrnsOA[0];
-        console.log('Valor de transOA', transOA)
+        //console.log('Valor de transOA', transOA)
         const TrnsTP = Meteor.call("ConexionGet", Url_TransTP)
-        console.log('Valor de TrnsTP', TrnsTP)
+        //console.log('Valor de TrnsTP', TrnsTP)
         const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
         var transID = TrnsID[0];
-        console.log('Valor de transID', transID)
+        //console.log('Valor de transID', transID)
         if ( transID === undefined ) {
             HistIdOrden = 0
-            console.log('Valor de HistIdOrden', HistIdOrden)
+            //console.log('Valor de HistIdOrden', HistIdOrden)
         }else{
             HistIdOrden = 1
-            console.log('Valor de HistIdOrden', HistIdOrden)
+            //console.log('Valor de HistIdOrden', HistIdOrden)
         }
         if ( transOA === undefined ) {
-            console.log(' Estoy en if ( transOA === undefined )')
+            //console.log(' Estoy en if ( transOA === undefined )')
             for ( CTrnsOA = 0, TTrnsOA = TrnsTP.length; CTrnsOA < TTrnsOA; CTrnsOA++ ) {
                 var HTrnsTP = TrnsTP[CTrnsOA];
                 IdOdenClient = HTrnsTP.clientOrderId
@@ -410,21 +410,19 @@ Meteor.methods({
                     break                    
                 }
             }
-            console.log('Valor de HistIdOrdenExiste', HistIdOrdenExiste)
-
+            //console.log('Valor de HistIdOrdenExiste', HistIdOrdenExiste)
 
             if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 ) {
-                console.log(' Estoy en if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
-                //var Estado_Orden = StatusOrden
+                //console.log(' Estoy en if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
                 var Estado_Orden = NuValOrden
             }else{
-                console.log(' Estoy en else de if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
+                //console.log(' Estoy en else de if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
                 var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: 'Fallido', type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
             }
         }else{
             var Estado_Orden = transOA
         }
-        console.log('Valor de Estado_Orden', Estado_Orden)
+        //console.log('Valor de Estado_Orden', Estado_Orden)
         return Estado_Orden
     },
     
