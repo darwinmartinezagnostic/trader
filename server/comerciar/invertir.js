@@ -935,8 +935,7 @@ Meteor.methods({
         console.log("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION), " ID_LOTE: ", ID_LOTE;
         console.log("Estoy en acá 7")
         var CONSTANTES = Meteor.call("Constantes");
-        //var IdTran = Meteor.call('CalculaId', 2);
-        var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal')
+        var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
         var IdTransaccionActual = Meteor.call("CompletaConCero", IdTran, 32);
         GananciaPerdida.insert({
                                 Operacion : {   
