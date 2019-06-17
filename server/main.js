@@ -9,23 +9,15 @@ Meteor.methods({
 
         if ( Robot.valor === 0 ) {
             Meteor.call("Encabezado");
-            
             Meteor.call("ListaTiposDeCambios", 2);
             Meteor.call("ListaMonedas");
             Meteor.call("ActualizaSaldoTodasMonedas");
             Meteor.call("ValidaMonedasTransfCuentaTRadeo");
-            //*/
-            //console.log("Estoy en acá 1")
             Meteor.call("ActualizaSaldoTodasMonedas");
-            //console.log("Estoy en acá 2")
             Meteor.call("ValidaSaldoEquivalenteActual");
-            //console.log("Estoy en acá 3")
             Meteor.call("ActualizaSaldoTodasMonedas");
-            //console.log("Estoy en acá 4")
             Meteor.call("EquivalenteDolarMinCompra");
-            //console.log("Estoy en acá 5")
             Meteor.call("ConsultarHistoricoOrdenes");
-            //console.log("Estoy en acá 6")
         }else if ( Robot.valor === 1 ) {
             Meteor.call("Encabezado");
             Meteor.call("ListaTiposDeCambios", 2);

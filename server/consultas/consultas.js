@@ -91,7 +91,9 @@ Meteor.methods({
             for (k = 0, len = transaccion.length; k < len; k++) {
                 trans = transaccion[k];
                 //var IdTran = Meteor.call('CalculaId', 2);
+                //console.log(' Estoy acá')
                 var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
+                //console.log('Valor de IdTran: ', IdTran)
                 var IdTransaccionActual = Meteor.call("CompletaConCero", parseFloat(IdTran), 32);            
                 var url_trans_orden=[CONSTANTES.HistOrdenes]+['/']+[trans.orderId]+['/trades']
                 var ComisionTansacion = Meteor.call("ConexionGet", url_trans_orden);
