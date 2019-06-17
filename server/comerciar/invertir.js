@@ -910,8 +910,11 @@ Meteor.methods({
                     //var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);
 
                     var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')
+                    console.log('Valor de IdTransaccionLoteActual', IdTransaccionLoteActual)
                     var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
+                    console.log('Valor de Robot', Robot)
                     if ( Robot.valor === 0 ) {
+                        console.log("Estoy en acá 6")
                         Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
                     }else if ( Robot.valor === 1 ) {
                         Meteor.call('CrearNuevaOrderRobot',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
