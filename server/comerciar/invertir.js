@@ -954,12 +954,16 @@ Meteor.methods({
             var V_TipoOperaciont = 'COMPRA';
         }
 
-        console.log("Valore de MON_B: ", MON_B)
-        console.log("Valore de MON_C: ", MON_C)
-        console.log("Valore de MONEDA_SALDO: ", MONEDA_SALDO)
-        console.log("Valore de V_TipoOperaciont: ", V_TipoOperaciont)
 
         var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+        
+        console.log("Valore de MON_B: ", MON_B)
+        console.log("Valore de MON_C: ", MON_C)
+        console.log("Valore de V_TipoOperaciont: ", V_TipoOperaciont)
+        console.log("Valore de MONEDA_SALDO: ", MONEDA_SALDO)
+        console.log("Valore de CANT_INVER: ", CANT_INVER)
+        console.log("Valore de RecalcIverPrec: ", RecalcIverPrec)
+        /**/
         var TC = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO })
         var MinimoInversion = TC.valor_incremento
         if ( parseFloat(RecalcIverPrec.MontIversionCal) >= parseFloat(MinimoInversion) ) {

@@ -344,12 +344,12 @@ Meteor.methods({
         const precio =  Meteor.call("ConexionGet", URL_TIKT);
         const OrdenesAbiertas =  Meteor.call("ConexionGet", URL_LIBORD);
         var TipoCambio =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
-        //console.log("Valor de OrdenesAbiertas", OrdenesAbiertas)
+        console.log("Valor de OrdenesAbiertas", OrdenesAbiertas)
         var CalTamAcum = 0;
 
         if ( MONEDA_SALDO == TipoCambio[0].moneda_cotizacion ) {
             var OrdenesAbiertasVenta = OrdenesAbiertas.ask
-            //console.log("Valor de OrdenesAbiertasVenta", OrdenesAbiertasVenta)
+            console.log("Valor de OrdenesAbiertasVenta", OrdenesAbiertasVenta)
             var ValTipoCambio = TipoCambio[0];
             var comision_hbtc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_hitbtc
             var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
@@ -362,12 +362,12 @@ Meteor.methods({
                 var MejorPrec = PrecOrdAbrt
                 var M_INVERTIR = MR_INVER / parseFloat(MejorPrec)
                 var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))
-                //console.log("Valor de MONT_INVERTIR", MONT_INVERTIR)
+                console.log("Valor de MONT_INVERTIR", MONT_INVERTIR)
                 var CalTamAcum = parseFloat(CalTamAcum) + parseFloat(TamOrdeAbrt)
                 if ( parseFloat(MONT_INVERTIR) < parseFloat(TamOrdeAbrt) || parseFloat(MONT_INVERTIR) < parseFloat(CalTamAcum) ) {
-                    //console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(MONT_INVERTIR) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(MONT_INVERTIR), ' < ', parseFloat(CalTamAcum))
+                    console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(MONT_INVERTIR) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(MONT_INVERTIR), ' < ', parseFloat(CalTamAcum))
                     resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
-                    //console.log("Valor de resultados", resultados)
+                    console.log("Valor de resultados", resultados)
                     break
                 }
             }
@@ -375,11 +375,11 @@ Meteor.methods({
             return resultados;
         }else if ( MONEDA_SALDO == TipoCambio[0].moneda_base ) {
             var OrdenesAbiertasCompra = OrdenesAbiertas.bid
-            //console.log("Valor de OrdenesAbiertasCompra", OrdenesAbiertasCompra)
+            console.log("Valor de OrdenesAbiertasCompra", OrdenesAbiertasCompra)
             var ValTipoCambio = TipoCambio[0];
             for ( COAC = 0, TOAC = OrdenesAbiertasCompra.length; COAC <= TOAC; COAC++ ) {
                 var OrdAbrt = OrdenesAbiertasCompra[COAC]
-                //console.log("Valor de OrdAbrt", OrdAbrt)
+                console.log("Valor de OrdAbrt", OrdAbrt)
                 var PrecOrdAbrt = OrdAbrt.price.toString()
                 var TamOrdeAbrt = OrdAbrt.size.toString()
                 var MejorPrec = PrecOrdAbrt
@@ -387,9 +387,9 @@ Meteor.methods({
                 var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
                 var CalTamAcum = parseFloat(CalTamAcum) + parseFloat(TamOrdeAbrt)
                 if ( parseFloat(INVER) < parseFloat(TamOrdeAbrt) || parseFloat(INVER) < parseFloat(CalTamAcum) ) {
-                    //console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(INVER) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(INVER), ' < ', parseFloat(CalTamAcum))
+                    console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(INVER) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(INVER), ' < ', parseFloat(CalTamAcum))
                     resultados = { 'MontIversionCal' : INVER, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
-                    //console.log("Valor de resultados", resultados)
+                    console.log("Valor de resultados", resultados)
                     break
                 }
             }

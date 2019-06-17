@@ -1258,4 +1258,30 @@ Meteor.methods({
         }
     },
 
+
+    'ResetTipoCambioMonSaldo':function( ){
+        var Monedas_Saldo = Monedas.aggregate([
+                        { $match : { $or : [{"saldo.tradeo.activo" : { $gt : 0 }},{ "moneda" : 'BTC' }] , "activo" : "S"}},
+                        { $sort : {"saldo.tradeo.equivalencia":-1} }
+                    ]);
+
+        for (CMONS = 0, TMONS = Monedas_Saldo.length; CMONS < TMONS; CMONS++) {
+            var moneda_saldo =  Monedas_Saldo[CMONS]
+            var Moneda = moneda_saldo.moneda
+
+            var TiposDeCambiosResetear = TiposDeCambios.aggregate([ { $match : { $or : [{ "moneda_base" : Moneda },
+                                                                                        { "moneda_cotizacion" : Moneda } ] }  },
+                                                                    { $sort : { tipo_cambio : 1 } } ])
+
+            for (CTCR = 0, T_TiposDeCambiosResetear = TiposDeCambiosResetear.length; CTCR < T_TiposDeCambiosResetear; CTCR++) {
+                var V_TiposDeCambiosResetear= TiposDeCambiosResetear[CTCR];
+                var V_TipoCambio = V_TiposDeCambiosResetear.tipo_cambio
+
+                TiposDeCambios.update(  { tipo_cambio : V_TipoCambio },
+                                        { $set:{  "periodo1.Base.reset": 1 }}
+                                    );
+            }
+        }
+    },
+
 });

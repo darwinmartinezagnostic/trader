@@ -35,8 +35,8 @@ Meteor.methods({
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
         
-        const MON_B='SMART'
-        const MON_C='BTC'
+        const MON_B='HTML'
+        const MON_C='ETH'
         var TIPO_CAMBIO = MON_B+MON_C
         //var MONEDA_SALDO = MON_B
         var MONEDA_COMISION = MON_C
@@ -56,10 +56,14 @@ Meteor.methods({
         
         if (MONEDA_SALDO === MON_B) {
             //CANT_INVER = '1.782'
-            CANT_INVER = '80'
+            //CANT_INVER = '80'
+            var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
+            var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
         }else if (MONEDA_SALDO === MON_C) {
             //CANT_INVER = '0.01696398'
-            CANT_INVER = '0.00058' 
+            //CANT_INVER = '0.00058' 
+            var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
+            var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
         } 
         
         MAPLICOMIS = MON_C
@@ -67,10 +71,10 @@ Meteor.methods({
 
         //Meteor.call("ConsultaCarterasDeposito");
  
-            //console.log("MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
+            console.log("Datos a enviar: MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
             //CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, IdTransaccionLoteActual){
             //Meteor.call("CrearNuevaOrder", 'ETHBTC', 'sell', '0.0166', 'ETH', 'BTC', 'BTC', 'BTC', IdTransaccionLoteActual);
-            //Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
+            Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
             //Meteor.call("CrearNuevaOrderRobot", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
                                         // TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){ 
      
@@ -245,7 +249,7 @@ Meteor.methods({
             //USDEOSDT
             //EURSUSD
             //'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
-            
+            /*
             var MONEDA='BMH'
             var prueba = Meteor.call("EquivalenteDolar", MONEDA, 10, 2);
             console.log("Valor de prueba ", prueba);
