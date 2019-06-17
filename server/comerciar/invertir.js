@@ -910,11 +910,8 @@ Meteor.methods({
                     //var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);
 
                     var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')
-                    console.log('Valor de IdTransaccionLoteActual', IdTransaccionLoteActual)
                     var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
-                    console.log('Valor de Robot', Robot)
                     if ( Robot.valor === 0 ) {
-                        console.log("Estoy en acá 6")
                         Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
                     }else if ( Robot.valor === 1 ) {
                         Meteor.call('CrearNuevaOrderRobot',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
@@ -932,11 +929,12 @@ Meteor.methods({
     },
     
     'CrearNuevaOrder':function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
-        console.log("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION), " ID_LOTE: ", ID_LOTE;
-        console.log("Estoy en acá 7")
+        //console.log("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION), " ID_LOTE: ", ID_LOTE;
         var CONSTANTES = Meteor.call("Constantes");
         var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
+        //console.log('Valor de Robot', Robot
         var IdTransaccionActual = Meteor.call("CompletaConCero", IdTran, 32);
+        //console.log('Valor de Robot', Robot
         GananciaPerdida.insert({
                                 Operacion : {   
                                                 ID_LocalAct : IdTransaccionActual,

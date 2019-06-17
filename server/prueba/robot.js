@@ -717,7 +717,7 @@ Meteor.methods({
     'ActualizaSaldoActualRobot':function(MONEDA){
         var CONSTANTES = Meteor.call("Constantes");
         var BlcMonedasTradeo=Meteor.call("ConexionGet", CONSTANTES.blc_tradeo);
-        var BlcCuenta =Meteor.call("ConexionGet", CONSTANTES.blc_cuenta);    
+        var BlcCuenta =Meteor.call("ConexionGet", CONSTANTES.blc_cuenta);
         var c_vect_BlcCuent = 0;
         var c_vect_BlcTrad = 0;
 
