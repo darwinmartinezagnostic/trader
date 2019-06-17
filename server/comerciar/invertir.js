@@ -932,6 +932,8 @@ Meteor.methods({
     },
     
     'CrearNuevaOrder':function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
+        console.log("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION), " ID_LOTE: ", ID_LOTE;
+        console.log("Estoy en acá 7")
         var CONSTANTES = Meteor.call("Constantes");
         //var IdTran = Meteor.call('CalculaId', 2);
         var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal')
@@ -943,7 +945,6 @@ Meteor.methods({
                             });
     	console.log('############################################');
         Meteor.call("GuardarLogEjecucionTrader", 'Creando una nueva orden');
-        console.log("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION);
 
         var fecha = new Date();
         console.log("Valor de fecha:", fecha)
