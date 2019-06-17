@@ -898,7 +898,7 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TOTAL ACTUAL: ']+[SaldoActualMoneda]);
                     Meteor.call("GuardarLogEjecucionTrader", ['     MONTO A INVERTIR: ']+[SaldoInverCalculado]);
 
-                    var DatosMoneda = Monedas.find( { "moenda" : MONEDA })
+                    var DatosMoneda = Monedas.findOne( { "moneda" : MONEDA })
                     var ContMonedaEstable = DatosMoneda.c_estable
                     if (parseFloat(ContMonedaEstable) > 0 ) {
                         Monedas.update( { moneda : MONEDA },
