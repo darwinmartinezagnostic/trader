@@ -246,8 +246,8 @@ Meteor.methods({
             //EURSUSD
             //'EquivalenteDolar':function(MONEDA, S_MOND, TIPO_ACCION){
             
-            var MONEDA='FREC'
-            var prueba = Meteor.call("EquivalenteDolar", MONEDA, 617092, 1);
+            var MONEDA='BMH'
+            var prueba = Meteor.call("EquivalenteDolar", MONEDA, 10, 2);
             console.log("Valor de prueba ", prueba);
             /**/
 

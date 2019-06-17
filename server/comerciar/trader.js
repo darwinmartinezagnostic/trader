@@ -154,7 +154,9 @@ Meteor.methods({
             SaldoTradeoActivo = parseFloat(V_MonedasSaldoVerificar.saldo.tradeo.activo);
             SaldoCuentaActivo = parseFloat(V_MonedasSaldoVerificar.saldo.cuenta.activo);
 
+
             if ( SaldoTradeoActivo !== undefined ) {
+            console.log(" Valor de MonedaSaldo: ", MonedaSaldo )
                 var EquivalenciaSaldoTradeo = Meteor.call('EquivalenteDolar', MonedaSaldo, SaldoTradeoActivo, 2 );
                 Monedas.update({
                                 _id: Id,
@@ -538,7 +540,7 @@ Meteor.methods({
         var compras_ventas = Meteor.call("ConexionGet", url_compras_ventas);
 
         if ( compras_ventas !== undefined ) {
-            //var v_compras_ventas = (compras_ventas.data);
+            var v_compras_ventas = (compras_ventas.data);
             var v_compras_ventas = compras_ventas
             var ValorOferta = v_compras_ventas.ask;
             var ValorDemanda = v_compras_ventas.bid;
@@ -556,20 +558,20 @@ Meteor.methods({
                 var sumatoria = parseFloat(ValorOferta) + parseFloat(ValorDemanda);
                 var promedio = (sumatoria/2).toString();
                 //console.log("Valor de promedio", promedio);
-                var CantPromedio = ValorOferta.toString().trim().length ;
-                var ValStrnPromedio = promedio.toString().substr(0, CantPromedio);
-                var ValFinPromedio = parseFloat(ValStrnPromedio);
+                var ValFinPromedio = parseFloat(promedio).toFixed(9);
+                //console.log("Valor de ValFinPromedio", ValFinPromedio);
                 var Existencia = 1;
+                /*
                 console.log('\n ');
                 console.log('############################################');
-                /*
+                
                 Meteor.call("GuardarLogEjecucionTrader", [' Verificando Tipo de Cambio: ']+[v_compras_ventas.symbol]);
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de Oferta en Venta: ']+[ValorOferta]);
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de Oferta de Compra: ']+[ValorDemanda]);
                 Meteor.call("GuardarLogEjecucionTrader", [' Promedio: ']+[ValFinPromedio]);
                 Meteor.call("GuardarLogEjecucionTrader", [' Marca de tiempo: ']+[v_compras_ventas.timestamp]);
-                */
                 console.log('############################################');
+                /**/
                 if (EquivalenciasDol.find({ tipo_cambio : TIPO_CAMBIO }).count() === 0) {
                     EquivalenciasDol.insert({ fecha : fecha._d, tipo_cambio : TIPO_CAMBIO, ValorOfertaVenta : v_compras_ventas.ask, ValorOfertaCompra : v_compras_ventas.bid, Promedio : ValFinPromedio, Existe : Existencia })
                 }
