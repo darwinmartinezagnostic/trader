@@ -365,8 +365,8 @@ Meteor.methods({
                 var M_INVERTIR = MR_INVER / parseFloat(MejorPrec)
                 var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))
                 console.log(" Valor de MONT_INVERTIR", MONT_INVERTIR, "= Meteor.call('CombierteNumeroExpStr'", M_INVERTIR.toFixed(9) )
-                console.log("Valor de MONT_INVERTIR", MONT_INVERTIR)
                 var CalTamAcum = parseFloat(CalTamAcum) + parseFloat(TamOrdeAbrt)
+                console.log("Valor de CalTamAcum", CalTamAcum," = ",parseFloat(CalTamAcum)," + ",parseFloat(TamOrdeAbrt) )
                 if ( parseFloat(MONT_INVERTIR) < parseFloat(TamOrdeAbrt) || parseFloat(MONT_INVERTIR) < parseFloat(CalTamAcum) ) {
                     console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(MONT_INVERTIR) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(MONT_INVERTIR), ' < ', parseFloat(CalTamAcum))
                     resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
@@ -389,6 +389,7 @@ Meteor.methods({
                 var comision_hbtc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_hitbtc
                 var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
                 var CalTamAcum = parseFloat(CalTamAcum) + parseFloat(TamOrdeAbrt)
+                console.log("Valor de CalTamAcum", CalTamAcum," = ",parseFloat(CalTamAcum)," + ",parseFloat(TamOrdeAbrt) )
                 if ( parseFloat(INVER) < parseFloat(TamOrdeAbrt) || parseFloat(INVER) < parseFloat(CalTamAcum) ) {
                     console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(INVER) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(INVER), ' < ', parseFloat(CalTamAcum))
                     resultados = { 'MontIversionCal' : INVER, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
