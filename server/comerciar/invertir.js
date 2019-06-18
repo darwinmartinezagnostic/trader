@@ -557,6 +557,7 @@ Meteor.methods({
         	console.log("  PRECIO ANTERIOR: ".green, "= ".green, ValPrecAntMB," =".green);
         	console.log("    PRECIO ACTUAL: ".green, "= ".green, ValPrecAct," =".green);
         	console.log("        TENDENCIA: ".green, "[[*** ".green, parseFloat(TendenciaMonedaBase.toFixed(4)) ," ***]]".green );
+            console.log("      TENDENCIA G: ".green, "[[*** ".green, parseFloat(VBtendencia.toFixed(4)) ," ***]]".green );
     	}else{
             console.log("             BASE: ".grey, Vmoneda_base);
             console.log("            FECHA: ".grey, VBfecha)
@@ -566,6 +567,7 @@ Meteor.methods({
     		  console.log("        TENDENCIA: ".grey, 0);
             }else{
               console.log("        TENDENCIA: ".grey, TendenciaMonedaBase);
+              console.log("      TENDENCIA G: ".grey, VBtendencia);
             }
     	}
         console.log('-------------------------------------------');
@@ -575,6 +577,7 @@ Meteor.methods({
         	console.log("  PRECIO ANTERIOR: ".green, "= ".green ,ValPrecAntMC," =".green);
         	console.log("    PRECIO ACTUAL: ".green, "= ".green ,ValPrecAct," =".green);
         	console.log("        TENDENCIA: ".green, "[[*** ".green, parseFloat(TendenciaMonedaCotizacion.toFixed(4)) ," ***]]".green );
+            console.log("      TENDENCIA G: ".green, "[[*** ".green, parseFloat(VCtendencia.toFixed(4)) ," ***]]".green );
         }else{
             console.log("       COTIZACION: ".grey, Vmoneda_cotizacion);
             console.log("            FECHA: ".grey, VCfecha);
@@ -584,6 +587,7 @@ Meteor.methods({
               console.log("        TENDENCIA: ".grey, 0);
             }else{
               console.log("        TENDENCIA: ".grey, TendenciaMonedaCotizacion);
+              console.log("      TENDENCIA G: ".grey, VCtendencia);
             }
         }
         console.log(" ");
