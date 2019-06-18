@@ -551,35 +551,35 @@ Meteor.methods({
         console.log("    PRECIO ACTUAL: ", PeriodoPrecioAct.toString().replace(".", ",") );
         console.log(" ");
         console.log('-------------------------------------------');
-        console.log("             BASE: ", Vmoneda_base);
-        console.log("            FECHA: ", VBfecha);
+        console.log("             BASE: ".grey, Vmoneda_base);
+        console.log("            FECHA: ".grey, VBfecha);
         if ( MONEDASALDO === MonBase ){
-        	console.log("  PRECIO ANTERIOR: ", "= ",ValPrecAntMB," =");
-        	console.log("    PRECIO ACTUAL: ", "= ",ValPrecAct," =");
-        	console.log("        TENDENCIA: ", "[[*** ", parseFloat(TendenciaMonedaBase.toFixed(4)) ," ***]]" );
+        	console.log("  PRECIO ANTERIOR: ".green, "= ".green, ValPrecAntMB," =".green);
+        	console.log("    PRECIO ACTUAL: ".green, "= ".green, ValPrecAct," =".green);
+        	console.log("        TENDENCIA: ".green, "[[*** ".green, parseFloat(TendenciaMonedaBase.toFixed(4)) ," ***]]".green );
     	}else{
-    		console.log("  PRECIO ANTERIOR: ", ValPrecAntMB);
-    		console.log("    PRECIO ACTUAL: ", ValPrecAct);
+    		console.log("  PRECIO ANTERIOR: ".grey, ValPrecAntMB);
+    		console.log("    PRECIO ACTUAL: ".grey, ValPrecAct);
             if ( TendenciaMonedaBase === undefined) {
-    		  console.log("        TENDENCIA: ", 0);
+    		  console.log("        TENDENCIA: ".grey, 0);
             }else{
-              console.log("        TENDENCIA: ", TendenciaMonedaBase);
+              console.log("        TENDENCIA: ".grey, TendenciaMonedaBase);
             }
     	}
         console.log('-------------------------------------------');
-        console.log("       COTIZACION: ", Vmoneda_cotizacion);
-        console.log("            FECHA: ", VCfecha);
+        console.log("       COTIZACION: ".grey, Vmoneda_cotizacion);
+        console.log("            FECHA: ".grey, VCfecha);
         if ( MONEDASALDO === MonCoti ){
-        	console.log("  PRECIO ANTERIOR: ", "= ",ValPrecAntMC," =");
-        	console.log("    PRECIO ACTUAL: ", "= ",ValPrecAct," =");
-        	console.log("        TENDENCIA: ", "[[*** ", parseFloat(TendenciaMonedaCotizacion.toFixed(4)) ," ***]]" );
+        	console.log("  PRECIO ANTERIOR: ".green, "= ".green ,ValPrecAntMC," =".green);
+        	console.log("    PRECIO ACTUAL: ".green, "= ".green ,ValPrecAct," =".green);
+        	console.log("        TENDENCIA: ".green, "[[*** ".green, parseFloat(TendenciaMonedaCotizacion.toFixed(4)) ," ***]]".green );
         }else{
-        	console.log("  PRECIO ANTERIOR: ", ValPrecAntMC);
-        	console.log("    PRECIO ACTUAL: ", ValPrecAct);
+        	console.log("  PRECIO ANTERIOR: ".grey, ValPrecAntMC);
+        	console.log("    PRECIO ACTUAL: ".grey, ValPrecAct);
             if ( TendenciaMonedaCotizacion === undefined) {
-              console.log("        TENDENCIA: ", 0);
+              console.log("        TENDENCIA: ".grey, 0);
             }else{
-              console.log("        TENDENCIA: ", TendenciaMonedaCotizacion);
+              console.log("        TENDENCIA: ".grey, TendenciaMonedaCotizacion);
             }
         }
         console.log(" ");
@@ -968,7 +968,7 @@ Meteor.methods({
         var MinimoInversion = TC.valor_incremento
         if ( parseFloat(RecalcIverPrec.MontIversionCal) >= parseFloat(MinimoInversion) ) {
             datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
-
+            console.log("Datos a Enviar: ", datos)
 
 
             //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+'100000000'+'&price='+'0.000001';

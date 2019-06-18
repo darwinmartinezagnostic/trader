@@ -632,6 +632,8 @@ Meteor.methods({
 
         console.log('--------------------------------------------');
         console.log('############################################');
+
+        throw new Error(" ÉJECUCIÓN DETENIDA");
     },
 
     'ActualizaSaldoTodasMonedasRobot':function(){

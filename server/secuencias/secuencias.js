@@ -114,6 +114,7 @@ Meteor.methods({
 
                 Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[moneda_saldo.moneda]);
                 Meteor.call("GuardarLogEjecucionTrader", ['      MONEDA: ']+[moneda_saldo.moneda]+[' HORA INICIO: ']+[fecha._d]);
+                console.time('       TIEMPO TRANSCURRIDO: '+ [moneda_saldo.moneda]);
 
                 if (TiposDeCambios.find().count() === 0){
                     Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ningún tipo de Cambio Guardado en la Base de Datos Local, Solucionando ... ']);
@@ -177,6 +178,7 @@ Meteor.methods({
 
                         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         Meteor.call("GuardarLogEjecucionTrader", ['      MONEDA: ']+[moneda_saldo.moneda]+[' HORA FIN: ']+[fecha._d]);
+                        console.timeEnd('       TIEMPO TRANSCURRIDO: '+ [moneda_saldo.moneda]);
                         console.log('-------------------------------------------');
                         console.log('--- DEBO SEGUIR CON LA SIGUIENTE MONEDA ---');
                         console.log('-------------------------------------------');
@@ -267,17 +269,7 @@ Meteor.methods({
             return ejecucionValidaTendenciaTipoCambio
         }
     },
-    /*
-    'ValidaInversion': function( MONEDA_VERIFICAR ){
-        Meteor.call("GuardarLogEjecucionTrader", [' ValidaInversion: Moneda con Saldo a Verificar: ']+[MONEDA_VERIFICAR]);
 
-        var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
-        var V_LimiteApDep = LimiteApDep[0].valor;
-            
-        Meteor.call("GuardarLogEjecucionTrader", [' ValidaInversion: Se ejecuta Meteor.call("ValidaPropTipoCambiosValidados": ']+[MONEDA_VERIFICAR]+[' ']+[V_LimiteApDep]);
-        Meteor.call('ValidaPropTipoCambiosValidados', MONEDA_VERIFICAR, V_LimiteApDep );
-    },
-    /**/
     'ReinicioSecuencia':function(){
         try{
             fecha = moment (new Date());
