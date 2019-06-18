@@ -71,10 +71,10 @@ Meteor.methods({
 
         //Meteor.call("ConsultaCarterasDeposito");
  
-            console.log("Datos a enviar: MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
+            //console.log("Datos a enviar: MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
             //CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, IdTransaccionLoteActual){
             //Meteor.call("CrearNuevaOrder", 'ETHBTC', 'sell', '0.0166', 'ETH', 'BTC', 'BTC', 'BTC', IdTransaccionLoteActual);
-            Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
+            //Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
             //Meteor.call("CrearNuevaOrderRobot", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
                                         // TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){ 
      
@@ -355,8 +355,16 @@ Meteor.methods({
 
             */
 
+            console.time('       TIEMPO TRANSCURRIDO: '+ MON_B);
 
+            //colors.enabled = true
             //Meteor.call("ConsultarHistoricoOrdenes");
+            console.log(" Probando".blue)
+            console.info(" Probando")
+            console.warn(" Probando")
+            Error(" Probando")
+            console.timeEnd('       TIEMPO TRANSCURRIDO: '+ MON_B);
+            
 
     },
 });

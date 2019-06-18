@@ -178,7 +178,9 @@ Meteor.methods({
 
                         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         Meteor.call("GuardarLogEjecucionTrader", ['      MONEDA: ']+[moneda_saldo.moneda]+[' HORA FIN: ']+[fecha._d]);
-                        console.timeEnd('       TIEMPO TRANSCURRIDO: '+ [moneda_saldo.moneda]);
+                        console.log('############################################');
+                        console.timeEnd('  TIEMPO TRANSCURRIDO: '+ [moneda_saldo.moneda]);
+                        console.log('############################################');
                         console.log('-------------------------------------------');
                         console.log('--- DEBO SEGUIR CON LA SIGUIENTE MONEDA ---');
                         console.log('-------------------------------------------');

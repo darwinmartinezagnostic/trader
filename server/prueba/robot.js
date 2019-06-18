@@ -341,6 +341,14 @@ Meteor.methods({
         var V_AnterioresMC = Monedas.aggregate([{ $match: { 'moneda' : MON_C }}]);
         var ValoresAnterioresMC = V_AnterioresMC[0];
 
+        console.log(" Valor de Comision: ", Comision)
+        console.log(" Valor de precio: ", precio)
+        console.log(" Valor de CantidadRecibida: ", CantidadRecibida)
+        console.log(" Valor de IdHBTC: ", IdHBTC)
+        console.log(" Valor de IdTransaccionActual: ", IdTransaccionActual)
+        console.log(" Valor de FormaDeOperacion: ", FormaDeOperacion)
+        console.log(" Valor de FechaCreacion: ", FechaCreacion)
+        console.log(" Valor de FechaActualizacion: ", FechaActualizacion)
         console.log(" Valor de ValoresAnterioresMB: ", ValoresAnterioresMB)
         console.log(" Valor de ValoresAnterioresMC: ", ValoresAnterioresMC)
 
@@ -389,8 +397,9 @@ Meteor.methods({
 
 
         if ( MONEDA_SALDO == MON_B ) {
+            console.log("Estoy en if ( MONEDA_SALDO == MON_B )")
             var SaldoActualCalcMB =  parseFloat(SaldoTradeoAnteriorMB) - parseFloat(CANT_INVER)
-            console.log(" Valor de SaldoActualCalcMB: ", SaldoActualCalcMB," = ", parseFloat(SaldoTradeoAnteriorMB)," + (", parseFloat(CANT_INVER),")")
+            console.log(" Valor de SaldoActualCalcMB: ", SaldoActualCalcMB," = ", parseFloat(SaldoTradeoAnteriorMB)," - (", parseFloat(CANT_INVER),")")
             var EqvSaldoActualCalcMB = Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoActualCalcMB.toFixed(9)), 2)
             console.log(" Valor de EqvSaldoActualCalcMB: ", EqvSaldoActualCalcMB)
             Monedas.update( { moneda : MON_B },
@@ -413,8 +422,9 @@ Meteor.methods({
                             );
 
         }else if ( MONEDA_SALDO == MON_C ) {
+            console.log("Estoy en else if ( MONEDA_SALDO == MON_C )")
             var SaldoActualCalcMC =  parseFloat(SaldoTradeoAnteriorMC) - ( parseFloat(CANT_INVER) - parseFloat(Comision))
-            console.log(" Valor de SaldoActualCalcMC: ", SaldoActualCalcMC," = ", parseFloat(SaldoTradeoAnteriorMC)," + (", parseFloat(CANT_INVER)," - ",parseFloat(Comision),")")
+            console.log(" Valor de SaldoActualCalcMC: ", SaldoActualCalcMC," = ", parseFloat(SaldoTradeoAnteriorMC)," - (", parseFloat(CANT_INVER)," - ",parseFloat(Comision),")")
             var EqvSaldoActualCalcMC = Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoActualCalcMC.toFixed(9)), 2)
             console.log(" Valor de EqvSaldoActualCalcMC: ", EqvSaldoActualCalcMC)
             Monedas.update( { moneda : MON_C },
