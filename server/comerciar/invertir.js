@@ -551,13 +551,15 @@ Meteor.methods({
         console.log("    PRECIO ACTUAL: ", PeriodoPrecioAct.toString().replace(".", ",") );
         console.log(" ");
         console.log('-------------------------------------------');
-        console.log("             BASE: ".grey, Vmoneda_base);
-        console.log("            FECHA: ".grey, VBfecha);
         if ( MONEDASALDO === MonBase ){
+            console.log("             BASE: ".green, Vmoneda_base);
+            console.log("            FECHA: ".green, VBfecha);
         	console.log("  PRECIO ANTERIOR: ".green, "= ".green, ValPrecAntMB," =".green);
         	console.log("    PRECIO ACTUAL: ".green, "= ".green, ValPrecAct," =".green);
         	console.log("        TENDENCIA: ".green, "[[*** ".green, parseFloat(TendenciaMonedaBase.toFixed(4)) ," ***]]".green );
     	}else{
+            console.log("             BASE: ".grey, Vmoneda_base);
+            console.log("            FECHA: ".grey, VBfecha)
     		console.log("  PRECIO ANTERIOR: ".grey, ValPrecAntMB);
     		console.log("    PRECIO ACTUAL: ".grey, ValPrecAct);
             if ( TendenciaMonedaBase === undefined) {
@@ -567,13 +569,15 @@ Meteor.methods({
             }
     	}
         console.log('-------------------------------------------');
-        console.log("       COTIZACION: ".grey, Vmoneda_cotizacion);
-        console.log("            FECHA: ".grey, VCfecha);
         if ( MONEDASALDO === MonCoti ){
+            console.log("       COTIZACION: ".green, Vmoneda_cotizacion);
+            console.log("            FECHA: ".green, VCfecha);
         	console.log("  PRECIO ANTERIOR: ".green, "= ".green ,ValPrecAntMC," =".green);
         	console.log("    PRECIO ACTUAL: ".green, "= ".green ,ValPrecAct," =".green);
         	console.log("        TENDENCIA: ".green, "[[*** ".green, parseFloat(TendenciaMonedaCotizacion.toFixed(4)) ," ***]]".green );
         }else{
+            console.log("       COTIZACION: ".grey, Vmoneda_cotizacion);
+            console.log("            FECHA: ".grey, VCfecha);
         	console.log("  PRECIO ANTERIOR: ".grey, ValPrecAntMC);
         	console.log("    PRECIO ACTUAL: ".grey, ValPrecAct);
             if ( TendenciaMonedaCotizacion === undefined) {
