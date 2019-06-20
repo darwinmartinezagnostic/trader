@@ -341,10 +341,10 @@ Meteor.methods({
         console.log(" CalcularIversion: Valores recibidos: ", TIPO_CAMBIO, MONEDA_SALDO, INVER )
         const CONSTANTES = Meteor.call("Constantes");
         const URL_LIBORD = [CONSTANTES.LibOrdenes]+[TIPO_CAMBIO]+['?limit=100'];
+        console.log(" CalcularIversion: Valores recibidos: ", URL_LIBORD )
         const OrdenesAbiertas =  Meteor.call("ConexionGet", URL_LIBORD);
         var TipoCambio =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
         var CalTamAcum = 0;
-
         if ( MONEDA_SALDO == TipoCambio[0].moneda_cotizacion ) {
             var OrdenesAbiertasVenta = OrdenesAbiertas.ask
             console.log("Valor de OrdenesAbiertasVenta", OrdenesAbiertasVenta)
@@ -365,7 +365,7 @@ Meteor.methods({
                 console.log("Valor de CalTamAcum", CalTamAcum," = ",parseFloat(CalTamAcum)," + ",parseFloat(TamOrdeAbrt) )
                 if ( parseFloat(MONT_INVERTIR) < parseFloat(CalTamAcum) ) {
                     console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(MONT_INVERTIR) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(MONT_INVERTIR), ' < ', parseFloat(CalTamAcum))
-                    resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MontRealIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : PrecOrdAbrt, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
+                    resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MontRealIversionCal' : MR_INVER, 'MejorPrecCal' : PrecOrdAbrt, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
                     console.log("Valor de resultados", resultados)
                     break
                 }
