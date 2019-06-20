@@ -911,8 +911,6 @@ Meteor.methods({
                                         {"multi" : true,"upsert" : true});
                     }
                     
-                    //var IdTransaccionLoteActual = Meteor.call('CalculaId', 3);
-
                     var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')
                     var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
                     if ( Robot.valor === 0 ) {
@@ -960,6 +958,7 @@ Meteor.methods({
 
 
         var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+        var InversionRealCalc = RecalcIverPrec.MontRealIversionCal
         
         console.log("Valore de MON_B: ", MON_B)
         console.log("Valore de MON_C: ", MON_C)
@@ -967,6 +966,7 @@ Meteor.methods({
         console.log("Valore de MONEDA_SALDO: ", MONEDA_SALDO)
         console.log("Valore de CANT_INVER: ", CANT_INVER)
         console.log("Valore de RecalcIverPrec: ", RecalcIverPrec)
+        console.log("Valore de InversionRealCalc: ", InversionRealCalc)
         /**/
         var TC = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO })
         var MinimoInversion = TC.valor_incremento
@@ -1166,7 +1166,7 @@ Meteor.methods({
         if ( Estado_Orden === "filled" ) {
             console.log(" if ( Estado_Orden === filled ) : Voy a Guardar")
             console.log(' Valor de Orden 13: ', Orden)
-            console.log(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+            console.log(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO, CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
             Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
             console.log(" if ( Estado_Orden === filled ) : Ya guardé")
         }

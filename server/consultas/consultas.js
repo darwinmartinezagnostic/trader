@@ -429,4 +429,33 @@ Meteor.methods({
         return Estado_Orden
     },
     
+    'ConcultaTiposCambiosAInvertir':function(){
+
+        var Monedas_Saldo = Monedas.aggregate([
+                        { $match : { $or : [{"saldo.tradeo.activo" : { $gt : 0 }},{ "moneda" : 'BTC' }] , "activo" : "S"}},
+                        { $sort : {"saldo.tradeo.equivalencia":-1} }
+                    ]);
+
+
+        for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
+            var moneda_saldo =  Monedas_Saldo[CMS];
+            var MONEDA = moneda_saldo.moneda 
+
+            var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: 3 } ]);
+            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_cotizacion" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
+            console.log('-------------------------------------------');
+            console.log('      MONEDA :' MONEDA)
+            console.log('Valor de TmpTCMB: ', TmpTCMB)
+            for (CTMCB = 0, T_TmpTCMB = TmpTCMB.length; CTMCB < T_TmpTCMB; CTMCB++) {
+                var V_TmpTCMB = TmpTCMB[CTMCB];
+                console.log('Valor de TmpTCMB: ', TmpTCMB)
+
+            }
+
+            for (CTMCB = 0, T_TmpTCMB = TmpTCMC.length; CTMCB < T_TmpTCMB; CTMCB++) {
+                var V_TmpTCMC = TmpTCMC[CTMCB];
+                console.log('Valor de TmpTCMB: ', TmpTCMB)
+            }
+        }
+    },
 });

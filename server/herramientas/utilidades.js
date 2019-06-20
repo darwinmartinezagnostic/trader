@@ -369,7 +369,7 @@ Meteor.methods({
                 console.log("Valor de CalTamAcum", CalTamAcum," = ",parseFloat(CalTamAcum)," + ",parseFloat(TamOrdeAbrt) )
                 if ( parseFloat(MONT_INVERTIR) < parseFloat(TamOrdeAbrt) || parseFloat(MONT_INVERTIR) < parseFloat(CalTamAcum) ) {
                     console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(MONT_INVERTIR) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(MONT_INVERTIR), ' < ', parseFloat(CalTamAcum))
-                    resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
+                    resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MontRealIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
                     console.log("Valor de resultados", resultados)
                     break
                 }
@@ -392,7 +392,7 @@ Meteor.methods({
                 console.log("Valor de CalTamAcum", CalTamAcum," = ",parseFloat(CalTamAcum)," + ",parseFloat(TamOrdeAbrt) )
                 if ( parseFloat(INVER) < parseFloat(TamOrdeAbrt) || parseFloat(INVER) < parseFloat(CalTamAcum) ) {
                     console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(INVER) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(INVER), ' < ', parseFloat(CalTamAcum))
-                    resultados = { 'MontIversionCal' : INVER, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
+                    resultados = { 'MontIversionCal' : INVER, 'MontRealIversionCal' : INVER, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
                     console.log("Valor de resultados", resultados)
                     break
                 }
