@@ -340,12 +340,9 @@ Meteor.methods({
     'CalcularIversion' : function ( TIPO_CAMBIO, MONEDA_SALDO, INVER){
         console.log(" CalcularIversion: Valores recibidos: ", TIPO_CAMBIO, MONEDA_SALDO, INVER )
         const CONSTANTES = Meteor.call("Constantes");
-        const URL_TIKT = CONSTANTES.ticker+TIPO_CAMBIO;        
-        const URL_LIBORD = [CONSTANTES.LibOrdenes]+[TIPO_CAMBIO]+['?limit=100'];        
-        const precio =  Meteor.call("ConexionGet", URL_TIKT);
+        const URL_LIBORD = [CONSTANTES.LibOrdenes]+[TIPO_CAMBIO]+['?limit=100'];
         const OrdenesAbiertas =  Meteor.call("ConexionGet", URL_LIBORD);
         var TipoCambio =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
-        //console.log("Valor de OrdenesAbiertas", OrdenesAbiertas)
         var CalTamAcum = 0;
 
         if ( MONEDA_SALDO == TipoCambio[0].moneda_cotizacion ) {
@@ -356,20 +353,19 @@ Meteor.methods({
             var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
             var MR_INVER = parseFloat(INVER).toFixed(9) - comision_hbtc.toFixed(9) - comision_merc.toFixed(9)
             console.log(" Valor de MR_INVER", MR_INVER," = ",parseFloat(INVER).toFixed(9)," - ", comision_hbtc.toFixed(9)," - ",comision_merc.toFixed(9))
-            
+
             for ( COAV = 0, TOAV = OrdenesAbiertasVenta.length; COAV <= TOAV; COAV++ ) {
                 var OrdAbrt = OrdenesAbiertasVenta[COAV]
                 var PrecOrdAbrt = OrdAbrt.price.toString()
                 var TamOrdeAbrt = OrdAbrt.size.toString()
-                var MejorPrec = PrecOrdAbrt
-                var M_INVERTIR = MR_INVER / parseFloat(MejorPrec)
+                var M_INVERTIR = MR_INVER / parseFloat(PrecOrdAbrt)
                 var MONT_INVERTIR = Meteor.call('CombierteNumeroExpStr', M_INVERTIR.toFixed(9))
                 console.log(" Valor de MONT_INVERTIR", MONT_INVERTIR, "= Meteor.call('CombierteNumeroExpStr'", M_INVERTIR.toFixed(9) )
-                var CalTamAcum = parseFloat(CalTamAcum) + parseFloat(TamOrdeAbrt)
+                CalTamAcum = parseFloat(CalTamAcum) + parseFloat(TamOrdeAbrt)
                 console.log("Valor de CalTamAcum", CalTamAcum," = ",parseFloat(CalTamAcum)," + ",parseFloat(TamOrdeAbrt) )
-                if ( parseFloat(MONT_INVERTIR) < parseFloat(TamOrdeAbrt) || parseFloat(MONT_INVERTIR) < parseFloat(CalTamAcum) ) {
+                if ( parseFloat(MONT_INVERTIR) < parseFloat(CalTamAcum) ) {
                     console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(MONT_INVERTIR) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(MONT_INVERTIR), ' < ', parseFloat(CalTamAcum))
-                    resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MontRealIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
+                    resultados = { 'MontIversionCal' : MONT_INVERTIR, 'MontRealIversionCal' : MONT_INVERTIR, 'MejorPrecCal' : PrecOrdAbrt, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
                     console.log("Valor de resultados", resultados)
                     break
                 }
@@ -385,14 +381,13 @@ Meteor.methods({
                 console.log("Valor de OrdAbrt", OrdAbrt)
                 var PrecOrdAbrt = OrdAbrt.price.toString()
                 var TamOrdeAbrt = OrdAbrt.size.toString()
-                var MejorPrec = PrecOrdAbrt
                 var comision_hbtc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_hitbtc
                 var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
-                var CalTamAcum = parseFloat(CalTamAcum) + parseFloat(TamOrdeAbrt)
+                CalTamAcum = parseFloat(CalTamAcum) + parseFloat(TamOrdeAbrt)
                 console.log("Valor de CalTamAcum", CalTamAcum," = ",parseFloat(CalTamAcum)," + ",parseFloat(TamOrdeAbrt) )
-                if ( parseFloat(INVER) < parseFloat(TamOrdeAbrt) || parseFloat(INVER) < parseFloat(CalTamAcum) ) {
+                if ( parseFloat(INVER) < parseFloat(CalTamAcum) ) {
                     console.log("Valor de parseFloat(INVER) < parseFloat(TamOrdeAbrt): ", parseFloat(INVER) , ' < ', parseFloat(TamOrdeAbrt) , ' || ', parseFloat(INVER), ' < ', parseFloat(CalTamAcum))
-                    resultados = { 'MontIversionCal' : INVER, 'MontRealIversionCal' : INVER, 'MejorPrecCal' : MejorPrec, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
+                    resultados = { 'MontIversionCal' : INVER, 'MontRealIversionCal' : INVER, 'MejorPrecCal' : PrecOrdAbrt, 'comision_hbtc' : comision_hbtc, 'comision_mercado' : comision_merc }
                     console.log("Valor de resultados", resultados)
                     break
                 }
