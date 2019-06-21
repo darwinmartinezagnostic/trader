@@ -954,7 +954,7 @@ Meteor.methods({
         console.log(" Valores recibidos: ", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE)
         var CONSTANTES = Meteor.call("Constantes");
         var ComisionTtl = 0
-
+        
         if ( ORDEN.tradesReport !== undefined ) {
             console.log(" Estoy en if ( ORDEN.tradesReport )")
             var Negociaciones = ORDEN.tradesReport
@@ -974,6 +974,17 @@ Meteor.methods({
             var status = ORDEN.status
             console.log('Valor de ComisionTtl', ComisionTtl)
         }
+        /**/
+        /*
+        var Negociaciones = ORDEN.tradesReport
+        console.log("Valor de ORDEN: ", ORDEN.tradesReport)
+        var status = ORDEN.status
+
+        for (CRPT = 0, TRPT = Negociaciones.length; CRPT < TRPT; CRPT++) {
+            var Reporte = Negociaciones[CRPT];
+            ComisionTtl +=  parseFloat(Reporte.fee)
+        }
+        /**/
 
 
 
