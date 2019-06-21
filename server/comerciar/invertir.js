@@ -1165,7 +1165,7 @@ Meteor.methods({
             console.log(" if ( Estado_Orden === filled ) : Voy a Guardar")
             console.log(' Valor de Orden 13: ', Orden)
             console.log(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO, CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
-            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
             console.log(" if ( Estado_Orden === filled ) : Ya guardé")
         }
         /**/
