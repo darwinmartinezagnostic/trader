@@ -343,22 +343,24 @@ Meteor.methods({
         const URL_LIBORD = [CONSTANTES.LibOrdenes]+[TIPO_CAMBIO]+['?limit=100'];
         console.log(" CalcularIversion: Valores recibidos: ", URL_LIBORD )
         const OrdenesAbiertas =  Meteor.call("ConexionGet", URL_LIBORD);
-        if ( OrdenesAbiertas === undefined ) {
-            TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
-                                                    { $set:{     
-                                                                activo : "N" }
-                                                    }
-                                                )
+        var CalTamAcum = 0;
+        var TipoCambio =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
+        if ( MONEDA_SALDO == TipoCambio[0].moneda_cotizacion ) {
+            var OrdenesAbiertasVenta = OrdenesAbiertas.ask
+            console.log("Valor de OrdenesAbiertasVenta", OrdenesAbiertasVenta)
+            if ( OrdenesAbiertasVenta === undefined ) {
+                TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
+                                                        { $set:{     
+                                                                    activo : "N",
+                                                                    estado : "I" }
+                                                        }
+                                                    )
 
-            resultados = { 'MontIversionCal' : 0, 'MontRealIversionCal' : 0, 'MejorPrecCal' : 0, 'comision_hbtc' : 0, 'comision_mercado' : 0 }
+                TempTiposCambioXMoneda.remove({ tipo_cambio : TIPO_CAMBIO  })
 
-        }else{
+                resultados = { 'MontIversionCal' : 0, 'MontRealIversionCal' : 0, 'MejorPrecCal' : 0, 'comision_hbtc' : 0, 'comision_mercado' : 0 }
 
-            var TipoCambio =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
-            var CalTamAcum = 0;
-            if ( MONEDA_SALDO == TipoCambio[0].moneda_cotizacion ) {
-                var OrdenesAbiertasVenta = OrdenesAbiertas.ask
-                console.log("Valor de OrdenesAbiertasVenta", OrdenesAbiertasVenta)
+            }else{                
                 var ValTipoCambio = TipoCambio[0];
                 var comision_hbtc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_hitbtc
                 var comision_merc = parseFloat(INVER).toFixed(9) * ValTipoCambio.comision_mercado
@@ -381,10 +383,24 @@ Meteor.methods({
                         break
                     }
                 }
-            }else if ( MONEDA_SALDO == TipoCambio[0].moneda_base ) {
-                var OrdenesAbiertasCompra = OrdenesAbiertas.bid
-                console.log("Valor de OrdenesAbiertasCompra", OrdenesAbiertasCompra)
-                var ValTipoCambio = TipoCambio[0];
+            }
+        }else if ( MONEDA_SALDO == TipoCambio[0].moneda_base ) {
+            var OrdenesAbiertasCompra = OrdenesAbiertas.bid
+            var ValTipoCambio = TipoCambio[0];
+            console.log("Valor de OrdenesAbiertasCompra", OrdenesAbiertasCompra)
+            if ( OrdenesAbiertasCompra === undefined ) {
+                TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
+                                                        { $set:{     
+                                                                    activo : "N",
+                                                                    estado : "I" }
+                                                        }
+                                                    )
+
+                TempTiposCambioXMoneda.remove({ tipo_cambio : TIPO_CAMBIO  })
+
+                resultados = { 'MontIversionCal' : 0, 'MontRealIversionCal' : 0, 'MejorPrecCal' : 0, 'comision_hbtc' : 0, 'comision_mercado' : 0 }
+
+            }else{  
                 for ( COAC = 0, TOAC = OrdenesAbiertasCompra.length; COAC <= TOAC; COAC++ ) {
                     var OrdAbrt = OrdenesAbiertasCompra[COAC]
                     console.log("Valor de OrdAbrt", OrdAbrt)
@@ -403,6 +419,7 @@ Meteor.methods({
                 }
             }
         }
+        
 
         return resultados;
     },
