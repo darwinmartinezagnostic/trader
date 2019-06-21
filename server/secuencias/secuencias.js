@@ -114,7 +114,7 @@ Meteor.methods({
 
                 Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[moneda_saldo.moneda]);
                 Meteor.call("GuardarLogEjecucionTrader", ['      MONEDA: ']+[moneda_saldo.moneda]+[' HORA INICIO: ']+[fecha._d]);
-                console.time('       TIEMPO TRANSCURRIDO: '+ [moneda_saldo.moneda]);
+                console.time('  TIEMPO TRANSCURRIDO: '+ [moneda_saldo.moneda]);
 
                 if (TiposDeCambios.find().count() === 0){
                     Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ningún tipo de Cambio Guardado en la Base de Datos Local, Solucionando ... ']);
