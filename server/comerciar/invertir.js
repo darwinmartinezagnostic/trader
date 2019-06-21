@@ -993,8 +993,6 @@ Meteor.methods({
             var Orden = {  status: 'Quantity too low' }
         }
 
-
-
         var Estado_Orden = Orden.status
         Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi estado: ']+[Estado_Orden]); 
         ContpartiallyFilled = 0;
