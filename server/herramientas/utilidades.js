@@ -344,7 +344,7 @@ Meteor.methods({
         console.log(" CalcularIversion: Valores recibidos: ", URL_LIBORD )
         do{
             const OrdenesAbiertas =  Meteor.call("ConexionGet", URL_LIBORD);
-        }while( OrdenesAbiertas !== undefined )
+        }while( OrdenesAbiertas === undefined )
         var TipoCambio =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
         var CalTamAcum = 0;
         if ( MONEDA_SALDO == TipoCambio[0].moneda_cotizacion ) {
