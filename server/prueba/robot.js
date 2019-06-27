@@ -300,19 +300,15 @@ Meteor.methods({
     },
 
     'ValidarEstadoOrdenRobot': function( VAL_ORDEN){
-        var CONSTANTES = Meteor.call("Constantes");
-        /////////////////////////////////////////////////////
 
         T_id = VAL_ORDEN.id
-
         var Estado_Orden = OrdenesRobot.findOne({ _id : T_id })
         console.log('Valor de Estado_Orden', Estado_Orden)
         return Estado_Orden
     },
-
+////////////////////////////////////DARWIN/////////////////////////////////393
     'GuardarOrdenRobot': function(TIPO_CAMBIO, CANT_INVER, REAL_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE){
         console.log(" Valores recibidos: ", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE)
-        var CONSTANTES = Meteor.call("Constantes");
         var ComisionTtl = 0
 
         var Negociaciones = ORDEN.tradesReport
@@ -324,9 +320,6 @@ Meteor.methods({
             ComisionTtl +=  parseFloat(Reporte.fee)
         }
         console.log('Valor de ComisionTtl', ComisionTtl)
-
-
-
 
         var Comision = ComisionTtl.toString()
         var precio = ORDEN.price
@@ -391,10 +384,6 @@ Meteor.methods({
 
         //////////////////////////////////////////////////////////////////////////
         /////////////////////////   ACTUALIZANDO SALDO   /////////////////////////
-
-
-
-
 
         if ( MONEDA_SALDO == MON_B ) {
             console.log("Estoy en if ( MONEDA_SALDO == MON_B )")
@@ -529,15 +518,20 @@ Meteor.methods({
                                                     Moneda : {  Emitida : {     moneda : MON_B,
                                                                                 Fecha : FechaTradeoAnteriorMB,
                                                                                 Saldo : SaldoTradeoAnteriorMB,
-                                                                                Equivalente : V_EquivalenciaTradeoAnteriorMB},
+                                                                                Equivalente : V_EquivalenciaTradeoAnteriorMB,
+                                                                                Equivalente_actual : 0
+
+                                                                },
                                                                 Adquirida : {   moneda : MON_C,
                                                                                 Fecha : FechaTradeoActualMC,
                                                                                 Saldo : SaldoTradeoActualMC,
-                                                                                Equivalente : V_EquivalenciaTradeoActualMC}},
+                                                                                Equivalente : V_EquivalenciaTradeoActualMC,
+                                                                                Equivalente_actual : 0
+                                                                }
+                                                    },
                                                     Inversion : {   SaldoInversion  : REAL_INVER,
                                                                     Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                                        Final : V_EquivSaldoMonedaAdquirida}},
-                                                    Ganancia : {    Valor : V_Ganancia }
+                                                                                        Final : V_EquivSaldoMonedaAdquirida}}
                                                     }
                                         }, 
                                         {"upsert" : true}
@@ -591,15 +585,17 @@ Meteor.methods({
                                                     Moneda : {  Emitida : { moneda : MON_C,
                                                                             Fecha : FechaTradeoAnteriorMC,
                                                                             Saldo : SaldoTradeoAnteriorMC,
-                                                                            Equivalente : V_EquivalenciaTradeoAnteriorMC},
+                                                                            Equivalente : V_EquivalenciaTradeoAnteriorMC,
+                                                                            Equivalente_actual : 0},
                                                                 Adquirida : { moneda : MON_B,
                                                                             Fecha : FechaTradeoActualMB,
                                                                             Saldo : SaldoTradeoActualMB,
-                                                                            Equivalente : V_EquivalenciaTradeoActualMB}},
+                                                                            Equivalente : V_EquivalenciaTradeoActualMB,
+                                                                            Equivalente_actual : 0
+                                                                }},
                                                     Inversion : { SaldoInversion  : REAL_INVER,
                                                                     Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                                        Final : V_EquivSaldoMonedaAdquirida}},
-                                                    Ganancia : { Valor :  V_Ganancia}
+                                                                                        Final : V_EquivSaldoMonedaAdquirida}}
                                                     }
                                         }, 
                                         {"upsert" : true}
@@ -644,6 +640,69 @@ Meteor.methods({
         console.log('############################################');
 
         throw new Error(" ÉJECUCIÓN DETENIDA");
+    },
+
+    'ActualizaEquivalenciaMonedas':function () {
+        var EquivalenteDolarE = '';
+        var EquivalenteDolarB = '';
+        var Monedas_Saldo = GananciaPerdida.aggregate([
+            { $match : {"Moneda.Adquirida.Saldo" : { $gt : 0 }}},
+            { $sort : {"Moneda.Adquirida.Saldo":-1} }
+        ]);
+        if(Monedas_Saldo.length > 0){
+            var MON_B;
+            var MON_E;
+            var SaldoActualCalcMB;
+            var SaldoActualCalcME;
+            for (var i = 0; i < Monedas_Saldo.length; i++) {
+                MON_B = Monedas_Saldo[i].Moneda.Adquirida.moneda;
+                MON_E = Monedas_Saldo[i].Moneda.Emitida.moneda;
+                SaldoActualCalcMB = Monedas_Saldo[i].Moneda.Adquirida.Saldo;
+                SaldoActualCalcME = Monedas_Saldo[i].Moneda.Emitida.Saldo;
+                EquivalenteDolarB = Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoActualCalcMB.toFixed(9)), 2);
+                EquivalenteDolarE = Meteor.call('EquivalenteDolar', MON_E, parseFloat(SaldoActualCalcME.toFixed(9)), 2);
+                GananciaPerdida.update( {"Operacion.ID_LocalAct" : Monedas_Saldo[i].Operacion.IdTransaccionActual, "Operacion.Id_Lote": Monedas_Saldo[i].Operacion.ID_LOTE},
+                    {
+                        $set: {
+                            "Operacion.FechaActualizacion" : new Date(),
+                            "Moneda.Emitida.Equivalente_actual" : EquivalenteDolarE,
+                             "Moneda.Adquirida.Equivalente_actual" : EquivalenteDolarB}
+                        }, {"multi" : true,"upsert" : true}
+                );
+            }
+        }
+    },
+
+    'CarcularGanancia':function (TIPO_OP) {
+        var Ganancia = GananciaPerdida.aggregate([
+            { $match : {"Moneda.Adquirida.Saldo" : { $gt : 0 }}},
+            { $sort : {"Moneda.Adquirida.Saldo":-1} }
+        ]);
+
+        var error = true;
+
+        if(Ganancia.length > 0){
+
+            for (var i = 0; i < Ganancia.length; i++) {
+
+                if(Ganancia[i].Moneda.Adquirida.Equivalente_actual - Ganancia[i].Moneda.Adquirida.Equivalente < Ganancia[i].Moneda.Emitida.Equivalente_actual - Ganancia[i].Moneda.Emitida.Equivalente ) {
+                    error = false;
+                }
+
+                GananciasGlobales.upsert({Operacion:Ganancia[i].Moneda.Adquirida.moneda+Ganancia[i].Moneda.Emitida.moneda},
+                    {
+                        Operacion:Ganancia[i].Moneda.Adquirida.moneda+Ganancia[i].Moneda.Emitida.moneda,
+                        Saldo:Ganancia[i].Moneda.Adquirida.Equivalente_actual,
+                        Ganancia: Ganancia[i].Moneda.Adquirida.Equivalente_actual - Ganancia[i].Moneda.Adquirida.Equivalente,
+                        Fecha:new Date(),
+                        BuenaInversion:error
+                    });
+                if (TIPO_OP != 1) {
+                       var ganancia = GananciasGlobales.find();
+                       console.log(ganancia);
+                }
+            }
+        }
     },
 
     'ActualizaSaldoTodasMonedasRobot':function(){
