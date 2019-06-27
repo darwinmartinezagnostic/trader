@@ -591,8 +591,10 @@ Meteor.methods({
 
     'ValidarRanking': function(MONEDA){
         try{
-            var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: 3 } ]);
-            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_cotizacion" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
+            var LMCM = Parametros.findOne( { dominio : "limites", nombre : "LimiteMaximoCompraMonedas", estado : true  })
+            var LIMITE_COMP_MON = LMCM.valor
+            var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: LIMITE_COMP_MON } ]);
+            var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_cotizacion" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: LIMITE_COMP_MON } ]);
             for (CTMCB = 0, T_TmpTCMB = TmpTCMB.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMB = TmpTCMB[CTMCB];
                 TmpTipCambioXMonedaReord.insert({ "tipo_cambio": V_TmpTCMB.tipo_cambio,
@@ -643,9 +645,11 @@ Meteor.methods({
         Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[MONEDA]);
         console.log('############################################');
         console.log(' ');
+        var LMCM = Parametros.findOne( { dominio : "limites", nombre : "LimiteMaximoCompraMonedas", estado : true  })
+        var LIMITE_COMP_MON = LMCM.valor
 
-        var CPTC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 1 }, { $count: "CantidadDeTiposDeCambios" } ]);
-        var RTDC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: 1 } ]);
+        var CPTC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: LIMITE_COMP_MON }, { $count: "CantidadDeTiposDeCambios" } ]);
+        var RTDC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: LIMITE_COMP_MON } ]);
         
 
         if ( CPTC[0] === undefined ){

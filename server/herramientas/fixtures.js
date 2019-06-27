@@ -35,12 +35,16 @@ if (Parametros.find({ dominio : 'limites' }).count() === 0){
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'PropPorcInver', estado : true, valor: { p11 : 1, p12 : 0.7, p22 : 1, p13 : 0.7, p23 : 0.6, p33 : 1 }, descripcion : 'Proporción de Procentajes de inversión según cantdad de tipos de cambio disponibles para compra' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadTransaccionesAtras', estado : true, valor: 300 ,descripcion : 'Cantidad de ID transacciones de traders hacia atrás que consultarán para determinar por primera vez el valor de la transacción Anterior' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'ValorMinimoTransferencia', estado : true, valor: 0.00000000000001 ,descripcion : 'Valor mínimo de para transferir entre los tipos de saldo Cuenta - trader y viceversa' });
-	Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "CantidadMinimaMuestreo", estado : true, valor : 5 , descripcion : "Valor de muestreos mínimos antes de invertir defecto 200" });
+	Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "CantidadMinimaMuestreo", estado : true, valor : 0 , descripcion : "Valor de muestreos mínimos antes de invertir defecto 200" });
 	Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "CantMaximaEjecucion", estado : true, valor : 9999999999 , descripcion : "Valor maximo de ejecución de los job de seguimiento, si el valor es = 9999999999 entonces la ejecución será infinita" });
 	Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContEstadoActivo", estado : true, valor : 5 , descripcion : "Valor máximo de Contador de estado Activo" });
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContAuxiliarEstadoActivo", estado : true, valor : 2 , descripcion : "Valor máximo de Contador Auxiliar de estado Activo" });
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContEstadoVerificando", estado : true, valor : 10 , descripcion : "Valor máximo de Contador de estado Verificando" });
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContAuxiliarEstadoVerificando", estado : true, valor : 3 , descripcion : "Valor máximo de Contador Auxiliar de estado Verificando" });
+    Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'TopePerdida', estado : true, valor: 20 ,descripcion : 'Tope Máximo de perdida' });
+    Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'TopeCapital', estado : true, valor: 1000 ,descripcion : 'Tope Máximo de Capital en tradeo' });
+    Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'TopeGanancia', estado : true, valor: 3000 ,descripcion : 'Tope Máximo de Ganancias alancanzadas antes de enviar a la cartera de los usuario' });
+    Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'LimiteMaximoCompraMonedas', estado : true, valor: 1 ,descripcion : 'Máxima Cantidad de monedas en la cual se puede invertir' });
 };
 
 if (Parametros.find({ dominio : 'Prueba' }).count() === 0){
