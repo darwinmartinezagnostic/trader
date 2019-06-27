@@ -931,7 +931,7 @@ Meteor.methods({
     },
     
     'CrearNuevaOrder':function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
-        //console.log("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION), " ID_LOTE: ", ID_LOTE;
+        console.log("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION, " ID_LOTE: ", ID_LOTE);
         var CONSTANTES = Meteor.call("Constantes");
         var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
         //console.log('Valor de Robot', Robot
@@ -992,8 +992,6 @@ Meteor.methods({
         }else{
             var Orden = {  status: 'Quantity too low' }
         }
-
-
 
         var Estado_Orden = Orden.status
         Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi estado: ']+[Estado_Orden]); 
@@ -1167,7 +1165,7 @@ Meteor.methods({
             console.log(" if ( Estado_Orden === filled ) : Voy a Guardar")
             console.log(' Valor de Orden 13: ', Orden)
             console.log(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO, CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
-            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
             console.log(" if ( Estado_Orden === filled ) : Ya guardé")
         }
         /**/
