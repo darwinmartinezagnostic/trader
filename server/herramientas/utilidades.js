@@ -341,7 +341,6 @@ Meteor.methods({
         console.log(" CalcularIversion: Valores recibidos: ", TIPO_CAMBIO, MONEDA_SALDO, INVER )
         const CONSTANTES = Meteor.call("Constantes");
         const URL_LIBORD = [CONSTANTES.LibOrdenes]+[TIPO_CAMBIO]+['?limit=100'];
-        console.log(" CalcularIversion: Valores recibidos: ", URL_LIBORD )
         const OrdenesAbiertas =  Meteor.call("ConexionGet", URL_LIBORD);
         var TipoCambio =  TiposDeCambios.aggregate([{ $match: { 'tipo_cambio' : TIPO_CAMBIO }}]);
         var CalTamAcum = 0;
