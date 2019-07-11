@@ -686,7 +686,7 @@ Meteor.methods({
                             var MonCBas = TCR.moneda_base
                             var MonCoti = TCR.moneda_cotizacion
                             var VInversion = TCR.saldo_moneda_tradear*PTDC.valor.p11;
-                            var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                            var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
                             var Inversion = RecalcIverPrec.MontIversionCal;
 
                             if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
@@ -710,7 +710,7 @@ Meteor.methods({
                                 case 0:
                                     var SaldoVerificar = RTDC[CRTC12].saldo_moneda_tradear
                                     var VInversion = TCR.saldo_moneda_tradear*PTDC.valor.p12;
-                                    var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                                    var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
                                     var Inversion = RecalcIverPrec.MontIversionCal;
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
@@ -743,7 +743,7 @@ Meteor.methods({
                                     var TIPO_CAMBIO = TCR.tipo_cambio;
 
                                     var VInversion = SaldoVerificar*PTDC.valor.p13;
-                                    var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                                    var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
                                     var Inversion = RecalcIverPrec.MontIversionCal;
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
@@ -761,7 +761,7 @@ Meteor.methods({
                                     var TIPO_CAMBIO = TCR.tipo_cambio;
 
                                     var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p23;
-                                    var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                                    var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
                                     var Inversion = RecalcIverPrec.MontIversionCal;
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
@@ -779,7 +779,7 @@ Meteor.methods({
                                     var TIPO_CAMBIO = TCR.tipo_cambio;
 
                                     var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p33;
-                                    var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA, VInversion);
+                                    var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
                                     var Inversion = RecalcIverPrec.MontIversionCal;
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
@@ -936,6 +936,7 @@ Meteor.methods({
     
     'CrearNuevaOrder':function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
         console.log("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION, " ID_LOTE: ", ID_LOTE);
+        var ContEspEdoOrd = 0;
         var CONSTANTES = Meteor.call("Constantes");
         var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
         //console.log('Valor de Robot', Robot
@@ -961,7 +962,7 @@ Meteor.methods({
         }
 
 
-        var RecalcIverPrec = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+        var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
         var InversionRealCalc = RecalcIverPrec.MontRealIversionCal
         
         console.log("Valore de MON_B: ", MON_B)
@@ -1002,6 +1003,7 @@ Meteor.methods({
         ContpartiallyFilled = 0;
 
         console.log(' Valor de Orden 1: ', Orden)
+        
 
         while( Estado_Orden !== "filled" ){
             console.log('Estoy en el while')
@@ -1054,7 +1056,14 @@ Meteor.methods({
                 var Orden = Resultado
                 var Estado_Orden = Resultado.status;
                 console.log(' Valor de Orden 5: ', Orden)
-                //var Estado_Orden = Resultado;                  
+                //var Estado_Orden = Resultado;        
+                ContEspEdoOrd = ContEspEdoOrd + 1;
+
+                if ( ContEspEdoOrd === 20 ) {
+                    //var Orden = Meteor.call("CancelarOrden", IdTransaccionActualesta );
+                    var Estado_Orden = Orden.status;
+                }
+
             }
 
             if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Quantity too low" ) {
@@ -1087,8 +1096,8 @@ Meteor.methods({
                 
                 if ( Estado_Orden === "DuplicateclientOrderId") {   
                     console.log(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")')
-                    Meteor.call("GuardarLogEjecucionTrader", [' CrearNuevaOrder: Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
-                    Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
+                    Meteor.call("GuardarLogEjecucionTrader", [' CalcularIversionPromedio: Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
+                    Meteor.call('CalcularIversionPromedio', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
                 }else{
                     TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
                 }

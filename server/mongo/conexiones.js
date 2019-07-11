@@ -251,8 +251,9 @@ Meteor.methods({
         }
     },
 
-    async ConexionDel (V_URL,datos) {       
-
+    async ConexionDel (V_URL) {       
+        var log = new Logger('router');
+        log.trace(" Valor recibido - V_URL: ", V_URL)
         var request = require('request-promise')
 
         global.Headers = fetch.Headers;
@@ -264,14 +265,13 @@ Meteor.methods({
         const user = CONSTANTES.user;
         const pswrd = CONSTANTES.passwr;
         let url = V_URL
-        console.log("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
+        console.log("Valor de url: ", url, " MS: ", MS,);
         var salida = 0;
         ordenCliente = "1" 
 
         var parametros = {
                         url: V_URL,
                         method: 'DEL',
-                        body: datos,
                         auth: {
                             'user': user,
                             'pass': pswrd
@@ -295,9 +295,8 @@ Meteor.methods({
             await iterf;
             if (token.cancelado)  {
               throw Error('Ejcución Cancelada');
-            }
+            } 
         }
-        
         while( salida.status !== 200 ){
             console.log("Estoy en while( salida.status !== 200 )")
             const respuesta = request(parametros)
@@ -313,8 +312,10 @@ Meteor.methods({
                                             });
             const tok = token();            
             const EstadoCancelacion = CancelaEjecucionConexion ( respuesta, tok);            
+            log.trace(" Voy por acá ")
             let tpr = await TimeoutEjecucion(EstadoCancelacion, MS)
             const salida = await respuesta
+            log.trace(" Valor de salida: ", salida)
 
             if ( salida.id ) {
                 console.log ("Valor de salida2", salida)

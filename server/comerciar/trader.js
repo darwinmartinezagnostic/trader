@@ -683,20 +683,18 @@ Meteor.methods({
         });
     },
 
-    'CancelarOrden':function(TIPO_CAMBIO){  //DELETE
+    'CancelarOrden':function(ID_LOCAL){  //DELETE
+        var log = new Logger('router');
         var CONSTANTES = Meteor.call("Constantes");
-        var url = [CONSTANTES.ordenes];
+        var urlCanlOrd = [CONSTANTES.ordenes]+['/']+[ID_LOCAL];
         console.log('############################################');
-        console.log('Borrando una nueva orden');
+        console.log('Cancelando Orden ID: ', ID_LOCAL);
+        
+        EstadoOrdenCancelada = Meteor.call('ConexionDel',urlCanlOrd);
 
-        var datos = new Object();
-        datos.symbol=TIPO_CAMBIO;
+        log.trace("CancelarOrden : Valor de EstadoOrdenCancelada: ", EstadoOrdenCancelada );
 
-        //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
-
-        OrdenBorrada = Meteor.call('ConexionDel',url, datos);
-
-        Meteor.call("GuardarLogEjecucionTrader", ["Valor de OrdenBorrada"]+[OrdenBorrada]);
+        return EstadoOrdenCancelada
     },
 
     'ConsultaTraderGuardados':function(TIPO_CAMBIO){
@@ -950,7 +948,7 @@ Meteor.methods({
         };
     },
     
-    'GuardarOrden': function(TIPO_CAMBIO, CANT_INVER, REAL_INVER,MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE){
+    'GuardarOrden': function(TIPO_CAMBIO, CANT_INVER, REAL_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE){
         console.log(" Valores recibidos: ", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE)
         var CONSTANTES = Meteor.call("Constantes");
         var ComisionTtl = 0
@@ -1088,12 +1086,13 @@ Meteor.methods({
                         
         if ( MONEDA_SALDO == MON_B ) {
             var V_MonedaAdquirida = MON_C
-            console.log(" GuardarOrden: Enviando 5 ", 'EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2);
-            var V_EquivSaldoMonedaAdquirida = (Meteor.call('EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2)).toString;
-            console.log( 'Eqv_V_InverSaldAnt = ' , parseFloat(Eqv_V_InverSaldAct), ' * ', parseFloat(V_EquivalenciaTradeoAnteriorMB) , ' / ', parseFloat(SaldoTradeoActualMB));
-            var Eqv_V_InverSaldAnt = (( parseFloat(Eqv_V_InverSaldAct) * parseFloat(V_EquivalenciaTradeoAnteriorMB) ) / parseFloat(SaldoTradeoActualMB)).toString;
+            console.log(" GuardarOrdenRobot: Enviando 5 ", 'EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2);
+            var V_EquivSaldoMonedaAdquirida = Meteor.call('EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2);
+            var Eqv_V_InverSaldAnt = (( parseFloat(CANT_INVER) * parseFloat(V_EquivalenciaTradeoAnteriorMB) ) / parseFloat(SaldoTradeoAnteriorMB));
+            console.log( 'Eqv_V_InverSaldAnt (', Eqv_V_InverSaldAnt ,') = CANT_INVER(',CANT_INVER, ') * V_EquivalenciaTradeoAnteriorMB(', V_EquivalenciaTradeoAnteriorMB , ') / SaldoTradeoAnteriorMB(', SaldoTradeoAnteriorMB , ')');
             console.log("Valor de Eqv_V_InverSaldAnt", Eqv_V_InverSaldAnt)
-            var V_Ganancia = (parseFloat(V_EquivSaldoMonedaAdquirida) - parseFloat(Eqv_V_InverSaldAnt)).toString;
+            var V_Ganancia = (parseFloat(V_EquivSaldoMonedaAdquirida) - parseFloat(Eqv_V_InverSaldAnt));
+            console.log( 'V_Ganancia (', V_Ganancia ,') = V_EquivSaldoMonedaAdquirida(', V_EquivSaldoMonedaAdquirida ,') - Eqv_V_InverSaldAnt(', Eqv_V_InverSaldAnt, ')' ); 
 
             GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
@@ -1114,15 +1113,20 @@ Meteor.methods({
                                                     Moneda : {  Emitida : {     moneda : MON_B,
                                                                                 Fecha : FechaTradeoAnteriorMB,
                                                                                 Saldo : SaldoTradeoAnteriorMB,
-                                                                                Equivalente : V_EquivalenciaTradeoAnteriorMB},
+                                                                                Equivalente : V_EquivalenciaTradeoAnteriorMB,
+                                                                                Equivalente_actual : V_EquivalenciaTradeoActualMB
+
+                                                                },
                                                                 Adquirida : {   moneda : MON_C,
                                                                                 Fecha : FechaTradeoActualMC,
                                                                                 Saldo : SaldoTradeoActualMC,
-                                                                                Equivalente : V_EquivalenciaTradeoActualMC}},
+                                                                                Equivalente : V_EquivalenciaTradeoActualMC,
+                                                                                Equivalente_actual : V_EquivalenciaTradeoActualMC
+                                                                }
+                                                    },
                                                     Inversion : {   SaldoInversion  : REAL_INVER,
                                                                     Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                                        Final : V_EquivSaldoMonedaAdquirida}},
-                                                    Ganancia : {    Valor : V_Ganancia }
+                                                                                        Final : V_EquivSaldoMonedaAdquirida}}
                                                     }
                                         }, 
                                         {"upsert" : true}
@@ -1152,10 +1156,12 @@ Meteor.methods({
 
         }else if ( MONEDA_SALDO == MON_C ){
                 var V_MonedaAdquirida = MON_B
-                console.log(" GuardarOrden: Enviando 6 ", 'EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2);
-                var V_EquivSaldoMonedaAdquirida = (Meteor.call('EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2)).toString;
-                var Eqv_V_InverSaldAnt = (( parseFloat(Eqv_V_InverSaldAct) * parseFloat(V_EquivalenciaTradeoAnteriorMC) ) / parseFloat(SaldoTradeoActualMC)).toString;
-                var V_Ganancia = (parseFloat(V_EquivSaldoMonedaAdquirida) - Eqv_V_InverSaldAnt).toString;
+                console.log(" GuardarOrdenRobot: Enviando 6 ", 'EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2);
+                var V_EquivSaldoMonedaAdquirida = Meteor.call('EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2);
+                var Eqv_V_InverSaldAnt = (( parseFloat(CANT_INVER) * parseFloat(V_EquivalenciaTradeoAnteriorMC) ) / parseFloat(SaldoTradeoAnteriorMC));
+                console.log( 'Eqv_V_InverSaldAnt (', Eqv_V_InverSaldAnt ,') = CANT_INVER(',CANT_INVER, ') * V_EquivalenciaTradeoAnteriorMC(', V_EquivalenciaTradeoAnteriorMC , ') / SaldoTradeoAnteriorMC(', SaldoTradeoAnteriorMC , ')');
+                var V_Ganancia = (parseFloat(V_EquivSaldoMonedaAdquirida) - parseFloat(Eqv_V_InverSaldAnt));
+                console.log( 'V_Ganancia (', V_Ganancia ,') = V_EquivSaldoMonedaAdquirida(', V_EquivSaldoMonedaAdquirida ,') - Eqv_V_InverSaldAnt(', Eqv_V_InverSaldAnt, ')' ); 
 
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
@@ -1176,15 +1182,18 @@ Meteor.methods({
                                                     Moneda : {  Emitida : { moneda : MON_C,
                                                                             Fecha : FechaTradeoAnteriorMC,
                                                                             Saldo : SaldoTradeoAnteriorMC,
-                                                                            Equivalente : V_EquivalenciaTradeoAnteriorMC},
+                                                                            Equivalente : V_EquivalenciaTradeoAnteriorMC,
+                                                                            Equivalente_actual : V_EquivalenciaTradeoActualMC
+                                                                },
                                                                 Adquirida : { moneda : MON_B,
                                                                             Fecha : FechaTradeoActualMB,
                                                                             Saldo : SaldoTradeoActualMB,
-                                                                            Equivalente : V_EquivalenciaTradeoActualMB}},
+                                                                            Equivalente : V_EquivalenciaTradeoActualMB,
+                                                                            Equivalente_actual : V_EquivalenciaTradeoActualMB
+                                                                }},
                                                     Inversion : { SaldoInversion  : REAL_INVER,
                                                                     Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                                        Final : V_EquivSaldoMonedaAdquirida}},
-                                                    Ganancia : { Valor :  V_Ganancia}
+                                                                                        Final : V_EquivSaldoMonedaAdquirida}}
                                                     }
                                         }, 
                                         {"upsert" : true}
