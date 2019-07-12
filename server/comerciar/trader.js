@@ -1130,7 +1130,8 @@ Meteor.methods({
                                                 Inversion : { SaldoInversion : REAL_INVER,
                                                                 Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
                                                                                     Final : Eqv_V_InverSaldAct},
-                                                                Comision : {    Valor : V_Comision,
+                                                                Comision : {    moneda : MON_C,
+                                                                                Valor : V_Comision,
                                                                                 Equivalencia : Equiv_V_Comision}
                                                 }                                                    
                                         }
@@ -1201,7 +1202,8 @@ Meteor.methods({
                                                     Inversion : { SaldoInversion : REAL_INVER,
                                                                     Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
                                                                                         Final : Eqv_V_InverSaldAct},
-                                                                    Comision : {    Valor : V_Comision,
+                                                                    Comision : {    moneda : MON_C,
+                                                                                    Valor : V_Comision,
                                                                                     Equivalencia : Equiv_V_Comision}
                                                                 }
                                                     }
