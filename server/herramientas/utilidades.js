@@ -319,24 +319,29 @@ Meteor.methods({
     },
 
     'EquivalenteTipoCambio':function( MONEDA , MONTO, PRECIO, TIPO_CAMBIO){
-
+        //CALCULA EL EQUIVALENTE RECIBIDO DE UNA MONEDA
+        //MONEDA = MONEDA QUE SE QUIERE OBTENER EL EQUIVALENTE
+        //MONTO = VALOR INVERTIDO EN LA MONEDA CONTRARIA
+        //PRECIO = VALOR DEL PRECIO DE LA OPERACION
+        //TIPO_CAMBIO = TIPO DE CAMBIO EN EL CUAL SER HARÁ LA CONVERSION
+        log.info(' EquivalenteTipoCambio: Valores recibidos: ', 'MONEDA(', MONEDA, '), MONTO(', MONTO,') PRECIO(', PRECIO, '), TIPO_CAMBIO(', TIPO_CAMBIO,')')
         var TiposCambio = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO });
-        console.log(' Valor de TiposCambio: ', TiposCambio)
+        log.info(' Valor de TiposCambio: ', TiposCambio)
         var TipoCambioObtenido = TiposCambio.tipo_cambio;
         var MB = TiposCambio.moneda_base;
         var MC = TiposCambio.moneda_cotizacion;
         var MinInv=TiposCambio.valor_incremento;
 
         if ( MONEDA === MB ) {
-            var EquivalenciaActual = ( parseFloat(MONTO) * parseFloat(PRECIO) ) ;
-            console.log(" Valor de EquivalenciaActual (", EquivalenciaActual,") = MONTO(", parseFloat(MONTO),") * PRECIO(",parseFloat(PRECIO),")", )
+            var EquivalenciaMoneda = ( parseFloat(MONTO) / parseFloat(PRECIO) );
+            log.info(" Valor de EquivalenciaMoneda (", EquivalenciaMoneda,") = MONTO(", parseFloat(MONTO),") / PRECIO(",parseFloat(PRECIO),")", )
         }else if ( MONEDA === MC ) {
-            var EquivalenciaActual = ( parseFloat(MONTO) / parseFloat(PRECIO) );
-            console.log(" Valor de EquivalenciaActual (", EquivalenciaActual,") = MONTO(", parseFloat(MONTO),") / PRECIO(",parseFloat(PRECIO),")", )
+            var EquivalenciaMoneda = ( parseFloat(MONTO) * parseFloat(PRECIO) ) ;
+            log.info(" Valor de EquivalenciaMoneda (", EquivalenciaMoneda,") = MONTO(", parseFloat(MONTO),") * PRECIO(",parseFloat(PRECIO),")", )
         }
         
 
-        EquivAct = parseFloat(EquivalenciaActual.toFixed(9))
+        EquivAct = parseFloat(EquivalenciaMoneda.toFixed(9))
         //console.log(" EquivalenteDolar: Valor de EquivAct: ", EquivAct)
         return EquivAct        
     },
