@@ -6,8 +6,8 @@ Meteor.methods({
 
 	'ActualizaTiposDeCambios':function( TMA, TC, EST, VA, CTCP, CTCA, IDM, FM, PM, TOM, TM ){
 		if ( TMA == 1 ) {
-			//console.log("Valores ecibidos: TMA: ",[TMA]+[", TC: "]+[TC]+[", EST: "]+[EST]+[", VA: "]+[VA]+[", CTCP: "]+[CTCP]);
-			//console.log([", CTCA: "]+[CTCA]+[", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]+[TM]); 
+			//log.info("Valores ecibidos: TMA: ",[TMA]+[", TC: "]+[TC]+[", EST: "]+[EST]+[", VA: "]+[VA]+[", CTCP: "]+[CTCP]);
+			//log.info([", CTCA: "]+[CTCA]+[", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]+[TM]);
 			TiposDeCambios.update(	{ tipo_cambio : TC },
 			                        { $set:{ 	estado: EST,
 			                        			activo : VA,
@@ -21,8 +21,8 @@ Meteor.methods({
 			                        { "multi" : true,"upsert" : true });
 		}
 		else {
-			//console.log("Valores ecibidos: TMA: ",[TMA]+[", TC: "]+[TC]+[", EST: "]+[EST]+[", VA: "]+[VA]+[", CTCP: "]+[CTCP]);
-			//console.log([", CTCA: "]+[CTCA]+[", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]);
+			//log.info("Valores ecibidos: TMA: ",[TMA]+[", TC: "]+[TC]+[", EST: "]+[EST]+[", VA: "]+[VA]+[", CTCP: "]+[CTCP]);
+			//log.info([", CTCA: "]+[CTCA]+[", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]);
 			TiposDeCambios.update(	{ tipo_cambio : TC },
 			                        { $set:{ 	estado: EST,
 			                        			activo : VA,
@@ -39,9 +39,9 @@ Meteor.methods({
 
 	'ActualizaTempTiposCambioXMoneda':function( TMA, TC, MB, MC, ACT, HAB, CHBT, CM, MACM, VI, EST, CEP, CEA, MINC, MCE, IDM, FM, PM, TOM, TM ){
 		if ( TMA == 1 ) {
-			//console.log("Valores ecibidos: TMA: ",[TMA]+[", TC: "]+[MB]+[", MC: "]+[MC]+[", ACT: "]+[ACT]+[", HAB: "]+[HAB]+[", CHBT: "]+[CHBT]+[", CM: "]+[CM]);
-			//console.log([", MACM: "]+[MACM]+[", VI: "]+[VI]+[", EST: "]+[EST]+[", CEP: "]+[CEP]+[", CEA: "]+[CEA]+[", MINC: "]+[MINC]+[", MCE: "]+[MCE]);
-			//console.log([", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]);
+			//log.info("Valores ecibidos: TMA: ",[TMA]+[", TC: "]+[MB]+[", MC: "]+[MC]+[", ACT: "]+[ACT]+[", HAB: "]+[HAB]+[", CHBT: "]+[CHBT]+[", CM: "]+[CM]);
+			//log.info([", MACM: "]+[MACM]+[", VI: "]+[VI]+[", EST: "]+[EST]+[", CEP: "]+[CEP]+[", CEA: "]+[CEA]+[", MINC: "]+[MINC]+[", MCE: "]+[MCE]);
+			//log.info([", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]);
 			TempTiposCambioXMoneda.update(	{ tipo_cambio : TC },
 			                                { $set:{"moneda_base" : MB ,
 			                                		"moneda_cotizacion" : MC,
@@ -64,9 +64,9 @@ Meteor.methods({
 			                                { "multi" : true,"upsert" : true });
 		}
 		else {
-			//console.log("Valores ecibidos: TMA: ",[TMA]+[", TC: "]+[MB]+[", MC: "]+[MC]+[", ACT: "]+[ACT]+[", HAB: "]+[HAB]+[", CHBT: "]+[CHBT]+[", CM: "]+[CM]);
-			//console.log([", MACM: "]+[MACM]+[", VI: "]+[VI]+[", EST: "]+[EST]+[", CEP: "]+[CEP]+[", CEA: "]+[CEA]+[", MINC: "]+[MINC]+[", MCE: "]+[MCE]);
-			//console.log([", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]);
+			//log.info("Valores ecibidos: TMA: ",[TMA]+[", TC: "]+[MB]+[", MC: "]+[MC]+[", ACT: "]+[ACT]+[", HAB: "]+[HAB]+[", CHBT: "]+[CHBT]+[", CM: "]+[CM]);
+			//log.info([", MACM: "]+[MACM]+[", VI: "]+[VI]+[", EST: "]+[EST]+[", CEP: "]+[CEP]+[", CEA: "]+[CEA]+[", MINC: "]+[MINC]+[", MCE: "]+[MCE]);
+			//log.info([", IDM: "]+[IDM]+[", FM: "]+[FM]+[", PM: "]+[PM]+[", TOM: "]+[TOM]+[", TM: "]);
 			TempTiposCambioXMoneda.update(	{ tipo_cambio : TC },
 			                                { $set:{"moneda_base" : MB ,
 			                                		"moneda_cotizacion" : MC,

@@ -19,7 +19,7 @@ Meteor.methods({
         const MS =  CONSTANTES.TimeoutEjecucion * 60000
         const ak = CONSTANTES.apikey
         let url = V_URL
-        //console.log("Valor de url: ", url, " MS: ", MS);
+        //log.info("Valor de url: ", url, " MS: ", MS);
         var salida = 0;
 
         const token = function() { 
@@ -54,7 +54,7 @@ Meteor.methods({
                                         headers: headers
                                     })
                                     .then(function (response) {
-                                    //console.log (response)
+                                    //log.info (response)
                                     return response
                                     });
                 const tok = token();
@@ -66,7 +66,7 @@ Meteor.methods({
                     const datos = salida.json()
                     return datos
                 }catch(e){
-                    console.log('TIMEOUT en ejecución del URL: ', url);
+                    log.info('TIMEOUT en ejecución del URL: ', url);
                 }
         }
     },
@@ -84,7 +84,7 @@ Meteor.methods({
         const user = CONSTANTES.user;
         const pswrd = CONSTANTES.passwr;
         let url = V_URL
-        console.log("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
+        log.info("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
         var salida = 0;
         ordenCliente = "1" 
 
@@ -119,16 +119,16 @@ Meteor.methods({
         }
         
         while( salida.status !== 200 ){
-            //console.log("Estoy en while( salida.status !== 200 )")
+            //log.info("Estoy en while( salida.status !== 200 )")
             const respuesta = request(parametros)
                                         .then(function (response) {
-                                            //console.log ("Valor de response: ",response)
+                                            //log.info ("Valor de response: ",response)
                                             resp = JSON.parse(response)
                                             return resp
                                             })
                                         .catch(function(error) {
                                             ErrorConseguido = JSON.parse(error.error)
-                                            //console.error("Valor de catch ErrorConseguido: ", ErrorConseguido);
+                                            //log.error("Valor de catch ErrorConseguido: ", ErrorConseguido);
                                             return ErrorConseguido
                                             });
             const tok = token();            
@@ -137,11 +137,11 @@ Meteor.methods({
             const salida = await respuesta
 
             if ( salida.id ) {
-                //console.log ("Valor de salida2", salida)
+                //log.info ("Valor de salida2", salida)
                 return salida
             }else if ( salida.error.code !== 200 ) {
                 const mensaje = salida.error.message
-                console.log("Valor de mensaje: ", mensaje)
+                log.error("Valor de mensaje: ", mensaje)
                 
                 if ( mensaje === "Insufficient funds") {
                     mensj = { status :"Insufficientfunds"}
@@ -155,7 +155,7 @@ Meteor.methods({
                     mensj = { status :"errorisnotdefined"}
                     return mensj
                 }else {
-                    console.log("Valor de salida.error: ", salida.error)
+                    log.error("Valor de salida.error: ", salida.error)
                     return salida.error
                 }
             }
@@ -170,7 +170,7 @@ Meteor.methods({
         const MS =  CONSTANTES.TimeoutEjecucion * 60000
         const ak = CONSTANTES.apikey
         let url = V_URL
-        console.log("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
+        log.info("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
         var salida = 0;
 
         const token = function() { 
@@ -207,20 +207,20 @@ Meteor.methods({
                                         headers: headers
                                     })
                                     .then(function (response) {
-                                    //console.log (response)
+                                    //log.info (response)
                                     return response
                                     });
-                //console.log("Valor de respuesta: ", respuesta)
+                //log.info("Valor de respuesta: ", respuesta)
                 const tok = token();
                 const EstadoCancelacion = CancelaEjecucionConexion ( respuesta, tok);
                 try{
                     let tpr = await TimeoutEjecucion(EstadoCancelacion, MS)
                     const salida = await respuesta
-                    console.log("Valor de salida", salida) 
+                    log.info("Valor de salida", salida)
 
                     /*
                     if ( salida.status === 200 ) {
-                        console.log("Probando")
+                        log.info("Probando")
                         const datos = salida.json()
                         return datos
                     }else{
@@ -234,17 +234,17 @@ Meteor.methods({
 
 
                 }catch(e){
-                    console.log('TIMEOUT en ejecución del URL: ', url);
+                    log.error('TIMEOUT en ejecución del URL: ', url);
                 }/*
             }catch(error){
                 if ( /url must be absolute and start with http:/.test(error) || /Parameter "url" must be a string, not object/.test(error) || /request to https:/.test(error) ) {
                     //Meteor.call("ValidaError",'Conexion_api_fallida', 1);
-                    console.log("Conexion_api_fallida")
+                    log.info("Conexion_api_fallida")
                     break;
                 }
                 else{   
                     //Meteor.call('ValidaError',error, 1);
-                    console.log("estoy en el else del error:", error);
+                    log.info("estoy en el else del error:", error);
                     break;
                 }
             }*/
@@ -265,7 +265,7 @@ Meteor.methods({
         const user = CONSTANTES.user;
         const pswrd = CONSTANTES.passwr;
         let url = V_URL
-        console.log("Valor de url: ", url, " MS: ", MS,);
+        log.info("Valor de url: ", url, " MS: ", MS,);
         var salida = 0;
         ordenCliente = "1" 
 
@@ -298,16 +298,16 @@ Meteor.methods({
             } 
         }
         while( salida.status !== 200 ){
-            console.log("Estoy en while( salida.status !== 200 )")
+            log.info("Estoy en while( salida.status !== 200 )")
             const respuesta = request(parametros)
                                         .then(function (response) {
-                                            console.log ("Valor de response: ",response)
+                                            log.info ("Valor de response: ",response)
                                             resp = JSON.parse(response)
                                             return resp
                                             })
                                         .catch(function(error) {
                                             ErrorConseguido = JSON.parse(error.error)
-                                            console.error("Valor de catch ErrorConseguido: ", ErrorConseguido);
+                                            log.error("Valor de catch ErrorConseguido: ", ErrorConseguido);
                                             return ErrorConseguido
                                             });
             const tok = token();            
@@ -318,12 +318,12 @@ Meteor.methods({
             log.trace(" Valor de salida: ", salida)
 
             if ( salida.id ) {
-                console.log ("Valor de salida2", salida)
+                log.info ("Valor de salida2", salida)
                 return salida
             }else if ( salida.error.code !== 200 ) {
-                console.log ("Valor de salida3", salida)
+                log.info ("Valor de salida3", salida)
                 const mensaje = salida.error.message
-                console.log("Valor de mensaje: ", mensaje)
+                log.info("Valor de mensaje: ", mensaje)
                 
                 if ( mensaje === "Insufficient funds") {
                     mensj = { status :"Insufficientfunds"}
@@ -337,7 +337,7 @@ Meteor.methods({
                     mensj = { status :"errorisnotdefined"}
                     return mensj
                 }else {
-                    console.log("Valor de salida.error: ", salida.error)
+                    log.error("Valor de salida.error: ", salida.error)
                     return salida.error
                 }
             }

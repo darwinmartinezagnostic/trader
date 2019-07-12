@@ -5,7 +5,12 @@ Meteor.methods({
     
 	'PruebasUnitarias':function(){
 
-        
+
+        //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
+        Meteor.call('ActualizaEquivalenciaMonedas');
+        Meteor.call('CarcularGanancia',1);
+
+/*
             var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
             var V_LimiteApDep = LimiteApDep[0].valor;
             var CONSTANTES = Meteor.call("Constantes");
@@ -45,7 +50,7 @@ Meteor.methods({
         var PRECIO = '0.023502500'
         /* 
 
-            //console.log(' Tipo de Cambio T
+            //log.info(' Tipo de Cambio T
             IPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
            
     		for (C = 0, MAXEJC = 5; C < MAXEJC; C++){
@@ -54,7 +59,7 @@ Meteor.methods({
                 //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
             }
         */        
-        
+        /*
         if (MONEDA_SALDO === MON_B) {
             //CANT_INVER = '1.782'
             CANT_INVER = '0.019'
@@ -72,12 +77,13 @@ Meteor.methods({
 
         //Meteor.call("ConsultaCarterasDeposito");
  
-            //console.log("Datos a enviar: MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
+            //log.info("Datos a enviar: MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
             //CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, IdTransaccionLoteActual){
             //Meteor.call("CrearNuevaOrder", 'ETHBTC', 'sell', '0.0166', 'ETH', 'BTC', 'BTC', 'BTC', IdTransaccionLoteActual);
             //Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
             //Meteor.call("CrearNuevaOrderRobot", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
                                         // TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){ 
+<<<<<<< HEAD
             /*
             console.log('--------------------------------------------');
             var XPromedio = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
@@ -94,6 +100,13 @@ Meteor.methods({
             var Orden = Meteor.call("CancelarOrden", IdTransaccionActual );
             console.log("Calculo X Orden: ", Orden);
 
+=======
+     
+         
+        
+            //var sal = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            //log.info("Valor de sal: ", sal);
+>>>>>>> 1431713e9f05ec5077165943b7c6ffcd76e6fff1
         /**/
 
             //Meteor.call("ConsultarHistoricoOrdenes"); 
@@ -142,22 +155,22 @@ Meteor.methods({
 
                 V_MES = Meteor.call('CompletaConCero', MES, 2);
                 var date = new Date(AnioInicio,MES);
-                console.log("     MES:", MES);
-                //console.log(" Valor de date:", date);
+                log.info("     MES:", MES);
+                //log.info(" Valor de date:", date);
 
                 var primerDia = new Date(date.getFullYear(), date.getMonth(), 1)
                 var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
                 /*
-                console.log(" Valor de primerDia:", primerDia);
-                console.log(" Valor de ultimoDia:", ultimoDia);
+                log.info(" Valor de primerDia:", primerDia);
+                log.info(" Valor de ultimoDia:", ultimoDia);
                 *//*
                 PD = Meteor.call('CompletaConCero', primerDia.getDate(), 2);
                 UD = Meteor.call('CompletaConCero', ultimoDia.getDate(), 2);
                 
-                //console.log(" Valor de AnioIncial:", AnioInicio);
+                //log.info(" Valor de AnioIncial:", AnioInicio);
                 var FechaInicial = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ PD ]+['T00%3A00%3A00']
                 var UltimoDiaAnio = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ UD ]+['T23%3A59%3A59']
-                console.log("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);
+                log.info("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);
 
                 
                 MES += 1
@@ -177,7 +190,7 @@ Meteor.methods({
             var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
             var V_LimiteMuestreo = LimiteMuestreo[0].valor
 
-            console.log("Valor de V_LimiteMuestreo: ", V_LimiteMuestreo)
+            log.info("Valor de V_LimiteMuestreo: ", V_LimiteMuestreo)
         */
 
 
@@ -201,17 +214,17 @@ Meteor.methods({
         var RankingTiposDeCambios = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA_SALDO, estado : "A", "tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: CANT_TIP_CAMBIOS_VALIDADOS } ]);
         var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
         var ProporcionTipoCambios = PTC[0];
-        //console.log("Valor de RankingTiposDeCambios: ", RankingTiposDeCambios)
+        //log.info("Valor de RankingTiposDeCambios: ", RankingTiposDeCambios)
         var CRTC2=1;     
 
             for ( CTCV = 0, TTCV = RankingTiposDeCambios.length; CTCV <= TTCV; CTCV++ ) {
-                console.log('--------------------------------------------');
+                log.info('--------------------------------------------');
                 var Tendencia = RankingTiposDeCambios[0].tendencia;
                 Meteor.call("GuardarLogEjecucionTrader", '             **** INVERTIR **** ');
                 Meteor.call("GuardarLogEjecucionTrader", '   | Realizando Calculos de inversión |');
                 Meteor.call("GuardarLogEjecucionTrader", ['     TENDENCIA: ']+[Tendencia]);
-                console.log("   |   ............................   |")
-                console.log(' ');
+                log.info("   |   ............................   |")
+                log.info(' ');
 
                 while ( CRTC2 <= CANT_TIP_CAMBIOS_VALIDADOS ) {
                     TipoCambioRanking = RankingTiposDeCambios[CTCV];
@@ -248,7 +261,7 @@ Meteor.methods({
 
                     var SaldoInverCalculado = parseFloat(SaldoActualMoneda)*parseFloat(PorcentajeInversion)
                     
-                    console.log('--------------------------------------------');
+                    log.info('--------------------------------------------');
                     Meteor.call("GuardarLogEjecucionTrader", ['                  POSICIÓN:']+[CRTC1+1]);
                     Meteor.call("GuardarLogEjecucionTrader", [' ******** ']+[' TIPO CAMBIO: ']+[TipoCambio]+[' ********']);
                     Meteor.call("GuardarLogEjecucionTrader", ['     MONEDA BASE: ']+[MonCBas]);
@@ -270,18 +283,18 @@ Meteor.methods({
             /*
             var MONEDA='BMH'
             var prueba = Meteor.call("EquivalenteDolar", MONEDA, 10, 2);
-            console.log("Valor de prueba ", prueba);
+            log.info("Valor de prueba ", prueba);
             /**/
 
             //Meteor.call("SecuenciaPeriodo1")
             /*
             var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', MONEDA_SALDO, CANT_INVER);
-            console.log("Valor de TiposDeCambioVerificar ", TiposDeCambioVerificar[0])            
+            log.info("Valor de TiposDeCambioVerificar ", TiposDeCambioVerificar[0])
             Meteor.call('ValidaTendenciaTipoCambio', TiposDeCambioVerificar[0], MONEDA_SALDO);
             var prueba = Meteor.call("ConsultaOrdenesAbiertas", TIPO_CAMBIO)
-            console.log("Valor de prueba: ", prueba)
+            log.info("Valor de prueba: ", prueba)
             var prueba = Meteor.call("CancelarOrden", TIPO_CAMBIO)
-            console.log("Valor de prueba: ", prueba) 
+            log.info("Valor de prueba: ", prueba)
             */
             //Meteor.call('EquivalenteDolar', 'KRWB', parseFloat(2761.9602096), 2)
             //Meteor.call('EquivalenteDolar', 'KRWB', parseFloat(1397.00), 2)
@@ -289,14 +302,14 @@ Meteor.methods({
             /*
             VALOR = 4.2405e-8
             var prueba = Meteor.call('CombierteNumeroExpStr', VALOR) 
-            console.log("Valor de prueba: ", prueba)
+            log.info("Valor de prueba: ", prueba)
             /**/
             /*
             MONEDA = 'BTC'
             var DatosMoneda = Monedas.find( { moneda : MONEDA }).fetch()
             var SaldoMoneda = DatosMoneda[0].saldo.tradeo.activo
             var prueba1 = Meteor.call('EquivalenteDolar', MONEDA, parseFloat(SaldoMoneda), 2) 
-            console.log("Valor de prueba1: ", prueba1) 
+            log.info("Valor de prueba1: ", prueba1)
             /**/
             /*            
             MONEDAS = Monedas.aggregate([
@@ -306,32 +319,32 @@ Meteor.methods({
 
 
 
-            console.log("Valor de MONEDAS: ", MONEDAS) 
+            log.info("Valor de MONEDAS: ", MONEDAS)
             
 
             for (CMS = 0, TMS = MONEDAS.length; CMS < TMS; CMS++){
-                console.log('-------------------------------------------');
+                log.info('-------------------------------------------');
                 var moneda_saldo =  MONEDAS[CMS];
-                console.log("Valor de moneda_saldo: ", moneda_saldo.moneda) 
+                log.info("Valor de moneda_saldo: ", moneda_saldo.moneda)
                 var MONEDA = moneda_saldo.moneda
                 var DatosMoneda = Monedas.find( { moneda : MONEDA }).fetch()
                 var SaldoMoneda = DatosMoneda[0].saldo.tradeo.activo
                 var prueba = Meteor.call('EquivalenteDolar', MONEDA, parseFloat(SaldoMoneda), 2) 
-                console.log("Valor de prueba: ", prueba) 
-                console.log('-------------------------------------------');
+                log.info("Valor de prueba: ", prueba)
+                log.info('-------------------------------------------');
             }
             /**/
             /*
             TC = TiposDeCambios.findOne({ $and: [{ $or: [ { moneda_base : MONEDA}, { moneda_cotizacion : MONEDA }]}, { $or: [ { moneda_base : 'USD' }, { moneda_cotizacion : 'USD' }]} ] })
-            console.log("Valor de TC: ", TC)
+            log.info("Valor de TC: ", TC)
             MinInv=TC.valor_incremento
             tipoCambio = Monedas.find( { tipo_cambio : MONEDA }).fetch()
-            console.log("Valor de MinInv: ", MinInv)
+            log.info("Valor de MinInv: ", MinInv)
             TMinInv = MinInv.toString().trim().length
-            console.log("Valor de TMinInv: ", TMinInv)
+            log.info("Valor de TMinInv: ", TMinInv)
             NuevValorSaldo= SaldoMoneda.toString().toString().trim().substr(0, TMinInv)
-            console.log("Valor de SaldoMoneda: ", SaldoMoneda)
-            console.log("Valor de NuevValorSaldo: ", NuevValorSaldo)
+            log.info("Valor de SaldoMoneda: ", SaldoMoneda)
+            log.info("Valor de NuevValorSaldo: ", NuevValorSaldo)
             */
 
             //Meteor.call("InvertirEnMonedaInestable", MONEDASALDO );
@@ -341,7 +354,7 @@ Meteor.methods({
             var ORDEN= "00000000000000000000000000000001";
 
             var prueba = Meteor.call('ValidarEstadoOrden', ORDEN, ID, TIPO_CAMBIO)
-            console.log("Valor de prueba: ", prueba)
+            log.info("Valor de prueba: ", prueba)
             */
 
             //DATOS = [{ id: '134731069733',clientOrderId: '00000000000000000000000000001547', symbol: 'GETBTC', side: 'buy',status: 'partiallyFilled',type: 'limit',timeInForce: 'GTC', quantity: '410', price: '0.00000692800', cumQuantity: '130',createdAt: '2019-06-08T13:45:12.616Z', updatedAt: '2019-06-08T13:45:12.616Z', postOnly: false, tradesReport: [ { id: 576327398, quantity: '130', price: '0.00000692800', fee: '0.000001801280', timestamp: '2019-06-08T13:45:12.616Z' } ] }]
@@ -350,7 +363,7 @@ Meteor.methods({
             DATOS = [{ id: '134746692991', clientOrderId: '00000000000000000000000000001562', ymbol: 'GETBTC', side: 'buy', status: 'new', type: 'limit', imeInForce: 'GTC', quantity: '150', price: '0.00000674577', cumQuantity: '0', createdAt: '2019-06-08T15:15:20.441Z', updatedAt: '2019-06-08T15:15:20.441Z', postOnly: false }]
 
             ORDEN  = DATOS[0]
-            //console.log("Valor de ORDEN: ", ORDEN.tradesReport)
+            //log.info("Valor de ORDEN: ", ORDEN.tradesReport)
             ID = ORDEN.id
 
             //existe = {ORDEN.tradesReport: exists}
@@ -358,17 +371,17 @@ Meteor.methods({
             if ( ORDEN.tradesReport ) {
                 var Negociaciones = ORDEN.tradesReport
                 var ComisionTtl = 0
-                console.log("Valor de ORDEN: ", ORDEN.tradesReport)
+                log.info("Valor de ORDEN: ", ORDEN.tradesReport)
 
             }else {
-                console.log(' Estoy acá')
+                log.info(' Estoy acá')
                 var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[ID]+['/trades']
-                console.log('Valor de Url_TransID', Url_TransID)
+                log.info('Valor de Url_TransID', Url_TransID)
                 const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
                 var transID = TrnsID[0];
-                //console.log('Valor de transID', transID)
+                //log.info('Valor de transID', transID)
                 var ComisionTtl = transID.fee
-                console.log('Valor de ComisionTtl', ComisionTtl)
+                log.info('Valor de ComisionTtl', ComisionTtl)
             }
 
             */
@@ -377,9 +390,9 @@ Meteor.methods({
 
             //colors.enabled = true
             //Meteor.call("ConsultarHistoricoOrdenes");
-            console.log(" Probando".blue)
-            console.info(" Probando")
-            console.warn(" Probando")
+            log.info(" Probando".blue)
+            log.info(" Probando")
+            log.warn(" Probando")
             Error(" Probando")
             console.timeEnd('       TIEMPO TRANSCURRIDO: '+ MON_B);
             /**/
@@ -392,6 +405,6 @@ Meteor.methods({
             var pruebaB = Meteor.call("EquivalenteDolar", MON_C, pruebaA, 2);
             console.log("Valor de prueba ", pruebaB);
 
-    },
+    }
 });
 
