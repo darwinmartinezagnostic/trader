@@ -1264,7 +1264,8 @@ Meteor.methods({
                                     $set: {
                                                 "valor": V_LimiteMaximoDeCompras
                                     }
-                                });            
+                                });
+        }
     },
 
     'InvertirEnMonedaInestable':function( MONEDASALDO ){
