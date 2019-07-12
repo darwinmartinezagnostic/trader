@@ -503,46 +503,48 @@ Meteor.methods({
             console.log( 'V_Ganancia (', V_Ganancia ,') = Eqv_V_InverSaldAct(', Eqv_V_InverSaldAct ,') - Eqv_V_InverSaldAnt(', Eqv_V_InverSaldAnt, ')' ); 
 
             GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
-                                        {
-                                            $set: {
-                                                    Operacion : {   Id_hitbtc : V_IdHitBTC,
-                                                                    Id_Transhitbtc : V_Id_Transhitbtc,
-                                                                    ID_LocalAnt : IdTransaccionActual,
-                                                                    ID_LocalAct : IdTransaccionActual,
-                                                                    Id_Lote: ID_LOTE,
-                                                                    Tipo : V_FormaOperacion,
-                                                                    TipoCambio : TIPO_CAMBIO,
-                                                                    Base : MON_B,
-                                                                    Cotizacion : MON_C,
-                                                                    Precio : precio,
-                                                                    Status : status,
-                                                                    FechaCreacion : FechaCreacion,
-                                                                    FechaActualizacion : FechaActualizacion},
-                                                    Moneda : {  Emitida : {     moneda : MON_B,
-                                                                                Fecha : FechaTradeoAnteriorMB,
-                                                                                Saldo_Anterior : SaldoTradeoAnteriorMB,
-                                                                                Equivalente_Anterior : V_EquivalenciaTradeoAnteriorMB,
-                                                                                Saldo_Actual : SaldoTradeoActualMB,
-                                                                                Equivalente_Actual : V_EquivalenciaTradeoActualMB
+                                    {
+                                        $set: {
+                                                Operacion : {   Id_hitbtc : V_IdHitBTC,
+                                                                Id_Transhitbtc : V_Id_Transhitbtc,
+                                                                ID_LocalAnt : IdTransaccionActual,
+                                                                ID_LocalAct : IdTransaccionActual,
+                                                                Id_Lote: ID_LOTE,
+                                                                Tipo : V_FormaOperacion,
+                                                                TipoCambio : TIPO_CAMBIO,
+                                                                Base : MON_B,
+                                                                Cotizacion : MON_C,
+                                                                Precio : precio,
+                                                                Status : status,
+                                                                FechaCreacion : FechaCreacion,
+                                                                FechaActualizacion : FechaActualizacion
+                                                },
+                                                Moneda : {  Emitida : {     moneda : MON_B,
+                                                                            Fecha : FechaTradeoAnteriorMB,
+                                                                            Saldo_Anterior : SaldoTradeoAnteriorMB,
+                                                                            Equivalente_Anterior : V_EquivalenciaTradeoAnteriorMB,
+                                                                            Saldo_Actual : SaldoTradeoActualMB,
+                                                                            Equivalente_Actual : V_EquivalenciaTradeoActualMB
 
-                                                                },
-                                                                Adquirida : {   moneda : MON_C,
-                                                                                Fecha : FechaTradeoActualMC,
-                                                                                Saldo_Anterior : SaldoTradeoAnteriorMC,
-                                                                                Equivalente_Anterior : V_EquivalenciaTradeoAnteriorMC,
-                                                                                Saldo_Actual : SaldoTradeoActualMC,
-                                                                                Equivalente_Actual : V_EquivalenciaTradeoActualMC
-                                                                }
-                                                    },
-                                                    Inversion : { SaldoInversion : REAL_INVER,
-                                                                    Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                                        Final : Eqv_V_InverSaldAct},
-                                                                    Comision : {    Valor : V_Comision,
-                                                                                    Equivalencia : Equiv_V_Comision}
-                                                    
-                                        }, 
-                                        {"upsert" : true}
-                                        );
+                                                            },
+                                                            Adquirida : {   moneda : MON_C,
+                                                                            Fecha : FechaTradeoActualMC,
+                                                                            Saldo_Anterior : SaldoTradeoAnteriorMC,
+                                                                            Equivalente_Anterior : V_EquivalenciaTradeoAnteriorMC,
+                                                                            Saldo_Actual : SaldoTradeoActualMC,
+                                                                            Equivalente_Actual : V_EquivalenciaTradeoActualMC
+                                                            }
+                                                },
+                                                Inversion : { SaldoInversion : REAL_INVER,
+                                                                Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
+                                                                                    Final : Eqv_V_InverSaldAct},
+                                                                Comision : {    Valor : V_Comision,
+                                                                                Equivalencia : Equiv_V_Comision}
+                                                }                                                    
+                                        }
+                                    }, 
+                                    {"upsert" : true}
+            );
 
             Monedas.update({ "moneda": MONEDA_SALDO }, {    
                             $set: {
@@ -574,7 +576,7 @@ Meteor.methods({
                 var V_Ganancia = (parseFloat(Eqv_V_InverSaldAct) - parseFloat(Eqv_V_InverSaldAnt));
                 console.log( 'V_Ganancia (', V_Ganancia ,') = Eqv_V_InverSaldAct(', Eqv_V_InverSaldAct ,') - Eqv_V_InverSaldAnt(', Eqv_V_InverSaldAnt, ')' ); 
 
-                GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
+                GananciaPerdida.update ({    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
                                             $set: {
                                                     Operacion : {   Id_hitbtc : V_IdHitBTC,
@@ -613,7 +615,7 @@ Meteor.methods({
                                                     }
                                         }, 
                                         {"upsert" : true}
-                                        );
+                );
 
                 Monedas.update({ "moneda": MONEDA_SALDO }, {    
                             $set: {
