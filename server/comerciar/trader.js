@@ -1249,27 +1249,22 @@ Meteor.methods({
         console.log('--------------------------------------------');
         console.log('############################################');
 
-        var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"}).fetch()
-        var V_LimiteMaximoDeCompras= LimiteMaximoDeCompras.valor
-
+        var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
+        var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
+        Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_LimiteMaximoDeCompras: "]+[V_LimiteMaximoDeCompras]);
         if ( V_LimiteMaximoDeCompras === 0 ) {
                                     
             throw new Error(" ÉJECUCIÓN DETENIDA");
 
         }else if ( V_LimiteMaximoDeCompras > 0 && V_LimiteMaximoDeCompras !== 9999999999 ) {
 
-            console.log(' ');
-            //var EjecucionSecuencia = Meteor.call('SecuenciaPeriodo1');
-            Meteor.call('SecuenciaPeriodo1');
             V_LimiteMaximoDeCompras = V_LimiteMaximoDeCompras - 1
                         
             Parametros.update({ "dominio": "limites", "nombre": "CantMaximaDeCompras" }, {
                                     $set: {
-                                                "estado": true,
                                                 "valor": V_LimiteMaximoDeCompras
-                                                }
-                                    });
-        }
+                                    }
+            
     },
 
     'InvertirEnMonedaInestable':function( MONEDASALDO ){
