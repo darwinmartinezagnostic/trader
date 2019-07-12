@@ -646,7 +646,7 @@ Meteor.methods({
         console.log('--------------------------------------------');
         console.log('############################################');
 
-        var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"}).fetch()
+        var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
         var V_LimiteMaximoDeCompras= LimiteMaximoDeCompras.valor
 
         if ( V_LimiteMaximoDeCompras === 0 ) {
