@@ -5,7 +5,7 @@ Meteor.methods({
 
     'ValidaError':function (ERROR, F_ERROR) {
         
-       //console.log('Valor de ERROR: ', ERROR);
+       //log.info('Valor de ERROR: ', ERROR);
 
         if ( F_ERROR === 1 ) {
             if ( ERROR === "Conexion_api_fallida" ) {

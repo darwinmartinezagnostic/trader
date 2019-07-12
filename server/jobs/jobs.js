@@ -11,14 +11,14 @@ Jobs.register({
 	"JobSecuenciaInicial": function (){
 		try{
 	    	fecha = moment (new Date());
-	    	console.log('        ',fecha._d);
-			console.log('');
+	    	log.info('        ',fecha._d);
+			log.info('');
 			Meteor.call("GuardarLogEjecucionTrader", '----------  SOY EL JOB INICIAL  -----------');
-		    console.log(' ');
+		    log.info(' ');
 
 		    var EjecucionInicial = Meteor.call('EjecucionInicial'); 
 
-		    console.log("Valor de EjecucionInicial", EjecucionInicial);
+		    log.info("Valor de EjecucionInicial", EjecucionInicial);
 
 		    if ( EjecucionInicial === 0 ) {
 		    	Meteor.call("GuardarLogEjecucionTrader", 'Iniciando las secuencias Secundarías');
@@ -45,9 +45,9 @@ Jobs.register({
     "JobSecuencia": function (){
     	try{
 	    		fecha = moment (new Date());
-	    		console.log('        ',fecha._d);
+	    		log.info('        ',fecha._d);
 		        Meteor.call("GuardarLogEjecucionTrader", '----------  SOY EL JOB GENERAL  -----------');
-		        console.log(' ');
+		        log.info(' ');
 
 		        if ( JobsInternal.Utilities.collection.find({ name : "JobSecuenciaPeriodo1", state : "pending" }).count() === 0 ){
 
@@ -69,7 +69,7 @@ Jobs.register({
 
 		        if ( V_LimiteMaximoEjecucion === 9999999999 ) {
 								
-					console.log(' ');
+					log.info(' ');
 					Jobs.run("JobSecuencia", { 
 						in: {
 						       	second: 5
@@ -78,7 +78,7 @@ Jobs.register({
 
 				}else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
 
-				 	console.log(' ');
+				 	log.info(' ');
 					Jobs.run("JobSecuencia", { 
 				    	in: {
 					        	second: 5
@@ -104,10 +104,10 @@ Jobs.register({
     "JobReinicioSecuencia": function (){  
     	try{
 	    	fecha = moment (new Date());
-	    	console.log('        ',fecha._d);
-			console.log('');
+	    	log.info('        ',fecha._d);
+			log.info('');
 			Meteor.call("GuardarLogEjecucionTrader", '---------  REINICIANDO PROCESOS  ----------');
-		    console.log(' ');
+		    log.info(' ');
 
 
 
@@ -154,9 +154,9 @@ Jobs.register({
 	   		var TM = 1;
 	   		V_EJEC = 2;
 	   		fecha = moment (new Date());
-	   		console.log('        ',fecha._d);
-	   		console.log('----------    SOY EL SUB JOB    -----------');
-	        console.log(' ');
+	   		log.info('        ',fecha._d);
+	   		log.info('----------    SOY EL SUB JOB    -----------');
+	        log.info(' ');
 			Meteor.call("GuardarLogEjecucionTrader", ' Estoy en el Job JobSecuenciaPeriodo1');
 
 
@@ -234,7 +234,7 @@ Jobs.register({
 
 							    for (CMV = 0, TMV = MonedasVerificar.length; CMV < TMV; CMV++) {
 									var V_moneda_verificar = MonedasVerificar[CMV];
-									console.log("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id)
+									log.info("     Moneda con Saldo a Verificar: ", V_moneda_verificar._id)
 									
 									//Jobs.run("JobValidaInversion", V_moneda_verificar._id, {
 									Jobs.run("JobValidaInversion", V_moneda_verificar._id, tipo_cambio_verificar.accion, {
@@ -260,7 +260,7 @@ Jobs.register({
 							var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
 						    var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
 
-						    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion)
+						    log.info("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion)
 
 
 
@@ -268,7 +268,7 @@ Jobs.register({
 						    /*
 						    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
 								
-								console.log(' ');
+								log.info(' ');
 								Jobs.run("JobSecuenciaPeriodo1", { 
 							    	in: {
 							        	minute: 5
@@ -277,7 +277,7 @@ Jobs.register({
 
 						    }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
 
-						    	console.log(' ');
+						    	log.info(' ');
 								Jobs.run("JobSecuenciaPeriodo1", { 
 							    	in: {
 							        	minute: 5
@@ -299,12 +299,12 @@ Jobs.register({
 				        	var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
 						    var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
 
-						    console.log("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion);
+						    log.info("Valor de V_LimiteMaximoEjecucion", V_LimiteMaximoEjecucion);
 						    
 
 						    if ( V_LimiteMaximoEjecucion === 9999999999 ) {
 								
-								console.log(' ');
+								log.info(' ');
 								Jobs.run("JobSecuenciaPeriodo1", { 
 							    	in: {
 							        	minute: 1
@@ -314,7 +314,7 @@ Jobs.register({
 								
 						    }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
 								
-								console.log(' ');
+								log.info(' ');
 								Jobs.run("JobSecuenciaPeriodo1", { 
 							    	in: {
 							        	minute: 1
@@ -349,28 +349,28 @@ Jobs.register({
 
     "JobValidaTendenciaTipoCambio": function ( TIPO_CAMBIO, TIPO_MUESTREO ){
     	try{
-	    	console.log(' Estoy en JobValidaTendenciaTipoCambio');
+	    	log.info(' Estoy en JobValidaTendenciaTipoCambio');
 	    	if ( Job_activo === 1 ) {
 		        var V_EJEC = 2
 		        fecha = moment (new Date());
 
-	    		console.log('############################################');
-	    		console.log('--------------------------------------------');
-		        console.log('---------- SOY EL JOB TRABAJANDO -----------');
-		        console.log('--------------------------------------------');
-		        console.log(' ');
-		        console.log("Estoy en el Job JobValidaTendenciaTipoCambio");
-		        //console.log(' Tipo de Cambio Recibido', TIPO_CAMBIO, " Muestreo: ", TIPO_MUESTREO, " ACCION: ", TIPO_MONEDA_SALDO)
+	    		log.info('############################################');
+	    		log.info('--------------------------------------------');
+		        log.info('---------- SOY EL JOB TRABAJANDO -----------');
+		        log.info('--------------------------------------------');
+		        log.info(' ');
+		        log.info("Estoy en el Job JobValidaTendenciaTipoCambio");
+		        //log.info(' Tipo de Cambio Recibido', TIPO_CAMBIO, " Muestreo: ", TIPO_MUESTREO, " ACCION: ", TIPO_MONEDA_SALDO)
 		        //Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC, TIPO_MUESTREO);
 		        Meteor.call('ListaTradeoActual', TIPO_CAMBIO, V_EJEC);
 	            //Meteor.call('EvaluarTendencias', TIPO_CAMBIO, TIPO_MUESTREO, TIPO_MONEDA_SALDO );
 	            Meteor.call('EvaluarTendencias', TIPO_CAMBIO );
 		        
-		        console.log('--------------------------------------------');
-		        console.log('############################################');
-		        console.log('-------------- JOB FINALIZADO --------------');
-	   			console.log('        ',fecha._d);
-		        console.log('############################################');
+		        log.info('--------------------------------------------');
+		        log.info('############################################');
+		        log.info('-------------- JOB FINALIZADO --------------');
+	   			log.info('        ',fecha._d);
+		        log.info('############################################');
 
 
 	    	}
@@ -392,7 +392,7 @@ Jobs.register({
 	*/
     "JobValidaInversion": function( MONEDA_VERIFICAR ){
     	try{
-    		console.log("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
+    		log.info("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
 
 	    	Meteor.call("GuardarLogEjecucionTrader", [' JobValidaInversion: Moneda con Saldo a Verificar: ']+[MONEDA_VERIFICAR]);
 
@@ -424,7 +424,7 @@ Jobs.register({
     
     "JobsFrecuenciaDiaria": function(){
     	try{
-	    	console.log(' Estoy en JobsFrecuenciaDiaria');
+	    	log.info(' Estoy en JobsFrecuenciaDiaria');
 	    	// Mantenieminto de la coleccion JObs_data
 	    	JobsInternal.Utilities.collection.remove({ state : 'successful' });
 

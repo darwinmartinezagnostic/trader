@@ -43,7 +43,7 @@ Meteor.methods({
 		// ACTIVACION DE GUARDADO DEBUG DEL CÓDIGO EN DB
 		const debug_activo = Parametros.aggregate([  { $match : { dominio : "Ejecucion", nombre : "Depuracion" } },
                                                     { $project : { _id : 0, valor : 1 } }]);;
-		//console.log("Valor de debug_activo: ", debug_activo[0]);
+		//log.info("Valor de debug_activo: ", debug_activo[0]);
 		const Timeout = Parametros.aggregate([  { $match : { dominio : "limites", nombre : "TimeoutEjecucion" } },
                                                     { $project : { _id : 0, valor : 1 } }]);;
 		

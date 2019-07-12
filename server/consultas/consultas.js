@@ -11,21 +11,21 @@ Meteor.methods({
 
         //para verificar una transaccion en especifica se anexar al final de la contrccion de la URL ID de la transaccion ejemp "f672d164-6c6d-4bbd-9ba3-401692b3b404"
         // var Url_Transaccion = [transacciones]+'/'+[<varible de entrada = D de la transaccion>];
-        console.log('############################################');
+        log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", ' Devuelve los datos Historicos de Transacciones realizadas en la cuenta');
-        console.log(' ');
+        log.info(' ');
         var url_transaccion_parcial=['sort=ASC&by=timestamp&limit=']+[TRANSACCIONES];
         var url_transaccion_completa=[CONSTANTES.transacciones]+'?'+[url_transaccion_parcial];
-        console.log(' Valor de URL transacciones:', url_transaccion_completa);
+        log.info(' Valor de URL transacciones:', url_transaccion_completa);
 
         var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
         //var v_transaccion=(transaccion.data); 
         var v_transaccion=transaccion
 
-        //console.log(v_transaccion);
+        //log.info(v_transaccion);
 
         for (k = 0, len = v_transaccion.length; k < len; k++) {
-            console.log('############################################');
+            log.info('############################################');
             transaccion = v_transaccion[k];
             Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[transaccion.id]);
             Meteor.call("GuardarLogEjecucionTrader", [' INDICE: ']+[transaccion.index]);
@@ -36,8 +36,8 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", [' FECHA CREACION: ']+[transaccion.createdAt]);
             Meteor.call("GuardarLogEjecucionTrader", [' FECHA DE CAMBIO: ']+[transaccion.updatedAt]);
             Meteor.call("GuardarLogEjecucionTrader", [' HASH: ']+[transaccion.hash]);
-            console.log('############################################');
-            console.log(' ');
+            log.info('############################################');
+            log.info(' ');
         };
     },
 
@@ -48,15 +48,15 @@ Meteor.methods({
         var OrdAbi = OrdeneAbiertas[0]
 
         if ( OrdAbi === undefined ) {
-            console.log('--------------------------------------------');
+            log.info('--------------------------------------------');
             Meteor.call("GuardarLogEjecucionTrader", "     --- No hay ordenes Abiertas ---");
-            console.log('--------------------------------------------');
+            log.info('--------------------------------------------');
             var Estado_Orden ='Fallido'
         }
         else{
-            console.log("Ordenes Activas: ", OrdeneAbiertas)
+            log.info("Ordenes Activas: ", OrdeneAbiertas)
             var Estado_Orden = OrdAbi.status
-            console.log('Valor de Estado_Orden', Estado_Orden)
+            log.info('Valor de Estado_Orden', Estado_Orden)
         }
         return Estado_Orden
     },
@@ -66,9 +66,9 @@ Meteor.methods({
 
         for ( cmsa = 0, tmsa = MonedasSaldoActual.length; cmsa < tmsa; cmsa++ ) {
             var v_BMonedasSaldoActual = MonedasSaldoActual[cmsa];
-            console.log('############################################');
+            log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", '            Saldo disponible');
-            console.log('############################################');
+            log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", ['  ********* ']+[' MONEDA: ']+[v_BMonedasSaldoActual.moneda]+[' ********* ']);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TRADEO: ']+[v_BMonedasSaldoActual.saldo.tradeo.activo]);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TRADEO EQUIVALENTE $: ']+[v_BMonedasSaldoActual.saldo.tradeo.equivalencia]);
@@ -76,8 +76,8 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO EN CUENTA: ']+[v_BMonedasSaldoActual.saldo.cuenta.activo]);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO CUENTA EQUIVALENTE $: ']+[v_BMonedasSaldoActual.saldo.cuenta.equivalencia]);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO CUENTA RESERVA: ']+[v_BMonedasSaldoActual.saldo.tradeo.reserva]);
-            console.log('############################################');
-            console.log(' ');
+            log.info('############################################');
+            log.info(' ');
         }
     },
 
@@ -91,9 +91,9 @@ Meteor.methods({
             for (k = 0, len = transaccion.length; k < len; k++) {
                 trans = transaccion[k];
                 //var IdTran = Meteor.call('CalculaId', 2);
-                //console.log(' Estoy acá')
+                //log.info(' Estoy acá')
                 var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
-                //console.log('Valor de IdTran: ', IdTran)
+                //log.info('Valor de IdTran: ', IdTran)
                 var IdTransaccionActual = Meteor.call("CompletaConCero", parseFloat(IdTran), 32);            
                 var url_trans_orden=[CONSTANTES.HistOrdenes]+['/']+[trans.orderId]+['/trades']
                 var ComisionTansacion = Meteor.call("ConexionGet", url_trans_orden);
@@ -203,13 +203,13 @@ Meteor.methods({
         var AnioInicio = parseFloat(2019);
 
         while ( AnioInicio <=  parseFloat(AnioAct) ){
-            console.log('############################################');
-            console.log("         Año a Recuperar:", AnioInicio);
-            console.log('############################################'); 
+            log.info('############################################');
+            log.info("         Año a Recuperar:", AnioInicio);
+            log.info('############################################');
             var MES = 1;
             while ( MES < 13 ){
                 V_MES = Meteor.call('CompletaConCero', MES, 2);
-                console.log("            MES:", V_MES);
+                log.info("            MES:", V_MES);
 
                 var date = new Date(AnioInicio,MES);
                 var primerDia = new Date(date.getFullYear(), date.getMonth(), 1)
@@ -218,8 +218,8 @@ Meteor.methods({
                 var UD = Meteor.call('CompletaConCero', ultimoDia.getDate(), 2);var FechaInicial = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ PD ]+['T00%3A00%3A00']
                 var UltimoDiaAnio = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ UD ]+['T23%3A59%3A59']                
 
-                console.log("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);                
-                console.log(' ');
+                log.info("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);
+                log.info(' ');
 
                 var url_transaccion_completa=[CONSTANTES.HistTradeo]+['?sort=ASC']+['&by=timestamp&from=']+[FechaInicial]+['&by=timestamp&from=']+[UltimoDiaAnio]
                 var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
@@ -328,7 +328,7 @@ Meteor.methods({
             AnioInicio += 1
         }
         /**/
-        console.log('############################################');
+        log.info('############################################');
     },
 
     'VerificarHistoricoEstadoOrden':function(ORDEN){
@@ -378,28 +378,28 @@ Meteor.methods({
         var Url_TransTP=[CONSTANTES.HistOrdenes]+['?symbol=']+[T_symbol]+['&limit=3']
         var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[T_id]+['/trades']
         /*
-        console.log('Valor de url_tranOA', url_tranOA)
-        console.log('Valor de Url_TransTP', Url_TransTP)
-        console.log('Valor de Url_TransID', Url_TransID)
+        log.info('Valor de url_tranOA', url_tranOA)
+        log.info('Valor de Url_TransTP', Url_TransTP)
+        log.info('Valor de Url_TransID', Url_TransID)
         */
 
         const TrnsOA = Meteor.call("ConexionGet", url_tranOA)   
         var transOA = TrnsOA[0];
-        //console.log('Valor de transOA', transOA)
+        //log.info('Valor de transOA', transOA)
         const TrnsTP = Meteor.call("ConexionGet", Url_TransTP)
-        //console.log('Valor de TrnsTP', TrnsTP)
+        //log.info('Valor de TrnsTP', TrnsTP)
         const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
         var transID = TrnsID[0];
-        //console.log('Valor de transID', transID)
+        //log.info('Valor de transID', transID)
         if ( transID === undefined ) {
             HistIdOrden = 0
-            //console.log('Valor de HistIdOrden', HistIdOrden)
+            //log.info('Valor de HistIdOrden', HistIdOrden)
         }else{
             HistIdOrden = 1
-            //console.log('Valor de HistIdOrden', HistIdOrden)
+            //log.info('Valor de HistIdOrden', HistIdOrden)
         }
         if ( transOA === undefined ) {
-            //console.log(' Estoy en if ( transOA === undefined )')
+            //log.info(' Estoy en if ( transOA === undefined )')
             for ( CTrnsOA = 0, TTrnsOA = TrnsTP.length; CTrnsOA < TTrnsOA; CTrnsOA++ ) {
                 var HTrnsTP = TrnsTP[CTrnsOA];
                 IdOdenClient = HTrnsTP.clientOrderId
@@ -413,19 +413,19 @@ Meteor.methods({
                     break                    
                 }
             }
-            //console.log('Valor de HistIdOrdenExiste', HistIdOrdenExiste)
+            //log.info('Valor de HistIdOrdenExiste', HistIdOrdenExiste)
 
             if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 ) {
-                //console.log(' Estoy en if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
+                //log.info(' Estoy en if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
                 var Estado_Orden = NuValOrden
             }else{
-                //console.log(' Estoy en else de if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
+                //log.info(' Estoy en else de if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
                 var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: 'Fallido', type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
             }
         }else{
             var Estado_Orden = transOA
         }
-        //console.log('Valor de Estado_Orden', Estado_Orden)
+        //log.info('Valor de Estado_Orden', Estado_Orden)
         return Estado_Orden
     },
     
@@ -443,18 +443,18 @@ Meteor.methods({
 
             var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: 3 } ]);
             var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_cotizacion" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
-            console.log('-------------------------------------------');
-            console.log('      MONEDA :', MONEDA)
-            console.log('Valor de TmpTCMB: ', TmpTCMB)
+            log.info('-------------------------------------------');
+            log.info('      MONEDA :', MONEDA)
+            log.info('Valor de TmpTCMB: ', TmpTCMB)
             for (CTMCB = 0, T_TmpTCMB = TmpTCMB.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMB = TmpTCMB[CTMCB];
-                console.log('Valor de TmpTCMB: ', TmpTCMB)
+                log.info('Valor de TmpTCMB: ', TmpTCMB)
 
             }
 
             for (CTMCB = 0, T_TmpTCMB = TmpTCMC.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMC = TmpTCMC[CTMCB];
-                console.log('Valor de TmpTCMB: ', TmpTCMB)
+                log.info('Valor de TmpTCMB: ', TmpTCMB)
             }
         }
     },
