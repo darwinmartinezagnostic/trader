@@ -989,7 +989,7 @@ Meteor.methods({
 
         var Comision = ComisionTtl.toString()
         var precio = ORDEN.price
-        var CantidadRecibida = ORDEN.quantity
+        var CantidadNegociada = ORDEN.quantity
         var IdHBTC = ORDEN.id
         var IdTransaccionActual = ORDEN.clientOrderId
         var FormaDeOperacion = ORDEN.side
@@ -1037,6 +1037,18 @@ Meteor.methods({
 
         Meteor.call('ActualizaSaldoActual', MON_B );
         Meteor.call('ActualizaSaldoActual', MON_C );
+
+         if ( MONEDA_SALDO == MON_B ) {
+            var MonAdquirida = MON_C
+            console.log(" Valor de MonAdquirida: ", MonAdquirida)
+            var CantidadRecibida = Meteor.call("EquivalenteTipoCambio", MonAdquirida, CantidadNegociada, precio, TIPO_CAMBIO );
+            console.log(" Valor de EqvSaldoActualCalcMC: ", EqvSaldoActualCalcMC)
+
+        }else if ( MONEDA_SALDO == MON_C ) {
+            var MonAdquirida =  MON_B 
+            console.log(" Valor de MonAdquirida: ", MonAdquirida)
+            var CantidadRecibida = Meteor.call("EquivalenteTipoCambio", MonAdquirida, CantidadNegociada, precio, TIPO_CAMBIO );
+        }
 
         var V_ActualMB = Monedas.aggregate([{ $match: { 'moneda' : MON_B }}]);
         var ValoresActualesMB = V_ActualMB[0];

@@ -318,6 +318,29 @@ Meteor.methods({
         }
     },
 
+    'EquivalenteTipoCambio':function( MONEDA , MONTO, PRECIO, TIPO_CAMBIO){
+
+        var TiposCambio = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO });
+        console.log(' Valor de TiposCambio: ', TiposCambio)
+        var TipoCambioObtenido = TiposCambio.tipo_cambio;
+        var MB = TiposCambio.moneda_base;
+        var MC = TiposCambio.moneda_cotizacion;
+        var MinInv=TiposCambio.valor_incremento;
+
+        if ( MONEDA === MB ) {
+            var EquivalenciaActual = ( parseFloat(MONTO) * parseFloat(PRECIO) ) ;
+            console.log(" Valor de EquivalenciaActual (", EquivalenciaActual,") = MONTO(", parseFloat(MONTO),") * PRECIO(",parseFloat(PRECIO),")", )
+        }else if ( MONEDA === MC ) {
+            var EquivalenciaActual = ( parseFloat(MONTO) / parseFloat(PRECIO) );
+            console.log(" Valor de EquivalenciaActual (", EquivalenciaActual,") = MONTO(", parseFloat(MONTO),") / PRECIO(",parseFloat(PRECIO),")", )
+        }
+        
+
+        EquivAct = parseFloat(EquivalenciaActual.toFixed(9))
+        //console.log(" EquivalenteDolar: Valor de EquivAct: ", EquivAct)
+        return EquivAct        
+    },
+
     'CompletaConCero' : function (numero, tamanio) {
         var numeroOutput = Math.abs(numero); /* Valor absoluto del número */
         var length = numero.toString().length; /* Largo del número */ 

@@ -35,13 +35,14 @@ Meteor.methods({
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
         
-        const MON_B='HTML'
-        const MON_C='ETH'
+        const MON_B='ETH'
+        const MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
         //var MONEDA_SALDO = MON_B
         var MONEDA_COMISION = MON_C
-        var MONEDA_SALDO = MON_C
+        var MONEDA_SALDO = MON_B
         var MONEDASALDO = MONEDA_SALDO
+        var PRECIO = '0.023502500'
         /* 
 
             //console.log(' Tipo de Cambio T
@@ -56,18 +57,18 @@ Meteor.methods({
         
         if (MONEDA_SALDO === MON_B) {
             //CANT_INVER = '1.782'
-            //CANT_INVER = '80'
-            var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
-            var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
+            CANT_INVER = '0.019'
+            //var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
+            //var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
         }else if (MONEDA_SALDO === MON_C) {
             //CANT_INVER = '0.01696398'
-            //CANT_INVER = '0.00058' 
+            //CANT_INVER = '0.00055' 
             var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
             var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
         } 
         
         MAPLICOMIS = MON_C
-        var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')    
+        //var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')    
 
         //Meteor.call("ConsultaCarterasDeposito");
  
@@ -77,14 +78,25 @@ Meteor.methods({
             //Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
             //Meteor.call("CrearNuevaOrderRobot", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
                                         // TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){ 
-     
-         
-        
-            //var sal = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-            //console.log("Valor de sal: ", sal);
+            /*
+            console.log('--------------------------------------------');
+            var XPromedio = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            console.log("Calculo X Promedio: ", XPromedio);
+            console.log('--------------------------------------------');
+            var XOrden = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            console.log("Calculo X Orden: ", XOrden);
+            console.log('--------------------------------------------');
+            var XVolumen = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            console.log("Calculo X Volumen: ", XVolumen);
+            console.log('--------------------------------------------');
+            /*
+            var IdTransaccionActual = "0899750c5384478998adb2818337d627"
+            var Orden = Meteor.call("CancelarOrden", IdTransaccionActual );
+            console.log("Calculo X Orden: ", Orden);
+
         /**/
 
-            //Meteor.call("ConsultarHistoricoOrdenes");
+            //Meteor.call("ConsultarHistoricoOrdenes"); 
         
         /*
             var ORDEN = '00000000000000000000000000000154'
@@ -94,21 +106,27 @@ Meteor.methods({
         
         /*
         const ORDEN = { id: 134980877254,
-                        clientOrderId: '00000000000000000000000000001676',
-                        symbol: 'ORMEUSBTC',
-                        side: 'sell',
+                        clientOrderId: '00000000000000000000000000000023',
+                        symbol: 'VRABTC',
+                        side: 'buy',
                         status: 'filled',
                         type: 'limit',
                         timeInForce: 'GTC',
-                        quantity: '8.0',
-                        price: '0.000010200',
-                        cumQuantity: '8.0',
-                        createdAt: '2019-06-09T13:42:02.598Z',
-                        updatedAt: '2019-06-09T13:48:54.599Z' }
+                        quantity: '19',
+                        price: '0.0000001401',
+                        cumQuantity: '19',
+                        createdAt: '2019-06-21T05:06:42.088Z',
+                        updatedAt: '2019-06-21T05:06:42.088Z',
+                        tradesReport:
+                            [ { id: 588955797,
+                                quantity: '19',
+                                price: '0.0000001401',
+                                fee: '0.000000005324',
+                                timestamp: '2019-06-21T05:06:42.088Z' } ] }
 
-
+        var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')
         //(TIPO_CAMBIO, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, DATOS, ID_LOTE){
-        //Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, 13);
+        Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, IdTransaccionLoteActual);
         /**/   
 
         /*
@@ -354,7 +372,7 @@ Meteor.methods({
             }
 
             */
-
+            /*
             console.time('       TIEMPO TRANSCURRIDO: '+ MON_B);
 
             //colors.enabled = true
@@ -364,7 +382,15 @@ Meteor.methods({
             console.warn(" Probando")
             Error(" Probando")
             console.timeEnd('       TIEMPO TRANSCURRIDO: '+ MON_B);
-            
+            /**/
+
+
+
+            var pruebaA = Meteor.call("EquivalenteTipoCambio", MONEDA_SALDO, CANT_INVER, PRECIO, TIPO_CAMBIO );
+            console.log('Valor de prueba: ', pruebaA);
+
+            var pruebaB = Meteor.call("EquivalenteDolar", MON_C, pruebaA, 2);
+            console.log("Valor de prueba ", pruebaB);
 
     },
 });

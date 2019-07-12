@@ -325,7 +325,7 @@ Meteor.methods({
 
         var Comision = ComisionTtl.toString()
         var precio = ORDEN.price
-        var CantidadRecibida = ORDEN.quantity
+        var CantidadNegociada = ORDEN.quantity
         var IdHBTC = ORDEN.id
         var IdTransaccionActual = ORDEN.clientOrderId
         var FormaDeOperacion = ORDEN.side
@@ -338,7 +338,7 @@ Meteor.methods({
 
         console.log(" Valor de Comision: ", Comision)
         console.log(" Valor de precio: ", precio)
-        console.log(" Valor de CantidadRecibida: ", CantidadRecibida)
+        console.log(" Valor de CantidadNegociada: ", CantidadNegociada)
         console.log(" Valor de IdHBTC: ", IdHBTC)
         console.log(" Valor de IdTransaccionActual: ", IdTransaccionActual)
         console.log(" Valor de FormaDeOperacion: ", FormaDeOperacion)
@@ -401,6 +401,7 @@ Meteor.methods({
             var MonAdquirida = Monedas.findOne({ moneda : MON_C })
             console.log(" Valor de MonAdquirida: ", MonAdquirida)
             var SaldoActualMonAd = MonAdquirida.saldo.tradeo.activo
+            var CantidadRecibida = Meteor.call("EquivalenteTipoCambio", MonAdquirida.moneda, CantidadNegociada, precio, TIPO_CAMBIO );
             console.log(" Valor de SaldoActualMonAd: ", SaldoActualMonAd)
             var SaldoActualCalcMC =  parseFloat(SaldoActualMonAd) + ( parseFloat(CantidadRecibida))
             console.log(" Valor de SaldoActualCalcMC: ", SaldoActualCalcMC," = ", parseFloat(SaldoActualMonAd)," + (", parseFloat(CantidadRecibida),")")
@@ -427,6 +428,7 @@ Meteor.methods({
             var MonAdquirida = Monedas.findOne({ moneda : MON_B })
             console.log(" Valor de MonAdquirida: ", MonAdquirida)
             var SaldoActualMonAd = MonAdquirida.saldo.tradeo.activo
+            var CantidadRecibida = Meteor.call("EquivalenteTipoCambio", MonAdquirida.moneda, CantidadNegociada, precio, TIPO_CAMBIO );
             console.log(" Valor de SaldoActualMonAd: ", SaldoActualMonAd)
             var SaldoActualCalcMB =  parseFloat(SaldoActualMonAd) + ( parseFloat(CantidadRecibida))
             console.log(" Valor de SaldoActualCalcMB: ", SaldoActualCalcMB," = ", parseFloat(SaldoActualMonAd)," + (", parseFloat(CantidadRecibida),")")
