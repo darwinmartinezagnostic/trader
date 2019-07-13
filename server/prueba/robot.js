@@ -412,7 +412,6 @@ Meteor.methods({
                                             "saldo.tradeo.equivalencia": parseFloat(EqvSaldoActualCalcMC.toFixed(9)) }
                                 }
                             );
-
         }else if ( MONEDA_SALDO == MON_C ) {
             log.info("Estoy en else if ( MONEDA_SALDO == MON_C )")
             var SaldoActualCalcMC =  parseFloat(SaldoTradeoAnteriorMC) - ( parseFloat(REAL_INVER) - parseFloat(Comision))
@@ -439,7 +438,6 @@ Meteor.methods({
                                             "saldo.tradeo.equivalencia": parseFloat(EqvSaldoActualCalcMB.toFixed(9)) }
                                 }
                             );
-
         }
         log.info(" Valor de SaldoActualCalcMB: ", parseFloat(SaldoActualCalcMB.toFixed(9)))
         log.info(" Valor de SaldoActualCalcMC: ", parseFloat(SaldoActualCalcMC.toFixed(9)))
@@ -931,7 +929,6 @@ Meteor.methods({
 
         for ( CS = 0, TCS = SECUENCIAS.length; CS < TCS; CS++ ) {
             var NOMBRE_SECUENCIA = SECUENCIAS[CS]
-            log.info(' Valor de NOMBRE_SECUENCIA: ', NOMBRE_SECUENCIA)
             Meteor.call('ReinicioDeSecuenciasGBL', NOMBRE_SECUENCIA);
         }
     },
