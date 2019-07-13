@@ -326,15 +326,17 @@ Meteor.methods({
         //TIPO_CAMBIO = TIPO DE CAMBIO EN EL CUAL SER HARÁ LA CONVERSION
         log.info(' EquivalenteTipoCambio: Valores recibidos: ', 'MONEDA(', MONEDA, '), MONTO(', MONTO,') PRECIO(', PRECIO, '), TIPO_CAMBIO(', TIPO_CAMBIO,')')
         var TiposCambio = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO });
-        log.info(' Valor de TiposCambio: ', TiposCambio)
+        //log.info(' Valor de TiposCambio: ', TiposCambio)
         var TipoCambioObtenido = TiposCambio.tipo_cambio;
         var MB = TiposCambio.moneda_base;
         var MC = TiposCambio.moneda_cotizacion;
         var MinInv=TiposCambio.valor_incremento;
 
         if ( MONEDA === MB ) {
-            var EquivalenciaMoneda = ( parseFloat(MONTO) / parseFloat(PRECIO) );
-            log.info(" Valor de EquivalenciaMoneda (", EquivalenciaMoneda,") = MONTO(", parseFloat(MONTO),") / PRECIO(",parseFloat(PRECIO),")", )
+            //var EquivalenciaMoneda = ( parseFloat(MONTO) / parseFloat(PRECIO) );
+            //log.info(" Valor de EquivalenciaMoneda (", EquivalenciaMoneda,") = MONTO(", parseFloat(MONTO),") / PRECIO(",parseFloat(PRECIO),")", )
+            var EquivalenciaMoneda = parseFloat(MONTO);
+            log.info(" Valor de EquivalenciaMoneda (", EquivalenciaMoneda,") = MONTO(", parseFloat(MONTO),")");
         }else if ( MONEDA === MC ) {
             var EquivalenciaMoneda = ( parseFloat(MONTO) * parseFloat(PRECIO) ) ;
             log.info(" Valor de EquivalenciaMoneda (", EquivalenciaMoneda,") = MONTO(", parseFloat(MONTO),") * PRECIO(",parseFloat(PRECIO),")", )
@@ -548,6 +550,14 @@ Meteor.methods({
         
 
         return resultados;
+    },
+
+    'ReinicioDeSecuenciasGBL' : function (NOMBRE) {
+        SecuenciasGlobales.findAndModify({
+                                            query: { _id: NOMBRE },
+                                            update: { secuencia: 0 },
+                                            new: true
+                                        });
     },
 	
 });

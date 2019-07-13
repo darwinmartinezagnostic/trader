@@ -47,6 +47,7 @@ Meteor.startup(function (){
     JobsInternal.Utilities.collection.remove({  });
     TmpTipCambioXMonedaReord.remove({ });
     LogEjecucionTrader.remove({  });
+    Meteor.call('ReinicioDeSecuenciasGBL', 'IdLog');
     
     try {
         // Verificamos si la aplicación es su ejecución Inicial o no
@@ -55,8 +56,10 @@ Meteor.startup(function (){
 
         var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
         
+        var ResetSaldos = Parametros.findOne( { dominio : "Prueba", nombre : "saldo" } );
+        
+
         var ValorModoEjecucion = ModoEjecucion[0].valor
-        //var ValorModoEjecucion = 0
         log.info("Valor de EjecucionInicial: ", ValorModoEjecucion);
 
         switch ( ValorModoEjecucion ){
@@ -67,6 +70,9 @@ Meteor.startup(function (){
                 Meteor.call('SecuenciaInicial');
             break;
             case 2:
+                if ( ResetSaldos.valor === 1 ) {
+                    Meteor.call("ReinioDeSaldos");
+                }
                 if ( Robot.valor === 0 ) {
                     Meteor.call("ActualizaSaldoTodasMonedas");
                 }

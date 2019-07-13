@@ -988,7 +988,7 @@ Meteor.methods({
 
 
         var Comision = ComisionTtl.toString()
-        var precio = ORDEN.price
+        var precio = parseFloat(ORDEN.price)
         var CantidadNegociada = ORDEN.quantity
         var IdHBTC = ORDEN.id
         var IdTransaccionActual = ORDEN.clientOrderId
@@ -1118,7 +1118,6 @@ Meteor.methods({
                                                                 TipoCambio : TIPO_CAMBIO,
                                                                 Base : MON_B,
                                                                 Cotizacion : MON_C,
-                                                                Precio : precio,
                                                                 Status : status,
                                                                 FechaCreacion : FechaCreacion,
                                                                 FechaActualizacion : FechaActualizacion
@@ -1139,9 +1138,10 @@ Meteor.methods({
                                                                             Equivalente_Actual : V_EquivalenciaTradeoActualMC
                                                             }
                                                 },
-                                                Inversion : { SaldoInversion : REAL_INVER,
-                                                                Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
+                                                Inversion : {   Saldo : parseFloat(REAL_INVER.toFixed(9)),
+                                                                Equivalencia : {    Inicial : parseFloat(Eqv_V_InverSaldAnt.toFixed(4)),
                                                                                     Final : Eqv_V_InverSaldAct},
+                                                                Precio : precio,
                                                                 Comision : {    moneda : MON_C,
                                                                                 Valor : V_Comision,
                                                                                 Equivalencia : Equiv_V_Comision}
@@ -1193,7 +1193,6 @@ Meteor.methods({
                                                                     TipoCambio : TIPO_CAMBIO,
                                                                     Base : MON_B,
                                                                     Cotizacion : MON_C,
-                                                                    Precio : precio,
                                                                     Status : status,
                                                                     FechaCreacion : FechaCreacion,
                                                                     FechaActualizacion : FechaActualizacion},
@@ -1211,9 +1210,10 @@ Meteor.methods({
                                                                                 Saldo_Actual : SaldoTradeoActualMB,
                                                                                 Equivalente_Actual : V_EquivalenciaTradeoActualMB
                                                                 }},
-                                                    Inversion : { SaldoInversion : REAL_INVER,
-                                                                    Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
+                                                    Inversion : {   Saldo : parseFloat(REAL_INVER.toFixed(9)),
+                                                                    Equivalencia : {    Inicial : parseFloat(Eqv_V_InverSaldAnt.toFixed(4)),
                                                                                         Final : Eqv_V_InverSaldAct},
+                                                                    Precio : precio,
                                                                     Comision : {    moneda : MON_C,
                                                                                     Valor : V_Comision,
                                                                                     Equivalencia : Equiv_V_Comision}

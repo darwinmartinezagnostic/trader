@@ -324,7 +324,7 @@ Meteor.methods({
         log.info('Valor de ComisionTtl', ComisionTtl)
 
         var Comision = ComisionTtl.toString()
-        var precio = ORDEN.price
+        var precio = parseFloat(ORDEN.price)
         var CantidadNegociada = ORDEN.quantity
         var IdHBTC = ORDEN.id
         var IdTransaccionActual = ORDEN.clientOrderId
@@ -516,7 +516,6 @@ Meteor.methods({
                                                                 TipoCambio : TIPO_CAMBIO,
                                                                 Base : MON_B,
                                                                 Cotizacion : MON_C,
-                                                                Precio : precio,
                                                                 Status : status,
                                                                 FechaCreacion : FechaCreacion,
                                                                 FechaActualizacion : FechaActualizacion
@@ -537,9 +536,10 @@ Meteor.methods({
                                                                             Equivalente_Actual : V_EquivalenciaTradeoActualMC
                                                             }
                                                 },
-                                                Inversion : { SaldoInversion : REAL_INVER,
-                                                                Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
+                                                Inversion : {   Saldo : parseFloat(REAL_INVER.toFixed(9)),
+                                                                Equivalencia : {    Inicial : parseFloat(Eqv_V_InverSaldAnt.toFixed(4)),
                                                                                     Final : Eqv_V_InverSaldAct},
+                                                                Precio : precio,
                                                                 Comision : {    moneda : MON_C,
                                                                                 Valor : V_Comision,
                                                                                 Equivalencia : Equiv_V_Comision}
@@ -591,7 +591,6 @@ Meteor.methods({
                                                                     TipoCambio : TIPO_CAMBIO,
                                                                     Base : MON_B,
                                                                     Cotizacion : MON_C,
-                                                                    Precio : precio,
                                                                     Status : status,
                                                                     FechaCreacion : FechaCreacion,
                                                                     FechaActualizacion : FechaActualizacion},
@@ -609,9 +608,10 @@ Meteor.methods({
                                                                                 Saldo_Actual : SaldoTradeoActualMB,
                                                                                 Equivalente_Actual : V_EquivalenciaTradeoActualMB
                                                                 }},
-                                                    Inversion : { SaldoInversion : REAL_INVER,
-                                                                    Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
+                                                    Inversion : {   Saldo : parseFloat(REAL_INVER.toFixed(9)),
+                                                                    Equivalencia : {    Inicial : parseFloat(Eqv_V_InverSaldAnt.toFixed(4)),
                                                                                         Final : Eqv_V_InverSaldAct},
+                                                                    Precio : precio,
                                                                     Comision : {    moneda : MON_C,
                                                                                     Valor : V_Comision,
                                                                                     Equivalencia : Equiv_V_Comision}
@@ -912,5 +912,32 @@ Meteor.methods({
             log.info(' ');
         }
     },
+
+    'ReinioDeSaldos' : function () {
+        Monedas.update({}, 
+                        {
+                            $set:{  "saldo.tradeo.activo": Number(0),
+                                    "saldo.tradeo.reserva": Number(0)
+                            }
+                        },
+                        {"multi" : true,"upsert" : true}
+        );
+
+        GananciaPerdida.remove({});
+
+        Meteor.call("ActualizaSaldoTodasMonedasRobot");
+
+        var SECUENCIAS = [ 'IdGanPerdLote', 'IdGanPerdLocal']
+
+        for ( CS = 0, TCS = SECUENCIAS.length; CS < TCS; CS++ ) {
+            var NOMBRE_SECUENCIA = SECUENCIAS[CS]
+            log.info(' Valor de NOMBRE_SECUENCIA: ', NOMBRE_SECUENCIA)
+            Meteor.call('ReinicioDeSecuenciasGBL', NOMBRE_SECUENCIA);
+        }
+    },
+
+    
+
+
 
 });

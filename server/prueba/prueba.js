@@ -39,7 +39,8 @@ Meteor.methods({
 
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
-        
+        //Meteor.call("ListaMonedas");
+        Meteor.call("ReinioDeSaldos"); 
         const MON_B='ETH'
         const MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
@@ -47,7 +48,7 @@ Meteor.methods({
         var MONEDA_COMISION = MON_C
         var MONEDA_SALDO = MON_B
         var MONEDASALDO = MONEDA_SALDO
-        var PRECIO = '0.023502500'
+        var PRECIO = '0.000000544'
         /* 
 
             //log.info(' Tipo de Cambio T
@@ -59,17 +60,19 @@ Meteor.methods({
                 //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
             }
         */        
-        /*
+        
         if (MONEDA_SALDO === MON_B) {
+            var MONEDA_S_SALDO = MON_C
             //CANT_INVER = '1.782'
             CANT_INVER = '0.019'
             //var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
             //var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
         }else if (MONEDA_SALDO === MON_C) {
+            var MONEDA_S_SALDO = MON_B
             //CANT_INVER = '0.01696398'
-            //CANT_INVER = '0.00055' 
-            var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
-            var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
+            CANT_INVER = '0.00055' 
+            //var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
+            //var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
         } 
         
         MAPLICOMIS = MON_C
@@ -83,139 +86,136 @@ Meteor.methods({
             //Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
             //Meteor.call("CrearNuevaOrderRobot", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
                                         // TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){ 
-<<<<<<< HEAD
+
             /*
-            console.log('--------------------------------------------');
+            log.info('--------------------------------------------');
             var XPromedio = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-            console.log("Calculo X Promedio: ", XPromedio);
-            console.log('--------------------------------------------');
+            log.info("Calculo X Promedio: ", XPromedio);
+            log.info('--------------------------------------------');
             var XOrden = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-            console.log("Calculo X Orden: ", XOrden);
-            console.log('--------------------------------------------');
+            log.info("Calculo X Orden: ", XOrden);
+            log.info('--------------------------------------------');
             var XVolumen = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-            console.log("Calculo X Volumen: ", XVolumen);
-            console.log('--------------------------------------------');
+            log.info("Calculo X Volumen: ", XVolumen);
+            log.info('--------------------------------------------');
             /*
             var IdTransaccionActual = "0899750c5384478998adb2818337d627"
             var Orden = Meteor.call("CancelarOrden", IdTransaccionActual );
-            console.log("Calculo X Orden: ", Orden);
-
-=======
+            log.info("Calculo X Orden: ", Orden);
      
          
         
             //var sal = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
             //log.info("Valor de sal: ", sal);
->>>>>>> 1431713e9f05ec5077165943b7c6ffcd76e6fff1
         /**/
 
             //Meteor.call("ConsultarHistoricoOrdenes"); 
         
-        /*
-            var ORDEN = '00000000000000000000000000000154'
+            /*
+                var ORDEN = '00000000000000000000000000000154'
 
-            Meteor.call("ValidaTiempoEspera", ORDEN);
-        */
-        
-        /*
-        const ORDEN = { id: 134980877254,
-                        clientOrderId: '00000000000000000000000000000023',
-                        symbol: 'VRABTC',
-                        side: 'buy',
-                        status: 'filled',
-                        type: 'limit',
-                        timeInForce: 'GTC',
-                        quantity: '19',
-                        price: '0.0000001401',
-                        cumQuantity: '19',
-                        createdAt: '2019-06-21T05:06:42.088Z',
-                        updatedAt: '2019-06-21T05:06:42.088Z',
-                        tradesReport:
-                            [ { id: 588955797,
-                                quantity: '19',
-                                price: '0.0000001401',
-                                fee: '0.000000005324',
-                                timestamp: '2019-06-21T05:06:42.088Z' } ] }
+                Meteor.call("ValidaTiempoEspera", ORDEN);
+            */
+            
+            /*
+            const ORDEN = { id: 134980877254,
+                            clientOrderId: '00000000000000000000000000000023',
+                            symbol: 'VRABTC',
+                            side: 'buy',
+                            status: 'filled',
+                            type: 'limit',
+                            timeInForce: 'GTC',
+                            quantity: '19',
+                            price: '0.0000001401',
+                            cumQuantity: '19',
+                            createdAt: '2019-06-21T05:06:42.088Z',
+                            updatedAt: '2019-06-21T05:06:42.088Z',
+                            tradesReport:
+                                [ { id: 588955797,
+                                    quantity: '19',
+                                    price: '0.0000001401',
+                                    fee: '0.000000005324',
+                                    timestamp: '2019-06-21T05:06:42.088Z' } ] }
 
-        var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')
-        //(TIPO_CAMBIO, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, DATOS, ID_LOTE){
-        Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, IdTransaccionLoteActual);
-        /**/   
+            var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')
+            //(TIPO_CAMBIO, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, DATOS, ID_LOTE){
+            Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, IdTransaccionLoteActual);
+            /**/   
 
-        /*
-        var AnioInicio = 2019
-        var fechaActual = new Date();
-        var AnioAct = fechaActual.getFullYear();
+            /*
+            var AnioInicio = 2019
+            var fechaActual = new Date();
+            var AnioAct = fechaActual.getFullYear();
 
 
-        while ( AnioInicio <=  parseFloat(AnioAct) ){
+            while ( AnioInicio <=  parseFloat(AnioAct) ){
 
-            var MES = 1;
-            while ( MES < 13 ){
+                var MES = 1;
+                while ( MES < 13 ){
 
-                V_MES = Meteor.call('CompletaConCero', MES, 2);
-                var date = new Date(AnioInicio,MES);
-                log.info("     MES:", MES);
-                //log.info(" Valor de date:", date);
+                    V_MES = Meteor.call('CompletaConCero', MES, 2);
+                    var date = new Date(AnioInicio,MES);
+                    log.info("     MES:", MES);
+                    //log.info(" Valor de date:", date);
 
-                var primerDia = new Date(date.getFullYear(), date.getMonth(), 1)
-                var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-                /*
-                log.info(" Valor de primerDia:", primerDia);
-                log.info(" Valor de ultimoDia:", ultimoDia);
-                *//*
-                PD = Meteor.call('CompletaConCero', primerDia.getDate(), 2);
-                UD = Meteor.call('CompletaConCero', ultimoDia.getDate(), 2);
-                
-                //log.info(" Valor de AnioIncial:", AnioInicio);
-                var FechaInicial = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ PD ]+['T00%3A00%3A00']
-                var UltimoDiaAnio = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ UD ]+['T23%3A59%3A59']
-                log.info("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);
+                    var primerDia = new Date(date.getFullYear(), date.getMonth(), 1)
+                    var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+                    /*
+                    log.info(" Valor de primerDia:", primerDia);
+                    log.info(" Valor de ultimoDia:", ultimoDia);
+                    *//*
+                    PD = Meteor.call('CompletaConCero', primerDia.getDate(), 2);
+                    UD = Meteor.call('CompletaConCero', ultimoDia.getDate(), 2);
+                    
+                    //log.info(" Valor de AnioIncial:", AnioInicio);
+                    var FechaInicial = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ PD ]+['T00%3A00%3A00']
+                    var UltimoDiaAnio = [AnioInicio.toString()]+['-']+[ V_MES ]+['-']+[ UD ]+['T23%3A59%3A59']
+                    log.info("Fecha Inicial: ", FechaInicial, " Fecha Final: ", UltimoDiaAnio);
 
-                
-                MES += 1
+                    
+                    MES += 1
+                }
+
+
+
+
+                AnioInicio += 1
             }
+            /**/    
+            
+            //Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+
+            /**/
+            /*
+                var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
+                var V_LimiteMuestreo = LimiteMuestreo[0].valor
+
+                log.info("Valor de V_LimiteMuestreo: ", V_LimiteMuestreo)
+            */
+
+
+            //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO,1);
 
 
 
+            //'Invertir': function( MONEDA, LIMITE_AP_DEP, CANT_TIP_CAMBIOS_VALIDADOS ){
+            ///Meteor.call("Invertir",MONEDA_SALDO, 1, 1);
+            //Meteor.call("ValidaPropTipoCambiosValidados",MONEDA_SALDO, 1);
 
-            AnioInicio += 1
-        }
-        /**/    
-        
-        //Meteor.call("ValidaMonedasTransfCuentaTRadeo");
+            //Meteor.call("TipoCambioDisponibleCompra", MONEDA_SALDO,CANT_INVER);
 
-        /**/
-        /*
-            var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
-            var V_LimiteMuestreo = LimiteMuestreo[0].valor
+            //Meteor.call("ValidarRanking", MONEDA_SALDO)
 
-            log.info("Valor de V_LimiteMuestreo: ", V_LimiteMuestreo)
-        */
+            //Meteor.call(ConsultarHistoricoOrdenes)
+            /*
+            var LIMITE_AP_DEP= 1
 
-
-        //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO,1);
-
-
-
-        //'Invertir': function( MONEDA, LIMITE_AP_DEP, CANT_TIP_CAMBIOS_VALIDADOS ){
-        ///Meteor.call("Invertir",MONEDA_SALDO, 1, 1);
-        //Meteor.call("ValidaPropTipoCambiosValidados",MONEDA_SALDO, 1);
-
-        //Meteor.call("TipoCambioDisponibleCompra", MONEDA_SALDO,CANT_INVER);
-
-        //Meteor.call("ValidarRanking", MONEDA_SALDO)
-
-        //Meteor.call(ConsultarHistoricoOrdenes)
-        /*
-        var LIMITE_AP_DEP= 1
-
-        var CANT_TIP_CAMBIOS_VALIDADOS =1
-        var RankingTiposDeCambios = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA_SALDO, estado : "A", "tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: CANT_TIP_CAMBIOS_VALIDADOS } ]);
-        var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
-        var ProporcionTipoCambios = PTC[0];
-        //log.info("Valor de RankingTiposDeCambios: ", RankingTiposDeCambios)
-        var CRTC2=1;     
+            var CANT_TIP_CAMBIOS_VALIDADOS =1
+            var RankingTiposDeCambios = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA_SALDO, estado : "A", "tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: CANT_TIP_CAMBIOS_VALIDADOS } ]);
+            var PTC = Parametros.aggregate([{ $match : { dominio : "limites", nombre : "PropPorcInver", estado : true  } }, { $project: {_id : 0, valor : 1}}])
+            var ProporcionTipoCambios = PTC[0];
+            //log.info("Valor de RankingTiposDeCambios: ", RankingTiposDeCambios)
+            var CRTC2=1;     
 
             for ( CTCV = 0, TTCV = RankingTiposDeCambios.length; CTCV <= TTCV; CTCV++ ) {
                 log.info('--------------------------------------------');
@@ -395,15 +395,17 @@ Meteor.methods({
             log.warn(" Probando")
             Error(" Probando")
             console.timeEnd('       TIEMPO TRANSCURRIDO: '+ MON_B);
-            /**/
+        /**/
 
+    log.info(' ');
+    log.info(' ');
+    log.info('===================================================================================================================================');
 
+    var ResultadoEquvalenciaTipoCambio = Meteor.call("EquivalenteTipoCambio", MONEDA_S_SALDO, CANT_INVER, PRECIO, TIPO_CAMBIO );
+    log.info(' ResultadoEquvalenciaTipoCambio: ', ResultadoEquvalenciaTipoCambio);
 
-            var pruebaA = Meteor.call("EquivalenteTipoCambio", MONEDA_SALDO, CANT_INVER, PRECIO, TIPO_CAMBIO );
-            console.log('Valor de prueba: ', pruebaA);
-
-            var pruebaB = Meteor.call("EquivalenteDolar", MON_C, pruebaA, 2);
-            console.log("Valor de prueba ", pruebaB);
+    var ResultadoEquivalenteEnDolares = Meteor.call("EquivalenteDolar", MONEDA_S_SALDO, ResultadoEquvalenciaTipoCambio, 2);
+    log.info(" ResultadoEquivalenteEnDolares ", ResultadoEquivalenteEnDolares);
 
     }
 });
