@@ -49,8 +49,8 @@ if (Parametros.find({ dominio : 'limites' }).count() === 0){
 };
 
 if (Parametros.find({ dominio : 'Prueba' }).count() === 0){
-	Parametros.insert({ fecha : new Date(), dominio : "Prueba", nombre : "robot", estado : true, valor : 1, descripcion : "Simula la compra de monedas" });
-	Parametros.insert({ fecha : new Date(), dominio : "Prueba", nombre : "saldo", estado : true, valor : 1, descripcion : "Saldo ficticio" });
+	Parametros.insert({ fecha : new Date(), dominio : "Prueba", nombre : "robot", estado : true, valor : 1, descripcion : "1 = activo, 0 = Inactivo - Simula la compra de monedas" });
+	Parametros.insert({ fecha : new Date(), dominio : "Prueba", nombre : "saldo", estado : true, valor : 1, descripcion : " 1 = activo, 0 = Inactivo - Restaura los valores de Saldo de todas las monedas y asigna Saldo ficticio Inicial" });
 };
 
 if (Parametros.find({ dominio : 'Periodos' }).count() === 0){
