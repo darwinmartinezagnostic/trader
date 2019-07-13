@@ -1,14 +1,21 @@
 import { Meteor } from 'meteor/meteor';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
 moment().tz('America/Caracas').format();
+
+const log = new Logger();
+const LogFile = new LoggerFile(log,logFilePath);
+// Enable LoggerFile with default settings
+LogFile.enable();
 
 Meteor.methods({
 
     'CrearNuevaOrderRobot':function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
-        log.info(' ');
-        log.info('--------------------------------------------');
+        //log.info(' ');
+        //log.info('--------------------------------------------');
         Meteor.call("GuardarLogEjecucionTrader", ['Creando una nueva orden en el ROBOT']);
-        log.info('--------------------------------------------');
-        log.info(' ');
+        //log.info('--------------------------------------------');
+        //log.info(' ');
 
         var CONSTANTES = Meteor.call("Constantes");
         var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
@@ -18,12 +25,12 @@ Meteor.methods({
                                                 ID_LocalAct : IdTransaccionActual,
                                                 Id_Lote: ID_LOTE}
                             });
-        log.info('############################################');
+        //log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", 'Creando una nueva orden');
-        log.info("Valores recibidos CrearNuevaOrderRobot", " TIPO_CAMBIO: ", TIPO_CAMBIO, " CANT_INVER: ", CANT_INVER, " MON_B: ", MON_B, " MON_C: ", MON_C, " MONEDA_SALDO: ", MONEDA_SALDO, " MONEDA_COMISION: ", MONEDA_COMISION, " ID_LOTE: ", ID_LOTE);
+        log.info("Valores recibidos CrearNuevaOrderRobot", " TIPO_CAMBIO: "+ TIPO_CAMBIO+ " CANT_INVER: "+ CANT_INVER+ " MON_B: "+ MON_B+ " MON_C: "+ MON_C+ " MONEDA_SALDO: "+ MONEDA_SALDO+ " MONEDA_COMISION: "+ MONEDA_COMISION+ " ID_LOTE: "+ ID_LOTE,'Robot');
 
         var fecha = new Date();
-        log.info("Valor de fecha:", fecha)
+        log.info("Valor de fecha:", fecha,'Robot');
 
         if ( MON_B === MONEDA_SALDO ) {
             var TP = 'sell'
@@ -33,29 +40,29 @@ Meteor.methods({
             var V_TipoOperaciont = 'COMPRA';
         }
 
-        log.info("Valor de MON_B: ", MON_B)
-        log.info("Valor de MON_C: ", MON_C)
-        log.info("Valor de MONEDA_SALDO: ", MONEDA_SALDO)
-        log.info("Valor de V_TipoOperaciont: ", V_TipoOperaciont)
+        log.info("Valor de MON_B: ", MON_B,'Robot');
+        log.info("Valor de MON_C: ", MON_C,'Robot');
+        log.info("Valor de MONEDA_SALDO: ", MONEDA_SALDO,'Robot');
+        log.info("Valor de V_TipoOperaciont: ", V_TipoOperaciont,'Robot');
 
         var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-        log.info(" Valor de RecalcIverPrec: ", RecalcIverPrec)
+        log.info(" Valor de RecalcIverPrec: ", RecalcIverPrec,'Robot');
         var TC = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO })
-        log.info(" Valor de TC: ", TC)
+        log.info(" Valor de TC: ", TC,'Robot');
         var MinimoInversion = TC.valor_incremento
-        log.info(" Valor de MinimoInversion: ", MinimoInversion)
+        log.info(" Valor de MinimoInversion: ", MinimoInversion,'Robot');
         if ( parseFloat(RecalcIverPrec.MontIversionCal) >= parseFloat(MinimoInversion) ) {
-            log.info(" Valor de if ( ", parseFloat(RecalcIverPrec.MontIversionCal)," >= ",parseFloat(MinimoInversion), " )")
-            var INV_REAL = RecalcIverPrec.MontRealIversionCal
+            log.info(" Valor de if ( "+ parseFloat(RecalcIverPrec.MontIversionCal)+" >= "+parseFloat(MinimoInversion) +" )",'','Robot');
+            var INV_REAL = RecalcIverPrec.MontRealIversionCal;
 
-            log.info("Valor de IdTransaccionActual: ", IdTransaccionActual)
-            log.info("Valor de TIPO_CAMBIO: ", TIPO_CAMBIO)
-            log.info("Valor de TP: ", TP);
-            log.info("Valor de INV_REAL: ", INV_REAL);
-            log.info("Valor de RecalcIverPrec.MontIversionCal: ", RecalcIverPrec.MontIversionCal)
-            log.info("Valor de RecalcIverPrec.MejorPrecCal: ", RecalcIverPrec.MejorPrecCal)
-            log.info("Valor de RecalcIverPrec.comision_hbtc: ", RecalcIverPrec.comision_hbtc)
-            log.info("Valor de RecalcIverPrec.comision_mercado: ", RecalcIverPrec.comision_mercado)
+            log.info("Valor de IdTransaccionActual: ", IdTransaccionActual,'Robot');
+            log.info("Valor de TIPO_CAMBIO: ", TIPO_CAMBIO,'Robot');
+            log.info("Valor de TP: ", TP,'Robot');
+            log.info("Valor de INV_REAL: ", INV_REAL,'Robot');
+            log.info("Valor de RecalcIverPrec.MontIversionCal: ", RecalcIverPrec.MontIversionCal,'Robot');
+            log.info("Valor de RecalcIverPrec.MejorPrecCal: ", RecalcIverPrec.MejorPrecCal,'Robot');
+            log.info("Valor de RecalcIverPrec.comision_hbtc: ", RecalcIverPrec.comision_hbtc,'Robot');
+            log.info("Valor de RecalcIverPrec.comision_mercado: ", RecalcIverPrec.comision_mercado,'Robot');
 
             var DatosRobot = {  clientOrderId : IdTransaccionActual, 
                                 symbol : TIPO_CAMBIO, 
@@ -67,13 +74,13 @@ Meteor.methods({
                                 comision_m : RecalcIverPrec.comision_hbtc,  
                                 comision_h : RecalcIverPrec.comision_mercado }
 
-            log.info(" Valor de DatosRobot: ", DatosRobot)
+            log.info(" Valor de DatosRobot: ", DatosRobot,'Robot');
 
 
-            log.info(" Estoy aca 1")
+            log.info(" Estoy aca 1",'','Robot');
             do {            
                 var Orden = Meteor.call('GenerarOrderRobot', DatosRobot);
-                log.info(" Estoy aca 2")
+                log.info(" Estoy aca 2",'','Robot');
                 Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrderRobot: recibi Orden: ']+[Orden]); 
                 if ( Orden === undefined ) {
                     Meteor.call('sleep', 4);
@@ -90,17 +97,17 @@ Meteor.methods({
         Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrderRobot: recibi estado: ']+[Estado_Orden]); 
         ContpartiallyFilled = 0;
 
-        log.info(' Valor de Orden 1: ', Orden)
+        log.info(' Valor de Orden 1: ', Orden,'Robot');
 
         while( Estado_Orden !== "filled" ){
-            log.info('Estoy en el while')
-            log.info(' Valor de Orden 2: ', Orden)
-            log.info(' Valor de Estado_Orden: ', Estado_Orden)
+            log.info('Estoy en el while','','Robot');
+            log.info(' Valor de Orden 2: ', Orden,'Robot');
+            log.info(' Valor de Estado_Orden: ', Estado_Orden,'Robot');
             fecha = moment (new Date());
             if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
                 var V_IdHitBTC = Orden.id
-                log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" )')
-                log.info(' Valor de Orden 3: ', Orden)
+                log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" )','','Robot');
+                log.info(' Valor de Orden 3: ', Orden,'Robot');
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);                
                 Meteor.call('sleep', 4);
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FIN ESPERA: ']+[fecha._d]);
@@ -136,18 +143,18 @@ Meteor.methods({
 
                 const Resultado = Meteor.call("ValidarEstadoOrdenRobot", Orden)
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
-                log.info(' Valor de Orden 4: ', Orden)
+                log.info(' Valor de Orden 4: ', Orden,'Robot');
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
 
                 var Orden = Resultado
                 var Estado_Orden = Resultado.status;
-                log.info(' Valor de Orden 5: ', Orden)
+                log.info(' Valor de Orden 5: ', Orden,'Robot');
             }
 
             if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Quantity too low" ) {
-                log.info(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )')
-                var V_IdHitBTC = Orden.id
-                log.info(' Valor de Orden 6: ', Orden)
+                log.info(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )','','Robot');
+                var V_IdHitBTC = Orden.id;
+                log.info(' Valor de Orden 6: ', Orden,'Robot');
 
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
@@ -173,18 +180,18 @@ Meteor.methods({
                                         );
                 
                 if ( Estado_Orden === "DuplicateclientOrderId") {   
-                    log.info(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")')
+                    log.info(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")','','Robot');
                     Meteor.call("GuardarLogEjecucionTrader", [' CrearNuevaOrderRobot: Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
                     Meteor.call('CrearNuevaOrderRobot', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
                 }else{
                     TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
                 }
-                log.info(' Valor de Orden 7: ', Orden)
+                log.info(' Valor de Orden 7: ', Orden,'Robot');
                 break
             }
 
             if ( Estado_Orden === "errorisnotdefined" ) {
-                log.info(' Valor de Orden 8: ', Orden)
+                log.info(' Valor de Orden 8: ', Orden,'Robot');
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
                                             $set: {
@@ -206,13 +213,13 @@ Meteor.methods({
                                         }, 
                                         {"upsert" : true}
                                         );
-                log.info(' Valor de Orden 9: ', Orden)
+                log.info(' Valor de Orden 9: ', Orden,'Robot');
                 TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
                 break
             }
 
             if ( Estado_Orden === "Insufficientfunds" ) {
-                log.info(" Insufficientfunds: Valor de Orden 10: ", Orden)
+                log.info(" Insufficientfunds: Valor de Orden 10: ", Orden,'Robot');
                 //var V_IdHitBTC = Orden.id
 
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
@@ -239,7 +246,7 @@ Meteor.methods({
 
                 const Resultado = Meteor.call("ValidarEstadoOrdenRobot", Orden)
                 var Orden = Resultado
-                log.info(' Valor de Orden 11: ', Orden)
+                log.info(' Valor de Orden 11: ', Orden,'Robot');
                 var Estado_Orden = Resultado.status;
                 log.info(" Insufficientfunds: Valor de Estado_Orden: ", Estado_Orden)
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
@@ -247,19 +254,19 @@ Meteor.methods({
             } 
         }
 
-        log.info(' Valor de Orden 12: ', Orden)
+        log.info(' Valor de Orden 12: ', Orden,'Robot');
 
         if ( Estado_Orden === "filled" ) {
-            log.info(" if ( Estado_Orden === filled ) : Voy a Guardar")
-            log.info(' Valor de Orden 13: ', Orden)
-            log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO, CANT_INVER,  INV_REAL, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+            log.info(" if ( Estado_Orden === filled ) : Voy a Guardar",'','Robot');
+            log.info(' Valor de Orden 13: ', Orden,'Robot');
+            log.info(''," if ( Estado_Orden === filled ) : Enviando "+ TIPO_CAMBIO+' '+CANT_INVER+' '+INV_REAL+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE,'Robot');
             Meteor.call('GuardarOrdenRobot', TIPO_CAMBIO, CANT_INVER,  INV_REAL, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
-            log.info(" if ( Estado_Orden === filled ) : Ya guardé")
+            log.info(" if ( Estado_Orden === filled ) : Ya guardé",'','Robot');
         }
     },
 
     'GenerarOrderRobot':function(DATOS){
-        log.info(' GenerarOrderRobot: Valor de DATOS: ', DATOS)
+        log.info(' GenerarOrderRobot: Valor de DATOS: ', DATOS,'Robot');
         IdCalcHTB = Meteor.call("SecuenciasRBT", 'IdOrdenHBTC');
 
         fecha = moment (new Date());
@@ -304,78 +311,78 @@ Meteor.methods({
     'ValidarEstadoOrdenRobot': function( VAL_ORDEN){
 
         T_id = VAL_ORDEN.id
-        var Estado_Orden = OrdenesRobot.findOne({ _id : T_id })
-        log.info('Valor de Estado_Orden', Estado_Orden)
-        return Estado_Orden
+        var Estado_Orden = OrdenesRobot.findOne({ _id : T_id });
+        log.info('Valor de Estado_Orden', Estado_Orden,'Robot');
+        return Estado_Orden;
     },
     ////////////////////////////////////DARWIN/////////////////////////////////393
     'GuardarOrdenRobot': function(TIPO_CAMBIO, CANT_INVER, REAL_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE){
-        log.info(" Valores recibidos: ", TIPO_CAMBIO, CANT_INVER, REAL_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE)
+        log.info(" Valores recibidos: ", TIPO_CAMBIO+' '+CANT_INVER+' '+REAL_INVER+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+ORDEN+' '+ID_LOTE,'Robot');
         var ComisionTtl = 0
 
         var Negociaciones = ORDEN.tradesReport
-        log.info("Valor de ORDEN: ", ORDEN.tradesReport)
+        log.info("Valor de ORDEN: ", ORDEN.tradesReport,'Robot');
         var status = ORDEN.status
 
         for (CRPT = 0, TRPT = Negociaciones.length; CRPT < TRPT; CRPT++) {
             var Reporte = Negociaciones[CRPT];
             ComisionTtl +=  parseFloat(Reporte.fee)
         }
-        log.info('Valor de ComisionTtl', ComisionTtl)
+        log.info('Valor de ComisionTtl', ComisionTtl,'Robot');
 
-        var Comision = ComisionTtl.toString()
-        var precio = ORDEN.price
-        var CantidadRecibida = ORDEN.quantity
-        var IdHBTC = ORDEN.id
-        var IdTransaccionActual = ORDEN.clientOrderId
-        var FormaDeOperacion = ORDEN.side
-        var FechaCreacion = ORDEN.createdAt
-        var FechaActualizacion = ORDEN.updatedAt
+        var Comision = ComisionTtl.toString();
+        var precio = ORDEN.price;
+        var CantidadRecibida = ORDEN.quantity;
+        var IdHBTC = ORDEN.id;
+        var IdTransaccionActual = ORDEN.clientOrderId;
+        var FormaDeOperacion = ORDEN.side;
+        var FechaCreacion = ORDEN.createdAt;
+        var FechaActualizacion = ORDEN.updatedAt;
         var V_AnterioresMB = Monedas.aggregate([{ $match: { 'moneda' : MON_B }}]);
         var ValoresAnterioresMB = V_AnterioresMB[0];
         var V_AnterioresMC = Monedas.aggregate([{ $match: { 'moneda' : MON_C }}]);
         var ValoresAnterioresMC = V_AnterioresMC[0];
 
-        log.info(" Valor de Comision: ", Comision)
-        log.info(" Valor de precio: ", precio)
-        log.info(" Valor de CantidadRecibida: ", CantidadRecibida)
-        log.info(" Valor de IdHBTC: ", IdHBTC)
-        log.info(" Valor de IdTransaccionActual: ", IdTransaccionActual)
-        log.info(" Valor de FormaDeOperacion: ", FormaDeOperacion)
-        log.info(" Valor de FechaCreacion: ", FechaCreacion)
-        log.info(" Valor de FechaActualizacion: ", FechaActualizacion)
-        log.info(" Valor de ValoresAnterioresMB: ", ValoresAnterioresMB)
-        log.info(" Valor de ValoresAnterioresMC: ", ValoresAnterioresMC)
+        log.info(" Valor de Comision: ", Comision,'Robot');
+        log.info(" Valor de precio: ", precio,'Robot');
+        log.info(" Valor de CantidadRecibida: ", CantidadRecibida,'Robot');
+        log.info(" Valor de IdHBTC: ", IdHBTC,'Robot');
+        log.info(" Valor de IdTransaccionActual: ", IdTransaccionActual,'Robot');
+        log.info(" Valor de FormaDeOperacion: ", FormaDeOperacion,'Robot');
+        log.info(" Valor de FechaCreacion: ", FechaCreacion,'Robot');
+        log.info(" Valor de FechaActualizacion: ", FechaActualizacion,'Robot');
+        log.info(" Valor de ValoresAnterioresMB: ", ValoresAnterioresMB,'Robot');
+        log.info(" Valor de ValoresAnterioresMC: ", ValoresAnterioresMC,'Robot');
 
         var Transaccion = OrdenesRobot.findOne({ clientOrderId : IdTransaccionActual })
         var V_Id_Transhitbtc = Transaccion._id
-        log.info(" Valor de Transaccion: ", Transaccion)
+        log.info(" Valor de Transaccion: ", Transaccion,'Robot');
 
         Meteor.call('GuardarLogEjecucionTrader', ' CrearNuevaOrder: Estoy en: Estado_Orden === "filled"');
 
 
-        log.info('############################################');
-        log.info('--------------------------------------------');
+        //log.info('############################################');
+        //log.info('--------------------------------------------');
         Meteor.call("GuardarLogEjecucionTrader", '   VALORES ANTERIORES MB');
         Meteor.call("GuardarLogEjecucionTrader", ['  ']+[MON_B]);
-        log.info('--------------------------------------------');
+        //log.info('--------------------------------------------');
         
 
         var FechaTradeoAnteriorMB = ValoresAnterioresMB.saldo.tradeo.fecha;
         var SaldoTradeoAnteriorMB = ValoresAnterioresMB.saldo.tradeo.activo;
         
-        log.info(" Valor de FechaTradeoAnteriorMB: ", FechaTradeoAnteriorMB)
-        log.info(" Valor de SaldoTradeoAnteriorMB: ", SaldoTradeoAnteriorMB)
+        log.info(" Valor de FechaTradeoAnteriorMB: ", FechaTradeoAnteriorMB,'Robot');
+        log.info(" Valor de SaldoTradeoAnteriorMB: ", SaldoTradeoAnteriorMB,'Robot');
         var V_EquivalenciaTradeoAnteriorMB = ValoresAnterioresMB.saldo.tradeo.equivalencia;
 
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de FechaTradeoAnteriorMB: "]+[FechaTradeoAnteriorMB]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoTradeoAnteriorMB: "]+[SaldoTradeoAnteriorMB]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_EquivalenciaTradeoAnteriorMB: "]+[V_EquivalenciaTradeoAnteriorMB]);
 
-        log.info('--------------------------------------------');
+        //log.info('--------------------------------------------');
         Meteor.call("GuardarLogEjecucionTrader", '   VALORES ANTERIORES MC');
         Meteor.call("GuardarLogEjecucionTrader", ['  ']+[MON_C]);
-        log.info('--------------------------------------------');
+        //log.info('--------------------------------------------');
         var FechaTradeoAnteriorMC = ValoresAnterioresMC.saldo.tradeo.fecha;
         var SaldoTradeoAnteriorMC = ValoresAnterioresMC.saldo.tradeo.activo;
         var V_EquivalenciaTradeoAnteriorMC = ValoresAnterioresMC.saldo.tradeo.equivalencia;
@@ -388,24 +395,24 @@ Meteor.methods({
         /////////////////////////   ACTUALIZANDO SALDO   /////////////////////////
 
         if ( MONEDA_SALDO == MON_B ) {
-            log.info("Estoy en if ( MONEDA_SALDO == MON_B )")
+            log.info("Estoy en if ( MONEDA_SALDO == MON_B )",'','Robot');
             var SaldoActualCalcMB =  parseFloat(SaldoTradeoAnteriorMB) - parseFloat(REAL_INVER)
-            log.info(" Valor de SaldoActualCalcMB: ", SaldoActualCalcMB," = ", parseFloat(SaldoTradeoAnteriorMB)," - (", parseFloat(REAL_INVER),")")
-            var EqvSaldoActualCalcMB = Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoActualCalcMB.toFixed(9)), 2)
-            log.info(" Valor de EqvSaldoActualCalcMB: ", EqvSaldoActualCalcMB)
+            log.info(''," Valor de SaldoActualCalcMB: "+ SaldoActualCalcMB+" = "+ parseFloat(SaldoTradeoAnteriorMB)+" - ("+ parseFloat(REAL_INVER)+")",'Robot');
+            var EqvSaldoActualCalcMB = Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoActualCalcMB.toFixed(9)), 2);
+            log.info(" Valor de EqvSaldoActualCalcMB: ", EqvSaldoActualCalcMB,'Robot');
             Monedas.update( { moneda : MON_B },
                                 { $set:{    "saldo.tradeo.activo": parseFloat(SaldoActualCalcMB.toFixed(9)),
                                             "saldo.tradeo.equivalencia": parseFloat(EqvSaldoActualCalcMB.toFixed(9)) }
                                 }
                             );
-            var MonAdquirida = Monedas.findOne({ moneda : MON_C })
-            log.info(" Valor de MonAdquirida: ", MonAdquirida)
-            var SaldoActualMonAd = MonAdquirida.saldo.tradeo.activo
-            log.info(" Valor de SaldoActualMonAd: ", SaldoActualMonAd)
-            var SaldoActualCalcMC =  parseFloat(SaldoActualMonAd) + ( parseFloat(CantidadRecibida))
-            log.info(" Valor de SaldoActualCalcMC: ", SaldoActualCalcMC," = ", parseFloat(SaldoActualMonAd)," + (", parseFloat(CantidadRecibida),")")
-            var EqvSaldoActualCalcMC =  Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoActualCalcMC.toFixed(9)), 2)
-            log.info(" Valor de EqvSaldoActualCalcMC: ", EqvSaldoActualCalcMC)
+            var MonAdquirida = Monedas.findOne({ moneda : MON_C });
+            log.info(" Valor de MonAdquirida: ", MonAdquirida,'Robot');
+            var SaldoActualMonAd = MonAdquirida.saldo.tradeo.activo;
+            log.info(" Valor de SaldoActualMonAd: ", SaldoActualMonAd,'Robot');
+            var SaldoActualCalcMC =  parseFloat(SaldoActualMonAd) + ( parseFloat(CantidadRecibida));
+            log.info(" Valor de SaldoActualCalcMC: ", SaldoActualCalcMC+" = "+ parseFloat(SaldoActualMonAd)+" + ("+ parseFloat(CantidadRecibida)+")",'Robot');
+            var EqvSaldoActualCalcMC =  Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoActualCalcMC.toFixed(9)), 2);
+            log.info(" Valor de EqvSaldoActualCalcMC: ", EqvSaldoActualCalcMC,'Robot');
             Monedas.update( { moneda : MON_C },
                                 { $set:{    "saldo.tradeo.activo": parseFloat(SaldoActualCalcMC.toFixed(9)),
                                             "saldo.tradeo.equivalencia": parseFloat(EqvSaldoActualCalcMC.toFixed(9)) }
@@ -413,11 +420,11 @@ Meteor.methods({
                             );
 
         }else if ( MONEDA_SALDO == MON_C ) {
-            log.info("Estoy en else if ( MONEDA_SALDO == MON_C )")
+            log.info("Estoy en else if ( MONEDA_SALDO == MON_C )",'','Robot');
             var SaldoActualCalcMC =  parseFloat(SaldoTradeoAnteriorMC) - ( parseFloat(REAL_INVER) - parseFloat(Comision))
-            log.info(" Valor de SaldoActualCalcMC: ", SaldoActualCalcMC," = ", parseFloat(SaldoTradeoAnteriorMC)," - (", parseFloat(REAL_INVER)," - ",parseFloat(Comision),")")
+            log.info(" Valor de SaldoActualCalcMC: ", SaldoActualCalcMC+" = "+ parseFloat(SaldoTradeoAnteriorMC)+" - ("+ parseFloat(REAL_INVER)+" - "+parseFloat(Comision)+")",'Robot');
             var EqvSaldoActualCalcMC = Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoActualCalcMC.toFixed(9)), 2)
-            log.info(" Valor de EqvSaldoActualCalcMC: ", EqvSaldoActualCalcMC)
+            log.info(" Valor de EqvSaldoActualCalcMC: ", EqvSaldoActualCalcMC,'Robot');
             Monedas.update( { moneda : MON_C },
                                 { $set:{    "saldo.tradeo.activo": parseFloat(SaldoActualCalcMC.toFixed(9)),
                                             "saldo.tradeo.equivalencia": parseFloat(EqvSaldoActualCalcMC.toFixed(9)) }
@@ -425,13 +432,13 @@ Meteor.methods({
                             );
 
             var MonAdquirida = Monedas.findOne({ moneda : MON_B })
-            log.info(" Valor de MonAdquirida: ", MonAdquirida)
-            var SaldoActualMonAd = MonAdquirida.saldo.tradeo.activo
-            log.info(" Valor de SaldoActualMonAd: ", SaldoActualMonAd)
-            var SaldoActualCalcMB =  parseFloat(SaldoActualMonAd) + ( parseFloat(CantidadRecibida))
-            log.info(" Valor de SaldoActualCalcMB: ", SaldoActualCalcMB," = ", parseFloat(SaldoActualMonAd)," + (", parseFloat(CantidadRecibida),")")
+            log.info(" Valor de MonAdquirida: ", MonAdquirida,'Robot');
+            var SaldoActualMonAd = MonAdquirida.saldo.tradeo.activo;
+            log.info(" Valor de SaldoActualMonAd: ", SaldoActualMonAd,'Robot');
+            var SaldoActualCalcMB =  parseFloat(SaldoActualMonAd) + ( parseFloat(CantidadRecibida));
+            log.info(" Valor de SaldoActualCalcMB: ", SaldoActualCalcMB+" = "+ parseFloat(SaldoActualMonAd)+" + ("+ parseFloat(CantidadRecibida)+")",'Robot');
             var EqvSaldoActualCalcMB = Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoActualCalcMB.toFixed(9)), 2)
-            log.info(" Valor de EqvSaldoActualCalcMB: ", EqvSaldoActualCalcMB)
+            log.info(" Valor de EqvSaldoActualCalcMB: ", EqvSaldoActualCalcMB,'Robot');
             Monedas.update( { moneda : MON_B },
                                 { $set:{    "saldo.tradeo.activo": parseFloat(SaldoActualCalcMB.toFixed(9)),
                                             "saldo.tradeo.equivalencia": parseFloat(EqvSaldoActualCalcMB.toFixed(9)) }
@@ -439,8 +446,8 @@ Meteor.methods({
                             );
 
         }
-        log.info(" Valor de SaldoActualCalcMB: ", parseFloat(SaldoActualCalcMB.toFixed(9)))
-        log.info(" Valor de SaldoActualCalcMC: ", parseFloat(SaldoActualCalcMC.toFixed(9)))
+        log.info(" Valor de SaldoActualCalcMB: ", parseFloat(SaldoActualCalcMB.toFixed(9)),'Robot');
+        log.info(" Valor de SaldoActualCalcMC: ", parseFloat(SaldoActualCalcMC.toFixed(9)),'Robot');
 
 
         //////////////////////////////////////////////////////////////////////////
@@ -453,13 +460,13 @@ Meteor.methods({
 
 
 
-        log.info('--------------------------------------------');
+        //log.info('--------------------------------------------');
         Meteor.call("GuardarLogEjecucionTrader", '   VALORES ACTUALES MB');
         Meteor.call("GuardarLogEjecucionTrader", ['  ']+[MON_B]);
-        log.info('--------------------------------------------');
+        //log.info('--------------------------------------------');
         var FechaTradeoActualMB = ValoresActualesMB.saldo.tradeo.fecha;
         var SaldoTradeoActualMB = ValoresActualesMB.saldo.tradeo.activo;
-        log.info(" GuardarOrdenRobot: Enviando 1 ", 'EquivalenteDolar', MON_B, parseFloat(SaldoTradeoActualMB), 2);
+        log.info(" GuardarOrdenRobot: Enviando 1 ", 'EquivalenteDolar '+ MON_B+' '+parseFloat(SaldoTradeoActualMB)+' '+ 2,'Robot');
         //var V_EquivalenciaTradeoActualMB = Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoTradeoActualMB), 2);
         var V_EquivalenciaTradeoActualMB = ValoresActualesMB.saldo.tradeo.equivalencia;
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de FechaTradeoActualMB: "]+[FechaTradeoActualMB]);
@@ -467,26 +474,26 @@ Meteor.methods({
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_EquivalenciaTradeoActualMB: "]+[V_EquivalenciaTradeoActualMB]);
 
 
-        log.info('--------------------------------------------');
+        //log.info('--------------------------------------------');
         Meteor.call("GuardarLogEjecucionTrader", '   VALORES ACTUALES MC');
         Meteor.call("GuardarLogEjecucionTrader", ['  ']+[MON_C]);
-        log.info('--------------------------------------------');
+        //log.info('--------------------------------------------');
         var FechaTradeoActualMC = ValoresActualesMC.saldo.tradeo.fecha;
         var SaldoTradeoActualMC = ValoresActualesMC.saldo.tradeo.activo;
-        log.info(" GuardarOrdenRobot: Enviando 2 ", 'EquivalenteDolar', MON_C, parseFloat(SaldoTradeoActualMC), 2);
+        log.info(" GuardarOrdenRobot: Enviando 2 ", 'EquivalenteDolar '+ MON_C+' '+ parseFloat(SaldoTradeoActualMC)+' '+ 2,'Robot');
         //var V_EquivalenciaTradeoActualMC = Meteor.call('EquivalenteDolar', MON_C, parseFloat(SaldoTradeoActualMC), 2);
         var V_EquivalenciaTradeoActualMC = ValoresActualesMC.saldo.tradeo.equivalencia;
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de FechaTradeoActualMC: "]+[FechaTradeoActualMC]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoTradeoActualMC: "]+[SaldoTradeoActualMC]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_EquivalenciaTradeoActualMC: "]+[V_EquivalenciaTradeoActualMC]);
 
-        log.info('--------------------------------------------');
+        //log.info('--------------------------------------------');
         Meteor.call("GuardarLogEjecucionTrader", '   VALORES INVERSION');
-        log.info(" GuardarOrdenRobot: Enviando 3 ", 'EquivalenteDolar', MONEDA_SALDO, parseFloat(REAL_INVER), 2);
+        log.info(" GuardarOrdenRobot: Enviando 3 ", 'EquivalenteDolar '+MONEDA_SALDO+' '+parseFloat(REAL_INVER)+' '+2,'Robot');
         var Eqv_V_InverSaldAct = Meteor.call('EquivalenteDolar', MONEDA_SALDO, parseFloat(REAL_INVER), 2);
-        log.info("Valor de Eqv_V_InverSaldAct", Eqv_V_InverSaldAct)
+        log.info("Valor de Eqv_V_InverSaldAct", Eqv_V_InverSaldAct,'Robot');
         var V_Comision = Comision;
-        log.info(" GuardarOrdenRobot: Enviando 4 ", 'EquivalenteDolar', MONEDA_COMISION, parseFloat(V_Comision), 2);
+        log.info(" GuardarOrdenRobot: Enviando 4 ", 'EquivalenteDolar '+MONEDA_COMISION+' '+parseFloat(V_Comision)+' '+ 2,'Robot');
         var Equiv_V_Comision = Meteor.call('EquivalenteDolar', MONEDA_COMISION, parseFloat(V_Comision), 2);
         var SaldoMonedaAdquirida = CantidadRecibida;
         var V_IdHitBTC = IdHBTC
@@ -494,13 +501,13 @@ Meteor.methods({
 
         if ( MONEDA_SALDO == MON_B ) {
             var V_MonedaAdquirida = MON_C
-            log.info(" GuardarOrdenRobot: Enviando 5 ", 'EquivalenteDolar, V_MonedaAdquirida(', V_MonedaAdquirida, '), SaldoMonedaAdquirida(', parseFloat(SaldoMonedaAdquirida), '),', 2);
+            log.info(" GuardarOrdenRobot: Enviando 5 ", 'EquivalenteDolar, V_MonedaAdquirida('+ V_MonedaAdquirida+ ')+ SaldoMonedaAdquirida('+ parseFloat(SaldoMonedaAdquirida)+ '),'+ 2,'Robot');
             var V_EquivSaldoMonedaAdquirida =  Meteor.call('EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2);
             var Eqv_V_InverSaldAnt = (( parseFloat(REAL_INVER) * parseFloat(V_EquivalenciaTradeoAnteriorMB) ) / parseFloat(SaldoTradeoAnteriorMB));
-            log.info( 'Eqv_V_InverSaldAnt (', Eqv_V_InverSaldAnt ,') = REAL_INVER(',REAL_INVER, ') * V_EquivalenciaTradeoAnteriorMB(', V_EquivalenciaTradeoAnteriorMB , ') / SaldoTradeoAnteriorMB(', SaldoTradeoAnteriorMB , ')');
-            log.info("Valor de Eqv_V_InverSaldAnt", Eqv_V_InverSaldAnt)
+            log.info( '','Eqv_V_InverSaldAnt ('+ Eqv_V_InverSaldAnt +') = REAL_INVER('+REAL_INVER+ ') * V_EquivalenciaTradeoAnteriorMB('+ V_EquivalenciaTradeoAnteriorMB + ') / SaldoTradeoAnteriorMB('+ SaldoTradeoAnteriorMB + ')','Robot');
+            log.info("Valor de Eqv_V_InverSaldAnt", Eqv_V_InverSaldAnt,'Robot');
             var V_Ganancia = (parseFloat(Eqv_V_InverSaldAct) - parseFloat(Eqv_V_InverSaldAnt));
-            log.info( 'V_Ganancia (', V_Ganancia ,') = Eqv_V_InverSaldAct(', Eqv_V_InverSaldAct ,') - Eqv_V_InverSaldAnt(', Eqv_V_InverSaldAnt, ')' );
+            log.info( '','V_Ganancia ('+ V_Ganancia +') = Eqv_V_InverSaldAct('+ Eqv_V_InverSaldAct +') - Eqv_V_InverSaldAnt('+ Eqv_V_InverSaldAnt+ ')' ,'Robot');
 
             GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                     {
@@ -570,12 +577,12 @@ Meteor.methods({
             }
         }else if ( MONEDA_SALDO == MON_C ){
                 var V_MonedaAdquirida = MON_B
-                log.info(" GuardarOrdenRobot: Enviando 6 ", 'EquivalenteDolar, V_MonedaAdquirida(', V_MonedaAdquirida, '), SaldoMonedaAdquirida(', parseFloat(SaldoMonedaAdquirida), '),', 2);
+                log.info(" GuardarOrdenRobot: Enviando 6 ", 'EquivalenteDolar, V_MonedaAdquirida('+ V_MonedaAdquirida+ '), SaldoMonedaAdquirida('+ parseFloat(SaldoMonedaAdquirida)+ '),'+2,'Robot');
                 var V_EquivSaldoMonedaAdquirida =  Meteor.call('EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2);
                 var Eqv_V_InverSaldAnt = (( parseFloat(REAL_INVER) * parseFloat(V_EquivalenciaTradeoAnteriorMC) ) / parseFloat(SaldoTradeoAnteriorMC));
-                log.info( 'Eqv_V_InverSaldAnt (', Eqv_V_InverSaldAnt ,') = REAL_INVER(',REAL_INVER, ') * V_EquivalenciaTradeoAnteriorMC(', V_EquivalenciaTradeoAnteriorMC , ') / SaldoTradeoAnteriorMC(', SaldoTradeoAnteriorMC , ')');
+                log.info( '','Eqv_V_InverSaldAnt ('+ Eqv_V_InverSaldAnt +') = REAL_INVER('+REAL_INVER+') * V_EquivalenciaTradeoAnteriorMC('+ V_EquivalenciaTradeoAnteriorMC +') / SaldoTradeoAnteriorMC('+ SaldoTradeoAnteriorMC + ')','Robot');
                 var V_Ganancia = (parseFloat(Eqv_V_InverSaldAct) - parseFloat(Eqv_V_InverSaldAnt));
-                log.info( 'V_Ganancia (', V_Ganancia ,') = Eqv_V_InverSaldAct(', Eqv_V_InverSaldAct ,') - Eqv_V_InverSaldAnt(', Eqv_V_InverSaldAnt, ')' );
+                log.info( '','V_Ganancia ('+ V_Ganancia +') = Eqv_V_InverSaldAct('+ Eqv_V_InverSaldAct +') - Eqv_V_InverSaldAnt('+ Eqv_V_InverSaldAnt+')','Robot');
 
                 GananciaPerdida.update ({    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
@@ -654,8 +661,8 @@ Meteor.methods({
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_FormaOperacion: "]+[V_FormaOperacion]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_Ganancia: "]+[V_Ganancia]);
 
-        log.info('--------------------------------------------');
-        log.info('############################################');
+       // log.info('--------------------------------------------');
+        //log.info('############################################');
 
         var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
         var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
@@ -733,7 +740,7 @@ Meteor.methods({
                     });
                 if (TIPO_OP != 1) {
                        var ganancia = GananciasGlobales.find();
-                       log.info(ganancia);
+                       log.info('Ganancia',ganancia.toString(),'Robot');
                 }
             }
         }
@@ -741,10 +748,10 @@ Meteor.methods({
 
     'ActualizaSaldoTodasMonedasRobot':function(){
 
-        log.info('############################################');
+        //log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", '           VERIFICANDO SALDOS');
-        log.info('############################################');
-        log.info('--------------------------------------------');
+        //log.info('############################################');
+        //log.info('--------------------------------------------');
 
         var BlcMonedasTradeo= [{ currency : 'BTC', available : '0.00055', reserved : '0' }, { currency : 'ETH', available : '0.019', reserved : '0' }]
         var BlcCuenta = [{ currency : 'BTC', available : '0', reserved : '0' }, { currency : 'ETH', available : '0', reserved : '0' }]
@@ -827,15 +834,15 @@ Meteor.methods({
         var c_vect_BlcTrad = 0;
 
 
-        log.info('############################################');
+        //log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", ['      VERIFICANDO SALDO MONEDA: ']+[MONEDA] );
-        log.info('############################################');
-        log.info('--------------------------------------------');
+        //log.info('############################################');
+        //log.info('--------------------------------------------');
         for ( cbmt = 0, tam_bmt = BlcMonedasTradeo.length; cbmt < tam_bmt; cbmt++ ) {
             var v_BlcMonedasTradeo = BlcMonedasTradeo[cbmt];
             var MonedaSaldoTradear = v_BlcMonedasTradeo.currency;
             if ( MonedaSaldoTradear == MONEDA ) {
-                log.info('Valor de MonedaSaldoTradear: ', MonedaSaldoTradear);
+                log.info('Valor de MonedaSaldoTradear: ', MonedaSaldoTradear,'Robot');
 
                 var SaldoMonedaInvertidoTradear = Number(v_BlcMonedasTradeo.available);
 
@@ -896,9 +903,9 @@ Meteor.methods({
 
         for ( cmsa = 0, tmsa = MonedasSaldoActual.length; cmsa < tmsa; cmsa++ ) {
             var v_BMonedasSaldoActual = MonedasSaldoActual[cmsa];
-            log.info('############################################');
+            //log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", '            Saldo disponible');
-            log.info('############################################');
+            //log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", ['  ********* ']+[' MONEDA: ']+[v_BMonedasSaldoActual.moneda]+[' ********* ']);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TRADEO: ']+[v_BMonedasSaldoActual.saldo.tradeo.activo]);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TRADEO EQUIVALENTE $: ']+[v_BMonedasSaldoActual.saldo.tradeo.equivalencia]);
@@ -906,8 +913,8 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO EN CUENTA: ']+[v_BMonedasSaldoActual.saldo.cuenta.activo]);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO CUENTA EQUIVALENTE $: ']+[v_BMonedasSaldoActual.saldo.cuenta.equivalencia]);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO CUENTA RESERVA: ']+[v_BMonedasSaldoActual.saldo.tradeo.reserva]);
-            log.info('############################################');
-            log.info(' ');
+            //log.info('############################################');
+            //log.info(' ');
         }
     },
 

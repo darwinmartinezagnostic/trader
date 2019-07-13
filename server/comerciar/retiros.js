@@ -1,6 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 //import { Constantes } from '../herramientas/Global.js';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
 moment().tz('America/Caracas').format();
+
+//**************************************************
+
+const log = new Logger();
+const LogFile = new LoggerFile(log,logFilePath);
+// Enable LoggerFile with default settings
+LogFile.enable();
 
 Meteor.methods({
 
@@ -8,10 +17,10 @@ Meteor.methods({
         var fecha = moment (new Date());
         var FECHA = fecha._d
         var CONSTANTES = Meteor.call("Constantes");
-        log.info('############################################');
+        //log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", '         TRANSFERENCIA DE FONDOS');
-        log.info('############################################');
-        log.info(' ');
+        //log.info('############################################');
+        //log.info(' ');
 
         //HAY 2 TIPOS DE TRANSFERENCIAS
         // "bankToExchange" Del Saldo de la cuenta a el Saldo de Trader
@@ -48,17 +57,17 @@ Meteor.methods({
             //Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Transacción: ']+[ IdTransferencia ]);
             HistoralTransferencias.insert({ fecha : FECHA, id : IdTransferencia ,tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : "Verificando" })
 
-            log.info('############################################');
+            //log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", '            Status Tranferencia');
-            log.info('############################################');
+            //log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", ['********* ']+[' MONEDA: ']+[MONEDA]+[' *********']);
             Meteor.call("GuardarLogEjecucionTrader", ['    FECHA: ']+[FECHA]);
             Meteor.call("GuardarLogEjecucionTrader", ['    ID: ']+[IdTransferencia]);
             Meteor.call("GuardarLogEjecucionTrader", ['    TIPO TRANSFERENCIA: ']+[TipoTransferencia]);
             Meteor.call("GuardarLogEjecucionTrader", ['    MONTO: ']+[MONTO]);
             Meteor.call("GuardarLogEjecucionTrader", ['    STATUS: ']+["VERIFICANDO"]);
-            log.info('############################################');
-            log.info(' ');
+            //log.info('############################################');
+            //log.info(' ');
 
             var VEstatus = Meteor.call( 'VerificarTransferencias', IdTransferencia);
 
@@ -69,7 +78,7 @@ Meteor.methods({
             var salida = Array.from(sal);
             return salida;
         }else{
-            log.info('############################################');
+            //log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", '            Status Tranferencia');
             log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", ['********* ']+[' MONEDA: ']+[MONEDA]+[' *********']);
@@ -77,8 +86,8 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", ['    TIPO TRANSFERENCIA: ']+[TipoTransferencia]);
             Meteor.call("GuardarLogEjecucionTrader", ['    MONTO: ']+[MONTO]);
             Meteor.call("GuardarLogEjecucionTrader", ['    STATUS: ']+["FALLIDO"]);
-            log.info('############################################');
-            log.info(' ');
+            //log.info('############################################');
+            //log.info(' ');
             //Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Sulicitud de Transferencia Fallida'] );
             var sal = new Set();
             sal.add( 1 );
@@ -89,23 +98,23 @@ Meteor.methods({
 
     'RetiroFondos':function(){ //Withdraw crypro
 
-        log.info('############################################');
+        //log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", ' Realiza el retiro de los fondos de las monedas en estado de reserva');
-        log.info(' ');
+        //log.info(' ');
     },
 
     'ConsultaRetiroFondos':function(){ //Commit withdraw crypro
 
-        log.info('############################################');
+        //log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", ' Realiza consulta de transacción retiro de los fondos en proceso');
-        log.info(' ');
+        //log.info(' ');
     },
 
     'CancelaRetiroFondos':function(){   //Rollback withdraw crypro
 
-        log.info('############################################');
+        //log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", ' Realiza cancelación de transacción retiro de los fondos en proceso');
-        log.info(' ');
+        //log.info(' ');
     },
 
 });

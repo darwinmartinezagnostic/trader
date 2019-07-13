@@ -1,5 +1,12 @@
 import { Meteor } from 'meteor/meteor';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
 moment().tz('America/Caracas').format();
+
+const log = new Logger();
+const LogFile = new LoggerFile(log,logFilePath);
+// Enable LoggerFile with default settings
+LogFile.enable();
 
 Meteor.methods({
     
@@ -7,6 +14,7 @@ Meteor.methods({
 
 
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
+        log.info('Esto es una prueba', 'Ejecutando pruebas', 'Pruebas');
         Meteor.call('ActualizaEquivalenciaMonedas');
         Meteor.call('CarcularGanancia',1);
 
@@ -364,10 +372,10 @@ Meteor.methods({
 
             //colors.enabled = true
             //Meteor.call("ConsultarHistoricoOrdenes");
-            log.info(" Probando".blue)
-            log.info(" Probando")
-            log.warn(" Probando")
-            Error(" Probando")
+            log.info(" Probando".blue,'','Pruebas');
+            log.info(" Probando",'','Pruebas');
+            log.warn(" Probando",'','Pruebas');
+            log.error(" Probando",'','Pruebas');
             console.timeEnd('       TIEMPO TRANSCURRIDO: '+ MON_B);
             
 

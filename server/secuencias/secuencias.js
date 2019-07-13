@@ -1,6 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 //import { Constantes } from '../herramientas/Global.js';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
 moment().tz('America/Caracas').format();
+
+const log = new Logger();
+const LogFile = new LoggerFile(log,logFilePath);
+// Enable LoggerFile with default settings
+LogFile.enable();
 
 //var CONSTANTES = Meteor.call("Constantes");
 
@@ -13,14 +20,14 @@ Meteor.methods({
         
         do{
             fecha = moment (new Date());
-            log.info('        ',fecha._d);
-            log.info('');
+            log.info('        ',fecha._d,'Secuencias');
+            //log.info('');
             Meteor.call("GuardarLogEjecucionTrader", '----------  SECUENCIA INICIAL  -----------');
-            log.info(' ');
+            //log.info(' ');
 
             var EjecucionInicial = Meteor.call('EjecucionInicial');
 
-            log.info("Valor de EjecucionInicial", EjecucionInicial);
+            log.info("Valor de EjecucionInicial", EjecucionInicial,'Secuencias');
         }while( EjecucionInicial !== 0 );
 
         Meteor.call("GuardarLogEjecucionTrader", 'Iniciando las secuencias Secundarías');
@@ -29,9 +36,9 @@ Meteor.methods({
 
     'SecuenciasSecundarias':function(){
         fecha = moment (new Date());
-        log.info('        ',fecha._d);
+        log.info('        ',fecha._d,'Secuencias');
         Meteor.call("GuardarLogEjecucionTrader", '--------  SECUENCIAS SECUNDARIAS  ---------');
-        log.info(' ');
+        //log.info(' ');
 
 
         // VALIDA EL LIMITE TOTAL DE EJECUCIÓN DE LA APLICACION SI ESTE ES IGUAL '9999999999' ENTONCES SE EJECUTARÁ DE FORMA INFINITA
@@ -48,13 +55,13 @@ Meteor.methods({
 
             if ( V_LimiteMaximoEjecucion === 9999999999 ) {
                                     
-                log.info(' ');
+                //log.info(' ');
                 var EjecucionSecuencia = Meteor.call('SecuenciaPeriodo1');
                         
 
             }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
 
-                log.info(' ');
+                //log.info(' ');
                 //var EjecucionSecuencia = Meteor.call('SecuenciaPeriodo1');
                 Meteor.call('SecuenciaPeriodo1');
                 V_LimiteMaximoEjecucion = V_LimiteMaximoEjecucion - 1
@@ -80,9 +87,9 @@ Meteor.methods({
         var TM = 1;
         V_EJEC = 2;
         fecha = moment (new Date());
-        log.info('        ',fecha._d);
-        log.info('---------- SECUENCIA PERIODO 1 ------------');
-        log.info(' ');
+        log.info('        ',fecha._d,'Secuencias');
+        //log.info('---------- SECUENCIA PERIODO 1 ------------');
+        //log.info(' ');
         try {
             var Monedas_Saldo = Monedas.aggregate([
                         { $match : { $or : [{"saldo.tradeo.activo" : { $gt : 0 }},{ "moneda" : 'BTC' }] , "activo" : "S"}},
@@ -141,11 +148,12 @@ Meteor.methods({
                             Meteor.call("GuardarLogEjecucionTrader", ['        TIPO DE CAMBIO: ']+[tipo_cambio_verificar]);
                             Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar, moneda_saldo.moneda )
                         }
-
+                        /*
                         log.info('-------------------------------------------');
                         log.info('----- FIN DE VALIDACION DE TENDENCIA ------');
                         log.info('-------------------------------------------');
                         log.info(' ');
+                         */
                         Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
                         Meteor.call('ValidarRanking', moneda_saldo.moneda);
 
@@ -178,13 +186,13 @@ Meteor.methods({
 
                         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         Meteor.call("GuardarLogEjecucionTrader", ['      MONEDA: ']+[moneda_saldo.moneda]+[' HORA FIN: ']+[fecha._d]);
-                        log.info('############################################');
+                       // log.info('############################################');
                         console.timeEnd('  TIEMPO TRANSCURRIDO: '+ [moneda_saldo.moneda]);
-                        log.info('############################################');
+                       /* log.info('############################################');
                         log.info('-------------------------------------------');
                         log.info('--- DEBO SEGUIR CON LA SIGUIENTE MONEDA ---');
                         log.info('-------------------------------------------');
-                        log.info(' ');
+                        log.info(' ');*/
                     }
                 //}while(TiposDeCambioVerificar === undefined)
             }
@@ -193,7 +201,7 @@ Meteor.methods({
 
     "ValidaInversion": function( MONEDA_VERIFICAR ){
         
-        log.info("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
+        log.info("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR,'Secuencias');
 
         Meteor.call("GuardarLogEjecucionTrader", [' JobValidaInversion: Moneda con Saldo a Verificar: ']+[MONEDA_VERIFICAR]);
 
@@ -228,13 +236,13 @@ Meteor.methods({
             if ( V_ResetTipCambMC === undefined ) {
                 var V_ResetTipCambMC = 0;
             }
-
+/*
             log.info('############################################');
             log.info('--------------------------------------------');
             log.info('----------- VALIDANDO TENDENCIA ------------');
             log.info('--------------------------------------------');
             log.info(' ');
-
+*/
             //log.info(' Tipo de Cambio ', TIPO_CAMBIO, " MB: ", MB, " MC: ", MC, " V_ResetTipCambMB: ", V_ResetTipCambMB, " V_ResetTipCambMC: ", V_ResetTipCambMC, " MONEDA_SALDO: ", MONEDA_SALDO);
 
             if ( MB === MONEDA_SALDO && V_ResetTipCambMB === 0 ) {
@@ -256,11 +264,11 @@ Meteor.methods({
 
             Meteor.call('EvaluarTendencias', TIPO_CAMBIO, MONEDA_SALDO );
                 
-            log.info('--------------------------------------------');
-            log.info('############################################');
-            log.info('---------------- FINALIZADO ----------------');
-            log.info('        ',fecha._d);
-            log.info('############################################');
+            //log.info('--------------------------------------------');
+            //log.info('############################################');
+            //log.info('---------------- FINALIZADO ----------------');
+            log.info('        ',fecha._d,'Secuencias');
+            //log.info('############################################');
 
 
             var ejecucionValidaTendenciaTipoCambio = 0
@@ -275,10 +283,10 @@ Meteor.methods({
     'ReinicioSecuencia':function(){
         try{
             fecha = moment (new Date());
-            log.info('        ',fecha._d);
-            log.info('');
+            log.info('        ',fecha._d,'Secuencias');
+            //log.info('');
             Meteor.call("GuardarLogEjecucionTrader", '---------  REINICIANDO PROCESOS  ----------');
-            log.info(' ');
+            //log.info(' ');
 
             try {
                 var EjecucionInicial = Ejecucion_Trader.find({ muestreo : { periodo_inicial : true } },{}).count()
@@ -297,6 +305,7 @@ Meteor.methods({
             var ejecucionJobReinicioSecuencia = 0
         }
         catch(error){
+            log.error('Error',error.toString(),'Secuencias');
             var ejecucionJobReinicioSecuencia = 1
         }
     },

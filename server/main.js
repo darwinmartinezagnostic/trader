@@ -1,6 +1,15 @@
 import { Meteor } from 'meteor/meteor';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
 
 //**************************************************
+
+const log = new Logger();
+const LogFile = new LoggerFile(log, logFilePath);
+// Enable LoggerFile with default settings
+LogFile.enable();
+
+
 
 Meteor.methods({
 
@@ -57,7 +66,7 @@ Meteor.startup(function (){
         
         var ValorModoEjecucion = ModoEjecucion[0].valor
         //var ValorModoEjecucion = 0
-        log.info("Valor de EjecucionInicial: ", ValorModoEjecucion);
+        log.info("Valor de EjecucionInicial:", ValorModoEjecucion.toString(),'Main');
 
         switch ( ValorModoEjecucion ){
             case 0:

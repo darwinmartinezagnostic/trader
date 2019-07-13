@@ -1,4 +1,11 @@
-import { Jobs } from 'meteor/msavin:sjobs'
+import { Jobs } from 'meteor/msavin:sjobs';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
+
+const log = new Logger();
+const LogFile = new LoggerFile(log,logFilePath);
+// Enable LoggerFile with default settings
+LogFile.enable();
 
 const Job_activo = 1;
 /*
@@ -392,7 +399,7 @@ Jobs.register({
 	*/
     "JobValidaInversion": function( MONEDA_VERIFICAR ){
     	try{
-    		log.info("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR);
+    		log.info("Moneda con Saldo a Verificar: ", MONEDA_VERIFICAR,'Jobs');
 
 	    	Meteor.call("GuardarLogEjecucionTrader", [' JobValidaInversion: Moneda con Saldo a Verificar: ']+[MONEDA_VERIFICAR]);
 
@@ -424,7 +431,7 @@ Jobs.register({
     
     "JobsFrecuenciaDiaria": function(){
     	try{
-	    	log.info(' Estoy en JobsFrecuenciaDiaria');
+	    	log.info(' Estoy en JobsFrecuenciaDiaria','','Jobs');
 	    	// Mantenieminto de la coleccion JObs_data
 	    	JobsInternal.Utilities.collection.remove({ state : 'successful' });
 
