@@ -7,8 +7,11 @@ Meteor.methods({
 
 
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
-        Meteor.call('ActualizaEquivalenciaMonedas');
-        Meteor.call('CarcularGanancia',1);
+        //Meteor.call('ActualizaEquivalenciaMonedas');
+        //Meteor.call('CarcularGanancia',1);
+
+        INV_REAL='0.000548350'
+        log.info(' Valor de INV_REAL: ', parseFloat(INV_REAL))
 
 /*
             var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
@@ -40,7 +43,7 @@ Meteor.methods({
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
         //Meteor.call("ListaMonedas");
-        Meteor.call("ReinioDeSaldos"); 
+        Meteor.call("ReinioDeSaldos");  
         const MON_B='ETH'
         const MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
@@ -396,7 +399,7 @@ Meteor.methods({
             Error(" Probando")
             console.timeEnd('       TIEMPO TRANSCURRIDO: '+ MON_B);
         /**/
-
+    /*
     log.info(' ');
     log.info(' ');
     log.info('===================================================================================================================================');
@@ -406,7 +409,7 @@ Meteor.methods({
 
     var ResultadoEquivalenteEnDolares = Meteor.call("EquivalenteDolar", MONEDA_S_SALDO, ResultadoEquvalenciaTipoCambio, 2);
     log.info(" ResultadoEquivalenteEnDolares ", ResultadoEquivalenteEnDolares);
-
+    /***/
     }
 });
 

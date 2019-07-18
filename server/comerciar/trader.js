@@ -1098,13 +1098,13 @@ Meteor.methods({
                         
         if ( MONEDA_SALDO == MON_B ) {
             var V_MonedaAdquirida = MON_C
-            log.info(" GuardarOrdenRobot: Enviando 5 ", 'EquivalenteDolar, V_MonedaAdquirida(', V_MonedaAdquirida, '), SaldoMonedaAdquirida(', parseFloat(SaldoMonedaAdquirida), '),', 2);
+            log.debug(" GuardarOrdenRobot: Enviando 5 ", 'EquivalenteDolar, V_MonedaAdquirida(', V_MonedaAdquirida, '), SaldoMonedaAdquirida(', parseFloat(SaldoMonedaAdquirida), '),', 2);
             var V_EquivSaldoMonedaAdquirida =  Meteor.call('EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2);
-            var Eqv_V_InverSaldAnt = (( parseFloat(REAL_INVER) * parseFloat(V_EquivalenciaTradeoAnteriorMB) ) / parseFloat(SaldoTradeoAnteriorMB));
-            log.info( 'Eqv_V_InverSaldAnt (', Eqv_V_InverSaldAnt ,') = REAL_INVER(',REAL_INVER, ') * V_EquivalenciaTradeoAnteriorMB(', V_EquivalenciaTradeoAnteriorMB , ') / SaldoTradeoAnteriorMB(', SaldoTradeoAnteriorMB , ')');
-            log.info("Valor de Eqv_V_InverSaldAnt", Eqv_V_InverSaldAnt)
-            var V_Ganancia = (parseFloat(Eqv_V_InverSaldAct) - parseFloat(Eqv_V_InverSaldAnt));
-            log.info( 'V_Ganancia (', V_Ganancia ,') = Eqv_V_InverSaldAct(', Eqv_V_InverSaldAct ,') - Eqv_V_InverSaldAnt(', Eqv_V_InverSaldAnt, ')' );
+            var Eqv_V_InverSaldAnt = parseFloat((( parseFloat(REAL_INVER) * parseFloat(V_EquivalenciaTradeoAnteriorMB) ) / parseFloat(SaldoTradeoAnteriorMB)).toFixed(9))
+            log.debug( 'Eqv_V_InverSaldAnt (', Eqv_V_InverSaldAnt ,') = REAL_INVER(',REAL_INVER, ') * V_EquivalenciaTradeoAnteriorMB(', V_EquivalenciaTradeoAnteriorMB , ') / SaldoTradeoAnteriorMB(', SaldoTradeoAnteriorMB , ')');
+            log.debug("Valor de Eqv_V_InverSaldAnt", Eqv_V_InverSaldAnt)
+            var V_Ganancia = parseFloat((parseFloat(Eqv_V_InverSaldAct) - parseFloat(Eqv_V_InverSaldAnt)).toFixed(4));
+            log.debug( 'V_Ganancia (', V_Ganancia ,') = Eqv_V_InverSaldAct(', Eqv_V_InverSaldAct ,') - Eqv_V_InverSaldAnt(', Eqv_V_InverSaldAnt, ')' );
 
             GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                     {
@@ -1138,8 +1138,8 @@ Meteor.methods({
                                                                             Equivalente_Actual : V_EquivalenciaTradeoActualMC
                                                             }
                                                 },
-                                                Inversion : {   Saldo : parseFloat(REAL_INVER.toFixed(9)),
-                                                                Equivalencia : {    Inicial : parseFloat(Eqv_V_InverSaldAnt.toFixed(4)),
+                                                Inversion : {   Saldo : REAL_INVER,
+                                                                Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
                                                                                     Final : Eqv_V_InverSaldAct},
                                                                 Precio : precio,
                                                                 Comision : {    moneda : MON_C,
@@ -1174,12 +1174,12 @@ Meteor.methods({
             }
         }else if ( MONEDA_SALDO == MON_C ){
                 var V_MonedaAdquirida = MON_B
-                log.info(" GuardarOrdenRobot: Enviando 6 ", 'EquivalenteDolar, V_MonedaAdquirida(', V_MonedaAdquirida, '), SaldoMonedaAdquirida(', parseFloat(SaldoMonedaAdquirida), '),', 2);
+                log.debug(" GuardarOrdenRobot: Enviando 6 ", 'EquivalenteDolar, V_MonedaAdquirida(', V_MonedaAdquirida, '), SaldoMonedaAdquirida(', parseFloat(SaldoMonedaAdquirida), '),', 2);
                 var V_EquivSaldoMonedaAdquirida =  Meteor.call('EquivalenteDolar', V_MonedaAdquirida, parseFloat(SaldoMonedaAdquirida), 2);
-                var Eqv_V_InverSaldAnt = (( parseFloat(REAL_INVER) * parseFloat(V_EquivalenciaTradeoAnteriorMC) ) / parseFloat(SaldoTradeoAnteriorMC));
-                log.info( 'Eqv_V_InverSaldAnt (', Eqv_V_InverSaldAnt ,') = REAL_INVER(',REAL_INVER, ') * V_EquivalenciaTradeoAnteriorMC(', V_EquivalenciaTradeoAnteriorMC , ') / SaldoTradeoAnteriorMC(', SaldoTradeoAnteriorMC , ')');
-                var V_Ganancia = (parseFloat(Eqv_V_InverSaldAct) - parseFloat(Eqv_V_InverSaldAnt));
-                log.info( 'V_Ganancia (', V_Ganancia ,') = Eqv_V_InverSaldAct(', Eqv_V_InverSaldAct ,') - Eqv_V_InverSaldAnt(', Eqv_V_InverSaldAnt, ')' );
+                var Eqv_V_InverSaldAnt = parseFloat((( parseFloat(REAL_INVER) * parseFloat(V_EquivalenciaTradeoAnteriorMC) ) / parseFloat(SaldoTradeoAnteriorMC)).toFixed(9))
+                log.debug( 'Eqv_V_InverSaldAnt (', Eqv_V_InverSaldAnt ,') = REAL_INVER(',REAL_INVER, ') * V_EquivalenciaTradeoAnteriorMC(', V_EquivalenciaTradeoAnteriorMC , ') / SaldoTradeoAnteriorMC(', SaldoTradeoAnteriorMC , ')');
+                var V_Ganancia = parseFloat((parseFloat(Eqv_V_InverSaldAct) - parseFloat(Eqv_V_InverSaldAnt)).toFixed(4));
+                log.debug( 'V_Ganancia (', V_Ganancia ,') = Eqv_V_InverSaldAct(', Eqv_V_InverSaldAct ,') - Eqv_V_InverSaldAnt(', Eqv_V_InverSaldAnt, ')' );
 
                 GananciaPerdida.update ({    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
@@ -1210,8 +1210,8 @@ Meteor.methods({
                                                                                 Saldo_Actual : SaldoTradeoActualMB,
                                                                                 Equivalente_Actual : V_EquivalenciaTradeoActualMB
                                                                 }},
-                                                    Inversion : {   Saldo : parseFloat(REAL_INVER.toFixed(9)),
-                                                                    Equivalencia : {    Inicial : parseFloat(Eqv_V_InverSaldAnt.toFixed(4)),
+                                                    Inversion : {   Saldo : REAL_INVER,
+                                                                    Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
                                                                                         Final : Eqv_V_InverSaldAct},
                                                                     Precio : precio,
                                                                     Comision : {    moneda : MON_C,

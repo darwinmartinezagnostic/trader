@@ -1177,8 +1177,8 @@ Meteor.methods({
         if ( Estado_Orden === "filled" ) {
             log.info(" if ( Estado_Orden === filled ) : Voy a Guardar")
             log.info(' Valor de Orden 13: ', Orden)
-            log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO, CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
-            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+            log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
             log.info(" if ( Estado_Orden === filled ) : Ya guardé")
         }
         /**/
