@@ -1,8 +1,14 @@
 import { Meteor } from 'meteor/meteor';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
 moment().tz('America/Caracas').format();
 const btoa = function(str){ return Buffer.from(str).toString('base64')};
 //var CONSTANTES = Meteor.call("Constantes");
 
+const log = new Logger();
+const LogFile = new LoggerFile(log,logFilePath);
+// Enable LoggerFile with default settings
+LogFile.enable();
 /*
 const autoriza_conexion = Conexion_api.findOne({ casa_cambio : 'hitbtc'}, {_id:0});
 const key = autoriza_conexion.key;
@@ -66,7 +72,7 @@ Meteor.methods({
                     const datos = salida.json()
                     return datos
                 }catch(e){
-                    log.info('TIMEOUT en ejecución del URL: ', url);
+                    log.error('TIMEOUT en ejecución del URL: ', url,'Conexiones');
                 }
         }
     },
@@ -84,7 +90,7 @@ Meteor.methods({
         const user = CONSTANTES.user;
         const pswrd = CONSTANTES.passwr;
         let url = V_URL
-        log.info("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
+        log.info('',"Valor de url: "+ url+ " MS: "+ MS+ "datos: "+ datos,'Conexiones');
         var salida = 0;
         ordenCliente = "1" 
 
@@ -133,30 +139,30 @@ Meteor.methods({
                                             });
             const tok = token();            
             const EstadoCancelacion = CancelaEjecucionConexion ( respuesta, tok);            
-            let tpr = await TimeoutEjecucion(EstadoCancelacion, MS)
-            const salida = await respuesta
+            let tpr = await TimeoutEjecucion(EstadoCancelacion, MS);
+            const salida = await respuesta;
 
             if ( salida.id ) {
                 //log.info ("Valor de salida2", salida)
-                return salida
+                return salida;
             }else if ( salida.error.code !== 200 ) {
-                const mensaje = salida.error.message
-                log.error("Valor de mensaje: ", mensaje)
+                const mensaje = salida.error.message;
+                log.error("Valor de mensaje: ", mensaje,'Conexiones');
                 
                 if ( mensaje === "Insufficient funds") {
                     mensj = { status :"Insufficientfunds"}
-                    return mensj
+                    return mensj;
                 }else 
                 if ( mensaje === "Duplicate clientOrderId") {
                     mensj = { status :"DuplicateclientOrderId"}
-                    return mensj
+                    return mensj;
                 }else 
                 if ( mensaje === "error is not defined") {
                     mensj = { status :"errorisnotdefined"}
-                    return mensj
+                    return mensj;
                 }else {
-                    log.error("Valor de salida.error: ", salida.error)
-                    return salida.error
+                    log.error("Valor de salida.error: ", salida.error,'Conexiones');
+                    return salida.error;
                 }
             }
         }
@@ -167,10 +173,10 @@ Meteor.methods({
         global.Headers = fetch.Headers;
 
         var CONSTANTES = Meteor.call("Constantes");  
-        const MS =  CONSTANTES.TimeoutEjecucion * 60000
-        const ak = CONSTANTES.apikey
-        let url = V_URL
-        log.info("Valor de url: ", url, " MS: ", MS, "datos: ", datos);
+        const MS =  CONSTANTES.TimeoutEjecucion * 60000;
+        const ak = CONSTANTES.apikey;
+        let url = V_URL;
+        log.info('',"Valor de url: "+ url+ " MS: "+ MS+ "datos: "+ datos,'Conexiones');
         var salida = 0;
 
         const token = function() { 
@@ -216,7 +222,7 @@ Meteor.methods({
                 try{
                     let tpr = await TimeoutEjecucion(EstadoCancelacion, MS)
                     const salida = await respuesta
-                    log.info("Valor de salida", salida)
+                    log.info("Valor de salida", salida,'Conexiones');
 
                     /*
                     if ( salida.status === 200 ) {
@@ -229,12 +235,12 @@ Meteor.methods({
                     }
                     */
 
-                    const datos = salida.json()
-                    return datos
+                    const datos = salida.json();
+                    return datos;
 
 
                 }catch(e){
-                    log.error('TIMEOUT en ejecución del URL: ', url);
+                    log.error('TIMEOUT en ejecución del URL: ', url,'Conexiones');
                 }/*
             }catch(error){
                 if ( /url must be absolute and start with http:/.test(error) || /Parameter "url" must be a string, not object/.test(error) || /request to https:/.test(error) ) {
@@ -253,7 +259,7 @@ Meteor.methods({
 
     async ConexionDel (V_URL) {       
         var log = new Logger('router');
-        log.trace(" Valor recibido - V_URL: ", V_URL)
+        log.trace(" Valor recibido - V_URL: ", V_URL,'Conexiones');
         var request = require('request-promise')
 
         global.Headers = fetch.Headers;
@@ -264,10 +270,10 @@ Meteor.methods({
         const ak = CONSTANTES.apikey
         const user = CONSTANTES.user;
         const pswrd = CONSTANTES.passwr;
-        let url = V_URL
-        log.info("Valor de url: ", url, " MS: ", MS,);
+        let url = V_URL;
+        log.info("Valor de url: "+ url, " MS: "+ MS,'Conexiones');
         var salida = 0;
-        ordenCliente = "1" 
+        ordenCliente = "1" ;
 
         var parametros = {
                         url: V_URL,
@@ -298,47 +304,47 @@ Meteor.methods({
             } 
         }
         while( salida.status !== 200 ){
-            log.info("Estoy en while( salida.status !== 200 )")
+            log.info('',"Estoy en while( salida.status !== 200 )",'Conexiones');
             const respuesta = request(parametros)
                                         .then(function (response) {
-                                            log.info ("Valor de response: ",response)
-                                            resp = JSON.parse(response)
-                                            return resp
+                                            log.info ("Valor de response: ",response,'Conexiones');
+                                            resp = JSON.parse(response);
+                                            return resp;
                                             })
                                         .catch(function(error) {
-                                            ErrorConseguido = JSON.parse(error.error)
-                                            log.error("Valor de catch ErrorConseguido: ", ErrorConseguido);
-                                            return ErrorConseguido
+                                            ErrorConseguido = JSON.parse(error.error);
+                                            log.error("Valor de catch ErrorConseguido: ", ErrorConseguido,'Conexiones');
+                                            return ErrorConseguido;
                                             });
             const tok = token();            
             const EstadoCancelacion = CancelaEjecucionConexion ( respuesta, tok);            
             log.trace(" Voy por acá ")
-            let tpr = await TimeoutEjecucion(EstadoCancelacion, MS)
-            const salida = await respuesta
-            log.trace(" Valor de salida: ", salida)
+            let tpr = await TimeoutEjecucion(EstadoCancelacion, MS);
+            const salida = await respuesta;
+            log.trace(" Valor de salida: ", salida,'Conexiones');
 
             if ( salida.id ) {
-                log.info ("Valor de salida2", salida)
-                return salida
+                log.info ("Valor de salida2", salida,'Conexiones');
+                return salida;
             }else if ( salida.error.code !== 200 ) {
-                log.info ("Valor de salida3", salida)
-                const mensaje = salida.error.message
-                log.info("Valor de mensaje: ", mensaje)
+                log.error("Valor de salida3", salida,'Conexiones');
+                const mensaje = salida.error.message;
+                log.error("Valor de mensaje: ", mensaje,'Conexiones');
                 
                 if ( mensaje === "Insufficient funds") {
                     mensj = { status :"Insufficientfunds"}
-                    return mensj
+                    return mensj;
                 }else 
                 if ( mensaje === "Duplicate clientOrderId") {
                     mensj = { status :"DuplicateclientOrderId"}
-                    return mensj
+                    return mensj;
                 }else 
                 if ( mensaje === "error is not defined") {
                     mensj = { status :"errorisnotdefined"}
-                    return mensj
+                    return mensj;
                 }else {
-                    log.error("Valor de salida.error: ", salida.error)
-                    return salida.error
+                    log.error("Valor de salida.error: ", salida.error,'Conexiones');
+                    return salida.error;
                 }
             }
         }

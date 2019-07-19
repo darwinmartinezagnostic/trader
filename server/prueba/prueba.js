@@ -1,5 +1,12 @@
 import { Meteor } from 'meteor/meteor';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
 moment().tz('America/Caracas').format();
+
+const log = new Logger();
+const LogFile = new LoggerFile(log,logFilePath);
+// Enable LoggerFile with default settings
+LogFile.enable();
 
 Meteor.methods({
     
@@ -12,6 +19,11 @@ Meteor.methods({
 
         INV_REAL='0.000548350'
         log.info(' Valor de INV_REAL: ', parseFloat(INV_REAL))
+        /*
+        log.info('Esto es una prueba', 'Ejecutando pruebas', 'Pruebas');
+        Meteor.call('ActualizaEquivalenciaMonedas');
+        Meteor.call('CarcularGanancia',1);
+        /***/
 
 /*
             var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
@@ -52,7 +64,7 @@ Meteor.methods({
         var MONEDA_SALDO = MON_B
         var MONEDASALDO = MONEDA_SALDO
         var PRECIO = '0.000000544'
-        /* 
+        /*
 
             //log.info(' Tipo de Cambio T
             IPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
@@ -62,7 +74,7 @@ Meteor.methods({
             	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
                 //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
             }
-        */        
+        /**/        
         
         if (MONEDA_SALDO === MON_B) {
             var MONEDA_S_SALDO = MON_C
@@ -393,10 +405,10 @@ Meteor.methods({
 
             //colors.enabled = true
             //Meteor.call("ConsultarHistoricoOrdenes");
-            log.info(" Probando".blue)
-            log.info(" Probando")
-            log.warn(" Probando")
-            Error(" Probando")
+            log.info(" Probando".blue,'','Pruebas');
+            log.info(" Probando",'','Pruebas');
+            log.warn(" Probando",'','Pruebas');
+            log.error(" Probando",'','Pruebas');
             console.timeEnd('       TIEMPO TRANSCURRIDO: '+ MON_B);
         /**/
     /*

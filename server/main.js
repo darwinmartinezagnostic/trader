@@ -1,10 +1,20 @@
 import { Meteor } from 'meteor/meteor';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
 
 //**************************************************
+
+const log = new Logger();
+const LogFile = new LoggerFile(log, logFilePath);
+// Enable LoggerFile with default settings
+LogFile.enable();
+
+
 
 Meteor.methods({
 
     'EjecucionInicial':function(){
+        log.info(" EjecucionInicial:", 'Acá etoy','Main');
         var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
 
         if ( Robot.valor === 0 ) {
@@ -48,7 +58,7 @@ Meteor.startup(function (){
     TmpTipCambioXMonedaReord.remove({ });
     LogEjecucionTrader.remove({  });
     Meteor.call('ReinicioDeSecuenciasGBL', 'IdLog');
-    
+
     try {
         // Verificamos si la aplicación es su ejecución Inicial o no
         var ModoEjecucion = Parametros.aggregate([  { $match : { dominio : "Ejecucion", nombre : "ModoEjecucion" } },
@@ -57,10 +67,10 @@ Meteor.startup(function (){
         var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
         
         var ResetSaldos = Parametros.findOne( { dominio : "Prueba", nombre : "saldo" } );
-        
+
 
         var ValorModoEjecucion = ModoEjecucion[0].valor
-        log.info("Valor de EjecucionInicial: ", ValorModoEjecucion);
+        log.info("Valor de EjecucionInicial:", ValorModoEjecucion.toString(),'Main');
 
         switch ( ValorModoEjecucion ){
             case 0:

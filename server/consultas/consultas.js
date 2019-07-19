@@ -1,6 +1,13 @@
 import { Meteor } from 'meteor/meteor';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
 moment().tz('America/Caracas').format();
 //var CONSTANTES = Meteor.call("Constantes");
+
+const log = new Logger();
+const LogFile = new LoggerFile(log,logFilePath);
+// Enable LoggerFile with default settings
+LogFile.enable();
 
 Meteor.methods({
 
@@ -11,21 +18,21 @@ Meteor.methods({
 
         //para verificar una transaccion en especifica se anexar al final de la contrccion de la URL ID de la transaccion ejemp "f672d164-6c6d-4bbd-9ba3-401692b3b404"
         // var Url_Transaccion = [transacciones]+'/'+[<varible de entrada = D de la transaccion>];
-        log.info('############################################');
+        //log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", ' Devuelve los datos Historicos de Transacciones realizadas en la cuenta');
-        log.info(' ');
+        //log.info(' ');
         var url_transaccion_parcial=['sort=ASC&by=timestamp&limit=']+[TRANSACCIONES];
         var url_transaccion_completa=[CONSTANTES.transacciones]+'?'+[url_transaccion_parcial];
-        log.info(' Valor de URL transacciones:', url_transaccion_completa);
+        log.info(' Valor de URL transacciones:', url_transaccion_completa,'Consultas');
 
         var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
         //var v_transaccion=(transaccion.data); 
-        var v_transaccion=transaccion
+        var v_transaccion=transaccion;
 
         //log.info(v_transaccion);
 
         for (k = 0, len = v_transaccion.length; k < len; k++) {
-            log.info('############################################');
+            //log.info('############################################');
             transaccion = v_transaccion[k];
             Meteor.call("GuardarLogEjecucionTrader", [' ID: ']+[transaccion.id]);
             Meteor.call("GuardarLogEjecucionTrader", [' INDICE: ']+[transaccion.index]);
@@ -36,8 +43,8 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", [' FECHA CREACION: ']+[transaccion.createdAt]);
             Meteor.call("GuardarLogEjecucionTrader", [' FECHA DE CAMBIO: ']+[transaccion.updatedAt]);
             Meteor.call("GuardarLogEjecucionTrader", [' HASH: ']+[transaccion.hash]);
-            log.info('############################################');
-            log.info(' ');
+            //log.info('############################################');
+           // log.info(' ');
         };
     },
 
@@ -48,15 +55,15 @@ Meteor.methods({
         var OrdAbi = OrdeneAbiertas[0]
 
         if ( OrdAbi === undefined ) {
-            log.info('--------------------------------------------');
+            //log.info('--------------------------------------------');
             Meteor.call("GuardarLogEjecucionTrader", "     --- No hay ordenes Abiertas ---");
-            log.info('--------------------------------------------');
+            //log.info('--------------------------------------------');
             var Estado_Orden ='Fallido'
         }
         else{
-            log.info("Ordenes Activas: ", OrdeneAbiertas)
+            log.info("Ordenes Activas: ", OrdeneAbiertas,'Consultas');
             var Estado_Orden = OrdAbi.status
-            log.info('Valor de Estado_Orden', Estado_Orden)
+            log.info('Valor de Estado_Orden', Estado_Orden,'Consultas');
         }
         return Estado_Orden
     },
@@ -66,9 +73,9 @@ Meteor.methods({
 
         for ( cmsa = 0, tmsa = MonedasSaldoActual.length; cmsa < tmsa; cmsa++ ) {
             var v_BMonedasSaldoActual = MonedasSaldoActual[cmsa];
-            log.info('############################################');
+            //log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", '            Saldo disponible');
-            log.info('############################################');
+            //log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", ['  ********* ']+[' MONEDA: ']+[v_BMonedasSaldoActual.moneda]+[' ********* ']);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TRADEO: ']+[v_BMonedasSaldoActual.saldo.tradeo.activo]);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO TRADEO EQUIVALENTE $: ']+[v_BMonedasSaldoActual.saldo.tradeo.equivalencia]);
@@ -76,8 +83,8 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO EN CUENTA: ']+[v_BMonedasSaldoActual.saldo.cuenta.activo]);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO CUENTA EQUIVALENTE $: ']+[v_BMonedasSaldoActual.saldo.cuenta.equivalencia]);
             Meteor.call("GuardarLogEjecucionTrader", ['     SALDO CUENTA RESERVA: ']+[v_BMonedasSaldoActual.saldo.tradeo.reserva]);
-            log.info('############################################');
-            log.info(' ');
+            //log.info('############################################');
+            //log.info(' ');
         }
     },
 
@@ -328,7 +335,7 @@ Meteor.methods({
             AnioInicio += 1
         }
         /**/
-        log.info('############################################');
+       // log.info('############################################');
     },
 
     'VerificarHistoricoEstadoOrden':function(ORDEN){
@@ -443,18 +450,18 @@ Meteor.methods({
 
             var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: 3 } ]);
             var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_cotizacion" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: 3 } ]);
-            log.info('-------------------------------------------');
-            log.info('      MONEDA :', MONEDA)
-            log.info('Valor de TmpTCMB: ', TmpTCMB)
+            //log.info('-------------------------------------------');
+            log.info('      MONEDA :', MONEDA,'Consultas');
+            log.info('Valor de TmpTCMB: ', TmpTCMB,'Consultas');
             for (CTMCB = 0, T_TmpTCMB = TmpTCMB.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMB = TmpTCMB[CTMCB];
-                log.info('Valor de TmpTCMB: ', TmpTCMB)
+                log.info('Valor de TmpTCMB: ', TmpTCMB,'Consultas');
 
             }
 
             for (CTMCB = 0, T_TmpTCMB = TmpTCMC.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMC = TmpTCMC[CTMCB];
-                log.info('Valor de TmpTCMB: ', TmpTCMB)
+                log.info('Valor de TmpTCMB: ', TmpTCMB,'Consultas');
             }
         }
     },
