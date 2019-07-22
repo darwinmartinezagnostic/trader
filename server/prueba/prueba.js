@@ -12,7 +12,7 @@ Meteor.methods({
     
 	'PruebasUnitarias':function(){
 
-
+        Meteor.call('sendEmail', 'darwin.2911@gmail.com', 'subject', 'email');
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
         //Meteor.call('ActualizaEquivalenciaMonedas');
         //Meteor.call('CarcularGanancia',1);
