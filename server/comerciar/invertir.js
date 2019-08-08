@@ -912,11 +912,14 @@ Meteor.methods({
                     
                     var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')
                     var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
+                    Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
+                    /*
                     if ( Robot.valor === 0 ) {
                         Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
                     }else if ( Robot.valor === 1 ) {
                         Meteor.call('CrearNuevaOrderRobot',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
                     }
+                    /**/
                     CRTC2 = CRTC2+1;
                 }
             }
