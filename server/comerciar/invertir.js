@@ -1223,7 +1223,13 @@ Meteor.methods({
         log.info(' Valor de Orden 12: ', Orden, AMBITO);
 
         if ( Estado_Orden === "filled" ) {
+
+            log.info(" if ( Estado_Orden === filled ) : Voy a Guardar", AMBITO);
+            log.info(' Valor de Orden 13: ', Orden, AMBITO);
+            log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO+' '+ CANT_INVER+' '+ InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE, AMBITO);
+            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
             
+            /*
             if ( Robot.valor === 0 ) {
                 log.info(" if ( Estado_Orden === filled ) : Voy a Guardar", AMBITO);
                 log.info(' Valor de Orden 13: ', Orden, AMBITO);
@@ -1238,8 +1244,8 @@ Meteor.methods({
                 Meteor.call('GuardarOrdenRobot', TIPO_CAMBIO, CANT_INVER,  parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
                 log.info(" if ( Estado_Orden === filled ) : Ya guardé",'', AMBITO);
             }
+            /**/
         }
-        /**/
     },
 
 });
