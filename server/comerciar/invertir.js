@@ -602,6 +602,7 @@ Meteor.methods({
             var LIMITE_COMP_MON = LMCM.valor
             var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: LIMITE_COMP_MON } ]);
             var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_cotizacion" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: LIMITE_COMP_MON } ]);
+            TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA});
             for (CTMCB = 0, T_TmpTCMB = TmpTCMB.length; CTMCB < T_TmpTCMB; CTMCB++) {
                 var V_TmpTCMB = TmpTCMB[CTMCB];
                 TmpTipCambioXMonedaReord.insert({ "tipo_cambio": V_TmpTCMB.tipo_cambio,
@@ -813,7 +814,7 @@ Meteor.methods({
         Meteor.call("GuardarLogEjecucionTrader", ["  Tipos de cambios que pueden invertirse: "]+[CANT_TIP_CAMBIOS_VALIDADOS]);
 
         if ( CANT_TIP_CAMBIOS_VALIDADOS === 0 ) {
-            /*
+            
             Meteor.call("GuardarLogEjecucionTrader", ["            **** EN ESPERA **** "]);
             Meteor.call("GuardarLogEjecucionTrader", ["   | Tendencias Analizadas no superan |"]);
             Meteor.call("GuardarLogEjecucionTrader", ["   |   limites Mínimos configurados   |"]);

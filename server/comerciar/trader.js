@@ -960,11 +960,11 @@ Meteor.methods({
         var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
         if ( Robot.valor === 0 ) {
             var AMBITO = 'GuardarOrden'
-            log.info(" Valores recibidos: ", ' TIPO_CAMBIO: '+TIPO_CAMBIO+' CANT_INVER: '+CANT_INVER+' MON_B: '+MON_B+' MON_C: '+MON_C+' MONEDA_SALDO: '+MONEDA_SALDO+' MONEDA_COMISION: '+MONEDA_COMISION+' ORDEN: '+ORDEN+' ID_LOTE: '+ID_LOTE, AMBITO);
         }else if ( Robot.valor === 1 ) {
             var AMBITO = 'GuardarOrdenRobot'
-            log.info(" Valores recibidos: ", ' TIPO_CAMBIO: '+TIPO_CAMBIO+' CANT_INVER: '+CANT_INVER+' MON_B: '+MON_B+' MON_C: '+MON_C+' MONEDA_SALDO: '+MONEDA_SALDO+' MONEDA_COMISION: '+MONEDA_COMISION+' ORDEN: '+ORDEN+' ID_LOTE: '+ID_LOTE, AMBITO);
         }
+        
+        log.info(" Valores recibidos: ", ' TIPO_CAMBIO: '+TIPO_CAMBIO+' CANT_INVER: '+CANT_INVER+' MON_B: '+MON_B+' MON_C: '+MON_C+' MONEDA_SALDO: '+MONEDA_SALDO+' MONEDA_COMISION: '+MONEDA_COMISION+' ORDEN: '+ORDEN+' ID_LOTE: '+ID_LOTE, AMBITO);
 
         
         var CONSTANTES = Meteor.call("Constantes");
