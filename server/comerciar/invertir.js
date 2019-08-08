@@ -14,6 +14,15 @@ LogFile.enable();
 Meteor.methods({
 
     'EvaluarTendencias':function( TIPOCAMBIO, MONEDASALDO ){
+
+        var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
+        if ( Robot.valor === 0 ) {
+            var AMBITO = 'EvaluarTendencias'
+        }else if ( Robot.valor === 1 ) {
+            var AMBITO = 'EvaluarTendenciasRobot'
+        }
+        log.info("Valores recibidos: ", " TIPO_CAMBIO: "+ TIPOCAMBIO+" MONEDASALDO: "+ MONEDASALDO, AMBITO);
+
     	var CONSTANTES = Meteor.call("Constantes");
         // Formula de deprecación
         // TENDENCIA = ((valor actual - valor anterior) / valor anterior) * 100
