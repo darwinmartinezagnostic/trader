@@ -100,7 +100,7 @@ Meteor.methods({
                 var TMA = 1;
                 if ( ValPrecAct > ValPrecAntMB) {                           
                     var TendenciaMonedaBase = ( parseFloat(ProcenApDpMB.toFixed(4)) * -1 )
-                    
+                    /*
                     log.info(" Valor de TendenciaMonedaBase: ", TendenciaMonedaBase)
                     Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonBase");
                     Meteor.call("GuardarLogEjecucionTrader", " VALOR ACTUAL ES MAYOR QUE VALOR ANTERIOR");
@@ -187,7 +187,7 @@ Meteor.methods({
                 else if ( ValPrecAct <= ValPrecAntMB ){
                     
                     var TendenciaMonedaBase = ( parseFloat(ProcenApDpMB.toFixed(4)) * -1 )
-                    
+                    /*
                     Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonBase");
                     Meteor.call("GuardarLogEjecucionTrader", "  VALOR ACTUAL ES MENOR QUE VALOR ANTERIOR");
                     Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA BASE: ']+[MonBase]+[' = ']+[TendenciaMonedaBase]);
@@ -325,7 +325,7 @@ Meteor.methods({
                 if ( ValPrecAct > ValPrecAntMC ) {
                     var TendenciaMonedaCotizacion = parseFloat(ProcenApDpMC.toFixed(4))
                 	//log.info('Valor de MonCoti:', [MonCoti]);
-                    
+                    /*
                     Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonCoti");
                     Meteor.call("GuardarLogEjecucionTrader", " VALOR ACTUAL ES MAYOR QUE VALOR ANTERIOR");
                     Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[MonCoti]+[' = ']+[TendenciaMonedaCotizacion]);
@@ -401,7 +401,7 @@ Meteor.methods({
                 else if ( ValPrecAct <= ValPrecAntMC ){
 
                     var TendenciaMonedaCotizacion = parseFloat(ProcenApDpMC.toFixed(4))
-                    
+                    /*
                     Meteor.call("GuardarLogEjecucionTrader", "  MONEDASALDO == MonCoti");
                     Meteor.call("GuardarLogEjecucionTrader", "  VALOR ACTUAL ES MENOR QUE VALOR ANTERIOR");
                     Meteor.call("GuardarLogEjecucionTrader", [' TENDENCIA MONEDA COTIZACION: ']+[MonCoti]+[' = ']+[TendenciaMonedaCotizacion]);
