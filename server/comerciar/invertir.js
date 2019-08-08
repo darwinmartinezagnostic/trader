@@ -607,7 +607,7 @@ Meteor.methods({
 
     'ValidarRanking': function(MONEDA){
         try{
-            var LMCM = Parametros.findOne( { dominio : "limites", nombre : "LimiteMaximoCompraMonedas", estado : true  })
+            var LMCM = Parametros.findOne( { dominio : "limites", nombre : "LimiteMaximoMonedasInvertir", estado : true  })
             var LIMITE_COMP_MON = LMCM.valor
             var TmpTCMB = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_base" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Base.tendencia" : -1 }}, { $limit: LIMITE_COMP_MON } ]);
             var TmpTCMC = TempTiposCambioXMoneda.aggregate([ { $match: { "moneda_saldo" : MONEDA, "moneda_cotizacion" : MONEDA, "estado" : 'A' }}, { $sort: { "periodo1.Cotizacion.tendencia" : -1 }}, { $limit: LIMITE_COMP_MON } ]);
@@ -658,7 +658,7 @@ Meteor.methods({
 
         Meteor.call("GuardarLogEjecucionTrader", ' *CALCULANDO RANKING DE LOS TIPOS DE CAMBIO*');
         Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[MONEDA]);
-        var LMCM = Parametros.findOne( { dominio : "limites", nombre : "LimiteMaximoCompraMonedas", estado : true  })
+        var LMCM = Parametros.findOne( { dominio : "limites", nombre : "LimiteMaximoMonedasInvertir", estado : true  })
         var LIMITE_COMP_MON = LMCM.valor;
 
         var CPTC = TmpTipCambioXMonedaReord.aggregate([ { $match: { "moneda_saldo" : MONEDA,"tendencia" : { $gte : LIMITE_AP_DEP }}}, { $sort: { "tendencia" : -1 }}, { $limit: LIMITE_COMP_MON }, { $count: "CantidadDeTiposDeCambios" } ]);

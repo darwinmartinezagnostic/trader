@@ -42,10 +42,10 @@ if (Parametros.find({ dominio : 'limites' }).count() === 0){
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContAuxiliarEstadoActivo", estado : true, valor : 2 , descripcion : "Valor máximo de Contador Auxiliar de estado Activo" });
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContEstadoVerificando", estado : true, valor : 10 , descripcion : "Valor máximo de Contador de estado Verificando" });
     Parametros.insert({ fecha : new Date(), dominio : "limites", nombre : "LimiteContAuxiliarEstadoVerificando", estado : true, valor : 3 , descripcion : "Valor máximo de Contador Auxiliar de estado Verificando" });
+    Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'LimiteMaximoMonedasInvertir', estado : true, valor: 1 ,descripcion : 'Máxima Cantidad de monedas en la cual se puede invertir' });
     Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'TopePerdida', estado : true, valor: 20 ,descripcion : 'Tope Máximo de perdida' });
     Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'TopeCapital', estado : true, valor: 1000 ,descripcion : 'Tope Máximo de Capital en tradeo' });
     Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'TopeGanancia', estado : true, valor: 3000 ,descripcion : 'Tope Máximo de Ganancias alancanzadas antes de enviar a la cartera de los usuario' });
-    Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'LimiteMaximoCompraMonedas', estado : true, valor: 1 ,descripcion : 'Máxima Cantidad de monedas en la cual se puede invertir' });
 };
 
 if (Parametros.find({ dominio : 'Prueba' }).count() === 0){
