@@ -550,47 +550,47 @@ Meteor.methods({
         
         log.info('-------------------------------------------');
         log.info(" ");
-        log.info("           MONEDA: ", MONEDASALDO,'Invertir');
-        log.info("            SALDO: ", SALDO_ACTUAL.toString(),'Invertir');
-        log.info("                $: ", SALDO_EQUIV.toString(),'Invertir');
-        log.info("      TIPO CAMBIO: ", Vtipo_cambio,'Invertir');
-        log.info("           ESTADO: ", VEstado,'Invertir');
+        log.info("           MONEDA: ", MONEDASALDO, AMBITO);
+        log.info("            SALDO: ", SALDO_ACTUAL.toString(), AMBITO);
+        log.info("                $: ", SALDO_EQUIV.toString(), AMBITO);
+        log.info("      TIPO CAMBIO: ", Vtipo_cambio, AMBITO);
+        log.info("           ESTADO: ", VEstado, AMBITO);
         log.info("    PRECIO ACTUAL: ", PeriodoPrecioAct.toString().replace(".", ","),'Invertir' );
         log.info(" ");
         log.info('-------------------------------------------');
         if ( MONEDASALDO === MonBase ){
-            log.info("             BASE: ", Vmoneda_base,'Invertir');
-            log.info("            FECHA: ", VBfecha,'Invertir');
-        	log.info("  PRECIO ANTERIOR: ", "= " + ValPrecAntMB + " =",'Invertir');
-        	log.info("    PRECIO ACTUAL: ", "= " + ValPrecAct + " =",'Invertir');
+            log.info("             BASE: ", Vmoneda_base, AMBITO);
+            log.info("            FECHA: ", VBfecha, AMBITO);
+        	log.info("  PRECIO ANTERIOR: ", "= " + ValPrecAntMB + " =", AMBITO);
+        	log.info("    PRECIO ACTUAL: ", "= " + ValPrecAct + " =", AMBITO);
         	log.info("        TENDENCIA: ", "[[*** "+ parseFloat(TendenciaMonedaBase.toFixed(4)) +" ***]]",'Invertir' );
     	}else{
-            log.info("             BASE: ", Vmoneda_base,'Invertir');
+            log.info("             BASE: ", Vmoneda_base, AMBITO);
             log.info("            FECHA: ", VBfecha,'Invertir')
-    		log.info("  PRECIO ANTERIOR: ", ValPrecAntMB,'Invertir');
+    		log.info("  PRECIO ANTERIOR: ", ValPrecAntMB, AMBITO);
     		log.info("    PRECIO ACTUAL: ", ValPrecAct),'Invertir';
             if ( TendenciaMonedaBase === undefined) {
-    		  log.info("        TENDENCIA: ", '0','Invertir');
+    		  log.info("        TENDENCIA: ", '0', AMBITO);
             }else{
-              log.info("        TENDENCIA: ", TendenciaMonedaBase,'Invertir');
+              log.info("        TENDENCIA: ", TendenciaMonedaBase, AMBITO);
             }
     	}
         log.info('-------------------------------------------');
         if ( MONEDASALDO === MonCoti ){
-            log.info("       COTIZACION: ", Vmoneda_cotizacion,'Invertir');
-            log.info("            FECHA: ", VCfecha,'Invertir');
-        	log.info("  PRECIO ANTERIOR: ", "= " + ValPrecAntMC +" =",'Invertir');
-        	log.info("    PRECIO ACTUAL: ", "= " + ValPrecAct +" =",'Invertir');
+            log.info("       COTIZACION: ", Vmoneda_cotizacion, AMBITO);
+            log.info("            FECHA: ", VCfecha, AMBITO);
+        	log.info("  PRECIO ANTERIOR: ", "= " + ValPrecAntMC +" =", AMBITO);
+        	log.info("    PRECIO ACTUAL: ", "= " + ValPrecAct +" =", AMBITO);
         	log.info("        TENDENCIA: ", "[[*** "+ parseFloat(TendenciaMonedaCotizacion.toFixed(4)) +" ***]]",'Invertir' );
         }else{
-            log.info("       COTIZACION: ", Vmoneda_cotizacion,'Invertir');
-            log.info("            FECHA: ", VCfecha,'Invertir');
-        	log.info("  PRECIO ANTERIOR: ", ValPrecAntMC,'Invertir');
-        	log.info("    PRECIO ACTUAL: ", ValPrecAct,'Invertir');
+            log.info("       COTIZACION: ", Vmoneda_cotizacion, AMBITO);
+            log.info("            FECHA: ", VCfecha, AMBITO);
+        	log.info("  PRECIO ANTERIOR: ", ValPrecAntMC, AMBITO);
+        	log.info("    PRECIO ACTUAL: ", ValPrecAct, AMBITO);
             if ( TendenciaMonedaCotizacion === undefined) {
-              log.info("        TENDENCIA: ", 0,'Invertir');
+              log.info("        TENDENCIA: ", 0, AMBITO);
             }else{
-              log.info("        TENDENCIA: ", TendenciaMonedaCotizacion,'Invertir');
+              log.info("        TENDENCIA: ", TendenciaMonedaCotizacion, AMBITO);
             }
         }
         /**/
@@ -927,22 +927,31 @@ Meteor.methods({
     },
     
     'CrearNuevaOrder':function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
-        log.info("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: "+ TIPO_CAMBIO+" CANT_INVER: "+ CANT_INVER+ " MON_B: "+ MON_B+ " MON_C: "+MON_C+ " MONEDA_SALDO: "+ MONEDA_SALDO+ " MONEDA_COMISION: "+ MONEDA_COMISION+ " ID_LOTE: "+ ID_LOTE,'Invertir');
+        var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
+        if ( Robot.valor === 0 ) {
+            var AMBITO = 'Invertir'
+            log.info("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: "+ TIPO_CAMBIO+" CANT_INVER: "+ CANT_INVER+ " MON_B: "+ MON_B+ " MON_C: "+MON_C+ " MONEDA_SALDO: "+ MONEDA_SALDO+ " MONEDA_COMISION: "+ MONEDA_COMISION+ " ID_LOTE: "+ ID_LOTE, AMBITO);
+        }else if ( Robot.valor === 1 ) {
+            var AMBITO = 'Robot'
+            log.info("Valores recibidos CrearNuevaOrderRobot", " TIPO_CAMBIO: "+ TIPO_CAMBIO+" CANT_INVER: "+ CANT_INVER+ " MON_B: "+ MON_B+ " MON_C: "+MON_C+ " MONEDA_SALDO: "+ MONEDA_SALDO+ " MONEDA_COMISION: "+ MONEDA_COMISION+ " ID_LOTE: "+ ID_LOTE, AMBITO);
+        }
+
         var ContEspEdoOrd = 0;
         var CONSTANTES = Meteor.call("Constantes");
         var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
-        //log.info('Valor de Robot', Robot
         var IdTransaccionActual = Meteor.call("CompletaConCero", IdTran, 32);
-        //log.info('Valor de Robot', Robot
+        //log.info('Valor de Robot', Robot, AMBITO);
+
         GananciaPerdida.insert({
                                 Operacion : {   
                                                 ID_LocalAct : IdTransaccionActual,
                                                 Id_Lote: ID_LOTE}
                             });
+
         Meteor.call("GuardarLogEjecucionTrader", 'Creando una nueva orden');
 
         var fecha = new Date();
-        log.info("Valor de fecha:", fecha,'Invertir')
+        log.info("Valor de fecha:", fecha, AMBITO)
 
         if ( MON_B === MONEDA_SALDO ) {
             var TP = 'sell'
@@ -956,34 +965,73 @@ Meteor.methods({
         var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
         var InversionRealCalc = RecalcIverPrec.MontRealIversionCal
         
-        log.info("Valore de MON_B: ", MON_B,'Invertir');
-        log.info("Valore de MON_C: ", MON_C,'Invertir');
-        log.info("Valore de V_TipoOperaciont: ", V_TipoOperaciont,'Invertir');
-        log.info("Valore de MONEDA_SALDO: ", MONEDA_SALDO,'Invertir');
-        log.info("Valore de CANT_INVER: ", CANT_INVER,'Invertir');
-        log.info("Valore de RecalcIverPrec: ", RecalcIverPrec,'Invertir');
-        log.info("Valore de InversionRealCalc: ", InversionRealCalc,'Invertir');
+        log.info("Valore de MON_B: ", MON_B, AMBITO);
+        log.info("Valore de MON_C: ", MON_C, AMBITO);
+        log.info("Valore de V_TipoOperaciont: ", V_TipoOperaciont, AMBITO);
+        log.info("Valore de MONEDA_SALDO: ", MONEDA_SALDO, AMBITO);
+        log.info("Valore de CANT_INVER: ", CANT_INVER, AMBITO);
+        log.info("Valore de RecalcIverPrec: ", RecalcIverPrec, AMBITO);
+        log.info("Valore de InversionRealCalc: ", InversionRealCalc, AMBITO);
         /**/
         var TC = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO })
         var MinimoInversion = TC.valor_incremento
         if ( parseFloat(RecalcIverPrec.MontIversionCal) >= parseFloat(MinimoInversion) ) {
-            datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
-            log.info("Datos a Enviar: ", datos,'Invertir');
+
+            
+            if ( Robot.valor === 0 ) {
+                datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
+                log.info("Datos a Enviar: ", datos, AMBITO);
 
 
-            //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+'100000000'+'&price='+'0.000001';
-            //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+RecalcIverPrec.MontIversionCal;
+                //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+'100000000'+'&price='+'0.000001';
+                //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+RecalcIverPrec.MontIversionCal;
 
 
-            var url_orden = CONSTANTES.ordenes;
+                var url_orden = CONSTANTES.ordenes;
 
-            do {            
-                var Orden = Meteor.call('ConexionPost', url_orden, datos);
-                Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi Orden: ']+[Orden]); 
-                if ( Orden === undefined ) {
-                    Meteor.call('sleep', 4);
-                }
-            }while( Orden === undefined );
+                do {            
+                    var Orden = Meteor.call('ConexionPost', url_orden, datos);
+                    Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi Orden: ']+[Orden]); 
+                    if ( Orden === undefined ) {
+                        Meteor.call('sleep', 4);
+                    }
+                }while( Orden === undefined );
+            }else if ( Robot.valor === 1 ) {
+                log.info(" Valor de if ( "+ parseFloat(RecalcIverPrec.MontIversionCal)+" >= "+parseFloat(MinimoInversion) +" )",'', AMBITO);
+                //var INV_REAL = RecalcIverPrec.MontRealIversionCal;
+
+                log.info("Valor de IdTransaccionActual: ", IdTransaccionActual, AMBITO);
+                log.info("Valor de TIPO_CAMBIO: ", TIPO_CAMBIO, AMBITO);
+                log.info("Valor de TP: ", TP, AMBITO);
+                log.info("Valor de InversionRealCalc: ", InversionRealCalc, AMBITO);
+                log.info("Valor de RecalcIverPrec.MontIversionCal: ", RecalcIverPrec.MontIversionCal, AMBITO);
+                log.info("Valor de RecalcIverPrec.MejorPrecCal: ", RecalcIverPrec.MejorPrecCal, AMBITO);
+                log.info("Valor de RecalcIverPrec.comision_hbtc: ", RecalcIverPrec.comision_hbtc, AMBITO);
+                log.info("Valor de RecalcIverPrec.comision_mercado: ", RecalcIverPrec.comision_mercado, AMBITO);
+
+                var DatosRobot = {  clientOrderId : IdTransaccionActual, 
+                                    symbol : TIPO_CAMBIO, 
+                                    side : TP, 
+                                    timeInForce : 'GTC', 
+                                    type : 'limit', 
+                                    quantity : RecalcIverPrec.MontIversionCal, 
+                                    price : RecalcIverPrec.MejorPrecCal, 
+                                    comision_m : RecalcIverPrec.comision_hbtc,  
+                                    comision_h : RecalcIverPrec.comision_mercado }
+
+                log.info(" Valor de DatosRobot: ", DatosRobot, AMBITO);
+
+
+                log.info(" Estoy aca 1",'', AMBITO);
+                do {            
+                    var Orden = Meteor.call('GenerarOrderRobot', DatosRobot);
+                    log.info(" Estoy aca 2",'', AMBITO);
+                    Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrderRobot: recibi Orden: ']+[Orden]); 
+                    if ( Orden === undefined ) {
+                        Meteor.call('sleep', 4);
+                    }
+                }while( Orden === undefined );
+            }
 
         }else{
             var Orden = {  status: 'Quantity too low' }
@@ -993,18 +1041,18 @@ Meteor.methods({
         Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi estado: ']+[Estado_Orden]); 
         ContpartiallyFilled = 0;
 
-        log.info(' Valor de Orden 1: ', Orden,'Invertir');
+        log.info(' Valor de Orden 1: ', Orden, AMBITO);
         
 
         while( Estado_Orden !== "filled" ){
-            log.info('Estoy en el while','','Invertir');
-            log.info(' Valor de Orden 2: ', Orden,'Invertir');
-            log.info(' Valor de Estado_Orden: ', Estado_Orden,'Invertir');
+            log.info('Estoy en el while','', AMBITO);
+            log.info(' Valor de Orden 2: ', Orden, AMBITO);
+            log.info(' Valor de Estado_Orden: ', Estado_Orden, AMBITO);
             fecha = moment (new Date());
             if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
                 var V_IdHitBTC = Orden.id
-                log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" )','','Invertir');
-                log.info(' Valor de Orden 3: ', Orden,'Invertir');
+                log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" )','', AMBITO);
+                log.info(' Valor de Orden 3: ', Orden, AMBITO);
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);                
                 Meteor.call('sleep', 4);
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FIN ESPERA: ']+[fecha._d]);
@@ -1038,15 +1086,18 @@ Meteor.methods({
                                 }
                             });
 
-                //const Resultado = Meteor.call("ValidarEstadoOrden", IdTransaccionActual, V_IdHitBTC, TIPO_CAMBIO, Orden)
-                const Resultado = Meteor.call("ValidarEstadoOrden", Orden)
+                if ( Robot.valor === 0 ) {
+                    const Resultado = Meteor.call("ValidarEstadoOrden", Orden)
+                }else if ( Robot.valor === 1 ) {
+                    const Resultado = Meteor.call("ValidarEstadoOrdenRobot", Orden)
+                }
                 Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
-                log.info(' Valor de Orden 4: ', Orden,'Invertir');
+                log.info(' Valor de Orden 4: ', Orden, AMBITO);
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
 
                 var Orden = Resultado
                 var Estado_Orden = Resultado.status;
-                log.info(' Valor de Orden 5: ', Orden,'Invertir');
+                log.info(' Valor de Orden 5: ', Orden, AMBITO);
                 //var Estado_Orden = Resultado;        
                 ContEspEdoOrd = ContEspEdoOrd + 1;
 
@@ -1058,9 +1109,9 @@ Meteor.methods({
             }
 
             if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Quantity too low" ) {
-                log.info(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )','','Invertir');
+                log.info(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )','', AMBITO);
                 var V_IdHitBTC = Orden.id
-                log.info(' Valor de Orden 6: ', Orden,'Invertir');
+                log.info(' Valor de Orden 6: ', Orden, AMBITO);
 
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
@@ -1086,18 +1137,18 @@ Meteor.methods({
                                         );
                 
                 if ( Estado_Orden === "DuplicateclientOrderId") {   
-                    log.info(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")','','Invertir');
+                    log.info(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")','', AMBITO);
                     Meteor.call("GuardarLogEjecucionTrader", [' CalcularIversionPromedio: Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
-                    Meteor.call('CalcularIversionPromedio', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
+                    Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
                 }else{
                     TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
                 }
-                log.info(' Valor de Orden 7: ', Orden,'Invertir');
+                log.info(' Valor de Orden 7: ', Orden, AMBITO);
                 break
             }
 
             if ( Estado_Orden === "errorisnotdefined" ) {
-                log.info(' Valor de Orden 8: ', Orden,'Invertir');
+                log.info(' Valor de Orden 8: ', Orden, AMBITO);
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                         {
                                             $set: {
@@ -1119,13 +1170,13 @@ Meteor.methods({
                                         }, 
                                         {"upsert" : true}
                                         );
-                log.info(' Valor de Orden 9: ', Orden,'Invertir');
+                log.info(' Valor de Orden 9: ', Orden, AMBITO);
                 TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
                 break
             }
 
             if ( Estado_Orden === "Insufficientfunds" ) {
-                log.info(" Insufficientfunds: Valor de Orden 10: ", Orden,'Invertir');
+                log.info(" Insufficientfunds: Valor de Orden 10: ", Orden, AMBITO);
                 //var V_IdHitBTC = Orden.id
 
                 GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
@@ -1152,26 +1203,38 @@ Meteor.methods({
 
 
 
-                //const VerifOrdenAbierta = Meteor.call("ValidarEstadoOrden", V_IdHitBTC, TIPO_CAMBIO, Orden)
-                const Resultado = Meteor.call("ValidarEstadoOrden", Orden)
+                if ( Robot.valor === 0 ) {
+                    const Resultado = Meteor.call("ValidarEstadoOrden", Orden)
+                }else if ( Robot.valor === 1 ) {
+                    const Resultado = Meteor.call("ValidarEstadoOrdenRobot", Orden)
+                }
                 var Orden = Resultado
-                log.info(' Valor de Orden 11: ', Orden,'Invertir');
+                log.info(' Valor de Orden 11: ', Orden, AMBITO);
                 var Estado_Orden = Resultado.status;
-                log.info(" Insufficientfunds: Valor de Estado_Orden: ", Estado_Orden,'Invertir');
+                log.info(" Insufficientfunds: Valor de Estado_Orden: ", Estado_Orden, AMBITO);
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
                 TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO})
             } 
         }
 
-        log.info(' Valor de Orden 12: ', Orden,'Invertir');
+        log.info(' Valor de Orden 12: ', Orden, AMBITO);
 
         if ( Estado_Orden === "filled" ) {
-            log.info(" if ( Estado_Orden === filled ) : Voy a Guardar",'Invertir');
-            log.info(' Valor de Orden 13: ', Orden,'Invertir');
-            log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO+' '+ CANT_INVER+' '+ InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE,'Invertir' );
-            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
-            log.info(" if ( Estado_Orden === filled ) : Ya guardé",'','Invertir');
             
+            if ( Robot.valor === 0 ) {
+                log.info(" if ( Estado_Orden === filled ) : Voy a Guardar", AMBITO);
+                log.info(' Valor de Orden 13: ', Orden, AMBITO);
+                log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO+' '+ CANT_INVER+' '+ InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE, AMBITO);
+                Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+                log.info(" if ( Estado_Orden === filled ) : Ya guardé",'', AMBITO);
+
+            }else if ( Robot.valor === 1 ) {
+                log.info(" if ( Estado_Orden === filled ) : Voy a Guardar",'', AMBITO);
+                log.info(' Valor de Orden 13: ', Orden, AMBITO);
+                log.info(''," if ( Estado_Orden === filled ) : Enviando "+ TIPO_CAMBIO+' '+CANT_INVER+' '+InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE, AMBITO);
+                Meteor.call('GuardarOrdenRobot', TIPO_CAMBIO, CANT_INVER,  parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+                log.info(" if ( Estado_Orden === filled ) : Ya guardé",'', AMBITO);
+            }
         }
         /**/
     },
