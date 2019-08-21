@@ -6,7 +6,8 @@ Meteor.methods({
         var nuevo_id = SecuenciasRobot.findAndModify({
                                                 query: { _id: NOMBRE },
                                                 update: { $inc: { secuencia: 1 } },
-                                                new: true
+                                                upsert: true,
+                                                'new' : true
                                             });
         
         return nuevo_id.secuencia;

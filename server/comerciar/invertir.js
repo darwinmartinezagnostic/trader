@@ -564,7 +564,7 @@ Meteor.methods({
         log.info("                $: ", SALDO_EQUIV.toString(), AMBITO);
         log.info("      TIPO CAMBIO: ", Vtipo_cambio, AMBITO);
         log.info("           ESTADO: ", VEstado, AMBITO);
-        log.info("    PRECIO ACTUAL: ", PeriodoPrecioAct.toString().replace(".", ","),'Invertir' );
+        log.info("    PRECIO ACTUAL: ", PeriodoPrecioAct.toString().replace(".", ","), AMBITO );
         log.info(" ");
         log.info('-------------------------------------------');
         if ( MONEDASALDO === MonBase ){
@@ -572,7 +572,7 @@ Meteor.methods({
             log.info("            FECHA: ", VBfecha, AMBITO);
         	log.info("  PRECIO ANTERIOR: ", "= " + ValPrecAntMB + " =", AMBITO);
         	log.info("    PRECIO ACTUAL: ", "= " + ValPrecAct + " =", AMBITO);
-        	log.info("        TENDENCIA: ", "[[*** "+ parseFloat(TendenciaMonedaBase.toFixed(4)) +" ***]]",'Invertir' );
+        	log.info("        TENDENCIA: ", "[[*** "+ parseFloat(TendenciaMonedaBase.toFixed(4)) +" ***]]", AMBITO );
     	}else{
             log.info("             BASE: ", Vmoneda_base, AMBITO);
             log.info("            FECHA: ", VBfecha,'Invertir')
@@ -590,7 +590,7 @@ Meteor.methods({
             log.info("            FECHA: ", VCfecha, AMBITO);
         	log.info("  PRECIO ANTERIOR: ", "= " + ValPrecAntMC +" =", AMBITO);
         	log.info("    PRECIO ACTUAL: ", "= " + ValPrecAct +" =", AMBITO);
-        	log.info("        TENDENCIA: ", "[[*** "+ parseFloat(TendenciaMonedaCotizacion.toFixed(4)) +" ***]]",'Invertir' );
+        	log.info("        TENDENCIA: ", "[[*** "+ parseFloat(TendenciaMonedaCotizacion.toFixed(4)) +" ***]]", AMBITO );
         }else{
             log.info("       COTIZACION: ", Vmoneda_cotizacion, AMBITO);
             log.info("            FECHA: ", VCfecha, AMBITO);
@@ -941,13 +941,9 @@ Meteor.methods({
     
     'CrearNuevaOrder':function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
         var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
-        if ( Robot.valor === 0 ) {
-            var AMBITO = 'Invertir'
-            log.info("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: "+ TIPO_CAMBIO+" CANT_INVER: "+ CANT_INVER+ " MON_B: "+ MON_B+ " MON_C: "+MON_C+ " MONEDA_SALDO: "+ MONEDA_SALDO+ " MONEDA_COMISION: "+ MONEDA_COMISION+ " ID_LOTE: "+ ID_LOTE, AMBITO);
-        }else if ( Robot.valor === 1 ) {
-            var AMBITO = 'Robot'
-            log.info("Valores recibidos CrearNuevaOrderRobot", " TIPO_CAMBIO: "+ TIPO_CAMBIO+" CANT_INVER: "+ CANT_INVER+ " MON_B: "+ MON_B+ " MON_C: "+MON_C+ " MONEDA_SALDO: "+ MONEDA_SALDO+ " MONEDA_COMISION: "+ MONEDA_COMISION+ " ID_LOTE: "+ ID_LOTE, AMBITO);
-        }
+        
+        var AMBITO = 'Invertir - CrearNuevaOrder'
+        log.info("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: "+ TIPO_CAMBIO+" CANT_INVER: "+ CANT_INVER+ " MON_B: "+ MON_B+ " MON_C: "+MON_C+ " MONEDA_SALDO: "+ MONEDA_SALDO+ " MONEDA_COMISION: "+ MONEDA_COMISION+ " ID_LOTE: "+ ID_LOTE, AMBITO);
 
         var ContEspEdoOrd = 0;
         var CONSTANTES = Meteor.call("Constantes");

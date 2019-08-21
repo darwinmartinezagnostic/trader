@@ -465,4 +465,23 @@ Meteor.methods({
             }
         }
     },
+
+    'ConcultaSaldoTotalMonedas':function(){
+        var SaldoTotal = Monedas.aggregate( { $match : {"saldo.tradeo.equivalencia" : { $gt : 0 }}},
+                                            { $group: {
+                                                        _id: 0,
+                                                        TotalEquivalente: {
+                                                            $sum: "$saldo.tradeo.equivalencia"
+                                                        }
+                                                    }
+                                            },
+                                            {
+                                                $project: {
+                                                    _id: 0,
+                                                    TotalEquivalente: 1
+                                            }});
+        
+        //log.info(" Valor de SaldoTotal ", SaldoTotal[0]);
+        return SaldoTotal[0].TotalEquivalente;
+    },
 });

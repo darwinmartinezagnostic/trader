@@ -1096,7 +1096,7 @@ Meteor.methods({
                 var SaldoActualMonAd = MonAdquirida.saldo.tradeo.activo
                 log.info(" Valor de SaldoActualMonAd: ", SaldoActualMonAd)
                 var CantidadRecibida = Meteor.call("EquivalenteTipoCambio", MonAdquirida.moneda, CantidadNegociada, precio, TIPO_CAMBIO );
-                var SaldoActualCalcMC =  parseFloat(SaldoActualMonAd) + ( parseFloat(CantidadRecibida))
+                var SaldoActualCalcMC =  parseFloat(SaldoActualMonAd) + ( parseFloat(CantidadRecibida) - parseFloat(Comision))
                 log.info(" Valor de SaldoActualCalcMC: ", SaldoActualCalcMC," = ", parseFloat(SaldoActualMonAd)," + (", parseFloat(CantidadRecibida),")")
                 var EqvSaldoActualCalcMC =  Meteor.call('EquivalenteDolar', MON_C, parseFloat(SaldoActualCalcMC.toFixed(9)), 2)
                 log.info(" Valor de EqvSaldoActualCalcMC: ", EqvSaldoActualCalcMC)
@@ -1350,13 +1350,15 @@ Meteor.methods({
         //log.info('############################################');
 
         var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
-        var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
-        Meteor.call("GuardarLogEjecucionTrader", [" Valor de V_LimiteMaximoDeCompras: "]+[V_LimiteMaximoDeCompras]);
-        if ( V_LimiteMaximoDeCompras === 0 ) {
-                                    
-            throw new Error(" ÉJECUCIÓN DETENIDA");
+        var SaldoTotal = Meteor.call("ConcultaSaldoTotalMonedas")
+        
+        if ( SaldoTotal < 1 ) {
+            var V_LimiteMaximoDeCompras = 1
+        }else{
+            var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
+        }
 
-        }else if ( V_LimiteMaximoDeCompras > 0 && V_LimiteMaximoDeCompras !== 9999999999 ) {
+        if ( V_LimiteMaximoDeCompras > 0 && V_LimiteMaximoDeCompras !== 9999999999 ) {
 
             V_LimiteMaximoDeCompras = V_LimiteMaximoDeCompras - 1
                         
@@ -1410,7 +1412,6 @@ Meteor.methods({
             Meteor.call('CrearNuevaOrder',TipoCambio, SaldoInverCalculado, MonCBas, MonCoti, MonedaSaldo, MonedaApCom, IdTransaccionLoteActual);
         }
     },
-
 
     'ResetTipoCambioMonSaldo':function( ){
         var Monedas_Saldo = Monedas.aggregate([

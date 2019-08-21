@@ -13,8 +13,44 @@ LogFile.enable();
 
 Meteor.methods({
 
-    'EjecucionInicial':function(){
-        log.info(" EjecucionInicial:", 'Acá etoy','Main');
+    'EjecucionInicial':function( IdDatoAnalisis, IdLote ){  
+        try {
+            // Verificamos si la aplicación es su ejecución Inicial o No
+
+            
+            var ModoEjecucion = Parametros.findOne( { dominio : "Ejecucion", nombre : "ModoEjecucion" } );
+            var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );            
+            var ResetSaldos = Parametros.findOne( { dominio : "Prueba", nombre : "saldo" } );
+
+            //var ValorModoEjecucion = ModoEjecucion[0].valor
+            var ValorModoEjecucion = ModoEjecucion.valor
+            //log.info('Valor de ValorModoEjecucion: ', ValorModoEjecucion);
+            switch ( ValorModoEjecucion ){
+                case 1:                    
+                    Meteor.call('SecuenciaInicial', IdDatoAnalisis, IdLote );
+                break;
+                case 2:
+                    if ( ResetSaldos.valor === 1 ) {
+                        Meteor.call("ReinioDeSaldos");
+                    }
+                    if ( Robot.valor === 0 ) {
+                        Meteor.call("ActualizaSaldoTodasMonedas");
+                    }
+                    Meteor.call("ValidaSaldoEquivalenteActual");
+                    Meteor.call("ResetTipoCambioMonSaldo");                    
+                    Meteor.call('SecuenciasSecundarias', IdDatoAnalisis, IdLote );
+                break;                
+            }
+
+            return 0;
+        }
+        catch (error){
+            Meteor.call("ValidaError", error, 2);
+            return 1;
+        };
+    },
+
+    'SecuenciaDeCarga':function(){
         var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
 
         if ( Robot.valor === 0 ) {
@@ -54,45 +90,16 @@ Meteor.methods({
 
 Meteor.startup(function (){
     // código que se ejecuta al iniciar la aplicación en el servidor
+
     JobsInternal.Utilities.collection.remove({  });
     TmpTipCambioXMonedaReord.remove({ });
     LogEjecucionTrader.remove({  });
     Meteor.call('ReinicioDeSecuenciasGBL', 'IdLog');
-
-    try {
-        // Verificamos si la aplicación es su ejecución Inicial o no
-        var ModoEjecucion = Parametros.aggregate([  { $match : { dominio : "Ejecucion", nombre : "ModoEjecucion" } },
-                                                    { $project : { _id : 0, valor : 1 } }]);
-
-        var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
-        
-        var ResetSaldos = Parametros.findOne( { dominio : "Prueba", nombre : "saldo" } );
-
-
-        var ValorModoEjecucion = ModoEjecucion[0].valor
-        log.info("Valor de EjecucionInicial:", ValorModoEjecucion.toString(),'Main');
-
-        switch ( ValorModoEjecucion ){
-            case 0:
-                Meteor.call("PruebasUnitarias");
-            break;
-            case 1:
-                Meteor.call('SecuenciaInicial');
-            break;
-            case 2:
-                if ( ResetSaldos.valor === 1 ) {
-                    Meteor.call("ReinioDeSaldos");
-                }
-                if ( Robot.valor === 0 ) {
-                    Meteor.call("ActualizaSaldoTodasMonedas");
-                }
-                Meteor.call("ValidaSaldoEquivalenteActual");
-                Meteor.call("ResetTipoCambioMonSaldo");
-                Meteor.call('SecuenciasSecundarias');
-            break;                
+    //log.info(' ------------------------- ACA ESTOY -------------------------');
+    
+    Jobs.run("JobTipoEjecucion", {
+        in: {
+            second: 1
         }
-    }
-    catch (error){
-        Meteor.call("ValidaError", error, 2);
-    };
+    })
 });

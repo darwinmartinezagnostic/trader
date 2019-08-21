@@ -1,5 +1,10 @@
 import { Meteor } from 'meteor/meteor';
+import { Logger } from 'meteor/ostrio:logger';
+import { LoggerFile } from 'meteor/ostrio:loggerfile';
 moment().tz('America/Caracas').format();
+const log = new Logger();
+const LogFile = new LoggerFile(log,logFilePath);
+LogFile.enable();
 
 Meteor.methods({
 
@@ -30,24 +35,29 @@ Meteor.methods({
                     var nuevo_id = SecuenciasGlobales.findAndModify({
                                                                         query: { _id: NOMBRE },
                                                                         update: { $inc: { secuencia: 1 } },
-                                                                        new: true
+                                                                        new: true,
+                                                                        upsert: true
                                                                     });
                 }
             }else{            
                 var nuevo_id = SecuenciasGlobales.findAndModify({
                                                                     query: { _id: NOMBRE },
                                                                     update: { $inc: { secuencia: 1 } },
-                                                                    new: true
+                                                                    upsert: true,
+                                                                    'new' : true
                                                                 });
             }
         }else{
+            //log.info(' Estoy en el else de if ( Robot.valor === 0 )')
+            //log.info(' Valor de NOMBRE: ', NOMBRE)
             var nuevo_id = SecuenciasGlobales.findAndModify({
                                                                     query: { _id: NOMBRE },
                                                                     update: { $inc: { secuencia: 1 } },
-                                                                    new: true
+                                                                    upsert: true,
+                                                                    'new' : true
                                                                 });
         }
-
+        //log.info(' Valor de nuevo_id: ', nuevo_id)
         return nuevo_id.secuencia;
     },
 	

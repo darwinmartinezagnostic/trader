@@ -12,13 +12,13 @@ Meteor.methods({
     
 	'PruebasUnitarias':function(){
 
-        Meteor.call('sendEmail', 'darwin.2911@gmail.com', 'subject', 'email');
+        //Meteor.call('sendEmail', 'darwin.2911@gmail.com', 'subject', 'email');
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
         //Meteor.call('ActualizaEquivalenciaMonedas');
         //Meteor.call('CarcularGanancia',1);
 
         INV_REAL='0.000548350'
-        log.info(' Valor de INV_REAL: ', parseFloat(INV_REAL))
+        //log.info(' Valor de INV_REAL: ', parseFloat(INV_REAL))
         /*
         log.info('Esto es una prueba', 'Ejecutando pruebas', 'Pruebas');
         Meteor.call('ActualizaEquivalenciaMonedas');
@@ -29,9 +29,9 @@ Meteor.methods({
             var LimiteApDep = Parametros.aggregate([{ $match:{ dominio : "limites", nombre : "MaxApDep", estado : true }}, { $project: {_id : 0, valor : 1}}]);
             var V_LimiteApDep = LimiteApDep[0].valor;
             var CONSTANTES = Meteor.call("Constantes");
-         
+         /
         //Meteor.call("ActualizaSaldoTodasMonedas");
-        /*
+        
         Meteor.call("ValidaSaldoEquivalenteActual");
         Meteor.call("ConsultarSaldoTodasMonedas");
         Meteor.call("EquivalenteDolarMinCompra");
@@ -55,7 +55,7 @@ Meteor.methods({
         //Meteor.call("ActualizaSaldoTodasMonedas");
         //Meteor.call("ValidaSaldoEquivalenteActual");
         //Meteor.call("ListaMonedas");
-        Meteor.call("ReinioDeSaldos");  
+        //Meteor.call("ReinioDeSaldos");  
         const MON_B='ETH'
         const MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
@@ -422,6 +422,126 @@ Meteor.methods({
     var ResultadoEquivalenteEnDolares = Meteor.call("EquivalenteDolar", MONEDA_S_SALDO, ResultadoEquvalenciaTipoCambio, 2);
     log.info(" ResultadoEquivalenteEnDolares ", ResultadoEquivalenteEnDolares);
     /***/
+
+    //var probando = ParametrosDeAnalisis.find({}).fetch();
+    //console.log ('Valor de probando: ', probando)
+
+    // Meteor.call("SecuenciaDeCarga")
+ 
+    /*
+    fecha = moment (new Date());
+    var SaldoTotal = Meteor.call("ConcultaSaldoTotalMonedas")
+    log.info(' Acá estoy ******');
+    log.info(" Valor de SaldoTotal ", SaldoTotal);
+
+
+
+   
+
+
+
+
+
+    TempSaldosTotales.update(   { _id : 1, IdLote : 1 }, 
+                                                    { $set : {
+                                                            'Saldo.Inicial' : SaldoTotal
+                                                            }
+                                                    },
+                                                    { "upsert" : true }); 
+
+    TempSaldosTotales.update(   { _id : 1, IdLote : 1 }, 
+                                                    { $set : {
+                                                            'Saldo.Final' : 9 
+                                                            }
+                                                    },
+                                                    { "upsert" : true }); 
+
+
+    TempSaldosTotales.update(   { _id : 2, IdLote : 1 }, 
+                                                    { $set : {
+                                                            'Saldo.Inicial' :  10 
+                                                            }
+                                                    },
+                                                    { "upsert" : true }); 
+
+
+    TempSaldosTotales.update(   { _id : 2, IdLote : 1 }, 
+                                                    { $set : {
+                                                            'Saldo.Final' : 12 
+                                                            }
+                                                    },
+                                                    { "upsert" : true }); 
+
+
+
+
+
+
+
+
+
+
+
+
+    /**/
+
+ 
+
+
+    //var nuevo_id = Meteor.call("SecuenciasGBL", 'IdAnalisis')
+
+    /*
+    var DatoSaldo = [{ id : nuevo_id , valor : SaldoTotal }]
+
+    var DatoSaldo = [{ id : nuevo_id , valor : SaldoTotal }]
+
+                        ResultadoAnalisis.update({ _id : nuevo_id}, 
+                                        { $set : {
+                                                    'Fecha' : fecha._d,
+                                                    'Saldo.Inicial' : { DatoSaldo }
+                                                    'Saldo.Final' : { DatoSaldo }
+                                                }
+                                        },
+                                        { "upsert" : true });
+
+    ResultadoAnalisis.findOne({ nuevo_id })
+
+    DatosSaldos.add ( { id : ResultadoAnalisis.Saldo.Inicial.id , valor : ResultadoAnalisis.Saldo.Inicial.valor } )
+
+    //var DatoSaldo = [{ id : nuevo_id , valor : 10 }]
+
+    DatosSaldos.add ( { id : nuevo_id , valor : 10 } )
+
+    var DatoSaldo = Array.from(DatosSaldos);
+    /***/
+    /*
+    var DatosParametros = Meteor.call("AnalisisConsultarParametros");
+    log.info(' Valor de DatosParametros: ', DatosParametros) 
+    var DatosSaldosTtl = Meteor.call("AnalisisConsultarSaldosTotales");
+    log.info(' Valor de DatosSaldosTtl: ', DatosSaldosTtl) 
+    var DatosSaldosMond = Meteor.call("AnalisisConsultarSaldos");        
+    log.info(' Valor de DatosSaldosMond: ', DatosSaldosMond)
+    var DatosHistGanancPrd = Meteor.call("AnalisisConsultarHistGananPerd");
+    log.info(' Valor de DatosHistGanancPrd: ', DatosHistGanancPrd)
+    /**/
+    //Meteor.call('GuardarDatosAnalisis' , 1 , 1);
+
+    Meteor.call('GuardarResultadosAnalisis' , 1 );
+
+    //ParametrosAnalisis.update( { "_id" : 1 }, { $set : { "activo" : false } } );
+
+    
+
+
+    /*
+
+    Jobs.run("JobTipoEjecucion", {
+        in: {
+            second: 1
+        }
+    })
+
+    /**/
     }
 });
 
