@@ -12,6 +12,7 @@ Meteor.methods({
     
 	'PruebasUnitarias':function(){
 
+        var AMBITO = 'PruebasUnitarias'
         //Meteor.call('sendEmail', 'darwin.2911@gmail.com', 'subject', 'email');
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
         //Meteor.call('ActualizaEquivalenciaMonedas');
@@ -53,19 +54,20 @@ Meteor.methods({
         */   
 
         //Meteor.call("ActualizaSaldoTodasMonedas");
+
+        
         //Meteor.call("ValidaSaldoEquivalenteActual");
         //Meteor.call("ListaMonedas");
         //Meteor.call("ReinioDeSaldos");  
         const MON_B='ETH'
         const MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
-        //var MONEDA_SALDO = MON_B
         var MONEDA_COMISION = MON_C
         var MONEDA_SALDO = MON_B
+        //var MONEDA_SALDO = MON_C
         var MONEDASALDO = MONEDA_SALDO
-        var PRECIO = '0.000000544'
+        var PRECIO = '0.019754'
         /*
-
             //log.info(' Tipo de Cambio T
             IPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
            
@@ -77,21 +79,49 @@ Meteor.methods({
         /**/        
         
         if (MONEDA_SALDO === MON_B) {
+            var TP = 'sell'
             var MONEDA_S_SALDO = MON_C
             //CANT_INVER = '1.782'
-            CANT_INVER = '0.019'
+            CANT_INVER = '0.0240'
             //var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
-            //var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
+            //var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo 
         }else if (MONEDA_SALDO === MON_C) {
+            var TP = 'buy'
             var MONEDA_S_SALDO = MON_B
-            //CANT_INVER = '0.01696398'
+            //CANT_INVER = '0.01696398' 
             CANT_INVER = '0.00055' 
             //var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
             //var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
         } 
-        
+
+        Monedas.update({
+                                        moneda: MON_B
+                                    }, 
+                                    {
+                                        $set:{  "saldo.tradeo.activo": 0.0240,
+                                                "saldo.tradeo.reserva": 0
+                                        }
+                                    },
+                                    {"multi" : true }
+                    );
+
+        Monedas.update({
+                                        moneda: MON_C
+                                    }, 
+                                    {
+                                        $set:{  "saldo.tradeo.activo": 0.00055,
+                                                "saldo.tradeo.reserva": 0
+                                        }
+                                    },
+                                    {"multi" : true }
+                    );
+        Meteor.call("ValidaSaldoEquivalenteActual");
+
+        log.info(' ------------------------- ACA ESTOY -------------------------');
         MAPLICOMIS = MON_C
-        //var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')    
+        var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
+        var IdTransaccionActual = Meteor.call("CompletaConCero", IdTran, 32);
+        var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')    
 
         //Meteor.call("ConsultaCarterasDeposito");
  
@@ -103,15 +133,22 @@ Meteor.methods({
                                         // TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){ 
 
             /*
+            log.info(" Prueba: Valores enviados: ", TIPO_CAMBIO + ' ' + MONEDA_SALDO + ' ' + CANT_INVER );
             log.info('--------------------------------------------');
-            var XPromedio = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-            log.info("Calculo X Promedio: ", XPromedio);
+            log.info('                  PROMEDIO');
+            Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            //var XPromedio = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            //log.info("Calculo X Promedio: ", XPromedio);
             log.info('--------------------------------------------');
-            var XOrden = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-            log.info("Calculo X Orden: ", XOrden);
+            log.info('                  X_ORDEN');
+            Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            //var XOrden = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            //log.info("Calculo X Orden: ", XOrden);
             log.info('--------------------------------------------');
-            var XVolumen = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
-            log.info("Calculo X Volumen: ", XVolumen);
+            log.info('                  X_VOLUMEN');
+            Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            //var XVolumen = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            //log.info("Calculo X Volumen: ", XVolumen);
             log.info('--------------------------------------------');
             /*
             var IdTransaccionActual = "0899750c5384478998adb2818337d627"
@@ -131,30 +168,36 @@ Meteor.methods({
 
                 Meteor.call("ValidaTiempoEspera", ORDEN);
             */
+
+
+            var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER); 
+            var InversionRealCalc = RecalcIverPrec.MontRealIversionCal
+
+            log.info("Valor de IdTransaccionActual: ", IdTransaccionActual, AMBITO);
+                log.info("Valor de TIPO_CAMBIO: ", TIPO_CAMBIO, AMBITO);
+                log.info("Valor de TP: ", TP, AMBITO);
+                log.info("Valor de InversionRealCalc: ", InversionRealCalc, AMBITO);
+                log.info("Valor de RecalcIverPrec.MontIversionCal: ", RecalcIverPrec.MontIversionCal, AMBITO);
+                log.info("Valor de RecalcIverPrec.MejorPrecCal: ", RecalcIverPrec.MejorPrecCal, AMBITO);
+                log.info("Valor de RecalcIverPrec.comision_hbtc: ", RecalcIverPrec.comision_hbtc, AMBITO);
+                log.info("Valor de RecalcIverPrec.comision_mercado: ", RecalcIverPrec.comision_mercado, AMBITO);
+
+                var DatosRobot = {  clientOrderId : IdTransaccionActual, 
+                                    symbol : TIPO_CAMBIO, 
+                                    side : TP, 
+                                    timeInForce : 'GTC', 
+                                    type : 'limit', 
+                                    quantity : RecalcIverPrec.MontIversionCal, 
+                                    price : RecalcIverPrec.MejorPrecCal, 
+                                    comision_m : RecalcIverPrec.comision_hbtc,  
+                                    comision_h : RecalcIverPrec.comision_mercado }
+
             
-            /*
-            const ORDEN = { id: 134980877254,
-                            clientOrderId: '00000000000000000000000000000023',
-                            symbol: 'VRABTC',
-                            side: 'buy',
-                            status: 'filled',
-                            type: 'limit',
-                            timeInForce: 'GTC',
-                            quantity: '19',
-                            price: '0.0000001401',
-                            cumQuantity: '19',
-                            createdAt: '2019-06-21T05:06:42.088Z',
-                            updatedAt: '2019-06-21T05:06:42.088Z',
-                            tradesReport:
-                                [ { id: 588955797,
-                                    quantity: '19',
-                                    price: '0.0000001401',
-                                    fee: '0.000000005324',
-                                    timestamp: '2019-06-21T05:06:42.088Z' } ] }
+            const ORDEN = Meteor.call('GenerarOrderRobot', DatosRobot);
 
             var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')
             //(TIPO_CAMBIO, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, DATOS, ID_LOTE){
-            Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, IdTransaccionLoteActual);
+            Meteor.call("GuardarOrden", TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, IdTransaccionLoteActual);
             /**/   
 
             /*
@@ -418,7 +461,7 @@ Meteor.methods({
 
     var ResultadoEquvalenciaTipoCambio = Meteor.call("EquivalenteTipoCambio", MONEDA_S_SALDO, CANT_INVER, PRECIO, TIPO_CAMBIO );
     log.info(' ResultadoEquvalenciaTipoCambio: ', ResultadoEquvalenciaTipoCambio);
-
+    /*
     var ResultadoEquivalenteEnDolares = Meteor.call("EquivalenteDolar", MONEDA_S_SALDO, ResultadoEquvalenciaTipoCambio, 2);
     log.info(" ResultadoEquivalenteEnDolares ", ResultadoEquivalenteEnDolares);
     /***/
@@ -526,7 +569,7 @@ Meteor.methods({
     /**/
     //Meteor.call('GuardarDatosAnalisis' , 1 , 1);
 
-    Meteor.call('GuardarResultadosAnalisis' , 1 );
+    //Meteor.call('GuardarResultadosAnalisis' , 1 );
 
     //ParametrosAnalisis.update( { "_id" : 1 }, { $set : { "activo" : false } } );
 
@@ -542,6 +585,8 @@ Meteor.methods({
     })
 
     /**/
+
+    Meteor.call('FinEjecucion')
     }
 });
 

@@ -50,13 +50,13 @@ Meteor.methods({
         var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
         log.info('Valor de TipoEjecucion: ', TipoEjecucion);
 
-        if ( TipoEjecucion === 1 ) {            
+        if ( TipoEjecucion === 1 ) {
+            log.info('Valor de IdDatoAnalisis: ', IdDatoAnalisis + ', IdLote: '+ IdLote );
             Meteor.call('GuardarSaldoTotal', 1, IdDatoAnalisis , IdLote );
         }
 
         var contador = 1;
-        do{
-                
+        do{                
 
             Meteor.call("GuardarLogEjecucionTrader", [' ESTOY INICIANDO SECUENCIA']+[' CONTADOR ACTUAL: ']+[contador]);
 
@@ -195,8 +195,31 @@ Meteor.methods({
                                                                 }
                                         });
                                 }
+
+                                var ExistSaldosPositivos = Monedas.aggregate( { $match : {"saldo.tradeo.equivalencia" : { $gt : 1 }}},
+                                                                        { $group: {
+                                                                                    _id: 0,
+                                                                                    TotalEquivalente: {
+                                                                                        $sum: "$saldo.tradeo.equivalencia"
+                                                                                    }
+                                                                                }
+                                                                        },
+                                                                        {
+                                                                            $project: {
+                                                                                _id: 0,
+                                                                                TotalEquivalente: 1
+                                                                        }});
+                                if ( ExistSaldosPositivos === undefined ) {
+                                    Parametros.update({ "dominio": "limites", "nombre": "CantMaximaDeCompras" }, {
+                                        $set: {
+                                                    "valor": 0
+                                        }
+                                    });
+                                }
+
                                 var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
                                 var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
+
 
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                 Meteor.call("GuardarLogEjecucionTrader", ['      MONEDA: ']+[moneda_saldo.moneda]+[' HORA FIN: ']+[fecha._d]);

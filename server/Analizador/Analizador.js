@@ -245,7 +245,7 @@ Meteor.methods({
                                     },
                                     { "upsert" : true });
 
-        ParametrosAnalisis.update( { "IdLote" : ID_LOTE }, { $set : { "activo" : false } } ); 
+        ParametrosAnalisis.update( { "IdLote" : ID_LOTE }, { $set : { "LoteActivo" : false } } ); 
 
         Meteor.call('FinEjecucion')
     },

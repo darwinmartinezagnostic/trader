@@ -21,7 +21,7 @@ Meteor.methods({
         }else if ( Robot.valor === 1 ) {
             var AMBITO = 'EvaluarTendenciasRobot'
         }
-        log.info("Valores recibidos: ", " TIPO_CAMBIO: "+ TIPOCAMBIO+" MONEDASALDO: "+ MONEDASALDO, AMBITO);
+        //log.info("Valores recibidos: ", " TIPO_CAMBIO: "+ TIPOCAMBIO+" MONEDASALDO: "+ MONEDASALDO, AMBITO);
 
     	var CONSTANTES = Meteor.call("Constantes");
         // Formula de deprecación
@@ -556,7 +556,7 @@ Meteor.methods({
         VCprecio = ValorGuardado[0].periodo1.Cotizacion.precio.toString().replace("." , ",");
         VCtendencia = ValorGuardado[0].periodo1.Cotizacion.tendencia;
 
-        
+        /* 
         log.info('-------------------------------------------');
         log.info(" ");
         log.info("           MONEDA: ", MONEDASALDO, AMBITO);
@@ -658,6 +658,8 @@ Meteor.methods({
 
         Meteor.call("GuardarLogEjecucionTrader", ' *CALCULANDO RANKING DE LOS TIPOS DE CAMBIO*');
         Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[MONEDA]);
+        var ModoCalculo = Parametros.findOne( { dominio : "Comercio", nombre : "TipoCalculoInversion" } );
+        var V_ModoCalculo = ModoCalculo.valor;
         var LMCM = Parametros.findOne( { dominio : "limites", nombre : "LimiteMaximoMonedasInvertir", estado : true  })
         var LIMITE_COMP_MON = LMCM.valor;
 
@@ -696,9 +698,19 @@ Meteor.methods({
                             var MonCBas = TCR.moneda_base
                             var MonCoti = TCR.moneda_cotizacion
                             var VInversion = TCR.saldo_moneda_tradear*PTDC.valor.p11;
-                            var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
+                            switch (V_ModoCalculo){
+                                case 0:
+                                    var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
+                                break;
+                                case 1:
+                                    var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA, VInversion);
+                                break;
+                                case 2:
+                                    var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA, VInversion);
+                                break;
+                            }                            
                             var Inversion = RecalcIverPrec.MontIversionCal;
-
+                            Meteor.call("GuardarLogEjecucionTrader", [' Valor de if ( Inversion(']+[Inversion]+[') >= MinimoInversion(']+[MinimoInversion]+[') )']);
                             if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                 CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                             }
@@ -720,8 +732,19 @@ Meteor.methods({
                                 case 0:
                                     var SaldoVerificar = RTDC[CRTC12].saldo_moneda_tradear
                                     var VInversion = TCR.saldo_moneda_tradear*PTDC.valor.p12;
-                                    var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
+                                    switch (V_ModoCalculo){
+                                        case 0:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 1:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 2:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                    }
                                     var Inversion = RecalcIverPrec.MontIversionCal;
+                                    Meteor.call("GuardarLogEjecucionTrader", [' Valor de if ( Inversion(']+[Inversion]+[') >= MinimoInversion(']+[MinimoInversion]+[') )']);
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                         NuevoSaldoCalculado = SaldoVerificar - Inversion
@@ -730,6 +753,7 @@ Meteor.methods({
                                 case 1:
                                     var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p22;
                                     var Inversion = RecalcIverPrec.MontIversionCal;
+                                    Meteor.call("GuardarLogEjecucionTrader", [' Valor de if ( Inversion(']+[Inversion]+[') >= MinimoInversion(']+[MinimoInversion]+[') )']);
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
@@ -753,8 +777,19 @@ Meteor.methods({
                                     var TIPO_CAMBIO = TCR.tipo_cambio;
 
                                     var VInversion = SaldoVerificar*PTDC.valor.p13;
-                                    var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
+                                    switch (V_ModoCalculo){
+                                        case 0:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 1:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 2:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                    }
                                     var Inversion = RecalcIverPrec.MontIversionCal;
+                                    Meteor.call("GuardarLogEjecucionTrader", [' Valor de if ( Inversion(']+[Inversion]+[') >= MinimoInversion(']+[MinimoInversion]+[') )']);
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                         NuevoSaldoCalculado = SaldoVerificar - Inversion
@@ -771,8 +806,19 @@ Meteor.methods({
                                     var TIPO_CAMBIO = TCR.tipo_cambio;
 
                                     var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p23;
-                                    var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
+                                    switch (V_ModoCalculo){
+                                        case 0:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 1:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 2:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                    }
                                     var Inversion = RecalcIverPrec.MontIversionCal;
+                                    Meteor.call("GuardarLogEjecucionTrader", [' Valor de if ( Inversion(']+[Inversion]+[') >= MinimoInversion(']+[MinimoInversion]+[') )']);
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                         NuevoSaldoCalculado = NuevoSaldoCalculado - Inversion
@@ -789,8 +835,19 @@ Meteor.methods({
                                     var TIPO_CAMBIO = TCR.tipo_cambio;
 
                                     var VInversion = NuevoSaldoCalculado.toFixed(9)*PTDC.valor.p33;
-                                    var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
+                                    switch (V_ModoCalculo){
+                                        case 0:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 1:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 2:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                    }
                                     var Inversion = RecalcIverPrec.MontIversionCal;
+                                    Meteor.call("GuardarLogEjecucionTrader", [' Valor de if ( Inversion(']+[Inversion]+[') >= MinimoInversion(']+[MinimoInversion]+[') )']);
                                     if ( parseFloat(Inversion) >= parseFloat(MinimoInversion) ) {
                                         CantPropTipoCambiosValidados = CantPropTipoCambiosValidados+1
                                     }
@@ -940,8 +997,9 @@ Meteor.methods({
     },
     
     'CrearNuevaOrder':function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
-        var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
-        
+        var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );        
+        var ModoCalculo = Parametros.findOne( { dominio : "Comercio", nombre : "TipoCalculoInversion" } );
+        var V_ModoCalculo = ModoCalculo.valor;
         var AMBITO = 'Invertir - CrearNuevaOrder'
         log.info("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: "+ TIPO_CAMBIO+" CANT_INVER: "+ CANT_INVER+ " MON_B: "+ MON_B+ " MON_C: "+MON_C+ " MONEDA_SALDO: "+ MONEDA_SALDO+ " MONEDA_COMISION: "+ MONEDA_COMISION+ " ID_LOTE: "+ ID_LOTE, AMBITO);
 
@@ -971,7 +1029,17 @@ Meteor.methods({
         }
 
 
-        var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+        switch (V_ModoCalculo){
+            case 0:
+                var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            break;
+            case 1:
+                var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            break;
+            case 2:
+                var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+            break;
+        }
         var InversionRealCalc = RecalcIverPrec.MontRealIversionCal
         
         log.info("Valore de MON_B: ", MON_B, AMBITO);

@@ -9,9 +9,13 @@ if (PeriodoMuestreo.find().count() === 0){
 };
 
 if (Parametros.find({ dominio : 'Ejecucion' }).count() === 0){
-	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'TipoEjecucion', estado : true, valor: 1 ,descripcion : 'Tipo de Ejecucíón del Trader, 0 = Normal, 1 = Analisis; ejecuta un serie de ejecuciones modificando automáticamente los parámetros de ejecución según lo indicado en la colección ParametrosDeAnalisis' });
+	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'TipoEjecucion', estado : true, valor: 1 ,descripcion : 'Tipo de Ejecucíón del Trader, 0 = Normal, 1 = Analisis; Realiza una serie de ejecuciones modificando automáticamente los parámetros de ejecución según lo indicado en la colección ParametrosDeAnalisis' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'ModoEjecucion', estado : true, valor: 1 ,descripcion : 'Modo de Ejecucíón del Trader, 0 = Pruebas, 1 = SecuenciaInicial, 2 = SecuenciasSecundarias' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'Depuracion', estado : true, valor: 1 ,descripcion : 'Activar o desactivar las banderas creadas para rasterar errores de ejecución en los diferentes módulos' });
+};
+
+if (Parametros.find({ dominio : 'Comercio' }).count() === 0){
+	Parametros.insert({ fecha : new Date(), dominio : 'Comercio', nombre : 'TipoCalculoInversion', estado : true, valor: 1 ,descripcion : 'Tipo de Calculo de inversion del Trader, 0 = Promedio, 1 = Orden, 2 = Volumen; cambiar el modo de calculo de inversión en las compras' });
 };
 
 if (Parametros.find({ dominio : 'limites' }).count() === 0){
@@ -38,6 +42,7 @@ if (Parametros.find({ dominio : 'Prueba' }).count() === 0){
 	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'robot', estado : true, valor : 1, descripcion : '1 = activo, 0 = Inactivo - Simula la compra de monedas' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'saldo', estado : true, valor : 1, descripcion : ' 1 = activo, 0 = Inactivo - Restaura los valores de Saldo de todas las monedas y asigna Saldo ficticio Inicial' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'ResetDatosIniciales', estado : true, valor : 1, descripcion : ' 1 = activo, 0 = Inactivo - Borrar los datos Iniciales de monedas, tipos de cambio e inicia los valores al estado inicial' });
+	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'ResetParametrosAnalisis', estado : true, valor : 1, descripcion : ' 1 = activo, 0 = Inactivo - Reactiva los parámetros de Analisis nuevo estados true' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'ResetResultadoAnalisis', estado : true, valor : 1, descripcion : '1 = activo, 0 = Inactivo - Borra lo datos de analisis para cada nuevo set de pruebas' });
 };
 
@@ -54,7 +59,7 @@ for ( CSR = 0, TSR = NombresSecuenciasRobot.length; CSR < TSR; CSR++ ) {
 	};
 }
 
-const NombresSecuenciasGlobales = ['IdGanPerdLocal', 'IdGanPerdLote', 'IdHistTrans', 'IdLog', 'IdAnalisis']
+const NombresSecuenciasGlobales = ['IdGanPerdLocal', 'IdGanPerdLote', 'IdHistTrans', 'IdLog', 'IdAnalisis', 'IdParamAnalisis', 'IdParamAnalisisLote']
 
 for ( CSG = 0, TSG = NombresSecuenciasGlobales.length; CSG < TSG; CSG++ ) {
 	NOMBRE = NombresSecuenciasGlobales[CSG]

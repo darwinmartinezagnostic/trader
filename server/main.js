@@ -95,7 +95,6 @@ Meteor.startup(function (){
     TmpTipCambioXMonedaReord.remove({ });
     LogEjecucionTrader.remove({  });
     Meteor.call('ReinicioDeSecuenciasGBL', 'IdLog');
-    //log.info(' ------------------------- ACA ESTOY -------------------------');
     
     Jobs.run("JobTipoEjecucion", {
         in: {
