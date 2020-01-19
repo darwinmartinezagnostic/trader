@@ -7,7 +7,7 @@ moment().tz('America/Caracas').format();
 const log = new Logger();
 const LogFile = new LoggerFile(log,logFilePath);
 // Enable LoggerFile with default settings
-LogFile.enable();
+LogFile.enable(); 
 
 //var CONSTANTES = Meteor.call("Constantes");
 
@@ -219,6 +219,17 @@ Meteor.methods({
 
                                 var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
                                 var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
+
+                                if ( V_LimiteMaximoDeCompras > 0 && V_LimiteMaximoDeCompras !== 9999999999 ) {
+
+                                    V_LimiteMaximoDeCompras = V_LimiteMaximoDeCompras - 1
+                                                
+                                    Parametros.update({ "dominio": "limites", "nombre": "CantMaximaDeCompras" }, {
+                                                            $set: {
+                                                                        "valor": V_LimiteMaximoDeCompras
+                                                            }
+                                                        });
+                                }
 
 
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

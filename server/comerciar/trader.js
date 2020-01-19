@@ -1337,7 +1337,7 @@ Meteor.methods({
                                         );
                 }
         }
-    /**/
+    /**/ 
 
         TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO})
 
@@ -1363,17 +1363,7 @@ Meteor.methods({
         }else{
             var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
         }
-
-        if ( V_LimiteMaximoDeCompras > 0 && V_LimiteMaximoDeCompras !== 9999999999 ) {
-
-            V_LimiteMaximoDeCompras = V_LimiteMaximoDeCompras - 1
-                        
-            Parametros.update({ "dominio": "limites", "nombre": "CantMaximaDeCompras" }, {
-                                    $set: {
-                                                "valor": V_LimiteMaximoDeCompras
-                                    }
-                                });
-        }
+        
         /**/
     },
 
