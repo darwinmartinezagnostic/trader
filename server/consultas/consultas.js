@@ -92,19 +92,17 @@ Meteor.methods({
         var CONSTANTES = Meteor.call("Constantes");
         var url_transaccion_completa=[CONSTANTES.HistTradeo]+['?sort=DESC&by=timestamp&limit=100']
         var transaccion = Meteor.call("ConexionGet", url_transaccion_completa);
-
         if ( transaccion !== undefined) {
+        
 
             for (k = 0, len = transaccion.length; k < len; k++) {
                 trans = transaccion[k];
                 //var IdTran = Meteor.call('CalculaId', 2);
                 //log.info(' Estoy acá')
                 var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
-                //log.info('Valor de IdTran: ', IdTran)
                 var IdTransaccionActual = Meteor.call("CompletaConCero", parseFloat(IdTran), 32);            
                 var url_trans_orden=[CONSTANTES.HistOrdenes]+['/']+[trans.orderId]+['/trades']
                 var ComisionTansacion = Meteor.call("ConexionGet", url_trans_orden);
-                
                 var ValorTP = TiposDeCambios.aggregate([  { $match : { tipo_cambio : trans.symbol }} ])
                 
                 var V_IdHitBTC = trans.id
@@ -118,23 +116,30 @@ Meteor.methods({
                 var V_FormaOperacion = trans.side        
                 var V_SaldoInversion = trans.quantity;
                 var precio = trans.price
-                var V_SaldoAcumulado = trans.cumQuantity
-                var V_Comision = ComisionTansacion[0].fee
+                var V_Comision = trans.fee
                 var Equiv_V_Comision = 0
-                var FechaCreacion = trans.createdAt
-                var FechaActualizacion = trans.createdAt
+                var FechaCreacion = trans.timestamp
+                var FechaActualizacion = trans.timestamp
                 
 
-                var FechaTradeoAnteriorMC = trans.updatedAt
+                var FechaTradeoAnteriorMC = trans.timestamp
                 var SaldoTradeoAnteriorMC = 0
-                var FechaTradeoActualMB = trans.createdAt
+                var FechaTradeoActualMC = trans.timestamp
+                var FechaTradeoActualMB = trans.timestamp
+                var FechaTradeoAnteriorMB = trans.timestamp
                 var SaldoTradeoActualMB = 0
                 var V_EquivalenciaTradeoAnteriorMC = 0
                 var V_EquivalenciaTradeoActualMB = 0
                 var Eqv_V_InverSaldAnt = 0
                 var V_EquivSaldoMonedaAdquirida = 0
                 var V_Ganancia = 0
-
+                var SaldoTradeoAnteriorMB = 0
+                var V_EquivalenciaTradeoAnteriorMB = 0
+                var SaldoTradeoActualMC = 0
+                var V_EquivalenciaTradeoActualMC = 0
+                var Eqv_V_InverSaldAct = 0
+                var SaldoMonedaAdquirida = 0
+                var REAL_INVER = 0
                 
                 if ( V_FormaOperacion == 'sell') {
                     GananciaPerdida.insert({    
@@ -145,54 +150,81 @@ Meteor.methods({
                                                                 Id_Lote: LOTE,
                                                                 Tipo : V_FormaOperacion,
                                                                 TipoCambio : TipoCambio,
-                                                                Precio : precio,
+                                                                Base : MON_B,
+                                                                Cotizacion : MON_C,
                                                                 Status : status,
                                                                 FechaCreacion : FechaCreacion,
-                                                                FechaActualizacion : FechaActualizacion},
-                                                Comision : {    Valor : V_Comision,
-                                                                Equivalencia : Equiv_V_Comision},
-                                                Moneda : {  Emitida : { moneda : MON_B,
-                                                                        Fecha : FechaTradeoActualMB,
-                                                                        Saldo : SaldoTradeoActualMB,
-                                                                        Equivalente : V_EquivalenciaTradeoActualMB},
-                                                            Adquirida : { moneda : MON_C,
-                                                                        Fecha : FechaTradeoAnteriorMC,
-                                                                        Saldo : SaldoTradeoAnteriorMC,
-                                                                        Equivalente : V_EquivalenciaTradeoAnteriorMC}},
-                                                Inversion : { SaldoInversion  : V_SaldoInversion,
-                                                                Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                                    Final : V_EquivSaldoMonedaAdquirida}},
-                                                Ganancia : { Valor :  V_Ganancia}
+                                                                FechaActualizacion : FechaActualizacion
+                                                },
+                                                Moneda : {  Emitida : {     moneda : MON_B,
+                                                                            Fecha : FechaTradeoActualMB,
+                                                                            Saldo_Anterior : SaldoTradeoAnteriorMB,
+                                                                            Equivalente_Anterior : V_EquivalenciaTradeoAnteriorMB,
+                                                                            Saldo_Actual : SaldoTradeoActualMB,
+                                                                            Equivalente_Actual : V_EquivalenciaTradeoActualMB
+
+                                                            },
+                                                            Adquirida : {   moneda : MON_C,
+                                                                            Fecha : FechaTradeoActualMC,
+                                                                            Saldo_Anterior : SaldoTradeoAnteriorMC,
+                                                                            Equivalente_Anterior : V_EquivalenciaTradeoAnteriorMC,
+                                                                            Saldo_Actual : SaldoTradeoActualMC,
+                                                                            Equivalente_Actual : V_EquivalenciaTradeoActualMC
+                                                            }
+                                                },
+                                                Inversion : {   Saldo : REAL_INVER,
+                                                                Equivalencia : {    Dolar : { Inicial : Eqv_V_InverSaldAnt,
+                                                                                                    Final : Eqv_V_InverSaldAct},
+                                                                                    MonedaCambio : { Valor : SaldoMonedaAdquirida }
+                                                                                },
+                                                                Precio : precio,
+                                                                Comision : {    moneda : MON_C,
+                                                                                Valor : V_Comision,
+                                                                                Equivalencia : Equiv_V_Comision}
+                                                }
                                             });
                 }else if ( V_FormaOperacion == 'buy') {
+
                     GananciaPerdida.insert({    
                                                 Operacion : {   Id_hitbtc : V_IdHitBTC,
                                                                 Id_Transhitbtc : V_Id_Transhitbtc,
-                                                                ID_LocalAnt : clientOrderId,
+                                                                ID_LocalAnt : IdTransaccionActual,
                                                                 ID_LocalAct : IdTransaccionActual,
                                                                 Id_Lote: LOTE,
                                                                 Tipo : V_FormaOperacion,
                                                                 TipoCambio : TipoCambio,
-                                                                Precio : precio,
+                                                                Base : MON_B,
+                                                                Cotizacion : MON_C,
                                                                 Status : status,
                                                                 FechaCreacion : FechaCreacion,
                                                                 FechaActualizacion : FechaActualizacion},
-                                                Comision : {    Valor : V_Comision,
-                                                                Equivalencia : Equiv_V_Comision},
                                                 Moneda : {  Emitida : { moneda : MON_C,
-                                                                        Fecha : FechaTradeoAnteriorMC,
-                                                                        Saldo : SaldoTradeoAnteriorMC,
-                                                                        Equivalente : V_EquivalenciaTradeoAnteriorMC},
-                                                            Adquirida : { moneda : MON_B,
-                                                                        Fecha : FechaTradeoActualMB,
-                                                                        Saldo : SaldoTradeoActualMB,
-                                                                        Equivalente : V_EquivalenciaTradeoActualMB}},
-                                                Inversion : { SaldoInversion  : V_SaldoInversion,
-                                                                Equivalencia : {    Inicial : Eqv_V_InverSaldAnt,
-                                                                                    Final : V_EquivSaldoMonedaAdquirida}},
-                                                Ganancia : { Valor :  V_Ganancia}
+                                                                        Fecha : FechaTradeoActualMC,
+                                                                        Saldo_Anterior : SaldoTradeoAnteriorMC,
+                                                                        Equivalente_Anterior : V_EquivalenciaTradeoAnteriorMC,
+                                                                        Saldo_Actual : SaldoTradeoActualMC,
+                                                                        Equivalente_Actual : V_EquivalenciaTradeoActualMC
+                                                            },
+                                                            Adquirida : {   moneda : MON_B,
+                                                                            Fecha : FechaTradeoAnteriorMB,
+                                                                            Saldo_Anterior : SaldoTradeoAnteriorMB,
+                                                                            Equivalente_Anterior : V_EquivalenciaTradeoAnteriorMB,
+                                                                            Saldo_Actual : SaldoTradeoActualMB,
+                                                                            Equivalente_Actual : V_EquivalenciaTradeoActualMB
+                                                            }},
+                                                Inversion : {   Saldo : REAL_INVER,
+                                                                Equivalencia : {    Dolar : { Inicial : Eqv_V_InverSaldAnt,
+                                                                                                Final : Eqv_V_InverSaldAct},
+                                                                                    MonedaCambio : { Valor : SaldoMonedaAdquirida }
+                                                                            },
+                                                                Precio : precio,
+                                                                Comision : {    moneda : MON_C,
+                                                                                Valor : V_Comision,
+                                                                                Equivalencia : Equiv_V_Comision}
+                                                            }
                                             });
                 }
+                /**/
             };
         }
 

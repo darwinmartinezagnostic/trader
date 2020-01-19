@@ -39,12 +39,12 @@ Meteor.methods({
         Meteor.call("ActualizaSaldoActual", 'TNT');
         Meteor.call("ActualizaSaldoActual", 'USD');
         /**/
-        /*
             Meteor.call("ListaMonedas");
             Meteor.call("ActualizaSaldoTodasMonedas");
             Meteor.call("ValidaSaldoEquivalenteActual");
             //Meteor.call("EjecucionInicial"); 
             Meteor.call("ListaTiposDeCambios", 2);
+        /*
             Meteor.call("ValidaMonedasTransfCuentaTRadeo");
             Meteor.call("ActualizaSaldoTodasMonedas");
             Meteor.call("ConsultarSaldoTodasMonedas");
@@ -77,7 +77,7 @@ Meteor.methods({
                 //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
             }
         /**/        
-        
+        /*
         if (MONEDA_SALDO === MON_B) {
             var TP = 'sell'
             var MONEDA_S_SALDO = MON_C
@@ -122,7 +122,7 @@ Meteor.methods({
         var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
         var IdTransaccionActual = Meteor.call("CompletaConCero", IdTran, 32);
         var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')    
-
+        /**/
         //Meteor.call("ConsultaCarterasDeposito");
  
             //log.info("Datos a enviar: MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
@@ -161,7 +161,7 @@ Meteor.methods({
             //log.info("Valor de sal: ", sal);
         /**/
 
-            //Meteor.call("ConsultarHistoricoOrdenes"); 
+            Meteor.call("ConsultarHistoricoOrdenes"); 
         
             /*
                 var ORDEN = '00000000000000000000000000000154'
@@ -169,7 +169,7 @@ Meteor.methods({
                 Meteor.call("ValidaTiempoEspera", ORDEN);
             */
 
-
+            /*
             var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER); 
             var InversionRealCalc = RecalcIverPrec.MontRealIversionCal
 

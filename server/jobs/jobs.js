@@ -22,17 +22,16 @@ Jobs.register({
 			Meteor.call("Encabezado");
 
 		    var TE = Parametros.findOne( { dominio : "Ejecucion", nombre : "TipoEjecucion" } );
-		    var TipoEjecucion = TE.valor
+		    var TipoEjecucion = TE.valor;
             var ModoEjecucion = Parametros.findOne( { dominio : "Ejecucion", nombre : "ModoEjecucion" } );
             var ValorModoEjecucion = ModoEjecucion.valor
             var ResetAnalisis = Parametros.findOne( { dominio : "Prueba", nombre : "ResetResultadoAnalisis" } )
-			var AMBITO = 'JobTipoEjecucion'    
+			var AMBITO = 'JobTipoEjecucion' 
 
-		    log.info('Valor de TipoEjecucion: ', TipoEjecucion); 
 		    switch ( TipoEjecucion ){
                 case 0:
                 	if ( ResetAnalisis.valor === 1 ) {
-				        Meteor.call('ReinicioDatResultAnalisis');
+                		Meteor.call('ReinicioDatResultAnalisis');
 				        Meteor.call('ReinicioDeSecuenciasGBL', 'IdAnalisis');
 				    }
                     Meteor.call("EjecucionInicial");
@@ -115,7 +114,10 @@ Jobs.register({
 						log.error(' SE CONFIGURÓ PARA REALIZAR ANALISIS DE DATOS PERO NO SE ENCUENTRAN LAS CONFIGURACIONES A SEGUIR, VERIFICAR COLECCION "ParametrosDeAnalisis"',AMBITO);
 						Meteor.call('FinEjecucion')
 					}
-                break;               
+                break;
+                default:
+                	log.info('Opción de Tipo de Ejecucion: ', TipoEjecucion + ' , No es valida.'); 
+                break;
             }
 
 		    var ejecucionJobSecuenciaInicial = 0;
