@@ -18,6 +18,7 @@ Meteor.methods({
         var FECHA = fecha._d
         var CONSTANTES = Meteor.call("Constantes");
         var nuevo_id = Meteor.call("SecuenciasGBL", 'IdHistTransfer');
+        var EquivalenciaMonto = Meteor.call('EquivalenteDolar', MONEDA, MONTO, 2 );
         log.info(' Valor de nuevo_id', nuevo_id);
         //log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", '         TRANSFERENCIA DE FONDOS');
@@ -51,7 +52,7 @@ Meteor.methods({
             break; 
         }
 
-        
+
         if ( VStatusEjecucion === 0 ) {
             
             var IdTransferencia = NuevaTransferencia.id;
@@ -63,6 +64,7 @@ Meteor.methods({
                                                 'tipo_transferencia' : TipoTransferencia,
                                                 'moneda' : MONEDA,
                                                 'monto' : MONTO,
+                                                'EquivalenciaDolar' : EquivalenciaMonto,
                                                 'estado' : "Verificando",
                                             }
                                     },
@@ -108,6 +110,7 @@ Meteor.methods({
                                                 'tipo_transferencia' : TipoTransferencia,
                                                 'moneda' : MONEDA,
                                                 'monto' : MONTO,
+                                                'EquivalenciaDolar' : EquivalenciaMonto,
                                                 'estado' : "FALLIDO",
                                                 'motivo' : VStatus
                                             }

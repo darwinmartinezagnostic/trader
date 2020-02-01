@@ -19,7 +19,7 @@ Meteor.methods({
         //Meteor.call('CarcularGanancia',1);
 
         INV_REAL='0.00106105'
-        Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'exchangeToBank' );
+        //Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'exchangeToBank' );
         //Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'bankToExchange' );
         //log.info(' Valor de INV_REAL: ', parseFloat(INV_REAL))
         /*
