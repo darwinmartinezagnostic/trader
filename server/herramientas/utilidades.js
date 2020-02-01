@@ -368,7 +368,7 @@ Meteor.methods({
         Carteras.remove({});
         
 
-        const NombresSecuenciasGlobales = ['IdGanPerdLocal', 'IdGanPerdLote', 'IdHistTrans', 'IdLog']
+        const NombresSecuenciasGlobales = ['IdGanPerdLocal', 'IdGanPerdLote', 'IdHistTrans', 'IdLog', 'IdHistTransfer']
 
         for ( CSG = 0, TSG = NombresSecuenciasGlobales.length; CSG < TSG; CSG++ ) {
             NOMBRE = NombresSecuenciasGlobales[CSG]
