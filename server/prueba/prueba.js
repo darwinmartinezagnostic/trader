@@ -19,6 +19,8 @@ Meteor.methods({
         //Meteor.call('CarcularGanancia',1);
 
         INV_REAL='0.000548350'
+        Meteor.call( "Transferirfondos", 'BTC', 0.00106105, 'exchangeToBank' );
+        //Meteor.call( "Transferirfondos", 'BTC', 0.00106105, 'bankToExchange' );
         //log.info(' Valor de INV_REAL: ', parseFloat(INV_REAL))
         /*
         log.info('Esto es una prueba', 'Ejecutando pruebas', 'Pruebas');
@@ -38,7 +40,7 @@ Meteor.methods({
         Meteor.call("EquivalenteDolarMinCompra");
         Meteor.call("ActualizaSaldoActual", 'TNT');
         Meteor.call("ActualizaSaldoActual", 'USD');
-        /**/
+        /*
             Meteor.call("ListaMonedas");
             Meteor.call("ActualizaSaldoTodasMonedas");
             Meteor.call("ValidaSaldoEquivalenteActual");
@@ -59,6 +61,7 @@ Meteor.methods({
         //Meteor.call("ValidaSaldoEquivalenteActual");
         //Meteor.call("ListaMonedas");
         //Meteor.call("ReinioDeSaldos");  
+        /*
         const MON_B='ETH'
         const MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
@@ -159,7 +162,7 @@ Meteor.methods({
         
             //var sal = Meteor.call("CalcularIversion", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
             //log.info("Valor de sal: ", sal);
-        /**/
+        /*
 
             Meteor.call("ConsultarHistoricoOrdenes"); 
         

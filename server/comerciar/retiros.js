@@ -31,10 +31,8 @@ Meteor.methods({
         var url_orden = CONSTANTES.transferencia;
 
         var NuevaTransferencia = Meteor.call("ConexionPost", url_orden, datos);
-
-        var StatusEjecucion = parseFloat(NuevaTransferencia.code);
-
-        if (StatusEjecucion > 0) {
+        Meteor.call("GuardarLogEjecucionTrader", [' Valor de NuevaTransferencia: ']+[NuevaTransferencia.id] );
+        if ( NuevaTransferencia.id == undefined ) {
             VStatusEjecucion = 1
         }else{
             VStatusEjecucion = 0
@@ -53,8 +51,8 @@ Meteor.methods({
         if ( VStatusEjecucion === 0 ) {
             
             var IdTransferencia = NuevaTransferencia.id;
-            //Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Solicitud de Transferencia Realizada Exitosamente']);
-            //Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Transacción: ']+[ IdTransferencia ]);
+            Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Solicitud de Transferencia Realizada Exitosamente']);
+            Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Transacción: ']+[ IdTransferencia ]);
             HistoralTransferencias.insert({ fecha : FECHA, id : IdTransferencia ,tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : "Verificando" })
 
             //log.info('############################################');
@@ -87,7 +85,7 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", ['    MONTO: ']+[MONTO]);
             Meteor.call("GuardarLogEjecucionTrader", ['    STATUS: ']+["FALLIDO"]);
             //log.info('############################################');
-            //log.info(' ');
+            //log.info(' '); 
             //Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Sulicitud de Transferencia Fallida'] );
             var sal = new Set();
             sal.add( 1 );

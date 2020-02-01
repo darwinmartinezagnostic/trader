@@ -120,7 +120,7 @@ Meteor.methods({
         async function CancelaEjecucionConexion (iterf, token){
             await iterf;
             if (token.cancelado)  {
-              throw Error('Ejcución Cancelada');
+              throw Error('Ejecución Cancelada');
             }
         }
         

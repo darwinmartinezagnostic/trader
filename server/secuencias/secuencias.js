@@ -7,7 +7,7 @@ moment().tz('America/Caracas').format();
 const log = new Logger();
 const LogFile = new LoggerFile(log,logFilePath);
 // Enable LoggerFile with default settings
-LogFile.enable(); 
+LogFile.enable();
 
 //var CONSTANTES = Meteor.call("Constantes");
 
