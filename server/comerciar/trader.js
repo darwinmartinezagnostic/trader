@@ -287,52 +287,55 @@ Meteor.methods({
     },
 
     'VerificarTransferencias':function(TRANSACCION){
-        var CONSTANTES = Meteor.call("Constantes");
-        var Url_transaccion = CONSTANTES.transacciones+"/"+TRANSACCION
-        var EstadoTransaccion = Meteor.call("ConexionGet", Url_transaccion);
-        var fecha = moment (new Date());
+        do{  
+            var CONSTANTES = Meteor.call("Constantes");            
+            var Url_transaccion = CONSTANTES.transacciones+"/"+TRANSACCION
+            log.info(' Valor de Url_transaccion:', Url_transaccion);
+            var EstadoTransaccion = Meteor.call("ConexionGet", Url_transaccion);
+            log.info(' Valor de EstadoTransaccion:', EstadoTransaccion);
+            var fecha = moment (new Date());
 
-        var FECHA = fecha._d
-        var IdTransferencia = V_EstadoTransaccion.id;
-        var Indice = V_EstadoTransaccion.index;
-        var TipoTransferencia = V_EstadoTransaccion.type;
-        var Estado = V_EstadoTransaccion.status;
-        var MONEDA = V_EstadoTransaccion.currency;
-        var MONTO = V_EstadoTransaccion.amount;
-        var fechaCreacionSol = V_EstadoTransaccion.createdAt;
-        var fechaProcesamientoSol = V_EstadoTransaccion.updatedAt;
+            var FECHA = fecha._d
+            var IdTransferencia = EstadoTransaccion.id;
+            var Indice = EstadoTransaccion.index;
+            var TipoTransferencia = EstadoTransaccion.type;
+            var Estado = EstadoTransaccion.status;
+            var MONEDA = EstadoTransaccion.currency;
+            var MONTO = EstadoTransaccion.amount;
+            var fechaCreacionSol = EstadoTransaccion.createdAt;
+            var fechaProcesamientoSol = EstadoTransaccion.updatedAt;
 
 
-        //log.info('############################################');
-        Meteor.call("GuardarLogEjecucionTrader", '            Status Tranferencia');
-        //log.info('############################################');
-        Meteor.call("GuardarLogEjecucionTrader", ['********* ']+[' MONEDA: ']+[MONEDA]+[' *********']);
-        Meteor.call("GuardarLogEjecucionTrader", ['    FECHA: ']+[FECHA]);
-        Meteor.call("GuardarLogEjecucionTrader", ['    ID: ']+[IdTransferencia]);
-        Meteor.call("GuardarLogEjecucionTrader", ['    TIPO TRANSFERENCIA: ']+[TipoTransferencia]);
-        Meteor.call("GuardarLogEjecucionTrader", ['    MONTO: ']+[MONTO]);
-        switch (Estado){
-            case "success":
-                var STATUS = "EXITOSO"
-            break;
-            case "pending":
-                var STATUS = "PENDIENTE"
-            break;
-            case "failed":
-                var STATUS = "FALLIDO"
-            break;
-        }
-        Meteor.call("GuardarLogEjecucionTrader", ['    STATUS: ']+[STATUS]);
-        //log.info('############################################');
-        //log.info(' ');
+            //log.info('############################################');
+            Meteor.call("GuardarLogEjecucionTrader", '            Status Tranferencia');
+            //log.info('############################################');
+            Meteor.call("GuardarLogEjecucionTrader", ['********* ']+[' MONEDA: ']+[MONEDA]+[' *********']);
+            Meteor.call("GuardarLogEjecucionTrader", ['    FECHA: ']+[FECHA]);
+            Meteor.call("GuardarLogEjecucionTrader", ['    ID: ']+[IdTransferencia]);
+            Meteor.call("GuardarLogEjecucionTrader", ['    TIPO TRANSFERENCIA: ']+[TipoTransferencia]);
+            Meteor.call("GuardarLogEjecucionTrader", ['    MONTO: ']+[MONTO]);
+            switch (Estado){
+                case "success":
+                    var STATUS = "EXITOSO"
+                break;
+                case "pending":
+                    var STATUS = "PENDIENTE"
+                break;
+                case "failed":
+                    var STATUS = "FALLIDO"
+                break;
+            }
+            Meteor.call("GuardarLogEjecucionTrader", ['    STATUS: ']+[STATUS]);
+            //log.info('############################################');
+            //log.info(' ');
+            
+            HistorialTransferencias.update({ id : IdTransferencia }, 
+                                    { $set : {
+                                                'estado' : STATUS,
+                                            }
+                                    });
 
-        var TransExist = HistorialTransferencias.find( { id : IdTransferencia }).fetch().length
-
-        if ( TransExist > 0 ) {
-            HistorialTransferencias.update({ id : IdTransferencia }, {$set: { estado: STATUS }}, {"multi" : true,"upsert" : true});
-        }else{
-            HistorialTransferencias.insert({ fecha : FECHA, id : IdTransferencia, indice : Indice, tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : STATUS, fecha_creacion_solicitud : fechaCreacionSol, fecha_ejecucion_solicitud : fechaProcesamientoSol })
-        };
+        }while( STATUS === "PENDIENTE" );
 
         return STATUS;
     },

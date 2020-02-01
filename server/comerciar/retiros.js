@@ -17,6 +17,8 @@ Meteor.methods({
         var fecha = moment (new Date());
         var FECHA = fecha._d
         var CONSTANTES = Meteor.call("Constantes");
+        var nuevo_id = Meteor.call("SecuenciasGBL", 'IdHistTransfer');
+        log.info(' Valor de nuevo_id', nuevo_id);
         //log.info('############################################');
         Meteor.call("GuardarLogEjecucionTrader", '         TRANSFERENCIA DE FONDOS');
         //log.info('############################################');
@@ -31,9 +33,11 @@ Meteor.methods({
         var url_orden = CONSTANTES.transferencia;
 
         var NuevaTransferencia = Meteor.call("ConexionPost", url_orden, datos);
-        Meteor.call("GuardarLogEjecucionTrader", [' Valor de NuevaTransferencia: ']+[NuevaTransferencia.id] );
+        //Meteor.call("GuardarLogEjecucionTrader", [' Valor de NuevaTransferencia: ']+[NuevaTransferencia.id] );
+        Meteor.call("GuardarLogEjecucionTrader", [' Valor de NuevaTransferencia.status: ']+[NuevaTransferencia.status] );
         if ( NuevaTransferencia.id == undefined ) {
             VStatusEjecucion = 1
+            VStatus = NuevaTransferencia.status;
         }else{
             VStatusEjecucion = 0
         }
@@ -44,7 +48,7 @@ Meteor.methods({
             break;
             case 'exchangeToBank':
                 TipoTransferencia = 'Trader - Cuenta';
-            break;
+            break; 
         }
 
         
@@ -53,7 +57,16 @@ Meteor.methods({
             var IdTransferencia = NuevaTransferencia.id;
             Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Solicitud de Transferencia Realizada Exitosamente']);
             Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Transacción: ']+[ IdTransferencia ]);
-            HistorialTransferencias.insert({ fecha : FECHA, id : IdTransferencia ,tipo_transferencia : TipoTransferencia, moneda : MONEDA, monto : MONTO, estado : "Verificando" })
+            HistorialTransferencias.update({ _id : nuevo_id, id : IdTransferencia }, 
+                                    { $set : {
+                                                'Fecha' : FECHA,
+                                                'tipo_transferencia' : TipoTransferencia,
+                                                'moneda' : MONEDA,
+                                                'monto' : MONTO,
+                                                'estado' : "Verificando",
+                                            }
+                                    },
+                                    { "upsert" : true });
 
             //log.info('############################################');
             Meteor.call("GuardarLogEjecucionTrader", '            Status Tranferencia');
@@ -84,9 +97,22 @@ Meteor.methods({
             Meteor.call("GuardarLogEjecucionTrader", ['    TIPO TRANSFERENCIA: ']+[TipoTransferencia]);
             Meteor.call("GuardarLogEjecucionTrader", ['    MONTO: ']+[MONTO]);
             Meteor.call("GuardarLogEjecucionTrader", ['    STATUS: ']+["FALLIDO"]);
+            Meteor.call("GuardarLogEjecucionTrader", ['    MOTIVO: ']+[VStatus]);
             //log.info('############################################');
             //log.info(' '); 
-            //Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Sulicitud de Transferencia Fallida'] );
+            Meteor.call("GuardarLogEjecucionTrader", [' Transferirfondos: Sulicitud de Transferencia Fallida'] );
+            HistorialTransferencias.update({ _id : nuevo_id, }, 
+                                    { $set : {
+                                                'id' : "N/A",
+                                                'Fecha' : FECHA,
+                                                'tipo_transferencia' : TipoTransferencia,
+                                                'moneda' : MONEDA,
+                                                'monto' : MONTO,
+                                                'estado' : "FALLIDO",
+                                                'motivo' : VStatus
+                                            }
+                                    },
+                                    { "upsert" : true });
             var sal = new Set();
             sal.add( 1 );
             var salida = Array.from(sal);

@@ -18,9 +18,9 @@ Meteor.methods({
         //Meteor.call('ActualizaEquivalenciaMonedas');
         //Meteor.call('CarcularGanancia',1);
 
-        INV_REAL='0.000548350'
-        Meteor.call( "Transferirfondos", 'BTC', 0.00106105, 'exchangeToBank' );
-        //Meteor.call( "Transferirfondos", 'BTC', 0.00106105, 'bankToExchange' );
+        INV_REAL='0.00106105'
+        Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'exchangeToBank' );
+        //Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'bankToExchange' );
         //log.info(' Valor de INV_REAL: ', parseFloat(INV_REAL))
         /*
         log.info('Esto es una prueba', 'Ejecutando pruebas', 'Pruebas');

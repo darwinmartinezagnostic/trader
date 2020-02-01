@@ -63,7 +63,7 @@ Meteor.methods({
             Meteor.call("ValidaSaldoEquivalenteActual");
             Meteor.call("ActualizaSaldoTodasMonedas");
             Meteor.call("EquivalenteDolarMinCompra");
-            Meteor.call("ConsultarHistoricoOrdenes");
+            //Meteor.call("ConsultarHistoricoOrdenes");
         }else if ( Robot.valor === 1 ) {
             Meteor.call("Encabezado");
             Meteor.call("ListaTiposDeCambios", 2);
@@ -71,7 +71,7 @@ Meteor.methods({
             Meteor.call("ActualizaSaldoTodasMonedasRobot");
             Meteor.call("ValidaSaldoEquivalenteActual");
             Meteor.call("EquivalenteDolarMinCompra");
-            Meteor.call("ConsultarHistoricoOrdenes");
+            //Meteor.call("ConsultarHistoricoOrdenes");
         }
 
         try {

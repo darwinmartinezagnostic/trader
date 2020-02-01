@@ -59,7 +59,7 @@ for ( CSR = 0, TSR = NombresSecuenciasRobot.length; CSR < TSR; CSR++ ) {
 	};
 }
 
-const NombresSecuenciasGlobales = ['IdGanPerdLocal', 'IdGanPerdLote', 'IdHistTrans', 'IdLog', 'IdAnalisis', 'IdParamAnalisis', 'IdParamAnalisisLote']
+const NombresSecuenciasGlobales = ['IdGanPerdLocal', 'IdGanPerdLote', 'IdHistTrans', 'IdLog', 'IdAnalisis', 'IdParamAnalisis', 'IdParamAnalisisLote', 'IdHistTransfer']
 
 for ( CSG = 0, TSG = NombresSecuenciasGlobales.length; CSG < TSG; CSG++ ) {
 	NOMBRE = NombresSecuenciasGlobales[CSG]
