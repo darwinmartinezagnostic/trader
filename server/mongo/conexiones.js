@@ -160,7 +160,11 @@ Meteor.methods({
                 if ( mensaje === "error is not defined") {
                     mensj = { status :"errorisnotdefined"}
                     return mensj;
-                }else {
+                }else 
+                if ( mensaje === "Symbol not found") {
+                    mensj = { status :"Symbolnotfound"}
+                    return mensj;
+                else {
                     log.error("Valor de salida.error: ", salida.error,'Conexiones');
                     return salida.error;
                 }

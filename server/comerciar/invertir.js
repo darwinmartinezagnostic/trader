@@ -1185,7 +1185,7 @@ Meteor.methods({
 
             }
 
-            if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Quantity too low" ) {
+            if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Quantity too low" || Estado_Orden === "Symbolnotfound" ) {
                 log.info(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )','', AMBITO);
                 var V_IdHitBTC = Orden.id
                 log.info(' Valor de Orden 6: ', Orden, AMBITO);
@@ -1215,11 +1215,25 @@ Meteor.methods({
                 
                 if ( Estado_Orden === "DuplicateclientOrderId") {   
                     log.info(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")','', AMBITO);
-                    Meteor.call("GuardarLogEjecucionTrader", [' CalcularIversionPromedio: Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
+                    Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
                     Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
                 }else{
                     TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
                 }
+
+                if ( Estado_Orden === "Symbolnotfound") {   
+                    log.info(' Estoy en if if ( Estado_Orden === "Symbolnotfound")','', AMBITO);
+                    Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Cambiando Status del TIPO_CAMBIO :']+[TIPO_CAMBIO]+[', a estado Inactivo (I) : ']);
+
+                    TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
+                                            { $set:{    estado: "I",
+                                                        activo : "S",
+                                                        c_estado_p: 0,
+                                                        c_estado_a: 0 
+                                                    }
+                                            });
+                }
+
                 log.info(' Valor de Orden 7: ', Orden, AMBITO);
                 break
             }
