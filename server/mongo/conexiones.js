@@ -164,7 +164,7 @@ Meteor.methods({
                 if ( mensaje === "Symbol not found") {
                     mensj = { status :"Symbolnotfound"}
                     return mensj;
-                else {
+                }else {
                     log.error("Valor de salida.error: ", salida.error,'Conexiones');
                     return salida.error;
                 }
