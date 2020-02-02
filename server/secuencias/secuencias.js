@@ -87,6 +87,7 @@ Meteor.methods({
 
             var contador = contador + 1;
             Meteor.call("GuardarLogEjecucionTrader", [' Valor de V_LimiteMaximoEjecucion ']+[V_LimiteMaximoEjecucion]);
+            Meteor.call("GuardarLogEjecucionTrader", [' Valor de V_LimiteMaximoDeCompras ']+[V_LimiteMaximoDeCompras]);
             Meteor.call("GuardarLogEjecucionTrader", [' FIN DE SECUENCIA - ']+[fecha._d]);
 
         }while( V_LimiteMaximoEjecucion !== 0 && V_LimiteMaximoDeCompras !== 0 );
@@ -217,19 +218,9 @@ Meteor.methods({
                                     });
                                 }
 
+                                
                                 var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
-                                var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
-
-                                if ( V_LimiteMaximoDeCompras > 0 && V_LimiteMaximoDeCompras !== 9999999999 ) {
-
-                                    V_LimiteMaximoDeCompras = V_LimiteMaximoDeCompras - 1
-                                                
-                                    Parametros.update({ "dominio": "limites", "nombre": "CantMaximaDeCompras" }, {
-                                                            $set: {
-                                                                        "valor": V_LimiteMaximoDeCompras
-                                                            }
-                                                        });
-                                }
+                                var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor;
 
 
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

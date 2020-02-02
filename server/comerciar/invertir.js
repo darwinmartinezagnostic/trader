@@ -1301,6 +1301,20 @@ Meteor.methods({
             log.info(" if ( Estado_Orden === filled ) : Voy a Guardar", AMBITO);
             log.info(' Valor de Orden 13: ', Orden, AMBITO);
             log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO+' '+ CANT_INVER+' '+ InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE, AMBITO);
+            var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
+            var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
+
+            if ( V_LimiteMaximoDeCompras > 0 && V_LimiteMaximoDeCompras !== 9999999999 ) {
+
+                V_LimiteMaximoDeCompras = V_LimiteMaximoDeCompras - 1
+                            
+                Parametros.update({ "dominio": "limites", "nombre": "CantMaximaDeCompras" }, {
+                                        $set: {
+                                                    "valor": V_LimiteMaximoDeCompras
+                                        }
+                                    });
+            };
+            
             Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
             
             /*
