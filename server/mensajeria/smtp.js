@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Logger } from 'meteor/ostrio:logger';
 import { LoggerFile } from 'meteor/ostrio:loggerfile';
+import { Email } from 'meteor/email';
 
 //**************************************************
 
@@ -11,24 +12,33 @@ LogFile.enable();
 
 Meteor.methods({
     'sendEmail': function (to, subject, email) {
+        var CONSTANTES = Meteor.call("Constantes");
         log.info("ENTRE","ACA","SMTP");
-        log.info("aaaa","ACA","SMTP");
         Email.send({
             to:       to,
-            from:     'darwin.2911@gmail.com',
+            from:     'invertminado@gmail.com',
             subject:  subject,
-            text:     'test email'
+            text:     email
         });
-        console.log(Email);
-    }
+        log.info("aaaa","ACA","SMTP");
+        console.log('Valor de Email: ',Email);
+        //log.info('Valor de Email: ',Email);
+    },
 });
 
 
 Meteor.startup(function () {
-   var smtp = {
-        username: 'darwin.2911@gmail.com',
-        password: '122sdsdsdsdqq',
-        server:   'smtp.gmail.com',
+    var CONSTANTES = Meteor.call("Constantes");
+    var usuario = CONSTANTES.CorreoUsur;
+    var clave = CONSTANTES.CorreoPasswd;
+    var servidor = CONSTANTES.CorreoServ;
+    var puerto = CONSTANTES.CorreoPuerto;
+
+    var smtp = {
+        username: usuario,
+        password: clave,
+        server:   servidor,
+        //port: 25 
         port: 25
     };
 

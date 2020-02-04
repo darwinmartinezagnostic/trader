@@ -13,13 +13,14 @@ Meteor.methods({
 	'PruebasUnitarias':function(){
 
         var AMBITO = 'PruebasUnitarias'
-        //Meteor.call('sendEmail', 'darwin.2911@gmail.com', 'subject', 'email');
+        Meteor.call('sendEmail', 'jarruizjesus@gmail.com', 'en el texto', 'prueba de correo');
+        //Meteor.call('EnviarCorreo', 'jarruizjesus@gmail.com', 'invertminado@gmail.com', 'en el texto', 'prueba de correo');
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
         //Meteor.call('ActualizaEquivalenciaMonedas');
         //Meteor.call('CarcularGanancia',1);
 
         INV_REAL='0.00105943'
-        Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'exchangeToBank' );
+        //Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'exchangeToBank' );
         //Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'bankToExchange' );
         //log.info(' Valor de INV_REAL: ', parseFloat(INV_REAL))
         /*

@@ -7,6 +7,12 @@ Meteor.methods({
 		const autoriza_conexion = Conexion_api.findOne({ casa_cambio : 'hitbtc'}, {_id:0});
 		const key = autoriza_conexion.key;
 		const secret = autoriza_conexion.secret;
+
+		const CorreoUsr = autoriza_conexion.correo.usuario;
+		const CorreoPasswd = autoriza_conexion.correo.passwd;
+		const CorreoPuerto = autoriza_conexion.correo.puerto;
+		const CorreoServ = autoriza_conexion.correo.servidor;
+
 		const API_HITBTC2 = autoriza_conexion.api.url;
 		const publico = API_HITBTC2+"public/";
 		const tradeo = API_HITBTC2+"trading/";
@@ -52,6 +58,10 @@ Meteor.methods({
 			user : key,
 			passwr : secret,
 		 	apikey : key+':'+secret,
+		 	CorreoUsur : CorreoUsr,
+			CorreoPasswd : CorreoPasswd,
+			CorreoPuerto : CorreoPuerto,
+			CorreoServ : CorreoServ,
 		 	publico : publico,
 			tradeo : tradeo,
 			cuenta : cuenta,
