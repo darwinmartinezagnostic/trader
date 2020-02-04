@@ -1130,122 +1130,12 @@ Meteor.methods({
         log.info(' Valor de Orden 1: ', Orden, AMBITO);
         
 
-        while( Estado_Orden !== "filled" ){
+        
             log.info('Estoy en el while','', AMBITO);
             log.info(' Valor de Orden 2: ', Orden, AMBITO);
             log.info(' Valor de Estado_Orden: ', Estado_Orden, AMBITO);
             fecha = moment (new Date());
-            if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
-                var V_IdHitBTC = Orden.id
-                log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" )','', AMBITO);
-                log.info(' Valor de Orden 3: ', Orden, AMBITO);
-                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);                
-                Meteor.call('sleep', 4);
-                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FIN ESPERA: ']+[fecha._d]);
-                GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE }, 
-                                        {
-                                            $set: {
-                                                    Operacion : {   
-                                                                    Id_hitbtc : V_IdHitBTC,
-                                                                    ID_LocalAct : IdTransaccionActual,
-                                                                    Id_Lote: ID_LOTE,
-                                                                    Tipo : TP,
-                                                                    TipoCambio : TIPO_CAMBIO,
-                                                                    Precio : RecalcIverPrec.MejorPrecCal,
-                                                                    Status : 'En seguimiento',
-                                                                    Razon : Estado_Orden,
-                                                                    FechaCreacion : fecha._d,
-                                                                    FechaActualizacion : fecha._d},
-                                                    Moneda : {  Emitida : { moneda : MON_C },
-                                                                Adquirida : { moneda : MON_B }
-                                                             },
-                                                    Inversion : { SaldoInversion  : CANT_INVER }
-                                                    }
-                                        }, 
-                                        {"upsert" : true}
-                                        );
-                                           
 
-                Monedas.update({ "moneda": MONEDA_SALDO }, {    
-                            $set: {
-                                    "activo": "N"
-                                }
-                            });
-
-                if ( Robot.valor === 0 ) {
-                    const Resultado = Meteor.call("ValidarEstadoOrden", Orden)
-                }else if ( Robot.valor === 1 ) {
-                    const Resultado = Meteor.call("ValidarEstadoOrdenRobot", Orden)
-                }
-                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
-                log.info(' Valor de Orden 4: ', Orden, AMBITO);
-                Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
-
-                var Orden = Resultado
-                var Estado_Orden = Resultado.status;
-                log.info(' Valor de Orden 5: ', Orden, AMBITO);
-                //var Estado_Orden = Resultado;        
-                ContEspEdoOrd = ContEspEdoOrd + 1;
-
-                if ( ContEspEdoOrd === 20 ) {
-                    //var Orden = Meteor.call("CancelarOrden", IdTransaccionActualesta );
-                    var Estado_Orden = Orden.status;
-                }
-
-            }
-
-            if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Quantity too low" || Estado_Orden === "Symbolnotfound" ) {
-                log.info(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )','', AMBITO);
-                var V_IdHitBTC = Orden.id
-                log.info(' Valor de Orden 6: ', Orden, AMBITO);
-
-                GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
-                                        {
-                                            $set: {
-                                                    Operacion : {   
-                                                                    Id_hitbtc : V_IdHitBTC,
-                                                                    ID_LocalAct : IdTransaccionActual,
-                                                                    Id_Lote: ID_LOTE,
-                                                                    Tipo : TP,
-                                                                    TipoCambio : TIPO_CAMBIO,
-                                                                    Precio : RecalcIverPrec.MejorPrecCal,
-                                                                    Status : 'Fallido',
-                                                                    Razon : Estado_Orden,
-                                                                    FechaCreacion : fecha._d,
-                                                                    FechaActualizacion : fecha._d},
-                                                    Moneda : {  Emitida : { moneda : MON_C },
-                                                                Adquirida : { moneda : MON_B }
-                                                             },
-                                                    Inversion : { SaldoInversion  : CANT_INVER }
-                                                    }
-                                        }, 
-                                        {"upsert" : true}
-                                        );
-                
-                if ( Estado_Orden === "DuplicateclientOrderId") {   
-                    log.info(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")','', AMBITO);
-                    Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
-                    Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
-                }else{
-                    TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
-                }
-
-                if ( Estado_Orden === "Symbolnotfound") {   
-                    log.info(' Estoy en if if ( Estado_Orden === "Symbolnotfound")','', AMBITO);
-                    Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Cambiando Status del TIPO_CAMBIO :']+[TIPO_CAMBIO]+[', a estado Inactivo (I) : ']);
-
-                    TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
-                                            { $set:{    estado: "I",
-                                                        activo : "S",
-                                                        c_estado_p: 0,
-                                                        c_estado_a: 0 
-                                                    }
-                                            });
-                }
-
-                log.info(' Valor de Orden 7: ', Orden, AMBITO);
-                break
-            }
 
             if ( Estado_Orden === "errorisnotdefined" ) {
                 log.info(' Valor de Orden 8: ', Orden, AMBITO);
@@ -1272,10 +1162,8 @@ Meteor.methods({
                                         );
                 log.info(' Valor de Orden 9: ', Orden, AMBITO);
                 TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
-                break
-            }
-
-            if ( Estado_Orden === "Insufficientfunds" ) {
+                //break
+            } else if ( Estado_Orden === "Insufficientfunds" ) {
                 log.info(" Insufficientfunds: Valor de Orden 10: ", Orden, AMBITO);
                 //var V_IdHitBTC = Orden.id
 
@@ -1314,49 +1202,170 @@ Meteor.methods({
                 log.info(" Insufficientfunds: Valor de Estado_Orden: ", Estado_Orden, AMBITO);
                 Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
                 TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO})
-            } 
-        }
+            } else {
+	            	
+	            	var V_IdHitBTC = Orden.id
 
-        log.info(' Valor de Orden 12: ', Orden, AMBITO);
+	            	GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE }, 
+	                                        {
+	                                            $set: {
+	                                                    Operacion : {   
+	                                                                    Id_hitbtc : V_IdHitBTC,
+	                                                                    Tipo : TP,
+	                                                                    TipoCambio : TIPO_CAMBIO,
+	                                                                    Precio : RecalcIverPrec.MejorPrecCal,
+	                                                                    FechaCreacion : fecha._d,
+	                                                                    FechaActualizacion : fecha._d},
+	                                                    Moneda : {  Emitida : { moneda : MON_C },
+	                                                                Adquirida : { moneda : MON_B }
+	                                                             },
+	                                                    Inversion : { SaldoInversion  : CANT_INVER }
+	                                                    }
+	                                        }, 
+	                                        {"upsert" : true}
+	                                        );
+            	do{
 
-        if ( Estado_Orden === "filled" ) {
+		            if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
+		                //var V_IdHitBTC = Orden.id
+		                log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" )','', AMBITO);
+		                log.info(' Valor de Orden 3: ', Orden, AMBITO);
+		                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO INICIAL: ']+[fecha._d]);                
+		                Meteor.call('sleep', 4);
+		                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FIN ESPERA: ']+[fecha._d]);
+		                GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE }, 
+		                                        {
+		                                            $set: {
+		                                                    Operacion : {   
+		                                                                    ID_LocalAct : IdTransaccionActual,
+		                                                                    Status : 'En seguimiento',
+		                                                                    Razon : Estado_Orden,
+		                                                                    FechaActualizacion : fecha._d}
+		                                                    }
+		                                        }
+		                                        );
+		                                           
 
-            log.info(" if ( Estado_Orden === filled ) : Voy a Guardar", AMBITO);
-            log.info(' Valor de Orden 13: ', Orden, AMBITO);
-            log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO+' '+ CANT_INVER+' '+ InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE, AMBITO);
-            var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
-            var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
+		                Monedas.update({ "moneda": MONEDA_SALDO }, {    
+		                            $set: {
+		                                    "activo": "N"
+		                                }
+		                            });
 
-            if ( V_LimiteMaximoDeCompras > 0 && V_LimiteMaximoDeCompras !== 9999999999 ) {
+		                if ( Robot.valor === 0 ) {
+		                    const Resultado = Meteor.call("ValidarEstadoOrden", Orden)
+		                }else if ( Robot.valor === 1 ) {
+		                    const Resultado = Meteor.call("ValidarEstadoOrdenRobot", Orden)
+		                }
+		                Meteor.call("GuardarLogEjecucionTrader", [' TIEMPO FINAL CULMINACION: ']+[fecha._d]);
+		                log.info(' Valor de Orden 4: ', Orden, AMBITO);
+		                Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
 
-                V_LimiteMaximoDeCompras = V_LimiteMaximoDeCompras - 1
-                            
-                Parametros.update({ "dominio": "limites", "nombre": "CantMaximaDeCompras" }, {
-                                        $set: {
-                                                    "valor": V_LimiteMaximoDeCompras
-                                        }
-                                    });
-            };
-            
-            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
-            
-            /*
-            if ( Robot.valor === 0 ) {
-                log.info(" if ( Estado_Orden === filled ) : Voy a Guardar", AMBITO);
-                log.info(' Valor de Orden 13: ', Orden, AMBITO);
-                log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO+' '+ CANT_INVER+' '+ InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE, AMBITO);
-                Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
-                log.info(" if ( Estado_Orden === filled ) : Ya guardé",'', AMBITO);
+		                var Orden = Resultado
+		                var Estado_Orden = Resultado.status;
+		                log.info(' Valor de Orden 5: ', Orden, AMBITO);
+		                //var Estado_Orden = Resultado;        
+		                ContEspEdoOrd = ContEspEdoOrd + 1;
 
-            }else if ( Robot.valor === 1 ) {
-                log.info(" if ( Estado_Orden === filled ) : Voy a Guardar",'', AMBITO);
-                log.info(' Valor de Orden 13: ', Orden, AMBITO);
-                log.info(''," if ( Estado_Orden === filled ) : Enviando "+ TIPO_CAMBIO+' '+CANT_INVER+' '+InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE, AMBITO);
-                Meteor.call('GuardarOrdenRobot', TIPO_CAMBIO, CANT_INVER,  parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
-                log.info(" if ( Estado_Orden === filled ) : Ya guardé",'', AMBITO);
+		                if ( ContEspEdoOrd === 20 ) {
+		                    var Orden = Meteor.call("CancelarOrden", IdTransaccionActual );
+		                    var Estado_Orden = Orden.status;
+		                }
+
+		            }
+
+		            if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Quantity too low" || Estado_Orden === "Symbolnotfound" ) {
+		                log.info(' Estoy en if ( Estado_Orden === "DuplicateclientOrderId" || Estado_Orden === "suspended" || Estado_Orden === "Estado_Orden" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" )','', AMBITO);
+		                //var V_IdHitBTC = Orden.id
+		                log.info(' Valor de Orden 6: ', Orden, AMBITO);
+
+		                GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
+		                                        {
+		                                            $set: {
+		                                                    Operacion : {   
+		                                                                    ID_LocalAct : IdTransaccionActual,
+		                                                                    Status : 'Fallido',
+		                                                                    Razon : Estado_Orden,
+		                                                                    FechaActualizacion : fecha._d}
+		                                                    }
+		                                        }, 
+		                                        {"upsert" : true}
+		                                        );
+		                
+		                if ( Estado_Orden === "DuplicateclientOrderId") {   
+		                    log.info(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")','', AMBITO);
+		                    Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER][', MON_B :']+[MON_B][', MON_C :']+[, MON_C]);
+		                    Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
+		                }else{
+		                    TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
+		                }
+
+		                if ( Estado_Orden === "Symbolnotfound") {   
+		                    log.info(' Estoy en if if ( Estado_Orden === "Symbolnotfound")','', AMBITO);
+		                    Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Cambiando Status del TIPO_CAMBIO :']+[TIPO_CAMBIO]+[', a estado Inactivo (I) : ']);
+
+		                    TiposDeCambios.update(  { tipo_cambio : TIPO_CAMBIO },
+		                                            { $set:{    estado: "I",
+		                                                        activo : "S",
+		                                                        c_estado_p: 0,
+		                                                        c_estado_a: 0 
+		                                                    }
+		                                            });
+		                }
+
+		                log.info(' Valor de Orden 7: ', Orden, AMBITO);
+		                break
+		            }
+	            } while( Estado_Orden !== "filled" )
+
+	            log.info(' Valor de Orden 12: ', Orden, AMBITO);
+
+		        if ( Estado_Orden === "filled" ) {
+
+		            log.info(" if ( Estado_Orden === filled ) : Voy a Guardar", AMBITO);
+		            log.info(' Valor de Orden 13: ', Orden, AMBITO);
+		            log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO+' '+ CANT_INVER+' '+ InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE, AMBITO);
+		            var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
+		            var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
+
+		            if ( V_LimiteMaximoDeCompras > 0 && V_LimiteMaximoDeCompras !== 9999999999 ) {
+
+		                V_LimiteMaximoDeCompras = V_LimiteMaximoDeCompras - 1
+		                            
+		                Parametros.update({ "dominio": "limites", "nombre": "CantMaximaDeCompras" }, {
+		                                        $set: {
+		                                                    "valor": V_LimiteMaximoDeCompras
+		                                        }
+		                                    });
+		            };
+		            
+		            Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+		            
+		            /*
+		            if ( Robot.valor === 0 ) {
+		                log.info(" if ( Estado_Orden === filled ) : Voy a Guardar", AMBITO);
+		                log.info(' Valor de Orden 13: ', Orden, AMBITO);
+		                log.info(" if ( Estado_Orden === filled ) : Enviando ", TIPO_CAMBIO+' '+ CANT_INVER+' '+ InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE, AMBITO);
+		                Meteor.call('GuardarOrden', TIPO_CAMBIO, CANT_INVER, parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+		                log.info(" if ( Estado_Orden === filled ) : Ya guardé",'', AMBITO);
+
+		            }else if ( Robot.valor === 1 ) {
+		                log.info(" if ( Estado_Orden === filled ) : Voy a Guardar",'', AMBITO);
+		                log.info(' Valor de Orden 13: ', Orden, AMBITO);
+		                log.info(''," if ( Estado_Orden === filled ) : Enviando "+ TIPO_CAMBIO+' '+CANT_INVER+' '+InversionRealCalc+' '+MON_B+' '+MON_C+' '+MONEDA_SALDO+' '+MONEDA_COMISION+' '+Orden+' '+ID_LOTE, AMBITO);
+		                Meteor.call('GuardarOrdenRobot', TIPO_CAMBIO, CANT_INVER,  parseFloat(InversionRealCalc), MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+		                log.info(" if ( Estado_Orden === filled ) : Ya guardé",'', AMBITO);
+		            }
+		            /**/
+		        }
             }
-            /**/
-        }
+
+
+
+            
+        
+
+        
     },
 
 });
