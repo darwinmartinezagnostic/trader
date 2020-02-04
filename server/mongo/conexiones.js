@@ -77,7 +77,7 @@ Meteor.methods({
         }
     },
 
-    async ConexionPost(V_URL, datos){
+    async ConexionPost(V_URL, datos, OPC){
 
         var request = require('request-promise')
 
@@ -94,16 +94,30 @@ Meteor.methods({
         var salida = 0;
         ordenCliente = "1" 
 
-        var parametros = {
+        switch ( OPC ){ 
+            case 1:
+                var parametros = {
+                                url: url,
+                                method: 'POST',
+                                body: JSON.stringify(datos),
+                                auth: {
+                                    'user': user,
+                                    'pass': pswrd
+                                }
+                            };
+            break;
+            case 2:
+                var parametros = {
                         url: url,
                         method: 'POST',
-                        //body: datos,
-                        body: JSON.stringify(datos),
+                        body: datos,
                         auth: {
                             'user': user,
                             'pass': pswrd
                         }
                     };
+            break;
+        }
 
         const token = function() { 
             return {
@@ -172,7 +186,7 @@ Meteor.methods({
             }
         }
     },
-    
+
     async ConexionPut(V_URL,datos){
 
         global.Headers = fetch.Headers;

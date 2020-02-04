@@ -18,8 +18,8 @@ Meteor.methods({
         //Meteor.call('ActualizaEquivalenciaMonedas');
         //Meteor.call('CarcularGanancia',1);
 
-        INV_REAL='0.00106105'
-        //Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'exchangeToBank' );
+        INV_REAL='0.00105943'
+        Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'exchangeToBank' );
         //Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'bankToExchange' );
         //log.info(' Valor de INV_REAL: ', parseFloat(INV_REAL))
         /*
@@ -66,7 +66,7 @@ Meteor.methods({
 
 
 
-        
+        /*
         const MON_B='JJRS'
         const MON_C='CARM'
         var TIPO_CAMBIO = MON_B+MON_C
@@ -85,7 +85,7 @@ Meteor.methods({
                 //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
             }
         /* */
-        
+        /*
         if (MONEDA_SALDO === MON_B) {
             var TP = 'sell'
             var MONEDA_S_SALDO = MON_C
@@ -132,7 +132,7 @@ Meteor.methods({
         var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')    
         /**/
         //Meteor.call("ConsultaCarterasDeposito");
- 
+            /*
             //log.info("Datos a enviar: MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
             //CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, IdTransaccionLoteActual){
             //Meteor.call("CrearNuevaOrder", 'ETHBTC', 'sell', '0.0166', 'ETH', 'BTC', 'BTC', 'BTC', IdTransaccionLoteActual);
@@ -150,7 +150,7 @@ Meteor.methods({
             datos.timeInForce='GTC';
             datos.quantity=1;
             datos.price=1;
-
+            /**/
 
 
 
