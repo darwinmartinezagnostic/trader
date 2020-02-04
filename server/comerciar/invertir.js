@@ -1056,14 +1056,23 @@ Meteor.methods({
 
             
             if ( Robot.valor === 0 ) {
-                datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
-                log.info("Datos a Enviar: ", datos, AMBITO);
+                //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&type=limit'+'&timeInForce=GTC'+"&quantity="+RecalcIverPrec.MontIversionCal+'&price='+RecalcIverPrec.MejorPrecCal;
+
+                var datos = new Object();
+                datos.clientOrderId=IdTransaccionActual;
+                datos.symbol=TIPO_CAMBIO;
+                datos.side=TP;
+                datos.type='limit';
+                datos.timeInForce='GTC';
+                datos.quantity=RecalcIverPrec.MontIversionCal;
+                datos.price=RecalcIverPrec.MejorPrecCal;
 
 
                 //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=limit'+"&quantity="+'100000000'+'&price='+'0.000001';
                 //datos='clientOrderId='+IdTransaccionActual+'&symbol='+TIPO_CAMBIO+'&side='+TP+'&timeInForce='+'GTC'+'&type=market'+"&quantity="+RecalcIverPrec.MontIversionCal;
 
 
+                log.info("Datos a Enviar: ", datos, AMBITO);
                 var url_orden = CONSTANTES.ordenes;
 
                 do {            

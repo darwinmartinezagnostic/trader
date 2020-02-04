@@ -29,7 +29,12 @@ Meteor.methods({
         // "bankToExchange" Del Saldo de la cuenta a el Saldo de Trader
         // "exchangeToBank" Del Saldo de Trader a el Saldo de la cuenta
 
-        datos=  'currency='+MONEDA+'&amount='+MONTO+'&type='+TIPO_TRANSF;
+        //datos=  'currency='+MONEDA+'&amount='+MONTO+'&type='+TIPO_TRANSF;
+
+        var datos = new Object();
+        datos.currency=MONEDA;
+        datos.amount=MONTO;
+        datos.type=TIPO_TRANSF;
 
         var url_orden = CONSTANTES.transferencia;
 

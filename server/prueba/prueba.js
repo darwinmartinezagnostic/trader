@@ -61,15 +61,20 @@ Meteor.methods({
         //Meteor.call("ValidaSaldoEquivalenteActual");
         //Meteor.call("ListaMonedas");
         //Meteor.call("ReinioDeSaldos");  
-        /*
-        const MON_B='ETH'
-        const MON_C='BTC'
+
+
+
+
+
+        
+        const MON_B='JJRS'
+        const MON_C='CARM'
         var TIPO_CAMBIO = MON_B+MON_C
         var MONEDA_COMISION = MON_C
-        var MONEDA_SALDO = MON_B
-        //var MONEDA_SALDO = MON_C
+        //var MONEDA_SALDO = MON_B
+        var MONEDA_SALDO = MON_C
         var MONEDASALDO = MONEDA_SALDO
-        var PRECIO = '0.019754'
+        var PRECIO = '0.0012742'
         /*
             //log.info(' Tipo de Cambio T
             IPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
@@ -79,24 +84,24 @@ Meteor.methods({
             	Meteor.call("ValidaTendenciaTipoCambio", TIPO_CAMBIO, MONEDA_SALDO);
                 //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
             }
-        /**/        
-        /*
+        /* */
+        
         if (MONEDA_SALDO === MON_B) {
             var TP = 'sell'
             var MONEDA_S_SALDO = MON_C
             //CANT_INVER = '1.782'
-            CANT_INVER = '0.0240'
-            //var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
-            //var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo 
+            //CANT_INVER = '0.83'
+            var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
+            var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo 
         }else if (MONEDA_SALDO === MON_C) {
             var TP = 'buy'
             var MONEDA_S_SALDO = MON_B
             //CANT_INVER = '0.01696398' 
-            CANT_INVER = '0.00055' 
-            //var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
-            //var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
+            //CANT_INVER = '0.82' 
+            var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
+            var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
         } 
-
+        /*
         Monedas.update({
                                         moneda: MON_B
                                     }, 
@@ -131,7 +136,24 @@ Meteor.methods({
             //log.info("Datos a enviar: MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
             //CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, IdTransaccionLoteActual){
             //Meteor.call("CrearNuevaOrder", 'ETHBTC', 'sell', '0.0166', 'ETH', 'BTC', 'BTC', 'BTC', IdTransaccionLoteActual);
+             MAPLICOMIS = MON_C
+            var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
+            var IdTransaccionActual = Meteor.call("CompletaConCero", IdTran, 32);
+            var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote') 
             //Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
+
+            var datos = new Object();
+            datos.clientOrderId=IdTransaccionActual;
+            datos.symbol=TIPO_CAMBIO;
+            datos.side=TP;
+            datos.type='limit';
+            datos.timeInForce='GTC';
+            datos.quantity=1;
+            datos.price=1;
+
+
+
+
             //Meteor.call("CrearNuevaOrderRobot", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
                                         // TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){ 
 

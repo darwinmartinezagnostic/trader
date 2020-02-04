@@ -90,14 +90,15 @@ Meteor.methods({
         const user = CONSTANTES.user;
         const pswrd = CONSTANTES.passwr;
         let url = V_URL
-        log.info('',"Valor de url: "+ url+ " MS: "+ MS+ "datos: "+ datos,'Conexiones');
+        log.info('',"Valor de url: " + url + " MS: " + MS + " datos: " + datos,' Conexiones');
         var salida = 0;
         ordenCliente = "1" 
 
         var parametros = {
-                        url: V_URL,
+                        url: url,
                         method: 'POST',
-                        body: datos,
+                        //body: datos,
+                        body: JSON.stringify(datos),
                         auth: {
                             'user': user,
                             'pass': pswrd
@@ -171,7 +172,7 @@ Meteor.methods({
             }
         }
     },
-
+    
     async ConexionPut(V_URL,datos){
 
         global.Headers = fetch.Headers;
