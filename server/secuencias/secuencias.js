@@ -173,7 +173,7 @@ Meteor.methods({
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION                        
 
-                                var LimiteMuestreoGeneral = Parametros.findOne({ "dominio": "limites", "nombre": "CantidadMinimaMuestreoMoneda"});
+                                var LimiteMuestreoGeneral = Parametros.findOne({ "dominio": "limites", "nombre": "CantidadMinimaMuestreoGeneral"});
                                 var V_LimiteMuestreoGeneral = LimiteMuestreoGeneral.valor
 
                                 if ( V_LimiteMuestreoGeneral === 0 ) {
