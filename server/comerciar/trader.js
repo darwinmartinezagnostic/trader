@@ -14,6 +14,7 @@ Meteor.methods({
 
     'ListaMonedas':function(){
         var CONSTANTES = Meteor.call("Constantes");
+        Meteor.call("GuardarLogEjecucionTrader", ' OBTENIENDO MONEDAS')
         //log.info('############################################');
         try{
             var moneda = Meteor.call("ConexionGet", CONSTANTES.monedas);
@@ -28,15 +29,15 @@ Meteor.methods({
         for ( a = 0, len = mons.length ; a < len; a++) {
             var mon = mons[a];
 
-            var LimiteMuestreo = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
-            var V_LimiteMuestreo = LimiteMuestreo[0].valor
+            var LimiteMuestreoMoneda = Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreoMoneda"}).fetch()
+            var V_LimiteMuestreoMoneda = LimiteMuestreoMoneda[0].valor
             fecha = moment (new Date());
             Monedas.update( { moneda : mon.id },
                             { $set:{    moneda : mon.id, 
                                         nombre_moneda : mon.fullName, 
                                         activo : "S", 
                                         min_transferencia : 0.0000000001,
-                                        CantidadMinimaMuestreo : V_LimiteMuestreo,
+                                        CantidadMinimaMuestreo : V_LimiteMuestreoMoneda,
                                         MonedaEstable : 'N',
                                         c_estable : 0,
                                         fecha_actualizacion : fecha._d,
@@ -460,6 +461,7 @@ Meteor.methods({
 
     'ListaTiposDeCambios':function(VALOR){
         var CONSTANTES = Meteor.call("Constantes");
+        Meteor.call("GuardarLogEjecucionTrader", ' OBTENIENDO TIPOS DE CAMBIO');
         try{
             var traders = Meteor.call("ConexionGet", CONSTANTES.simbolos);
             var mon_camb =traders
@@ -544,6 +546,8 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", ' Valor de tipo consulta no definida ');
             }
         };
+
+        Meteor.call("GuardarLogEjecucionTrader", ' TIPOS DE CAMBIO OBTENIDOS');
     },
 
     'LibroDeOrdenes':function(TIPO_CAMBIO){
@@ -607,6 +611,7 @@ Meteor.methods({
     'validaMonedasActivas':function(){
         //traerme las monedas y ver cuales estan activas?
         var CONSTANTES = Meteor.call("Constantes");
+
         Meteor.call("ListaMonedas",function(err, result){
             if (err) {
                 Meteor.call('ValidaError', err, 1);
