@@ -115,20 +115,21 @@ Meteor.methods({
                 if ( Monedas_Saldo[0] === undefined ) {
                     Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ninguna moneda con saldo disponible para invertir ']);
                 }
-                else{
+                else{                                         
+
                     for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
                         var moneda_saldo =  Monedas_Saldo[CMS];
-                        var V_LimiteMuestreo = moneda_saldo.CantidadMinimaMuestreo
-                        if ( V_LimiteMuestreo == undefined ) {
-                            var LimiteGeneral= Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreo"}).fetch()
-                            var V_LimiteGeneral = LimiteGeneral[0].valor
+                        var V_LimitMuestMoneda = moneda_saldo.CantidadMinimaMuestreo
+                        if ( V_LimitMuestMoneda == undefined ) {
+                            var LimiteMuestreoMonedas= Parametros.find({ "dominio": "limites", "nombre": "CantidadMinimaMuestreoMoneda"}).fetch()
+                            var V_LimiteMuestreoMonedas = LimiteMuestreoMonedas[0].valor
                             Monedas.update({ "moneda": moneda_saldo.moneda }, {
                                                                 $set: {
-                                                                    "CantidadMinimaMuestreo": V_LimiteGeneral,
+                                                                    "CantidadMinimaMuestreo": V_LimiteMuestreoMonedas,
                                                                     "fecha_actualizacion" : fecha._d
                                                                 }
                                         });
-                            var V_LimiteMuestreo = V_LimiteGeneral;
+                            var V_LimitMuestMoneda = V_LimiteMuestreoMonedas;
                         }
 
                         Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[moneda_saldo.moneda]);
@@ -172,30 +173,48 @@ Meteor.methods({
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION                        
 
-                                if ( V_LimiteMuestreo === 0 ) { 
-                                    Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
-                                    
-                                    Meteor.call('ValidaInversion', moneda_saldo.moneda);
-                                    /**/
-                                    /*
-                                    Jobs.run("JobValidaInversion", moneda_saldo.moneda, {
-                                                    in: {
-                                                        second: 1
-                                                    }
-                                                })
-                                    /**/
+                                var LimiteMuestreoGeneral = Parametros.findOne({ "dominio": "limites", "nombre": "CantidadMinimaMuestreoMoneda"});
+                                var V_LimiteMuestreoGeneral = LimiteMuestreoGeneral.valor
 
-                                }else if ( V_LimiteMuestreo > 0 ) {
-                                    V_LimiteMuestreo = V_LimiteMuestreo - 1
+                                if ( V_LimiteMuestreoGeneral === 0 ) {
+                                    if ( V_LimitMuestMoneda === 0 ) { 
+                                        Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
+                                        
+                                        Meteor.call('ValidaInversion', moneda_saldo.moneda);
+                                        /**/
+                                        /*
+                                        Jobs.run("JobValidaInversion", moneda_saldo.moneda, {
+                                                        in: {
+                                                            second: 1
+                                                        }
+                                                    })
+                                        /**/
+
+                                    }else if ( V_LimitMuestMoneda > 0 ) {
+                                        V_LimitMuestMoneda = V_LimitMuestMoneda - 1
+                                                    
+                                        fecha = moment (new Date());
+                                        Monedas.update({ "moneda": moneda_saldo.moneda }, {
+                                                                    $set: {
+                                                                        "CantidadMinimaMuestreo": V_LimitMuestMoneda,
+                                                                        "fecha_actualizacion" : fecha._d
+                                                                    }
+                                            });
+                                    }
+                                
+                                }else if ( V_LimiteMuestreoGeneral > 0 ) {
+                                    V_LimiteMuestreoGeneral = V_LimiteMuestreoGeneral - 1
                                                 
                                     fecha = moment (new Date());
-                                    Monedas.update({ "moneda": moneda_saldo.moneda }, {
-                                                                $set: {
-                                                                    "CantidadMinimaMuestreo": V_LimiteMuestreo,
-                                                                    "fecha_actualizacion" : fecha._d
-                                                                }
-                                        });
+                                    Parametros.update({ dominio: "limites", nombre: "CantidadMinimaMuestreoGeneral"}, {
+                                                        $set: {
+                                                            "CantidadMinimaMuestreoGeneral": V_LimiteMuestreoGeneral,
+                                                            "fecha_actualizacion" : fecha._d
+                                                        }
+                                    });
                                 }
+
+
 
                                 var ExistSaldosPositivos = Monedas.aggregate( { $match : {"saldo.tradeo.equivalencia" : { $gt : 1 }}},
                                                                         { $group: {
@@ -236,6 +255,8 @@ Meteor.methods({
                                 /**/
                             }
                     }
+
+                    
                 }
             }
             catch (error){

@@ -25,7 +25,10 @@ if (Parametros.find({ dominio : 'limites' }).count() === 0){
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'PropPorcInver', estado : true, valor: { p11 : 1, p12 : 0.7, p22 : 1, p13 : 0.7, p23 : 0.6, p33 : 1 }, descripcion : 'Proporción de Procentajes de inversión según cantdad de tipos de cambio disponibles para compra' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadTransaccionesAtras', estado : true, valor: 300 ,descripcion : 'Cantidad de ID transacciones de traders hacia atrás que consultarán para determinar por primera vez el valor de la transacción Anterior' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'ValorMinimoTransferencia', estado : true, valor: 0.00000000000001 ,descripcion : 'Valor mínimo de para transferir entre los tipos de saldo Cuenta - trader y viceversa' });
-	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadMinimaMuestreo', estado : true, valor : 3 , descripcion : 'Valor de muestreos mínimos de cada moneda antes invertir por defecto = 3' });
+	
+	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadMinimaMuestreoGeneral', estado : true, valor : 50 , descripcion : 'Valor de muestreos mínimos general antes invertir por defecto = 50' });
+	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantidadMinimaMuestreoMoneda', estado : true, valor : 3 , descripcion : 'Valor de muestreos mínimos de cada moneda antes invertir por defecto = 3' });
+
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantMaximaEjecucion', estado : true, valor : 9999999999 , descripcion : 'Valor maximo de ejecución de los job de seguimiento, si el valor es = 9999999999 entonces la ejecución será infinita' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'CantMaximaDeCompras', estado : true, valor : 9999999999 , descripcion : 'Valor maximo de ejecución de compras a realizar, si el valor es = 9999999999 entonces la ejecución será infinita' });
 	Parametros.insert({ fecha : new Date(), dominio : 'limites', nombre : 'LimiteContEstadoActivo', estado : true, valor : 5 , descripcion : 'Valor máximo de Contador de estado Activo' });
@@ -39,8 +42,8 @@ if (Parametros.find({ dominio : 'limites' }).count() === 0){
 };
 
 if (Parametros.find({ dominio : 'Prueba' }).count() === 0){
-	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'robot', estado : true, valor : 1, descripcion : '1 = activo, 0 = Inactivo - Simula la compra de monedas' });
-	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'saldo', estado : true, valor : 1, descripcion : ' 1 = activo, 0 = Inactivo - Restaura los valores de Saldo de todas las monedas y asigna Saldo ficticio Inicial' });
+	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'robot', estado : true, valor : 0, descripcion : '1 = activo, 0 = Inactivo - Simula la compra de monedas' });
+	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'saldo', estado : true, valor : 0, descripcion : ' 1 = activo, 0 = Inactivo - Restaura los valores de Saldo de todas las monedas y asigna Saldo ficticio Inicial' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'ResetDatosIniciales', estado : true, valor : 1, descripcion : ' 1 = activo, 0 = Inactivo - Borrar los datos Iniciales de monedas, tipos de cambio e inicia los valores al estado inicial' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'ResetParametrosAnalisis', estado : true, valor : 1, descripcion : ' 1 = activo, 0 = Inactivo - Reactiva los parámetros de Analisis nuevo estados true' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'ResetResultadoAnalisis', estado : true, valor : 1, descripcion : '1 = activo, 0 = Inactivo - Borra lo datos de analisis para cada nuevo set de pruebas' });
