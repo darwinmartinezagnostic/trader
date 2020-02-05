@@ -696,14 +696,13 @@ Meteor.methods({
     },
 
     'CancelarOrden':function(ID_LOCAL){  //DELETE
-        var log = new Logger('router');
         var CONSTANTES = Meteor.call("Constantes");
         var urlCanlOrd = [CONSTANTES.ordenes]+['/']+[ID_LOCAL];
         //log.info('############################################');
-        log.info('Cancelando Orden ID: ', ID_LOCAL, 'trader' );
+        log.info('Valor de urlCanlOrd: ', urlCanlOrd );
+        log.info('Cancelando Orden ID: ', ID_LOCAL );
         
         EstadoOrdenCancelada = Meteor.call('ConexionDel',urlCanlOrd);
-
         log.trace("CancelarOrden : Valor de EstadoOrdenCancelada: ", EstadoOrdenCancelada, 'trader' );
 
         return EstadoOrdenCancelada

@@ -277,9 +277,8 @@ Meteor.methods({
     },
 
     async ConexionDel (V_URL) {       
-        var log = new Logger('router');
-        log.trace(" Valor recibido - V_URL: ", V_URL,'Conexiones');
         var request = require('request-promise')
+        log.trace(" Valor recibido - V_URL: ", V_URL);
 
         global.Headers = fetch.Headers;
         global.formData = fetch.formData;

@@ -13,7 +13,10 @@ Meteor.methods({
 	'PruebasUnitarias':function(){
 
         var AMBITO = 'PruebasUnitarias'
-        Meteor.call('sendEmail', 'jarruizjesus@gmail.com', 'en el texto', 'prueba de correo');
+        //Meteor.call('sendEmail', 'jarruizjesus@gmail.com', 'en el texto', 'prueba de correo');
+        var ORDEN = '203709643677'
+        log.info('Voy a cancelar la orden: ', ORDEN );
+        Meteor.call("CancelarOrden", ORDEN);
         //Meteor.call('EnviarCorreo', 'jarruizjesus@gmail.com', 'invertminado@gmail.com', 'en el texto', 'prueba de correo');
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
         //Meteor.call('ActualizaEquivalenciaMonedas');

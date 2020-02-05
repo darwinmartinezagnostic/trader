@@ -1210,7 +1210,9 @@ Meteor.methods({
 	                                        {
 	                                            $set: {
 	                                                    Operacion : {   
+	                                                                    ID_LocalAct : IdTransaccionActual,
 	                                                                    Id_hitbtc : V_IdHitBTC,
+	                                                                    Id_Lote: ID_LOTE,
 	                                                                    Tipo : TP,
 	                                                                    TipoCambio : TIPO_CAMBIO,
 	                                                                    Precio : RecalcIverPrec.MejorPrecCal,
