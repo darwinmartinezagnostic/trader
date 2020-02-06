@@ -22,7 +22,6 @@ Meteor.methods({
             var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );            
             var ResetSaldos = Parametros.findOne( { dominio : "Prueba", nombre : "saldo" } );
 
-            //var ValorModoEjecucion = ModoEjecucion[0].valor
             var ValorModoEjecucion = ModoEjecucion.valor
             //log.info('Valor de ValorModoEjecucion: ', ValorModoEjecucion);
             switch ( ValorModoEjecucion ){

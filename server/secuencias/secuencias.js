@@ -115,7 +115,11 @@ Meteor.methods({
                 if ( Monedas_Saldo[0] === undefined ) {
                     Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ninguna moneda con saldo disponible para invertir ']);
                 }
-                else{                                         
+                else{    
+
+                    var LimiteMuestreoGeneral = Parametros.findOne({ "dominio": "limites", "nombre": "CantidadMinimaMuestreoGeneral"});
+                    var V_LimiteMuestreoGeneral = LimiteMuestreoGeneral.valor
+                    log.info('Valor de V_LimiteMuestreoGeneral: ', V_LimiteMuestreoGeneral);
 
                     for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
                         var moneda_saldo =  Monedas_Saldo[CMS];
@@ -153,7 +157,7 @@ Meteor.methods({
                                 Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible para moneda: ']+[moneda_saldo.moneda]);
                                 //Meteor.call('SecuenciaDeCarga');
                             }else {
-
+                                
                                 for ( CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++ ){
                                 	fecha = moment (new Date());
                                     var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
@@ -161,7 +165,8 @@ Meteor.methods({
                                     //Meteor.call("GuardarLogEjecucionTrader", ['        TIPO DE CAMBIO: ']+[tipo_cambio_verificar]);
                                     Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar, moneda_saldo.moneda )
                                 }
-                                /*
+
+                                /**/
                                 log.info('-------------------------------------------');
                                 log.info('----- FIN DE VALIDACION DE TENDENCIA ------');
                                 log.info('-------------------------------------------');
@@ -173,9 +178,7 @@ Meteor.methods({
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION                        
 
-                                var LimiteMuestreoGeneral = Parametros.findOne({ "dominio": "limites", "nombre": "CantidadMinimaMuestreoGeneral"});
-                                var V_LimiteMuestreoGeneral = LimiteMuestreoGeneral.valor
-
+                                
                                 if ( V_LimiteMuestreoGeneral === 0 ) {
                                     if ( V_LimitMuestMoneda === 0 ) { 
                                         Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
@@ -202,16 +205,6 @@ Meteor.methods({
                                             });
                                     }
                                 
-                                }else if ( V_LimiteMuestreoGeneral > 0 ) {
-                                    V_LimiteMuestreoGeneral = V_LimiteMuestreoGeneral - 1
-                                                
-                                    fecha = moment (new Date());
-                                    Parametros.update({ dominio: "limites", nombre: "CantidadMinimaMuestreoGeneral"}, {
-                                                        $set: {
-                                                            "CantidadMinimaMuestreoGeneral": V_LimiteMuestreoGeneral,
-                                                            "fecha_actualizacion" : fecha._d
-                                                        }
-                                    });
                                 }
 
 
@@ -256,7 +249,17 @@ Meteor.methods({
                             }
                     }
 
-                    
+                    if ( V_LimiteMuestreoGeneral > 0 ) {
+                        V_LimiteMuestreoGeneral = V_LimiteMuestreoGeneral - 1                                    
+                        fecha = moment (new Date());
+                        Parametros.update({ dominio: "limites", nombre: "CantidadMinimaMuestreoGeneral"}, {
+                                            $set: {
+                                                "valor": V_LimiteMuestreoGeneral,
+                                                "fecha_actualizacion" : fecha._d
+                                            }
+                        });
+                    }
+
                 }
             }
             catch (error){
