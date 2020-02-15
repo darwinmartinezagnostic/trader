@@ -9,9 +9,10 @@ LogFile.enable();
 Meteor.methods({
 
 	'ModificaParametrosGenerales':function ( DOMINIO, NONBRE, ESTADO, VALOR ) {
+        var fecha = moment (new Date());
 		try{
 			Parametros.update(  { dominio : DOMINIO,  nombre : NONBRE },
-	                                    { $set:{  "valor": VALOR , "estado" : ESTADO }}
+	                                    { $set:{  "valor": VALOR , "estado" : ESTADO, "fecha_actualizacion" : fecha._d }}
 	                                );
 			return 0;
 		}

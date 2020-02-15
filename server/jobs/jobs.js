@@ -1,6 +1,7 @@
 import { Jobs } from 'meteor/msavin:sjobs';
 import { Logger } from 'meteor/ostrio:logger';
 import { LoggerFile } from 'meteor/ostrio:loggerfile';
+import { Email } from 'meteor/email';
 
 const log = new Logger();
 const LogFile = new LoggerFile(log,logFilePath);
@@ -27,7 +28,6 @@ Jobs.register({
             var ValorModoEjecucion = ModoEjecucion.valor
             var ResetAnalisis = Parametros.findOne( { dominio : "Prueba", nombre : "ResetResultadoAnalisis" } )
 			var AMBITO = 'JobTipoEjecucion' 
-
 		    switch ( TipoEjecucion ){
                 case 0:
                 	if ( ResetAnalisis.valor === 1 ) {
@@ -139,6 +139,15 @@ Jobs.register({
 		    }
     	}
     	else {
+    		//Meteor.call('sendEmail', 'jarruizjesus@gmail.com', ['Falla en Job:'] + [AMBITO], ['El Job'] + [AMBITO] + ['A terminado con estado fallido y ha detenido toda la ejecución, se procede a reiniciar el proceso según la última configuración de la collección "parametros"']);
+    		log.info(' ERROR EN ', AMBITO +[', SE REINICIA EL PROCESO'])
+    		
+    		this.replicate({
+		                in: {
+		                    minutes: 1
+		                }
+		            });
+
     		this.failure(ejecucionJobSecuenciaInicial);
     	}
     },
@@ -558,6 +567,67 @@ Jobs.register({
     	}
     	else {
     		this.failure(ejecucionJobsFrecuenciaDiaria);
+    	}
+    },
+
+    "JobsValidarEstadoOrden": function(TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE, IdTemporal){
+    	var instance = this;
+    	var AMBITO = "JobsValidarEstadoOrden";
+    	try{
+	    	log.info(' Estoy en JobsValidarEstadoOrden','','JobsValidarEstadoOrden');
+    		Meteor.call("GuardarLogEjecucionTrader", [ " Valores recibidos"]+ [" TIPO_CAMBIO: "]+[TIPO_CAMBIO]+[', CANT_INVER :']+[CANT_INVER]+[', InversionRealCalc : ']+[InversionRealCalc]+[', MON_B :']+[MON_B]+[', MON_C :']+[, MON_C] + [', MONEDA_SALDO :']+[MONEDA_SALDO]+[', MONEDA_COMISION :']+[, MONEDA_COMISION] + [', ORDEN :']+[ORDEN]+[', ID_LOTE :']+[, ID_LOTE] + [', IdTemporal :']+[IdTemporal]);
+	    	// Mantenieminto de la coleccion JObs_data
+	    	JobsInternal.Utilities.collection.remove({ state : 'successful' });
+	    	var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
+	    	if ( Robot.valor === 0 ) {
+                var Resultado = Meteor.call("ValidarEstadoOrden", ORDEN)
+            }else if ( Robot.valor === 1 ) {
+                var Resultado = Meteor.call("ValidarEstadoOrdenRobot", ORDEN)
+            }
+
+            Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
+
+            var ORDEN = Resultado
+            var Estado_Orden = Resultado.status;
+            log.info(' Valor de ORDEN 5: ', ORDEN, AMBITO);
+
+	        if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
+	        	var ValorSecuencia = Meteor.call("SecuenciasTMP", IdTemporal);
+	        	log.info(' AQUI TOY');
+	        	log.info(' Valor de ValorSecuencia: ', ValorSecuencia, AMBITO);
+	        	if ( parseFloat(ValorSecuencia) < 20 ) {
+		        	instance.replicate({
+		                in: {
+		                    minutes: 1
+		                }
+		            });
+	        	}else{
+	        		var ORDEN = Meteor.call("CancelarOrden", IdTransaccionActual , MONEDA_SALDO);
+	        		var Estado_Orden = ORDEN.status;
+	        	}
+	        }
+
+	        if ( Estado_Orden === "suspended" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" ) {
+	        	log.info(' Estado_Orden === "suspended" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" ');
+	        	Meteor.call('EstadoOrdenFallida', ORDEN, ID_LOTE, MONEDA_SALDO, Estado_Orden );
+	        	SecuenciasTemporales.remove({ _id : IdTemporal});
+	        }
+
+            if ( Estado_Orden === "filled" ) {
+	            Meteor.call('EstadoOrdenCompletada', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE );
+	            SecuenciasTemporales.remove({ _id : IdTemporal});
+	        }			
+	        var ejecucionJobsValidarEstadoOrden = 0;
+		}
+		catch(error){
+			var ejecucionJobsValidarEstadoOrden = 1
+		}
+
+		if ( ejecucionJobsValidarEstadoOrden === 0) {
+    		return this.success(ejecucionJobsValidarEstadoOrden);
+    	}
+    	else {
+    		this.failure(ejecucionJobsValidarEstadoOrden);
     	}
     },
 

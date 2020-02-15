@@ -11,18 +11,142 @@ LogFile.enable();
 Meteor.methods({
     
 	'PruebasUnitarias':function(){
-
         var AMBITO = 'PruebasUnitarias'
+
+        ///////////          VARIABLES             /////////////
+
+
+        
+
+        const MON_B='DIM'
+        const MON_C='USD'
+        var TIPO_CAMBIO = MON_B+MON_C
+        var MONEDA_COMISION = MON_C
+        //var MONEDA_SALDO = MON_B
+        var MONEDA_SALDO = MON_C
+        var MONEDASALDO = MONEDA_SALDO
+        var PRECIO = '0.000231058'
+        var ID_LOTE = 1373
+        if (MONEDA_SALDO === MON_B) {
+            var TP = 'sell'
+            var MONEDA_S_SALDO = MON_C
+            //CANT_INVER = '1.782'
+            //CANT_INVER = '0.83'
+            var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
+            var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo 
+        }else if (MONEDA_SALDO === MON_C) {
+            var TP = 'buy'
+            var MONEDA_S_SALDO = MON_B
+            //CANT_INVER = '0.01696398' 
+            //CANT_INVER = '0.82' 
+            var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
+            var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
+        } 
+
+
+        /*
+        Orden = {
+          "id": 206599567723,
+          "clientOrderId": "00000000000000000000000000003645",
+          "symbol": "DIMUSD",
+          "side": "buy",
+          "status": "new",
+          "type": "limit",
+          "timeInForce": "GTC",
+          "price": "0.000211842",
+          "quantity": "32360",
+          "postOnly": false,
+          "cumQuantity": "0",
+          "createdAt": "2020-02-11T22:24:46.873Z",
+          "updatedAt": "2020-02-11T22:24:46.873Z"
+        }
+        /**/
+        var Orden = new Object();
+            Orden.id=206643505671;
+            Orden.clientOrderId="00000000000000000000000000003648";
+            Orden.symbol=TIPO_CAMBIO;
+            Orden.side=TP;
+            Orden.status="new";
+            Orden.type='limit';
+            Orden.timeInForce='GTC'
+            Orden.price= PRECIO
+            Orden.quantity= "31160"
+            Orden.postOnly= false
+            Orden.cumQuantity= "0"
+            Orden.createdAt= "2020-02-12T00:57:41.117Z"
+            Orden.updatedAt= "2020-02-12T00:57:41.117Z"
+
+
+        var InversionRealCalc = Orden.quantity;
+
+        Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
+
+        /*
+        var IdTemp = Meteor.call("SecuenciasGBL", 'IdTemporal');
+        var IdTemporal = Meteor.call("CompletaConCero", IdTemp, 32);
+
+        var ID = IdTemporal;
+        try{
+
+            }
+            catch(error){
+                log.info("TENGO UN ERROR EN ESTA PARTE")
+            }
+
+        /**/
+        /* 
+        if ( SecuenciasTemporales.find({ _id: ID.toString() }).count() === 0){
+            log.info(' SecuenciasTMP - if ( SecuenciasTemporales.find({ _id: ID}).count() === 0) ')
+
+            try{             
+                SecuenciasTemporales.insert({ _id: ID.toString(), secuencia: 0 });
+                var nuevo_id = SecuenciasTemporales.findAndModify({
+                                                                    query: { _id: ID },
+                                                                    update: { $inc: { secuencia: 1 } },
+                                                                    upsert: true,
+                                                                    'new' : true
+                                                                });
+            }
+            catch(error){
+                log.info("TENGO UN ERROR EN ESTA PARTE")
+            }
+        }else{
+            var nuevo_id = SecuenciasTemporales.findAndModify({
+                                                                query: { _id: ID },
+                                                                update: { $inc: { secuencia: 1 } },
+                                                                upsert: true,
+                                                                'new' : true
+                                                            });
+        }
+
+        /**/
+
+
+        //var ORDEN = '203709643677'
+        //log.info('Voy a cancelar la orden: ', ORDEN );
+        //Meteor.call("CancelarOrden", ORDEN);
         //Meteor.call('sendEmail', 'jarruizjesus@gmail.com', 'en el texto', 'prueba de correo');
-        var ORDEN = '203709643677'
-        log.info('Voy a cancelar la orden: ', ORDEN );
-        Meteor.call("CancelarOrden", ORDEN);
         //Meteor.call('EnviarCorreo', 'jarruizjesus@gmail.com', 'invertminado@gmail.com', 'en el texto', 'prueba de correo');
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
         //Meteor.call('ActualizaEquivalenciaMonedas');
         //Meteor.call('CarcularGanancia',1);
 
-        INV_REAL='0.00105943'
+        
+
+
+        
+
+        /*
+        Orden = new Object();
+        Orden.clientOrderId=IdTransaccionActual;
+        Orden.symbol=TIPO_CAMBIO;
+        Orden.side=TP;
+        Orden.type='limit';
+        Orden.timeInForce='GTC';
+        Orden.quantity=RecalcIverPrec.MontIversionCal;
+        Orden.price=RecalcIverPrec.MejorPrecCal;
+        /**/
+
         //Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'exchangeToBank' );
         //Meteor.call( "Transferirfondos", 'BTC', INV_REAL, 'bankToExchange' );
         //log.info(' Valor de INV_REAL: ', parseFloat(INV_REAL))
@@ -70,15 +194,7 @@ Meteor.methods({
 
 
 
-        /*
-        const MON_B='JJRS'
-        const MON_C='CARM'
-        var TIPO_CAMBIO = MON_B+MON_C
-        var MONEDA_COMISION = MON_C
-        //var MONEDA_SALDO = MON_B
-        var MONEDA_SALDO = MON_C
-        var MONEDASALDO = MONEDA_SALDO
-        var PRECIO = '0.0012742'
+        
         /*
             //log.info(' Tipo de Cambio T
             IPO_CAMBIO', TIPO_CAMBIO, ' MONEDA_SALDO: ', MONEDA_SALDO);
@@ -90,21 +206,7 @@ Meteor.methods({
             }
         /* */
         /*
-        if (MONEDA_SALDO === MON_B) {
-            var TP = 'sell'
-            var MONEDA_S_SALDO = MON_C
-            //CANT_INVER = '1.782'
-            //CANT_INVER = '0.83'
-            var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
-            var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo 
-        }else if (MONEDA_SALDO === MON_C) {
-            var TP = 'buy'
-            var MONEDA_S_SALDO = MON_B
-            //CANT_INVER = '0.01696398' 
-            //CANT_INVER = '0.82' 
-            var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
-            var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
-        } 
+        
         /*
         Monedas.update({
                                         moneda: MON_B

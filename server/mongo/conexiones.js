@@ -92,7 +92,6 @@ Meteor.methods({
         let url = V_URL
         log.info('',"Valor de url: " + url + " MS: " + MS + " datos: " + datos,' Conexiones');
         var salida = 0;
-        ordenCliente = "1" 
 
         switch ( OPC ){ 
             case 1:
@@ -291,7 +290,6 @@ Meteor.methods({
         let url = V_URL;
         log.info("Valor de url: "+ url, " MS: "+ MS,'Conexiones');
         var salida = 0;
-        ordenCliente = "1" ;
 
         var parametros = {
                         url: V_URL,

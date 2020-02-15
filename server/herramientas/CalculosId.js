@@ -60,5 +60,33 @@ Meteor.methods({
         //log.info(' Valor de nuevo_id: ', nuevo_id)
         return nuevo_id.secuencia;
     },
+
+    'SecuenciasTMP':function(ID){
+        log.info(' Valor de ID: ', ID)
+        if ( SecuenciasTemporales.find({ _id: ID}).count() === 0){
+            log.info(' SecuenciasTMP - if ( SecuenciasTemporales.find({ _id: ID}).count() === 0) ')
+
+            try{             
+                SecuenciasTemporales.insert({ _id: ID.toString(), secuencia: 0 });
+                var nuevo_id = SecuenciasTemporales.findAndModify({
+                                                                    query: { _id: ID },
+                                                                    update: { $inc: { secuencia: 1 } },
+                                                                    upsert: true,
+                                                                    'new' : true
+                                                                });
+            }
+            catch(error){
+                log.info("TENGO UN ERROR EN ESTA PARTE")
+            }
+        }else{
+            var nuevo_id = SecuenciasTemporales.findAndModify({
+                                                                query: { _id: ID },
+                                                                update: { $inc: { secuencia: 1 } },
+                                                                upsert: true,
+                                                                'new' : true
+                                                            });
+        }
+        return nuevo_id.secuencia;
+    },
 	
 });

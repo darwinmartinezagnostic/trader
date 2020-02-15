@@ -26,11 +26,7 @@ Meteor.methods({
             //log.info(" SecuenciaInicial:", 'Acá estoy','secuencias.js');
             //log.info(' ');
             var SecuenciaDeCarga = Meteor.call('SecuenciaDeCarga');
-
-            log.info("Valor de SecuenciaDeCarga", SecuenciaDeCarga,'Secuencias');
-        }while( SecuenciaDeCarga !== 0 );
-
-        
+        }while( SecuenciaDeCarga !== 0 );        
 
         Meteor.call("GuardarLogEjecucionTrader", 'Iniciando las secuencias Secundarías');
         Meteor.call("SecuenciasSecundarias", IdDatoAnalisis, IdLote );
@@ -62,14 +58,10 @@ Meteor.methods({
 
             if ( V_LimiteMaximoEjecucion === 9999999999 ) {
                                     
-                //log.info(' ');
-                var EjecucionSecuencia = Meteor.call('SecuenciaPeriodo1');
-                        
+                Meteor.call('SecuenciaPeriodo1');                        
 
             }else if ( V_LimiteMaximoEjecucion > 0 && V_LimiteMaximoEjecucion !== 9999999999 ) {
 
-                //log.info(' ');
-                //var EjecucionSecuencia = Meteor.call('SecuenciaPeriodo1');
                 Meteor.call('SecuenciaPeriodo1');
                 V_LimiteMaximoEjecucion = V_LimiteMaximoEjecucion - 1
                             
@@ -94,12 +86,12 @@ Meteor.methods({
     },    
 
     'SecuenciaPeriodo1':function(){
+        var AMBITO = 'SecuenciaPeriodo1';
         var TM = 1;
         V_EJEC = 2;
         fecha = moment (new Date());
-        log.info('        ',fecha._d,'Secuencias');
-        //log.info('---------- SECUENCIA PERIODO 1 ------------');
-        //log.info(' ');
+        var LimiteMuestreoGeneral = 0;
+
         do {
             try {
                 try {
@@ -116,11 +108,7 @@ Meteor.methods({
                     Meteor.call("GuardarLogEjecucionTrader", [' TipoCambioDisponibleCompra: Parece no Haber ninguna moneda con saldo disponible para invertir ']);
                 }
                 else{    
-
-                    var LimiteMuestreoGeneral = Parametros.findOne({ "dominio": "limites", "nombre": "CantidadMinimaMuestreoGeneral"});
-                    var V_LimiteMuestreoGeneral = LimiteMuestreoGeneral.valor
-                    log.info('Valor de V_LimiteMuestreoGeneral: ', V_LimiteMuestreoGeneral);
-
+                    //log.info(' Valor de Monedas_Saldo: ', Monedas_Saldo);
                     for (CMS = 0, TMS = Monedas_Saldo.length; CMS < TMS; CMS++){
                         var moneda_saldo =  Monedas_Saldo[CMS];
                         var V_LimitMuestMoneda = moneda_saldo.CantidadMinimaMuestreo
@@ -138,6 +126,7 @@ Meteor.methods({
 
                         Meteor.call("GuardarLogEjecucionTrader", ['             MONEDA: ']+[moneda_saldo.moneda]);
                         Meteor.call("GuardarLogEjecucionTrader", ['      MONEDA: ']+[moneda_saldo.moneda]+[' HORA INICIO: ']+[fecha._d]);
+                        Meteor.call("GuardarLogEjecucionTrader", ['               SALDO: ']+[moneda_saldo.saldo.tradeo.activo]+[' EQUIVALENTE $: ']+[moneda_saldo.saldo.tradeo.equivalencia]);
                         console.time('  TIEMPO TRANSCURRIDO: '+ [moneda_saldo.moneda]);
 
                         if (TiposDeCambios.find().count() === 0){
@@ -151,34 +140,33 @@ Meteor.methods({
                             }
                         };
                             var TiposDeCambioVerificar = Meteor.call('TipoCambioDisponibleCompra', moneda_saldo.moneda, moneda_saldo.saldo.tradeo.activo);
-                        
 
                             if ( TiposDeCambioVerificar === undefined ) {
                                 Meteor.call("GuardarLogEjecucionTrader", ['JobSecuenciaPeriodo1: No se ha podido recuperar los tipos de cambio con saldo disponible para moneda: ']+[moneda_saldo.moneda]);
-                                //Meteor.call('SecuenciaDeCarga');
+                                Meteor.call('SecuenciaDeCarga');
                             }else {
                                 
                                 for ( CTP = 0, TTP = TiposDeCambioVerificar.length; CTP < TTP; CTP++ ){
                                 	fecha = moment (new Date());
                                     var tipo_cambio_verificar = TiposDeCambioVerificar[CTP];
                                     //log.info('-------------------------------------------');
-                                    //Meteor.call("GuardarLogEjecucionTrader", ['        TIPO DE CAMBIO: ']+[tipo_cambio_verificar]);
+                                    //Meteor.call("GuardarLogEjecucionTrader", ['        TIPO DE CAMBIO: ']+[tipo_cambio_verificar]);                                    
                                     Meteor.call("ValidaTendenciaTipoCambio", tipo_cambio_verificar, moneda_saldo.moneda )
                                 }
 
-                                /**/
+                                
                                 log.info('-------------------------------------------');
                                 log.info('----- FIN DE VALIDACION DE TENDENCIA ------');
                                 log.info('-------------------------------------------');
                                 log.info(' ');
-                                /* */
+                                /**/
                                 Meteor.call("GuardarLogEjecucionTrader", 'JobSecuenciaPeriodo1: Ejecutando ValidarRanking ');
                                 Meteor.call('ValidarRanking', moneda_saldo.moneda);
 
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                 // VALIDA LA MÍNIMA CANTIDAD DE VECES QUE VA HACER LA CONSULTA DE TRANSACCIONES A HITBTC ANTES DE INICIAR LA INVERSION                        
-
-                                
+                                var LimiteMuestreoGeneral = Parametros.findOne({ "dominio": "limites", "nombre": "MuestreoGeneral"});
+                                var V_LimiteMuestreoGeneral = LimiteMuestreoGeneral.valor
                                 if ( V_LimiteMuestreoGeneral === 0 ) {
                                     if ( V_LimitMuestMoneda === 0 ) { 
                                         Meteor.call("GuardarLogEjecucionTrader", '  VOY A INTENTAR COMPRAR');
@@ -230,10 +218,9 @@ Meteor.methods({
                                     });
                                 }
 
-                                
+/**/                              
                                 var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
                                 var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor;
-
 
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                 Meteor.call("GuardarLogEjecucionTrader", ['      MONEDA: ']+[moneda_saldo.moneda]+[' HORA FIN: ']+[fecha._d]);
@@ -246,19 +233,13 @@ Meteor.methods({
                                 log.info('-------------------------------------------');
                                 log.info(' ');
                                 /**/
+                             
                             }
+                            /* */
                     }
 
-                    if ( V_LimiteMuestreoGeneral > 0 ) {
-                        V_LimiteMuestreoGeneral = V_LimiteMuestreoGeneral - 1                                    
-                        fecha = moment (new Date());
-                        Parametros.update({ dominio: "limites", nombre: "CantidadMinimaMuestreoGeneral"}, {
-                                            $set: {
-                                                "valor": V_LimiteMuestreoGeneral,
-                                                "fecha_actualizacion" : fecha._d
-                                            }
-                        });
-                    }
+                    log.info('Valor de V_LimiteMuestreoGeneral: ', V_LimiteMuestreoGeneral.toString(),  AMBITO);
+                    Meteor.call("ContadorMuestreoGeneral");
 
                 }
             }

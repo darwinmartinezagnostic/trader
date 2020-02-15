@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Logger } from 'meteor/ostrio:logger';
 import { LoggerFile } from 'meteor/ostrio:loggerfile';
+import { Email } from 'meteor/email';
 
 //**************************************************
 
@@ -16,7 +17,6 @@ Meteor.methods({
     'EjecucionInicial':function( IdDatoAnalisis, IdLote ){  
         try {
             // Verificamos si la aplicación es su ejecución Inicial o No
-
             
             var ModoEjecucion = Parametros.findOne( { dominio : "Ejecucion", nombre : "ModoEjecucion" } );
             var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );            
@@ -24,6 +24,7 @@ Meteor.methods({
 
             var ValorModoEjecucion = ModoEjecucion.valor
             //log.info('Valor de ValorModoEjecucion: ', ValorModoEjecucion);
+            
             switch ( ValorModoEjecucion ){
                 case 1:                    
                     Meteor.call('SecuenciaInicial', IdDatoAnalisis, IdLote );
@@ -74,7 +75,7 @@ Meteor.methods({
         }
 
         try {
-            Parametros.update({ dominio : "Ejecucion", nombre : "ModoEjecucion", "valor" : 1 },{ $set :{ "valor" : 2 , fecha_ejecucion : new Date() }});
+            Parametros.update({ dominio : "Ejecucion", nombre : "ModoEjecucion", "valor" : 1 },{ $set :{ "valor" : 2 , fecha_actualizacion : new Date() }});
         }
         catch (error){
             Meteor.call("ValidaError", error, 2);
