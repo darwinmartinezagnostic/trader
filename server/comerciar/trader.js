@@ -1005,20 +1005,6 @@ Meteor.methods({
             var status = ORDEN.status
             log.info('Valor de ComisionTtl', ComisionTtl, AMBITO);
         }
-        /**/
-        /*
-        var Negociaciones = ORDEN.tradesReport
-        log.info("Valor de ORDEN: ", ORDEN.tradesReport)
-        var status = ORDEN.status
-
-        for (CRPT = 0, TRPT = Negociaciones.length; CRPT < TRPT; CRPT++) {
-            var Reporte = Negociaciones[CRPT];
-            ComisionTtl +=  parseFloat(Reporte.fee)
-        }
-        /**/
-
-
-
 
         var Comision = ComisionTtl.toString()
         var precio = parseFloat(ORDEN.price)
@@ -1093,7 +1079,6 @@ Meteor.methods({
             }else if ( MONEDA_SALDO == MON_C ) {
                 var MonAdquirida =  MON_B 
                 console.log(" Valor de MonAdquirida: ", MonAdquirida)
-                //var CantidadRecibida = Meteor.call("EquivalenteTipoCambio", MonAdquirida, CantidadNegociada, precio, TIPO_CAMBIO );
                 var CantidadRecibida = CantidadNegociada;
             }
         }else if ( Robot.valor === 1 ) {
@@ -1139,8 +1124,6 @@ Meteor.methods({
                 log.info(" Valor de MonAdquirida: ", MonAdquirida)
                 var SaldoActualMonAd = MonAdquirida.saldo.tradeo.activo
                 log.info(" Valor de SaldoActualMonAd: ", SaldoActualMonAd)
-                //var CantidadRecibida = Meteor.call("EquivalenteTipoCambio", MonAdquirida.moneda, CantidadNegociada, precio, TIPO_CAMBIO );
-                //var CantidadRecibida = Meteor.call("EquivalenteTipoCambio", MonAdquirida.moneda, REAL_INVER, precio, TIPO_CAMBIO );
                 var CantidadRecibida = CantidadNegociada;
                 log.info(" Valor de CantidadRecibida: ", CantidadRecibida)
                 var SaldoActualCalcMB =  parseFloat(SaldoActualMonAd) + ( parseFloat(CantidadRecibida))
@@ -1169,7 +1152,6 @@ Meteor.methods({
         var FechaTradeoActualMB = ValoresActualesMB.saldo.tradeo.fecha;
         var SaldoTradeoActualMB = ValoresActualesMB.saldo.tradeo.activo;
         log.info(" GuardarOrden: Enviando 1 ", 'EquivalenteDolar '+ MON_B+' '+parseFloat(SaldoTradeoActualMB)+' '+ 2,'Trader');
-        //var V_EquivalenciaTradeoActualMB = Meteor.call('EquivalenteDolar', MON_B, parseFloat(SaldoTradeoActualMB), 2);
         var V_EquivalenciaTradeoActualMB = ValoresActualesMB.saldo.tradeo.equivalencia;
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de FechaTradeoActualMB: "]+[FechaTradeoActualMB]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoTradeoActualMB: "]+[SaldoTradeoActualMB]);
@@ -1183,7 +1165,6 @@ Meteor.methods({
         var FechaTradeoActualMC = ValoresActualesMC.saldo.tradeo.fecha;
         var SaldoTradeoActualMC = ValoresActualesMC.saldo.tradeo.activo;
         log.info(" GuardarOrden: Enviando 2 ", 'EquivalenteDolar '+MON_C+' '+parseFloat(SaldoTradeoActualMC)+' '+2,'Trader');
-        //var V_EquivalenciaTradeoActualMC = Meteor.call('EquivalenteDolar', MON_C, parseFloat(SaldoTradeoActualMC), 2);
         var V_EquivalenciaTradeoActualMC = ValoresActualesMC.saldo.tradeo.equivalencia;
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de FechaTradeoActualMC: "]+[FechaTradeoActualMC]);
         Meteor.call("GuardarLogEjecucionTrader", [" Valor de SaldoTradeoActualMC: "]+[SaldoTradeoActualMC]);
@@ -1245,7 +1226,8 @@ Meteor.methods({
                                                 "Inversion.Precio" : precio,
                                                 "Inversion.Comision.moneda" : MON_C,
                                                 "Inversion.Comision.Valor" : V_Comision,
-                                                "Inversion.Comision.Equivalencia" : Equiv_V_Comision
+                                                "Inversion.Comision.Equivalencia" : Equiv_V_Comision,
+                                                "DatosOrden" : ORDEN
                                                 }
                                     }, 
                                     {"upsert" : true}
@@ -1315,7 +1297,8 @@ Meteor.methods({
                                                     "Inversion.Precio" : precio,
                                                     "Inversion.Comision.moneda" : MON_C,
                                                     "Inversion.Comision.Valor" : V_Comision,
-                                                    "Inversion.Comision.Equivalencia" : Equiv_V_Comision
+                                                    "Inversion.Comision.Equivalencia" : Equiv_V_Comision,
+                                                    "DatosOrden" : ORDEN
                                                     }
                                         }, 
                                         {"upsert" : true}
@@ -1359,17 +1342,6 @@ Meteor.methods({
 
         //log.info('--------------------------------------------');
         //log.info('############################################');
-        /*
-        var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
-        var SaldoTotal = Meteor.call("ConcultaSaldoTotalMonedas")
-        
-        if ( SaldoTotal < 1 ) {
-            var V_LimiteMaximoDeCompras = 1
-        }else{
-            var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
-        }
-        
-        /**/
     },
 
     'InvertirEnMonedaInestable':function( MONEDASALDO ){

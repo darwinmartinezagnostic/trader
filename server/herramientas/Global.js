@@ -87,46 +87,6 @@ Meteor.methods({
 			debug_activo : debug_activo[0].valor,
 			TimeoutEjecucion : Timeout[0].valor
 		}
-
-		
-		/*
-		const apikey = key+':'+secret;
-		const API_HITBTC2 = autoriza_conexion.api.url;
-
-		const publico = API_HITBTC2+"public/";
-		const tradeo = API_HITBTC2+"trading/";
-		const cuenta = API_HITBTC2+"account/";
-		const historial = API_HITBTC2+"history/";
-		const ordenes = API_HITBTC2+"order";
-		const ZONA_HORARA = "GTC";
-		//**************************************************
-		//**************************************************
-		// API Public
-		const monedas = [publico]+"currency";
-		const simbolos = [publico]+"symbol";
-		// API Trading
-		const blc_tradeo = [tradeo]+"balance";
-		const comisiones = [tradeo]+"fee";
-		// API Account
-		const blc_cuenta = [cuenta]+"balance";
-		const transacciones = [cuenta]+"transactions";
-		const cripto_cuenta= [cuenta]+"crypto/";
-		const retiros= [cripto_cuenta]+"withdraw";
-		const cart_dep = [cripto_cuenta]+"address";
-		const transferencia = [cuenta]+"transfer";
-		// API Trading History
-		const HistTradeo = [historial]+"trades";
-		const HistOrdenes = [historial]+"order";
-		// CANTIDADES DE REGISTROS
-		const cant_traders = 1;
-		const cant_transacciones = 3;
-		// CANTIDAD DE REGISTROS ID HACIA ATRÁS
-		const CantTransAtras = 300;
-		// ACTIVACION DE GUARDADO DEBUG DEL CÓDIGO EN DB
-		const debug_activo = 1;
-
-		var idTrans = 0;
-		*/
 		return constante;
 	}
 

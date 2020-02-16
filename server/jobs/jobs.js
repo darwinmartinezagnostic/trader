@@ -34,7 +34,6 @@ Jobs.register({
                 		Meteor.call('ReinicioDatResultAnalisis');
 				        Meteor.call('ReinicioDeSecuenciasGBL', 'IdAnalisis');
 				    }
-                    Meteor.call("EjecucionInicial");
                     if ( ValorModoEjecucion === 0 ) {
 		            	Meteor.call("PruebasUnitarias");
 		            }else{				            	
@@ -77,15 +76,19 @@ Jobs.register({
 						            var V_nombre = PE.ParametrosModificar.nombre;
 						            var V_estado = PE.ParametrosModificar.estado;
 						            var V_valor = PE.ParametrosModificar.valor;
+						            var V_Ejecucion = PE.Ejecucion;
 
 						            Meteor.call("GuardarLogEjecucionTrader", [' LOTE ACTUAL: '] + [V_IdLote] + [', ID PARÁMETRO ACTUAL: '] + [V_ID]);
 
-						            for (CI = 0, TI = V_dominio.length; CI < TI; CI++) {
-						            	var dominio = V_dominio[CI]
-						            	var nombre = V_nombre[CI]
-						            	var estado = V_estado[CI]
-						            	var valor = V_valor[CI]
-							            Meteor.call('ModificaParametrosGenerales', dominio, nombre, estado, valor);
+						            if ( V_Ejecucion === 'N' ) {
+
+							            for (CI = 0, TI = V_dominio.length; CI < TI; CI++) {
+							            	var dominio = V_dominio[CI]
+							            	var nombre = V_nombre[CI]
+							            	var estado = V_estado[CI]
+							            	var valor = V_valor[CI]
+								            Meteor.call('ModificaParametrosGenerales', dominio, nombre, estado, valor);
+							            }       
 							            var ResetDatosIniciales = Parametros.findOne( { dominio : "Prueba", nombre : "ResetDatosIniciales" } );
 							            if ( ResetDatosIniciales.valor === 1 ) {
 							            	Meteor.call('LimpiarBD');
@@ -94,7 +97,8 @@ Jobs.register({
 							            		Meteor.call("ModificaParametrosGenerales", 'Ejecucion', 'ModoEjecucion', true, 1 )
 							            	}
 							            }
-						            }       
+							            ParametrosAnalisis.update({ _id: V_ID }, { $set : { "Ejecucion" : "S" } })
+						            }
 						            			            	
 					            	Meteor.call('EjecucionInicial', V_ID , V_IdLote); 
 					            	Meteor.call('GuardarSaldoTotal', 2, V_ID , V_IdLote);
@@ -589,11 +593,9 @@ Jobs.register({
 
             var ORDEN = Resultado
             var Estado_Orden = Resultado.status;
-            log.info(' Valor de ORDEN 5: ', ORDEN, AMBITO);
 
 	        if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
 	        	var ValorSecuencia = Meteor.call("SecuenciasTMP", IdTemporal);
-	        	log.info(' AQUI TOY');
 	        	log.info(' Valor de ValorSecuencia: ', ValorSecuencia, AMBITO);
 	        	if ( parseFloat(ValorSecuencia) < 20 ) {
 		        	instance.replicate({
@@ -627,6 +629,12 @@ Jobs.register({
     		return this.success(ejecucionJobsValidarEstadoOrden);
     	}
     	else {
+    		instance.replicate({
+		                in: {
+		                    minutes: 1
+		                }
+		            });
+
     		this.failure(ejecucionJobsValidarEstadoOrden);
     	}
     },
