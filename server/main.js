@@ -60,7 +60,7 @@ Meteor.methods({
                             var MONEDA_COMISION = MON_C ;
 
                             log.info(' Se encontraron Operaciones Pendientes de seguimiento, se procede a verificar sus status actuales');
-                            Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
+                            Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, OrdenGuardada, ID_LOTE )
 
                         }
                     }
