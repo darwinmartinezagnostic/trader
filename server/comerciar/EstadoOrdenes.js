@@ -35,7 +35,7 @@ Meteor.methods({
 	'ValidarEstadoOrden': function( VAL_ORDEN){
         var CONSTANTES = Meteor.call("Constantes");
         /////////////////////////////////////////////////////
-        //log.info(' Recibiendo valores en "ValidarEstadoOrden": VAL_ORDEN', VAL_ORDEN);
+        //log.info(' "ValidarEstadoOrden" - Recibiendo valores: VAL_ORDEN', VAL_ORDEN);
 
         T_id = VAL_ORDEN.id
         T_clientOrderId = VAL_ORDEN.clientOrderId
@@ -51,62 +51,43 @@ Meteor.methods({
         T_updatedAt = VAL_ORDEN.updatedAt
         T_postOnly = VAL_ORDEN.postOnly
 
-
-
-
-        var url_tranOA=[CONSTANTES.ordenes]+['?clientOrderId=']+[T_clientOrderId]+['?wait=300']
-        var Url_TransTP=[CONSTANTES.HistOrdenes]+['?symbol=']+[T_symbol]+['&limit=3']
-        var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[T_id]+['/trades']
+        try{
+            var url_tranOA=[CONSTANTES.ordenes]+['?clientOrderId=']+[T_clientOrderId]+['?wait=300']
+            //var Url_TransTP=[CONSTANTES.HistOrdenes]+['?symbol=']+[T_symbol]+['&limit=50']
+            var Url_TransTP=[CONSTANTES.HistOrdenes]+['?clientOrderId=']+[T_clientOrderId]
+            //var Url_TransID=[CONSTANTES.HistOrdenes]+['/']+[T_id]+['/trades']
+        }catch(error){
+            log.info('Error consultando HITBTC');
+        }
         /*
         log.info('Valor de url_tranOA', url_tranOA)
         log.info('Valor de Url_TransTP', Url_TransTP)
-        log.info('Valor de Url_TransID', Url_TransID)
-        */
+        //log.info('Valor de Url_TransID', Url_TransID)
+        /**/
 
         const TrnsOA = Meteor.call("ConexionGet", url_tranOA)   
         var transOA = TrnsOA[0];
-        //log.info('Valor de transOA', transOA)
         const TrnsTP = Meteor.call("ConexionGet", Url_TransTP)
-        //log.info('Valor de TrnsTP', TrnsTP)
-        const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
-        var transID = TrnsID[0];
-        //log.info('Valor de transID', transID)
-        if ( transID === undefined ) {
-            HistIdOrden = 0
-            //log.info('Valor de HistIdOrden', HistIdOrden)
-        }else{
-            HistIdOrden = 1
-            //log.info('Valor de HistIdOrden', HistIdOrden)
-        }
+        var transTP = TrnsTP[0];
+
         if ( transOA === undefined ) {
-            //log.info(' Estoy en if ( transOA === undefined )')
-            for ( CTrnsOA = 0, TTrnsOA = TrnsTP.length; CTrnsOA < TTrnsOA; CTrnsOA++ ) {
-                var HTrnsTP = TrnsTP[CTrnsOA];
-                var IdOdenClient = HTrnsTP.clientOrderId;
-                var StatusOrden = HTrnsTP.status;
-                //var StatusOrden = "new";
+            if ( transTP.clientOrderId === T_clientOrderId ) {
+                    var StatusOrden = transTP.status;
+                    var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: StatusOrden, type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
+                } 
 
-                if ( IdOdenClient !== T_clientOrderId ) {
-                    HistIdOrdenExiste = 0
-                }else{
-                    NuValOrden = HTrnsTP
-                    HistIdOrdenExiste = 1
-                    break                    
-                }
-            }
-            //log.info('Valor de HistIdOrdenExiste', HistIdOrdenExiste)
-
-            if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 ) {
-                //log.info(' Estoy en if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
-                var Estado_Orden = NuValOrden
-            }else{
-                //log.info(' Estoy en else de if ( HistIdOrden === 1 && HistIdOrdenExiste === 1 )')
-                var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: StatusOrden, type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
-            }
         }else{
-            var Estado_Orden = transOA
+            var IdOdenClient = transOA.clientOrderId
+            if ( IdOdenClient !== T_clientOrderId ) {
+                if ( transTP.clientOrderId === T_clientOrderId ) {
+                    var StatusOrden = transTP.status;
+                    var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: StatusOrden, type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
+                }           
+            }else{
+                var Estado_Orden = transOA
+            }
         }
-        log.info('Valor de Estado_Orden', Estado_Orden)
+        //log.info('Valor de Estado_Orden', Estado_Orden)
         return Estado_Orden
     },
 

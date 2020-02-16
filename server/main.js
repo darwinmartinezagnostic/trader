@@ -47,6 +47,7 @@ Meteor.methods({
                         log.info(' Se encontraron Operaciones Pendientes de seguimiento, se procede a verificar sus status actuales');
                         OperacionesImcompletas = GananciaPerdida.aggregate({ $match : {"Operacion.Status" : "En seguimiento"}});
                         for (COI = 0, TOI = OperacionesImcompletas.length; COI < TOI; COI++){
+                            //Meteor.call('sleep', 33);
                             var OperacionIncompleta = OperacionesImcompletas[COI]
                             var OrdenGuardada = OperacionIncompleta.DatosOrden
                             var TIPO_CAMBIO = OperacionIncompleta.Operacion.TipoCambio; 

@@ -17,7 +17,7 @@ Meteor.methods({
 
 
         
-
+        /*
         const MON_B='DIM'
         const MON_C='USD'
         var TIPO_CAMBIO = MON_B+MON_C
@@ -42,6 +42,7 @@ Meteor.methods({
             var DatosMoneda = Monedas.find( { moneda : MONEDA_SALDO }).fetch()
             var CANT_INVER = DatosMoneda[0].saldo.tradeo.activo
         } 
+        /**/
 
 
         /*
@@ -61,6 +62,7 @@ Meteor.methods({
           "updatedAt": "2020-02-11T22:24:46.873Z"
         }
         /**/
+        /*
         var Orden = new Object();
             Orden.id=206643505671;
             Orden.clientOrderId="00000000000000000000000000003648";
@@ -80,6 +82,78 @@ Meteor.methods({
         var InversionRealCalc = Orden.quantity;
 
         Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
+        /**/
+
+
+
+
+
+
+        var OperacionesEnSeguimiento = GananciaPerdida.find({ "Operacion.Status" : "En seguimiento" }).count()
+
+        if (OperacionesEnSeguimiento === 0 ) {
+
+                        log.info(' NO HAY OPERACIONES PENDIENTES DE SEGUIMIENTO');
+
+                    }else{
+                        var OperacionesEnSeguimiento = GananciaPerdida.find({ "Operacion.Status" : "En seguimiento" }).count()
+                        log.info(' Se encontraron', OperacionesEnSeguimiento + ' Operaciones Pendientes de seguimiento, se procede a verificar sus status actuales');
+                        OperacionesIncompletas = GananciaPerdida.aggregate({ $match : {"Operacion.Status" : "En seguimiento"}});
+                        for (COI = 0, TOI = OperacionesIncompletas.length; COI < TOI; COI++){
+                        //for (COI = 0, TOI = OperacionesIncompletas.length; COI < 1; COI++){
+                            Meteor.call('sleep', 33);
+                            log.info(' OPERACIÓN N°: ', COI + 1 );
+                            var OperacionIncompleta = OperacionesIncompletas[COI]
+                            var OrdenGuardada = OperacionIncompleta.DatosOrden
+                            var TIPO_CAMBIO = OperacionIncompleta.Operacion.TipoCambio; 
+                            var CANT_INVER = OperacionIncompleta.Inversion.SaldoInversion; 
+                            var InversionRealCalc = OrdenGuardada.quantity; 
+                            var MONEDA_SALDO = OperacionIncompleta.Moneda.Emitida.moneda; 
+                            var ID_LOTE = OperacionIncompleta.Operacion.Id_Lote;
+
+                            var V_TipoCambio = TiposDeCambios.findOne({ "tipo_cambio" : TIPO_CAMBIO });
+                            //log.info(' Valor de V_TipoCambio: ', V_TipoCambio);
+                            //var MON_B = V_TipoCambio.moneda_base
+                            //var MON_C = V_TipoCambio.moneda_cotizacion 
+                            var MONEDA_COMISION = V_TipoCambio.moneda_cotizacion ;
+
+                            //log.info(' Valor de OperacionIncompleta: ', OperacionIncompleta);
+                            log.info(' Valor de OrdenGuardada: ', OrdenGuardada);
+                            log.info(' Valor de TIPO_CAMBIO: ', TIPO_CAMBIO);
+                            log.info(' Valor de CANT_INVER: ', CANT_INVER);
+                            log.info(' Valor de InversionRealCalc: ', InversionRealCalc);
+                            log.info(' Valor de MONEDA_SALDO: ', MONEDA_SALDO);
+                            log.info(' Valor de ID_LOTE: ', ID_LOTE);
+                            //log.info(' Valor de MON_B: ', MON_B);
+                            //log.info(' Valor de MON_C: ', MON_C);
+                            log.info(' Valor de MON_B: ', V_TipoCambio.moneda_base);
+                            log.info(' Valor de MON_C: ', V_TipoCambio.moneda_cotizacion);
+                            log.info(' Valor de MONEDA_COMISION: ', MONEDA_COMISION);
+
+
+                            var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada)
+                            log.info(' Valor de Orden: ', Orden);
+                            //Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
+                            log.info('############################################')
+
+                        }
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         /*
         var IdTemp = Meteor.call("SecuenciasGBL", 'IdTemporal');
