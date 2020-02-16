@@ -44,7 +44,7 @@ Meteor.methods({
                         Meteor.call("ResetTipoCambioMonSaldo");
 
                     }else{
-                        log.info(' Se encontraron Operaciones Pendientes de seguimiento, se procede a verificar sus status actuales');
+                        log.info(' Se encontraron', OperacionesEnSeguimiento + ' Operaciones Pendientes de seguimiento, se procede a verificar sus status actuales');
                         OperacionesImcompletas = GananciaPerdida.aggregate({ $match : {"Operacion.Status" : "En seguimiento"}});
                         for (COI = 0, TOI = OperacionesImcompletas.length; COI < TOI; COI++){
                             //Meteor.call('sleep', 33);
