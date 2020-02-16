@@ -44,6 +44,7 @@ Meteor.methods({
                         Meteor.call("ResetTipoCambioMonSaldo");
 
                     }else{
+                        log.info(' Se encontraron Operaciones Pendientes de seguimiento, se procede a verificar sus status actuales');
                         OperacionesImcompletas = GananciaPerdida.aggregate({ $match : {"Operacion.Status" : "En seguimiento"}});
                         for (COI = 0, TOI = OperacionesImcompletas.length; COI < TOI; COI++){
                             var OperacionIncompleta = OperacionesImcompletas[COI]
@@ -59,8 +60,8 @@ Meteor.methods({
                             var MON_C = V_TipoCambio.moneda_cotizacion; 
                             var MONEDA_COMISION = MON_C ;
 
-                            log.info(' Se encontraron Operaciones Pendientes de seguimiento, se procede a verificar sus status actuales');
-                            Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, OrdenGuardada, ID_LOTE )
+                            var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada)
+                            Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
 
                         }
                     }
