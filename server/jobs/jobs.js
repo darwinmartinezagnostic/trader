@@ -581,7 +581,7 @@ Jobs.register({
 	    	log.info(' Estoy en JobsValidarEstadoOrden','','JobsValidarEstadoOrden');
     		Meteor.call("GuardarLogEjecucionTrader", [ " Valores recibidos"]+ [" TIPO_CAMBIO: "]+[TIPO_CAMBIO]+[', CANT_INVER :']+[CANT_INVER]+[', InversionRealCalc : ']+[InversionRealCalc]+[', MON_B :']+[MON_B]+[', MON_C :']+[, MON_C] + [', MONEDA_SALDO :']+[MONEDA_SALDO]+[', MONEDA_COMISION :']+[, MONEDA_COMISION] + [', ORDEN :']+[ORDEN]+[', ID_LOTE :']+[, ID_LOTE] + [', IdTemporal :']+[IdTemporal]);
 	    	// Mantenieminto de la coleccion JObs_data
-	    	JobsInternal.Utilities.collection.remove({ state : 'successful' });
+	    	JobsInternal.Utilities.collection.remove({ state : 'success' });
 	    	var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
 	    	if ( Robot.valor === 0 ) {
                 var Resultado = Meteor.call("ValidarEstadoOrden", ORDEN)
