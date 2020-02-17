@@ -579,7 +579,7 @@ Jobs.register({
     	var AMBITO = "JobsValidarEstadoOrden";
     	try{
 	    	log.info(' Estoy en JobsValidarEstadoOrden','','JobsValidarEstadoOrden');
-    		Meteor.call("GuardarLogEjecucionTrader", [ " Valores recibidos"]+ [" TIPO_CAMBIO: "]+[TIPO_CAMBIO]+[', CANT_INVER :']+[CANT_INVER]+[', InversionRealCalc : ']+[InversionRealCalc]+[', MON_B :']+[MON_B]+[', MON_C :']+[, MON_C] + [', MONEDA_SALDO :']+[MONEDA_SALDO]+[', MONEDA_COMISION :']+[, MONEDA_COMISION] + [', ORDEN :']+[ORDEN]+[', ID_LOTE :']+[, ID_LOTE] + [', IdTemporal :']+[IdTemporal]);
+    		Meteor.call("GuardarLogEjecucionTrader", [ " Valores recibidos"]+ [" TIPO_CAMBIO: "]+[TIPO_CAMBIO]+[', CANT_INVER :']+[CANT_INVER]+[', InversionRealCalc : ']+[InversionRealCalc]+[', MON_B :']+[MON_B]+[', MON_C :']+[, MON_C] + [', MONEDA_SALDO :']+[MONEDA_SALDO]+[', MONEDA_COMISION :']+[, MONEDA_COMISION] + [', ORDEN :']+[ORDEN]+[', ID_LOTE :']+[, ID_LOTE] + [', clientOrderId :']+[clientOrderId]);
 	    	// Mantenieminto de la coleccion JObs_data
 	    	JobsInternal.Utilities.collection.remove({ state : 'success' });
 	    	var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
@@ -612,12 +612,12 @@ Jobs.register({
 	        if ( Estado_Orden === "suspended" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" ) {
 	        	log.info(' Estado_Orden === "suspended" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" ');
 	        	Meteor.call('EstadoOrdenFallida', ORDEN, ID_LOTE, MONEDA_SALDO, Estado_Orden );
-	        	SecuenciasTemporales.remove({ _id : IdTemporal});
+	        	SecuenciasTemporales.remove({ _id : clientOrderId});
 	        }
 
             if ( Estado_Orden === "filled" ) {
 	            Meteor.call('EstadoOrdenCompletada', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE );
-	            SecuenciasTemporales.remove({ _id : IdTemporal});
+	            SecuenciasTemporales.remove({ _id : clientOrderId});
 	        }			
 	        var ejecucionJobsValidarEstadoOrden = 0;
 		}
