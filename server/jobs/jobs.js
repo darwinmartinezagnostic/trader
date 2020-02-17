@@ -595,16 +595,16 @@ Jobs.register({
             var Estado_Orden = Resultado.status;
 
 	        if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
-	        	var ValorSecuencia = Meteor.call("SecuenciasTMP", clientOrderId);
-	        	log.info(' Valor de ValorSecuencia: ', ValorSecuencia, AMBITO);
-	        	if ( parseFloat(ValorSecuencia) < 20 ) {
+	        	var ValorContador = Meteor.call("SecuenciasTMP", clientOrderId);
+	        	log.info(' Valor de ValorContador: ', ValorContador, AMBITO);
+	        	if ( parseFloat(ValorContador) < 20 ) {
 		        	instance.replicate({
 		                in: {
 		                    minutes: 1
 		                }
 		            });
 	        	}else{
-	        		var ORDEN = Meteor.call("CancelarOrden", IdTransaccionActual , MONEDA_SALDO);
+	        		var ORDEN = Meteor.call("CancelarOrden", clientOrderId , MONEDA_SALDO);
 	        		var Estado_Orden = ORDEN.status;
 	        	}
 	        }
