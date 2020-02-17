@@ -117,9 +117,9 @@ Meteor.methods({
                             }
                         });
 
+        /*
         var IdTemp = Meteor.call("SecuenciasGBL", 'IdTemporal');
         var IdTemporal = Meteor.call("CompletaConCero", IdTemp, 32);
-        /*
         log.info(' Valor de IdTemporal: ', IdTemporal, AMBITO);
         log.info(' Enviando a "JobsValidarEstadoOrden" Valores: ');
         log.info(' TIPO_CAMBIO: ', [TIPO_CAMBIO] );
@@ -133,7 +133,7 @@ Meteor.methods({
         log.info(' ID_LOTE: ', [ID_LOTE]);
         log.info(' IdTemporal: ', [IdTemporal]);
         /**/
-        Jobs.run("JobsValidarEstadoOrden", TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE, IdTemporal ,{ 
+        Jobs.run("JobsValidarEstadoOrden", TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE, T_clientOrderId ,{ 
 		   	in: {
                 minute: 1
             }

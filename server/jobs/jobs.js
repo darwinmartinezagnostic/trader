@@ -574,7 +574,7 @@ Jobs.register({
     	}
     },
 
-    "JobsValidarEstadoOrden": function(TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE, IdTemporal){
+    "JobsValidarEstadoOrden": function(TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE, clientOrderId){
     	var instance = this;
     	var AMBITO = "JobsValidarEstadoOrden";
     	try{
@@ -595,7 +595,7 @@ Jobs.register({
             var Estado_Orden = Resultado.status;
 
 	        if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
-	        	var ValorSecuencia = Meteor.call("SecuenciasTMP", IdTemporal);
+	        	var ValorSecuencia = Meteor.call("SecuenciasTMP", clientOrderId);
 	        	log.info(' Valor de ValorSecuencia: ', ValorSecuencia, AMBITO);
 	        	if ( parseFloat(ValorSecuencia) < 20 ) {
 		        	instance.replicate({
