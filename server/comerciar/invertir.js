@@ -1190,14 +1190,6 @@ Meteor.methods({
 
                 Meteor.call('EstadoOrdenFallida', Orden, ID_LOTE, MONEDA_SALDO, Estado_Orden)
 
-                if ( Estado_Orden === "DuplicateclientOrderId") {   
-                    log.info(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")','', AMBITO);
-                    Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER]+[', MON_B :']+[MON_B]+[', MON_C :']+[, MON_C]);
-                    Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
-                }else{
-                    TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
-                }
-
                 if ( Estado_Orden === "Symbolnotfound") {   
                     log.info(' Estoy en if ( Estado_Orden === "Symbolnotfound")','', AMBITO);
                     Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Cambiando Status del TIPO_CAMBIO :']+[TIPO_CAMBIO]+[', a estado Inactivo (I) : ']);
@@ -1209,7 +1201,33 @@ Meteor.methods({
                                                         "c_estado_a": 0 
                                                     }
                                             });
+                }else if ( Estado_Orden === "DuplicateclientOrderId") {   
+                    log.info(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")','', AMBITO);
+                    Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER]+[', MON_B :']+[MON_B]+[', MON_C :']+[, MON_C]);
+                    Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
+                }else{
+                    TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
+                    Monedas.update({ "moneda": MONEDA_SALDO }, {    
+                            $set: {
+                                    "activo": "S"
+                                }
+                            });
+                    var TiposDeCambiosResetear = TiposDeCambios.aggregate([ { $match : { $or : [    {"moneda_base" : MON_B },
+                                                                                                { "moneda_cotizacion" : MON_B }, 
+                                                                                                {"moneda_base" : MON_C }, 
+                                                                                                { "moneda_cotizacion" : MON_C } ] }  },
+                                                                        { $sort : { tipo_cambio : 1 } } ])
+
+                    for (CTCR = 0, T_TiposDeCambiosResetear = TiposDeCambiosResetear.length; CTCR < T_TiposDeCambiosResetear; CTCR++) {
+                        var V_TiposDeCambiosResetear= TiposDeCambiosResetear[CTCR];
+                        var V_TipoCambio = V_TiposDeCambiosResetear.tipo_cambio
+
+                        TiposDeCambios.update(  { tipo_cambio : V_TipoCambio },
+                                                { $set:{  "periodo1.Cotizacion.reset": 1 }}
+                                            );
+                    }
                 }
+
             }
 
 

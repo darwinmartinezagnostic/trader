@@ -613,6 +613,26 @@ Jobs.register({
 	        	log.info(' Estado_Orden === "suspended" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" ');
 	        	Meteor.call('EstadoOrdenFallida', ORDEN, ID_LOTE, MONEDA_SALDO, Estado_Orden );
 	        	SecuenciasTemporales.remove({ _id : clientOrderId});
+	        	
+        		Monedas.update({ "moneda": MONEDA_SALDO }, {    
+                        $set: {
+                                "activo": "S"
+                            }
+                        });
+        		var TiposDeCambiosResetear = TiposDeCambios.aggregate([ { $match : { $or : [    {"moneda_base" : MON_B },
+                                                                                            { "moneda_cotizacion" : MON_B }, 
+                                                                                            {"moneda_base" : MON_C }, 
+                                                                                            { "moneda_cotizacion" : MON_C } ] }  },
+                                                                    { $sort : { tipo_cambio : 1 } } ])
+
+                for (CTCR = 0, T_TiposDeCambiosResetear = TiposDeCambiosResetear.length; CTCR < T_TiposDeCambiosResetear; CTCR++) {
+                    var V_TiposDeCambiosResetear= TiposDeCambiosResetear[CTCR];
+                    var V_TipoCambio = V_TiposDeCambiosResetear.tipo_cambio
+
+                    TiposDeCambios.update(  { tipo_cambio : V_TipoCambio },
+                                            { $set:{  "periodo1.Cotizacion.reset": 1 }}
+                                        );
+                }
 	        }
 
             if ( Estado_Orden === "filled" ) {
