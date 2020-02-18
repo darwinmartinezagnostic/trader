@@ -604,9 +604,17 @@ Jobs.register({
 		                }
 		            });
 	        	}else{
-	        		var ORDEN = Meteor.call("CancelarOrden", clientOrderId , MONEDA_SALDO);
-	        		log.info(' Valor de ORDEN Cancelada: ', ORDEN, AMBITO);
-	        		var Estado_Orden = ORDEN.status;
+	        		Meteor.call("CancelarOrden", clientOrderId , MONEDA_SALDO);
+	        		var Resultado = Meteor.call("ValidarEstadoOrden", ORDEN)
+	        		var Estado_Orden = Resultado.status;
+	        		if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
+			        	var ValorContador = Meteor.call("SecuenciasTMP", clientOrderId);
+			        	instance.replicate({
+			                in: {
+			                    minutes: 1
+			                }
+			            });
+			        }
 	        	}
 	        }
 
