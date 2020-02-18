@@ -992,7 +992,6 @@ Meteor.methods({
             log.info(" Estoy en if ( ORDEN.tradesReport )",'', AMBITO);
             var Negociaciones = ORDEN.tradesReport
             log.info("Valor de ORDEN: ", ORDEN.tradesReport, AMBITO);
-            var status = ORDEN.status
 
             for (CRPT = 0, TRPT = Negociaciones.length; CRPT < TRPT; CRPT++) {
                 var Reporte = Negociaciones[CRPT];
@@ -1004,10 +1003,10 @@ Meteor.methods({
             const TrnsID = Meteor.call("ConexionGet", Url_TransID) 
             var transID = TrnsID[0];
             var ComisionTtl = transID.fee
-            var status = ORDEN.status
             log.info('Valor de ComisionTtl', ComisionTtl, AMBITO);
         }
 
+        var status = "Exitoso"
         var Comision = ComisionTtl.toString()
         var precio = parseFloat(ORDEN.price)
         var CantidadNegociada = ORDEN.quantity
