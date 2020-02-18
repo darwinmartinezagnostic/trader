@@ -133,7 +133,7 @@ Jobs.register({
 		if ( ejecucionJobSecuenciaInicial === 0) {
 	        Jobs.run("JobTipoEjecucion", {
 	            in: {
-	                minute: 1
+	                minute: 10
 	            }
 	        })
                 		//log.info(' ------------------------- ACA ESTOY -------------------------');
@@ -148,7 +148,7 @@ Jobs.register({
     		
     		this.replicate({
 		                in: {
-		                    minutes: 1
+		                    minutes: 10
 		                }
 		            });
 
@@ -605,6 +605,7 @@ Jobs.register({
 		            });
 	        	}else{
 	        		var ORDEN = Meteor.call("CancelarOrden", clientOrderId , MONEDA_SALDO);
+	        		log.info(' Valor de ORDEN Cancelada: ', ORDEN, AMBITO);
 	        		var Estado_Orden = ORDEN.status;
 	        	}
 	        }

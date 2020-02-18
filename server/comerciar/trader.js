@@ -707,18 +707,20 @@ Meteor.methods({
         log.info('Valor de urlCanlOrd: ', urlCanlOrd );
         log.info('Cancelando Orden ID: ', ID_LOCAL );
         
+        EstadoOrdenCancelada = Meteor.call('ConexionDel',urlCanlOrd);
+        log.trace("CancelarOrden : Valor de EstadoOrdenCancelada: ", EstadoOrdenCancelada, 'trader' );
+        Monedas.update({ "moneda": MONEDA_SALDO }, {    
+                    $set: {
+                            "activo": "S"
+                        }
+                    });
+        /*
         try{            
-            EstadoOrdenCancelada = Meteor.call('ConexionDel',urlCanlOrd);
-            log.trace("CancelarOrden : Valor de EstadoOrdenCancelada: ", EstadoOrdenCancelada, 'trader' );
-            Monedas.update({ "moneda": MONEDA_SALDO }, {    
-                        $set: {
-                                "activo": "S"
-                            }
-                        });
         }catch(error){
             log.info(' Orden N°: ', ID_LOCAL + [' No pudo ser cancelada']);
         }
-
+        /**/
+        
         return EstadoOrdenCancelada
     },
 

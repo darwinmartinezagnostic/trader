@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Logger } from 'meteor/ostrio:logger';
 import { LoggerFile } from 'meteor/ostrio:loggerfile';
 moment().tz('America/Caracas').format();
+import { Email } from 'meteor/email'
 
 const log = new Logger();
 const LogFile = new LoggerFile(log,logFilePath);
@@ -16,8 +17,8 @@ Meteor.methods({
         ///////////          VARIABLES             /////////////
 
 
-        
         /*
+        
         const MON_B='DIM'
         const MON_C='USD'
         var TIPO_CAMBIO = MON_B+MON_C
@@ -87,8 +88,8 @@ Meteor.methods({
 
 
 
-
-
+        //////////  NO OLIDARSE DE ESTO /////////////////
+        
         var OperacionesEnSeguimiento = GananciaPerdida.find({ "Operacion.Status" : "En seguimiento" }).count()
 
         if (OperacionesEnSeguimiento === 0 ) {
@@ -133,13 +134,13 @@ Meteor.methods({
 
                             var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada)
                             log.info(' Valor de Orden: ', Orden);
-                            //Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
+                            Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, V_TipoCambio.moneda_base, V_TipoCambio.moneda_cotizacion, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
                             log.info('############################################')
 
                         }
                     }
-
-
+        /**/
+    /////////////////////////////////////////////
 
 
 
@@ -194,12 +195,17 @@ Meteor.methods({
         }
 
         /**/
+        /*
 
 
         //var ORDEN = '203709643677'
         //log.info('Voy a cancelar la orden: ', ORDEN );
         //Meteor.call("CancelarOrden", ORDEN);
-        //Meteor.call('sendEmail', 'jarruizjesus@gmail.com', 'en el texto', 'prueba de correo');
+        log.info('Voy a enviar correo');
+        Meteor.call('sendEmail', 
+                    'jarruizjesus@gmail.com', 
+                    'en el texto', 
+                    'prueba de correo');
         //Meteor.call('EnviarCorreo', 'jarruizjesus@gmail.com', 'invertminado@gmail.com', 'en el texto', 'prueba de correo');
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
         //Meteor.call('ActualizaEquivalenciaMonedas');

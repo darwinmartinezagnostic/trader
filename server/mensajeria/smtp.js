@@ -14,15 +14,23 @@ Meteor.methods({
     'sendEmail': function (to, subject, email) {
         var CONSTANTES = Meteor.call("Constantes");
         log.info("ENTRE","ACA","SMTP");
-        Email.send({
-            to:       to,
-            from:     'invertminado@gmail.com',
-            subject:  subject,
-            text:     email
-        });
-        log.info("aaaa","ACA","SMTP");
+        check([to, subject, email], [String])
+        this.unblock();
+        try{
+
+            Email.send({
+                to:       to,
+                from:     'invertminado@gmail.com',
+                subject:  subject,
+                text:     email
+            });
+        }catch(error){
+            log.info(" FALLO EN ENVÍO DE CORREO");
+        }
+
+        
         console.log('Valor de Email: ',Email);
-        //log.info('Valor de Email: ',Email);
+        //log.info('Valor de Email: ',Email); 
     },
 });
 

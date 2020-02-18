@@ -291,15 +291,9 @@ Meteor.methods({
         log.info("Valor de url: "+ url, " MS: "+ MS,'Conexiones');
         var salida = 0;
 
-        var parametros = {
-                        url: V_URL,
-                        method: 'DEL',
-                        auth: {
-                            'user': user,
-                            'pass': pswrd
-                        }
-                    };
-
+        let autorizacion = ak
+        let headers = new Headers();
+        headers.set('Authorization', 'Basic ' + btoa(autorizacion))
         const token = function() { 
             return {
                 cancel: function () {this.cancelado = true},
@@ -320,18 +314,22 @@ Meteor.methods({
             } 
         }
         while( salida.status !== 200 ){
-            log.info('',"Estoy en while( salida.status !== 200 )",'Conexiones');
-            const respuesta = request(parametros)
-                                        .then(function (response) {
+            
+            const respuesta = fetch (url,{
+                                        method: 'DELETE',
+                                        headers: headers
+                                    })
+                                    .then(function (response) {
                                             log.info ("Valor de response: ",response,'Conexiones');
                                             resp = JSON.parse(response);
                                             return resp;
                                             })
-                                        .catch(function(error) {
-                                            ErrorConseguido = JSON.parse(error.error);
-                                            log.error("Valor de catch ErrorConseguido: ", ErrorConseguido,'Conexiones');
-                                            return ErrorConseguido;
-                                            });
+                                    .catch(function(error) {
+                                        ErrorConseguido = JSON.parse(error.error);
+                                        log.error("Valor de catch ErrorConseguido: ", ErrorConseguido,'Conexiones');
+                                        return ErrorConseguido;
+                                        });
+
             const tok = token();            
             const EstadoCancelacion = CancelaEjecucionConexion ( respuesta, tok);            
             log.trace(" Voy por acá ")
@@ -346,22 +344,8 @@ Meteor.methods({
                 log.error("Valor de salida3", salida,'Conexiones');
                 const mensaje = salida.error.message;
                 log.error("Valor de mensaje: ", mensaje,'Conexiones');
-                
-                if ( mensaje === "Insufficient funds") {
-                    mensj = { status :"Insufficientfunds"}
-                    return mensj;
-                }else 
-                if ( mensaje === "Duplicate clientOrderId") {
-                    mensj = { status :"DuplicateclientOrderId"}
-                    return mensj;
-                }else 
-                if ( mensaje === "error is not defined") {
-                    mensj = { status :"errorisnotdefined"}
-                    return mensj;
-                }else {
-                    log.error("Valor de salida.error: ", salida.error,'Conexiones');
-                    return salida.error;
-                }
+                 
+                return salida.error;
             }
         }
     },
