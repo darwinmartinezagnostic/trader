@@ -1007,6 +1007,7 @@ Meteor.methods({
         }
 
         var status = "Exitoso"
+        var T_status = ORDEN.status
         var Comision = ComisionTtl.toString()
         var precio = parseFloat(ORDEN.price)
         var CantidadNegociada = ORDEN.quantity
@@ -1206,6 +1207,7 @@ Meteor.methods({
                                                 "Operacion.Base" : MON_B,
                                                 "Operacion.Cotizacion" : MON_C,
                                                 "Operacion.Status" : status,
+                                                "Operacion.Razon" : T_status,
                                                 "Operacion.FechaCreacion" : FechaCreacion,
                                                 "Operacion.FechaActualizacion" : FechaActualizacion,
                                                 "Moneda.Emitida.moneda" : MON_B,
@@ -1277,6 +1279,7 @@ Meteor.methods({
                                                     "Operacion.Base" : MON_B,
                                                     "Operacion.Cotizacion" : MON_C,
                                                     "Operacion.Status" : status,
+                                                    "Operacion.Razon" : T_status,
                                                     "Operacion.FechaCreacion" : FechaCreacion,
                                                     "Operacion.FechaActualizacion" : FechaActualizacion,
                                                     "Moneda.Emitida.moneda" : MON_C,
