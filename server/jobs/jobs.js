@@ -147,7 +147,7 @@ Jobs.register({
 		    }
     	}
     	else {
-    		//Meteor.call('sendEmail', 'jarruizjesus@gmail.com', ['Falla en Job: '] + [AMBITO], ['El Job '] + [AMBITO] + [' ha terminado con estado fallido y ha detenido toda la ejecución, se procede a reiniciar el proceso según la última configuración de la collección "parametros"']);
+    		Meteor.call('sendEmail', 'jarruizjesus@gmail.com', ['Falla en Job: '] + [AMBITO], ['El Job '] + [AMBITO] + [' ha terminado con estado fallido y ha detenido toda la ejecución, se procede a reiniciar el proceso según la última configuración de la collección "parametros"']);
     		log.info(' ERROR EN ', AMBITO +[', SE REINICIA EL PROCESO'])
     		
     		this.replicate({

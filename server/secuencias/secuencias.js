@@ -35,6 +35,7 @@ Meteor.methods({
     'SecuenciasSecundarias':function( IdDatoAnalisis, IdLote ){
         fecha = moment (new Date());
         log.info('        ',fecha._d,'Secuencias');
+        var AMBITO = 'SecuenciasSecundarias';
         var TE = Parametros.findOne( { dominio : "Ejecucion", nombre : "TipoEjecucion" } );
         var TipoEjecucion = TE.valor  
         Meteor.call("GuardarLogEjecucionTrader", '--------  SECUENCIAS SECUNDARIAS  ---------');
@@ -80,6 +81,12 @@ Meteor.methods({
             var contador = contador + 1;
             Meteor.call("GuardarLogEjecucionTrader", [' Valor de V_LimiteMaximoEjecucion ']+[V_LimiteMaximoEjecucion]);
             Meteor.call("GuardarLogEjecucionTrader", [' Valor de V_LimiteMaximoDeCompras ']+[V_LimiteMaximoDeCompras]);
+            if ( V_LimiteMaximoDeCompras === 0 ) {
+                Meteor.call('sendEmail', 'jarruizjesus@gmail.com', ['Fin de ejecución: '] + [AMBITO], [' Se completaron todas la compras configuradas']);
+            }
+            if ( V_LimiteMaximoEjecucion === 0 ) {
+                Meteor.call('sendEmail', 'jarruizjesus@gmail.com', ['Fin de ejecución: '] + [AMBITO], [' Se Alcanzó el Maximo de ejecuciones configurado']);
+            }
             Meteor.call("GuardarLogEjecucionTrader", [' FIN DE SECUENCIA - ']+[fecha._d]);
 
         }while( V_LimiteMaximoEjecucion !== 0 && V_LimiteMaximoDeCompras !== 0 );
