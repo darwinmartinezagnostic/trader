@@ -41,82 +41,86 @@ Jobs.register({
 		            }
                 break;
                 case 1:
-                	var LotesActuales = ParametrosAnalisis.aggregate([	{ $match : { "LoteActivo" : true }},
-                														{ $group: {
-																			        "_id" : '$IdLote'
-																			    	}
-																		},
-																	    { $sort : { "_id" : 1 } }
-																	]);
+                	if ( ValorModoEjecucion === 0 ) {
+		            	Meteor.call("PruebasUnitarias");
+		            }else{	
+	                	var LotesActuales = ParametrosAnalisis.aggregate([	{ $match : { "LoteActivo" : true }},
+	                														{ $group: {
+																				        "_id" : '$IdLote'
+																				    	}
+																			},
+																		    { $sort : { "_id" : 1 } }
+																		]);
 
-                	//log.info(' ------------------------- ACA ESTOY -------------------------');
-                	log.info('Valor de LotesActuales: ', LotesActuales);
-                	if ( ParametrosAnalisis.find( { "LoteActivo" : true } ).count() > 0 ) {
-	                	for (CLA = 0, T_LotesActuales = LotesActuales.length; CLA < T_LotesActuales; CLA++) {
-	                		var LA= LotesActuales[CLA];
-	                		var V_IdLote = LA._id
-	                		log.info('Valor de V_IdLote: ', V_IdLote);
-	                		/**/
-		                	var ParametrosEditar = ParametrosAnalisis.aggregate( [{$match: {  "IdLote" : V_IdLote, "activo" : true }} ]);
-		                	//log.info('Valor de ParametrosEditar: ', ParametrosEditar); 
-		                    if ( ValorModoEjecucion === 0 ) {
-					            Meteor.call("PruebasUnitarias");
-					        }else{
-							    if ( ResetAnalisis.valor === 1 ) {
-							        Meteor.call('ReinicioDatResultAnalisis');
-							        Meteor.call('ReinicioDeSecuenciasGBL', 'IdAnalisis');
-							    }
-					            //log.info(' ------------------------- ACA ESTOY -------------------------');
-				                var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
-				                var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
-								for (CPE = 0, T_ParametrosEditar = ParametrosEditar.length; CPE < T_ParametrosEditar; CPE++) {
-									var PE= ParametrosEditar[CPE];
-						            var V_ID = PE._id
-						            var V_dominio = PE.ParametrosModificar.dominio;
-						            var V_nombre = PE.ParametrosModificar.nombre;
-						            var V_estado = PE.ParametrosModificar.estado;
-						            var V_valor = PE.ParametrosModificar.valor;
-						            var V_Ejecucion = PE.Ejecucion;
+	                	//log.info(' ------------------------- ACA ESTOY -------------------------');
+	                	log.info('Valor de LotesActuales: ', LotesActuales);
+	                	if ( ParametrosAnalisis.find( { "LoteActivo" : true } ).count() > 0 ) {
+		                	for (CLA = 0, T_LotesActuales = LotesActuales.length; CLA < T_LotesActuales; CLA++) {
+		                		var LA= LotesActuales[CLA];
+		                		var V_IdLote = LA._id
+		                		log.info('Valor de V_IdLote: ', V_IdLote);
+		                		/**/
+			                	var ParametrosEditar = ParametrosAnalisis.aggregate( [{$match: {  "IdLote" : V_IdLote, "activo" : true }} ]);
+			                	//log.info('Valor de ParametrosEditar: ', ParametrosEditar); 
+			                    if ( ValorModoEjecucion === 0 ) {
+						            Meteor.call("PruebasUnitarias");
+						        }else{
+								    if ( ResetAnalisis.valor === 1 ) {
+								        Meteor.call('ReinicioDatResultAnalisis');
+								        Meteor.call('ReinicioDeSecuenciasGBL', 'IdAnalisis');
+								    }
+						            //log.info(' ------------------------- ACA ESTOY -------------------------');
+					                var LimiteMaximoDeCompras = Parametros.findOne({ "dominio": "limites", "nombre": "CantMaximaDeCompras"});
+					                var V_LimiteMaximoDeCompras = LimiteMaximoDeCompras.valor
+									for (CPE = 0, T_ParametrosEditar = ParametrosEditar.length; CPE < T_ParametrosEditar; CPE++) {
+										var PE= ParametrosEditar[CPE];
+							            var V_ID = PE._id
+							            var V_dominio = PE.ParametrosModificar.dominio;
+							            var V_nombre = PE.ParametrosModificar.nombre;
+							            var V_estado = PE.ParametrosModificar.estado;
+							            var V_valor = PE.ParametrosModificar.valor;
+							            var V_Ejecucion = PE.Ejecucion;
 
-						            Meteor.call("GuardarLogEjecucionTrader", [' LOTE ACTUAL: '] + [V_IdLote] + [', ID PARÁMETRO ACTUAL: '] + [V_ID]);
+							            Meteor.call("GuardarLogEjecucionTrader", [' LOTE ACTUAL: '] + [V_IdLote] + [', ID PARÁMETRO ACTUAL: '] + [V_ID]);
 
-						            if ( V_Ejecucion === 'N' ) {
+							            if ( V_Ejecucion === 'N' ) {
 
-							            for (CI = 0, TI = V_dominio.length; CI < TI; CI++) {
-							            	var dominio = V_dominio[CI]
-							            	var nombre = V_nombre[CI]
-							            	var estado = V_estado[CI]
-							            	var valor = V_valor[CI]
-								            Meteor.call('ModificaParametrosGenerales', dominio, nombre, estado, valor);
-							            }       
-							            var ResetDatosIniciales = Parametros.findOne( { dominio : "Prueba", nombre : "ResetDatosIniciales" } );
-							            if ( ResetDatosIniciales.valor === 1 ) {
-							            	Meteor.call('LimpiarBD');
-							            	
-							            	if ( ValorModoEjecucion > 1 ) {
-							            		Meteor.call("ModificaParametrosGenerales", 'Ejecucion', 'ModoEjecucion', true, 1 )
-							            	}
+								            for (CI = 0, TI = V_dominio.length; CI < TI; CI++) {
+								            	var dominio = V_dominio[CI]
+								            	var nombre = V_nombre[CI]
+								            	var estado = V_estado[CI]
+								            	var valor = V_valor[CI]
+									            Meteor.call('ModificaParametrosGenerales', dominio, nombre, estado, valor);
+								            }       
+								            var ResetDatosIniciales = Parametros.findOne( { dominio : "Prueba", nombre : "ResetDatosIniciales" } );
+								            if ( ResetDatosIniciales.valor === 1 ) {
+								            	Meteor.call('LimpiarBD');
+								            	
+								            	if ( ValorModoEjecucion > 1 ) {
+								            		Meteor.call("ModificaParametrosGenerales", 'Ejecucion', 'ModoEjecucion', true, 1 )
+								            	}
+								            }
+								            ParametrosAnalisis.update({ _id: V_ID }, { $set : { "Ejecucion" : "S" } })
 							            }
-							            ParametrosAnalisis.update({ _id: V_ID }, { $set : { "Ejecucion" : "S" } })
-						            }
-						            			            	
-					            	Meteor.call('EjecucionInicial', V_ID , V_IdLote); 
-					            	Meteor.call('GuardarSaldoTotal', 2, V_ID , V_IdLote);
-					            	
-					            	Meteor.call('GuardarDatosAnalisis', V_ID, V_IdLote );
-						            ParametrosAnalisis.update( { "_id" : V_ID }, { $set : { "activo" : false } } );
-					            	Meteor.call('sleep', 60);
-						        }
-						        Meteor.call('GuardarResultadosAnalisis' , V_IdLote );
-						        ParametrosAnalisis.update( { "IdLote" : V_IdLote }, { $set : { "LoteActivo" : false } }, { "multi" : true } );
+							            			            	
+						            	Meteor.call('EjecucionInicial', V_ID , V_IdLote); 
+						            	Meteor.call('GuardarSaldoTotal', 2, V_ID , V_IdLote);
+						            	
+						            	Meteor.call('GuardarDatosAnalisis', V_ID, V_IdLote );
+							            ParametrosAnalisis.update( { "_id" : V_ID }, { $set : { "activo" : false } } );
+						            	Meteor.call('sleep', 60);
+							        }
+							        Meteor.call('GuardarResultadosAnalisis' , V_IdLote );
+							        ParametrosAnalisis.update( { "IdLote" : V_IdLote }, { $set : { "LoteActivo" : false } }, { "multi" : true } );
 
-						    }
-						/**/
-	                	
+							    }
+							/**/
+		                	
+							}
+						}else{
+							log.error(' SE CONFIGURÓ PARA REALIZAR ANALISIS DE DATOS PERO NO SE ENCUENTRAN LAS CONFIGURACIONES A SEGUIR, VERIFICAR COLECCION "ParametrosDeAnalisis"',AMBITO);
+							Meteor.call('FinEjecucion')
 						}
-					}else{
-						log.error(' SE CONFIGURÓ PARA REALIZAR ANALISIS DE DATOS PERO NO SE ENCUENTRAN LAS CONFIGURACIONES A SEGUIR, VERIFICAR COLECCION "ParametrosDeAnalisis"',AMBITO);
-						Meteor.call('FinEjecucion')
 					}
                 break;
                 default:
@@ -143,7 +147,7 @@ Jobs.register({
 		    }
     	}
     	else {
-    		//Meteor.call('sendEmail', 'jarruizjesus@gmail.com', ['Falla en Job:'] + [AMBITO], ['El Job'] + [AMBITO] + ['A terminado con estado fallido y ha detenido toda la ejecución, se procede a reiniciar el proceso según la última configuración de la collección "parametros"']);
+    		//Meteor.call('sendEmail', 'jarruizjesus@gmail.com', ['Falla en Job: '] + [AMBITO], ['El Job '] + [AMBITO] + [' ha terminado con estado fallido y ha detenido toda la ejecución, se procede a reiniciar el proceso según la última configuración de la collección "parametros"']);
     		log.info(' ERROR EN ', AMBITO +[', SE REINICIA EL PROCESO'])
     		
     		this.replicate({

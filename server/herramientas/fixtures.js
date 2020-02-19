@@ -10,7 +10,7 @@ if (PeriodoMuestreo.find().count() === 0){
 
 if (Parametros.find({ dominio : 'Ejecucion' }).count() === 0){
 	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'TipoEjecucion', estado : true, valor: 1 ,descripcion : 'Tipo de Ejecucíón del Trader, 0 = Normal, 1 = Analisis; Realiza una serie de ejecuciones modificando automáticamente los parámetros de ejecución según lo indicado en la colección ParametrosDeAnalisis' });
-	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'ModoEjecucion', estado : true, valor: 1 ,descripcion : 'Modo de Ejecucíón del Trader, 0 = Pruebas, 1 = SecuenciaInicial, 2 = SecuenciasSecundarias' });
+	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'ModoEjecucion', estado : true, valor: 0 ,descripcion : 'Modo de Ejecucíón del Trader, 0 = Pruebas, 1 = SecuenciaInicial, 2 = SecuenciasSecundarias' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Ejecucion', nombre : 'Depuracion', estado : true, valor: 1 ,descripcion : 'Activar o desactivar las banderas creadas para rasterar errores de ejecución en los diferentes módulos' });
 };
 

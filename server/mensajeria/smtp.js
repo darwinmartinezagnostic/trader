@@ -11,26 +11,28 @@ LogFile.enable();
 
 
 Meteor.methods({
-    'sendEmail': function (to, subject, email) {
+    'sendEmail': function (para, asunto, texto) {
+        log.info('Valores recibidos, para: : ', [para] + [', asunto: '] + [asunto] + [', texto: '] + [texto]); 
         var CONSTANTES = Meteor.call("Constantes");
-        log.info("ENTRE","ACA","SMTP");
-        check([to, subject, email], [String])
-        this.unblock();
+        var emisor = CONSTANTES.CorreoUsur;
+        //check([to, subject, email], [String])
+        //this.unblock();
         try{
 
             Email.send({
-                to:       to,
-                from:     'invertminado@gmail.com',
-                subject:  subject,
-                text:     email
+                to:       para,
+                from:     emisor,
+                subject:  asunto,
+                text:     texto
             });
         }catch(error){
             log.info(" FALLO EN ENVÍO DE CORREO");
+            log.info(" ERROR: ", error);
         }
 
         
-        console.log('Valor de Email: ',Email);
-        //log.info('Valor de Email: ',Email); 
+        //console.log('Valor de Email: ',Email);
+        log.info('Valor de Email: ',Email); 
     },
 });
 
@@ -47,9 +49,10 @@ Meteor.startup(function () {
         password: clave,
         server:   servidor,
         //port: 25 
-        port: 25
+        port: puerto
     };
 
-    process.env.MAIL_URL = 'smtp://' + encodeURIComponent(smtp.username) + ':' + encodeURIComponent(smtp.password) + '@' + encodeURIComponent(smtp.server) + ':' + smtp.port;
-    log.info(process.env.MAIL_URL,"","SMTP");
+    //process.env.MAIL_URL = 'smtp://' + encodeURIComponent(smtp.username) + ':' + encodeURIComponent(smtp.password) + '@' + encodeURIComponent(smtp.server) + ':' + smtp.port;
+    process.env.MAIL_URL = 'smtp://' + encodeURIComponent(usuario) + ':' + encodeURIComponent(clave) + '@' + encodeURIComponent(servidor) + ':' + puerto;
+    log.info(process.env.MAIL_URL);
 });

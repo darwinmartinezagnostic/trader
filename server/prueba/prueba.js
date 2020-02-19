@@ -13,6 +13,7 @@ Meteor.methods({
     
 	'PruebasUnitarias':function(){
         var AMBITO = 'PruebasUnitarias'
+        log.info(' **************** INICIANDO PRUEBAS UNITARIAS ****************');
 
         ///////////          VARIABLES             /////////////
 
@@ -89,7 +90,7 @@ Meteor.methods({
 
 
         //////////  NO OLIDARSE DE ESTO /////////////////
-        
+        /*
         var OperacionesEnSeguimiento = GananciaPerdida.find({ "Operacion.Status" : "En seguimiento" }).count()
 
         if (OperacionesEnSeguimiento === 0 ) {
@@ -195,17 +196,18 @@ Meteor.methods({
         }
 
         /**/
-        /*
+        
 
 
         //var ORDEN = '203709643677'
         //log.info('Voy a cancelar la orden: ', ORDEN );
         //Meteor.call("CancelarOrden", ORDEN);
-        log.info('Voy a enviar correo');
+        log.info(' ENVIANDO CORREO'); 
         Meteor.call('sendEmail', 
                     'jarruizjesus@gmail.com', 
                     'en el texto', 
                     'prueba de correo');
+        //Meteor.call('sendEmail', 'destinatario', 'subject', 'email');
         //Meteor.call('EnviarCorreo', 'jarruizjesus@gmail.com', 'invertminado@gmail.com', 'en el texto', 'prueba de correo');
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
         //Meteor.call('ActualizaEquivalenciaMonedas');
