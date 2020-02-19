@@ -240,7 +240,7 @@ Meteor.methods({
                 try{
                     let tpr = await TimeoutEjecucion(EstadoCancelacion, MS)
                     const salida = await respuesta
-                    log.info("Valor de salida", salida,'Conexiones');
+                    //log.info("Valor de salida", salida,'Conexiones');
 
                     /*
                     if ( salida.status === 200 ) {
@@ -320,28 +320,28 @@ Meteor.methods({
                                         headers: headers
                                     })
                                     .then(function (response) {
-                                            log.info ("Valor de response: ",response,'Conexiones');
+                                            //log.info ("Valor de response: ",response,'Conexiones');
                                             resp = JSON.parse(response);
                                             return resp;
                                             })
                                     .catch(function(error) {
                                         ErrorConseguido = JSON.parse(error.error);
-                                        log.error("Valor de catch ErrorConseguido: ", ErrorConseguido,'Conexiones');
+                                        //log.error("Valor de catch ErrorConseguido: ", ErrorConseguido,'Conexiones');
                                         return ErrorConseguido;
                                         });
 
             const tok = token();            
             const EstadoCancelacion = CancelaEjecucionConexion ( respuesta, tok);            
-            log.trace(" Voy por acá ")
+            //log.trace(" Voy por acá ")
             let tpr = await TimeoutEjecucion(EstadoCancelacion, MS);
             const salida = await respuesta;
-            log.trace(" Valor de salida: ", salida,'Conexiones');
+            //log.trace(" Valor de salida: ", salida,'Conexiones');
 
             if ( salida.id ) {
-                log.info ("Valor de salida2", salida,'Conexiones');
+                //log.info ("Valor de salida2", salida,'Conexiones');
                 return salida;
             }else if ( salida.error.code !== 200 ) {
-                log.error("Valor de salida3", salida,'Conexiones');
+                //log.error("Valor de salida3", salida,'Conexiones');
                 const mensaje = salida.error.message;
                 log.error("Valor de mensaje: ", mensaje,'Conexiones');
                  
