@@ -15,7 +15,7 @@ Meteor.methods({
         log.info('Valores recibidos, para: : ', [para] + [', asunto: '] + [asunto] + [', texto: '] + [texto]); 
         var CONSTANTES = Meteor.call("Constantes");
         var emisor = CONSTANTES.CorreoUsur;
-        
+        /*
         try{
 
             Email.send({
@@ -28,6 +28,7 @@ Meteor.methods({
             log.info(" FALLO EN ENVÍO DE CORREO");
             log.info(" ERROR: ", error);
         }
+        /**/
     },
 });
 
