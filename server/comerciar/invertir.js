@@ -1001,6 +1001,23 @@ Meteor.methods({
         var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );        
         var ModoCalculo = Parametros.findOne( { dominio : "Comercio", nombre : "TipoCalculoInversion" } );
         var V_ModoCalculo = ModoCalculo.valor;
+        var TE = Parametros.findOne( { dominio : "Ejecucion", nombre : "TipoEjecucion" } );
+        var TipoEjecucion = TE.valor;
+        if ( TipoEjecucion === 0 ) {
+            var AnalisisID = 0
+        }else{
+            var LoteAct = ParametrosAnalisis.aggregate([  { $match : { "LoteActivo" : true, "Ejecucion" : "S" }},
+                                                                                { $group: {
+                                                                                            "_id" : '$IdLote'
+                                                                                            }
+                                                                                },
+                                                                                { $sort : { "_id" : 1 } }
+                                                                            ]);
+            var LA= LoteAct[0];
+            var AnalisisID = LA._id
+        }
+
+
         var AMBITO = 'Invertir - CrearNuevaOrder'
         log.info("Valores recibidos CrearNuevaOrder", " TIPO_CAMBIO: "+ TIPO_CAMBIO+" CANT_INVER: "+ CANT_INVER+ " MON_B: "+ MON_B+ " MON_C: "+MON_C+ " MONEDA_SALDO: "+ MONEDA_SALDO+ " MONEDA_COMISION: "+ MONEDA_COMISION+ " ID_LOTE: "+ ID_LOTE, AMBITO);
 
@@ -1149,7 +1166,8 @@ Meteor.methods({
                                             "Moneda.Emitida.moneda" : MonedaEmitida,
                                             "Moneda.Adquirida.moneda" : MonedaAdquirida,
                                             "Inversion.SaldoInversion" : CANT_INVER,
-                                            "DatosOrden" : Orden
+                                            "DatosOrden" : Orden,
+                                            "Analisis.id" : AnalisisID
                                             }
                                 }, 
                                 {"upsert" : true}
