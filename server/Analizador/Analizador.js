@@ -143,9 +143,9 @@ Meteor.methods({
         return DatosSaldosMond
     },
 
-    'AnalisisConsultarHistGananPerd':function ( ) {
+    'AnalisisConsultarHistGananPerd':function ( LOTE ) {
         var DatosHistGananciaPerdida = new Set();
-        var HistGananciaPerdida = GananciaPerdida.find({}).fetch();
+        var HistGananciaPerdida = GananciaPerdida.find({ "Analisis.Lote" : LOTE }).fetch();
 
         for (CGP = 0, TGP = HistGananciaPerdida.length; CGP < TGP; CGP++) {
             var HistGPerd = HistGananciaPerdida[CGP];
@@ -207,7 +207,7 @@ Meteor.methods({
         var DatosParametros = Meteor.call("AnalisisConsultarParametros");
         var DatosSaldosTtl = Meteor.call("AnalisisConsultarSaldosTotales", V_ID, V_IdLote );
         var DatosSaldosMond = Meteor.call("AnalisisConsultarSaldos");        
-        var DatosHistGanancPrd = Meteor.call("AnalisisConsultarHistGananPerd");
+        var DatosHistGanancPrd = Meteor.call("AnalisisConsultarHistGananPerd", V_IdLote);
 
         /*
         log.info(' Valor de DatosParametros: ', DatosParametros)

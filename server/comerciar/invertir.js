@@ -1005,16 +1005,11 @@ Meteor.methods({
         var TipoEjecucion = TE.valor;
         if ( TipoEjecucion === 0 ) {
             var AnalisisID = 0
+            var AnalisisLote = 0
         }else{
-            var LoteAct = ParametrosAnalisis.aggregate([  { $match : { "LoteActivo" : true, "Ejecucion" : "S" }},
-                                                                                { $group: {
-                                                                                            "_id" : '$IdLote'
-                                                                                            }
-                                                                                },
-                                                                                { $sort : { "_id" : 1 } }
-                                                                            ]);
-            var LA= LoteAct[0];
-            var AnalisisID = LA._id
+            var LoteAct = ParametrosAnalisis.findOne({ "LoteActivo" : true, "Ejecucion" : "S" })
+            var AnalisisID = LoteAct._id
+            var AnalisisLote = LoteAct. IdLote
         }
 
 
@@ -1167,7 +1162,8 @@ Meteor.methods({
                                             "Moneda.Adquirida.moneda" : MonedaAdquirida,
                                             "Inversion.SaldoInversion" : CANT_INVER,
                                             "DatosOrden" : Orden,
-                                            "Analisis.id" : AnalisisID
+                                            "Analisis.Id" : AnalisisID,
+                                            "Analisis.Lote" : AnalisisLote
                                             }
                                 }, 
                                 {"upsert" : true}
