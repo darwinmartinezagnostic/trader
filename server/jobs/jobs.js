@@ -603,8 +603,14 @@ Jobs.register({
 
             Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
 
-            var ORDEN = Resultado
-            var Estado_Orden = Resultado.status;
+            if ( Resultado === undefined ) {
+            	Estado_Orden = "Insufficientfunds";
+            }else{            	
+	            var ORDEN = Resultado
+	            var Estado_Orden = Resultado.status;
+            }
+
+
 
 	        if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
 	        	var ValorContador = Meteor.call("SecuenciasTMP", clientOrderId);
