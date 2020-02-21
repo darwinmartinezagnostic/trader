@@ -96,7 +96,7 @@ Meteor.methods({
     	var AMBITO = 'EstadoOrdenVerificar'; 
     	log.info(' Valor de ORDEN: ', ORDEN, AMBITO);
     	fecha = moment (new Date());
-        T_clientOrderId = ORDEN.clientOrderId
+        T_clientOrderId = ORDEN.Operacion.ID_LocalAct
         T_status = ORDEN.status
         var V_IdHitBTC = ORDEN.id
 
