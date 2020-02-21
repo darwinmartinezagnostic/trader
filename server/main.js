@@ -61,10 +61,11 @@ Meteor.methods({
                             var MON_C = V_TipoCambio.moneda_cotizacion; 
                             var MONEDA_COMISION = MON_C ;
 
-                            if ( OrdenGuardada === undefined ) {
-                                var Orden = {  status: V_TipoCambio.Operacion.Status }
+                            if ( OrdenGuardada === undefined || OperacionIncompleta.DatosOrden.id === undefined ) {
+                                var Orden = {  status : V_TipoCambio.DatosOrden.Razon,  }
                             }
-                            var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada)
+                            var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada,
+                                                     'id' : 0 )
                             Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
 
                         }
