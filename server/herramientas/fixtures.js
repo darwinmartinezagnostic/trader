@@ -47,6 +47,7 @@ if (Parametros.find({ dominio : 'Prueba' }).count() === 0){
 	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'ResetDatosIniciales', estado : true, valor : 1, descripcion : ' 1 = activo, 0 = Inactivo - Borrar los datos Iniciales de monedas, tipos de cambio e inicia los valores al estado inicial' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'ResetParametrosAnalisis', estado : true, valor : 0, descripcion : ' 1 = activo, 0 = Inactivo - Reactiva los parámetros de Analisis nuevo estados true' });
 	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'ResetResultadoAnalisis', estado : true, valor : 0, descripcion : '1 = activo, 0 = Inactivo - Borra lo datos de analisis para cada nuevo set de pruebas' });
+	Parametros.insert({ fecha : new Date(), dominio : 'Prueba', nombre : 'ModificaParametros', estado : true, valor : 1, descripcion : '1 = activo, 0 = Inactivo - Permite modificar o nó de los parámetros de sistema' });
 };
 
 if (Parametros.find({ dominio : 'Periodos' }).count() === 0){

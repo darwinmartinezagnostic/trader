@@ -707,6 +707,9 @@ Meteor.methods({
                                     var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA, VInversion);
                                 break;
                                 case 2:
+                                    var RecalcIverPrec = Meteor.call("CalcularIversionXOrdenInverso", TIPO_CAMBIO, MONEDA, VInversion);
+                                break;
+                                case 3:
                                     var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA, VInversion);
                                 break;
                             }                            
@@ -741,6 +744,9 @@ Meteor.methods({
                                             var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA, VInversion);
                                         break;
                                         case 2:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXOrdenInverso", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 3:
                                             var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA, VInversion);
                                         break;
                                     }
@@ -786,6 +792,9 @@ Meteor.methods({
                                             var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA, VInversion);
                                         break;
                                         case 2:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXOrdenInverso", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 3:
                                             var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA, VInversion);
                                         break;
                                     }
@@ -815,6 +824,9 @@ Meteor.methods({
                                             var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA, VInversion);
                                         break;
                                         case 2:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXOrdenInverso", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 3:
                                             var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA, VInversion);
                                         break;
                                     }
@@ -844,6 +856,9 @@ Meteor.methods({
                                             var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA, VInversion);
                                         break;
                                         case 2:
+                                            var RecalcIverPrec = Meteor.call("CalcularIversionXOrdenInverso", TIPO_CAMBIO, MONEDA, VInversion);
+                                        break;
+                                        case 3:
                                             var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA, VInversion);
                                         break;
                                     }

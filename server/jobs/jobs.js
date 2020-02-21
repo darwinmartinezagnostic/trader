@@ -27,6 +27,8 @@ Jobs.register({
             var ModoEjecucion = Parametros.findOne( { dominio : "Ejecucion", nombre : "ModoEjecucion" } );
             var ValorModoEjecucion = ModoEjecucion.valor
             var ResetAnalisis = Parametros.findOne( { dominio : "Prueba", nombre : "ResetResultadoAnalisis" } )
+            var ModificarParametros = Parametros.findOne( { dominio : "Prueba", nombre : "ModificaParametros" } )
+            var ValorModificarParametros = ModificarParametros.valor
 			var AMBITO = 'JobTipoEjecucion' 
 		    switch ( TipoEjecucion ){
                 case 0:
@@ -54,8 +56,9 @@ Jobs.register({
 
 	                	//log.info(' ------------------------- ACA ESTOY -------------------------');
 	                	log.info('Valor de LotesActuales: ', LotesActuales);
-	                	if ( ParametrosAnalisis.find( { "LoteActivo" : true } ).count() > 0 ) {
+	                	if ( ParametrosAnalisis.find( { "LoteActivo" : true } ).count() > 0 ) {	                		
 		                	for (CLA = 0, T_LotesActuales = LotesActuales.length; CLA < T_LotesActuales; CLA++) {
+		                		log.info('Valor de LotesActuales[CLA]: ', LotesActuales[CLA]);
 		                		var LA= LotesActuales[CLA];
 		                		var V_IdLote = LA._id
 		                		log.info('Valor de V_IdLote: ', V_IdLote);
@@ -65,6 +68,7 @@ Jobs.register({
 			                    if ( ValorModoEjecucion === 0 ) {
 						            Meteor.call("PruebasUnitarias");
 						        }else{
+
 								    if ( ResetAnalisis.valor === 1 ) {
 								        Meteor.call('ReinicioDatResultAnalisis');
 								        Meteor.call('ReinicioDeSecuenciasGBL', 'IdAnalisis');
@@ -83,25 +87,28 @@ Jobs.register({
 
 							            Meteor.call("GuardarLogEjecucionTrader", [' LOTE ACTUAL: '] + [V_IdLote] + [', ID PARÁMETRO ACTUAL: '] + [V_ID]);
 
-							            if ( V_Ejecucion === 'N' ) {
+							            if ( ValorModificarParametros = 1 ) {
 
-								            for (CI = 0, TI = V_dominio.length; CI < TI; CI++) {
-								            	var dominio = V_dominio[CI]
-								            	var nombre = V_nombre[CI]
-								            	var estado = V_estado[CI]
-								            	var valor = V_valor[CI]
-									            Meteor.call('ModificaParametrosGenerales', dominio, nombre, estado, valor);
-								            }       
-								            var ResetDatosIniciales = Parametros.findOne( { dominio : "Prueba", nombre : "ResetDatosIniciales" } );
-								            if ( ResetDatosIniciales.valor === 1 ) {
-								            	Meteor.call('LimpiarBD');
-								            	
-								            	if ( ValorModoEjecucion > 1 ) {
-								            		Meteor.call("ModificaParametrosGenerales", 'Ejecucion', 'ModoEjecucion', true, 1 )
-								            	}
+								            if ( V_Ejecucion === 'N' ) {
+
+									            for (CI = 0, TI = V_dominio.length; CI < TI; CI++) {
+									            	var dominio = V_dominio[CI]
+									            	var nombre = V_nombre[CI]
+									            	var estado = V_estado[CI]
+									            	var valor = V_valor[CI]
+										            Meteor.call('ModificaParametrosGenerales', dominio, nombre, estado, valor);
+									            }       
+									            var ResetDatosIniciales = Parametros.findOne( { dominio : "Prueba", nombre : "ResetDatosIniciales" } );
+									            if ( ResetDatosIniciales.valor === 1 ) {
+									            	Meteor.call('LimpiarBD');
+									            	
+									            	if ( ValorModoEjecucion > 1 ) {
+									            		Meteor.call("ModificaParametrosGenerales", 'Ejecucion', 'ModoEjecucion', true, 1 )
+									            	}
+									            }
+									            ParametrosAnalisis.update({ _id: V_ID }, { $set : { "Ejecucion" : "S" } })
 								            }
-								            ParametrosAnalisis.update({ _id: V_ID }, { $set : { "Ejecucion" : "S" } })
-							            }
+								        }
 							            			            	
 						            	Meteor.call('EjecucionInicial', V_ID , V_IdLote); 
 						            	Meteor.call('GuardarSaldoTotal', 2, V_ID , V_IdLote);
@@ -117,6 +124,7 @@ Jobs.register({
 							/**/
 		                	
 							}
+
 						}else{
 							log.error(' SE CONFIGURÓ PARA REALIZAR ANALISIS DE DATOS PERO NO SE ENCUENTRAN LAS CONFIGURACIONES A SEGUIR, VERIFICAR COLECCION "ParametrosDeAnalisis"',AMBITO);
 							Meteor.call('FinEjecucion')
