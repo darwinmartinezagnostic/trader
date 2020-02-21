@@ -17,7 +17,7 @@ Meteor.methods({
     'EjecucionInicial':function( IdDatoAnalisis, IdLote ){  
         try {
             // Verificamos si la aplicación es su ejecución Inicial o No
-            
+            var AMBITO = 'EjecucionInicial'
             var ModoEjecucion = Parametros.findOne( { dominio : "Ejecucion", nombre : "ModoEjecucion" } );
             var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );            
             var ResetSaldos = Parametros.findOne( { dominio : "Prueba", nombre : "saldo" } );
@@ -49,10 +49,11 @@ Meteor.methods({
                         for (COI = 0, TOI = OperacionesImcompletas.length; COI < TOI; COI++){
                             //Meteor.call('sleep', 33);
                             var OperacionIncompleta = OperacionesImcompletas[COI]
-                            var OrdenGuardada = OperacionIncompleta.DatosOrden
+                            log.info('Valor de OperacionesImcompletas: ', ValorModoEjecucion);
+
+                            var OrdenGuardada = OperacionIncompleta.OperacionIncompleta
                             var TIPO_CAMBIO = OperacionIncompleta.Operacion.TipoCambio; 
                             var CANT_INVER = OperacionIncompleta.Inversion.SaldoInversion; 
-                            var InversionRealCalc = OrdenGuardada.quantity; 
                             var MONEDA_SALDO = OperacionIncompleta.Moneda.Emitida.moneda; 
                             var ID_LOTE = OperacionIncompleta.Operacion.Id_Lote;
 
@@ -62,9 +63,13 @@ Meteor.methods({
                             var MONEDA_COMISION = MON_C ;
 
                             if ( OrdenGuardada === undefined || OperacionIncompleta.DatosOrden.id === undefined ) {
-                                var Orden = {  status : V_TipoCambio.DatosOrden.Razon, 'id' : '0' }
+                                var Orden = {  status : OperacionIncompleta.DatosOrden.Razon , id : '0' }
+                                var InversionRealCalc = OperacionIncompleta.Inversion.SaldoInversion; 
+                            }else{
+                                var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada )
+                                var InversionRealCalc = OrdenGuardada.quantity; 
                             }
-                            var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada )
+
                             Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
 
                         }

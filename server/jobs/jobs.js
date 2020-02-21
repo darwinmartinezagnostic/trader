@@ -18,6 +18,7 @@ Jobs.register({
 	
 	"JobTipoEjecucion": function (){
 		try{
+			var AMBITO = 'JobTipoEjecucion' 
 	    	fecha = moment (new Date());
 	    	log.info('        ',fecha._d);
 			Meteor.call("Encabezado");
@@ -29,7 +30,6 @@ Jobs.register({
             var ResetAnalisis = Parametros.findOne( { dominio : "Prueba", nombre : "ResetResultadoAnalisis" } )
             var ModificarParametros = Parametros.findOne( { dominio : "Prueba", nombre : "ModificaParametros" } )
             var ValorModificarParametros = ModificarParametros.valor
-			var AMBITO = 'JobTipoEjecucion' 
 		    switch ( TipoEjecucion ){
                 case 0:
                 	if ( ResetAnalisis.valor === 1 ) {
@@ -54,7 +54,7 @@ Jobs.register({
 																		    { $sort : { "_id" : 1 } }
 																		]);
 
-	                	//log.info(' ------------------------- ACA ESTOY -------------------------');
+	                	
 	                	log.info('Valor de LotesActuales: ', LotesActuales);
 	                	if ( ParametrosAnalisis.find( { "LoteActivo" : true } ).count() > 0 ) {	                		
 		                	for (CLA = 0, T_LotesActuales = LotesActuales.length; CLA < T_LotesActuales; CLA++) {
