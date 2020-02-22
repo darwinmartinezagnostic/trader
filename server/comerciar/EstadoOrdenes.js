@@ -94,11 +94,12 @@ Meteor.methods({
     'EstadoOrdenVerificar':function( TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE ) {
         Meteor.call("GuardarLogEjecucionTrader", [' EstadoOrdenVerificar - Valores Recibido: TIPO_CAMBIO"']+[TIPO_CAMBIO]+[' ,CANT_INVER :']+[CANT_INVER]+[', InversionRealCalc : ']+[InversionRealCalc]+[', MON_B :']+[MON_B]+[', MON_C :']+[ MON_C]+[', MONEDA_SALDO :']+[ MONEDA_SALDO]+[', MONEDA_COMISION :']+[MONEDA_COMISION]+[', ORDEN :']+[ORDEN]+[', ID_LOTE :']+[ID_LOTE]);
     	var AMBITO = 'EstadoOrdenVerificar'; 
-    	log.info(' Valor de ORDEN: ', ORDEN, AMBITO);
+    	//log.info(' Valor de ORDEN: ', ORDEN, AMBITO);
     	fecha = moment (new Date());
-        T_clientOrderId = ORDEN.Operacion.ID_LocalAct
-        T_status = ORDEN.status
+        var T_clientOrderId = ORDEN.clientOrderId
+        var T_status = ORDEN.status
         var V_IdHitBTC = ORDEN.id
+
 
         GananciaPerdida.update( {   "Operacion.ID_LocalAct" : T_clientOrderId, "Operacion.Id_Lote": ID_LOTE }, 
                                 {
@@ -117,22 +118,6 @@ Meteor.methods({
                             }
                         });
 
-        /*
-        var IdTemp = Meteor.call("SecuenciasGBL", 'IdTemporal');
-        var IdTemporal = Meteor.call("CompletaConCero", IdTemp, 32);
-        log.info(' Valor de IdTemporal: ', IdTemporal, AMBITO);
-        log.info(' Enviando a "JobsValidarEstadoOrden" Valores: ');
-        log.info(' TIPO_CAMBIO: ', [TIPO_CAMBIO] );
-        log.info(' CANT_INVER: ', [CANT_INVER]);
-        log.info(' InversionRealCalc: ', [InversionRealCalc]);
-        log.info(' MON_B: ', [MON_B]);
-        log.info(' MON_C: ', [MON_C]);
-        log.info(' MONEDA_SALDO: ', [MONEDA_SALDO]);
-        log.info(' MONEDA_COMISION: ', [MONEDA_COMISION]);
-        log.info(' ORDEN: ', [ORDEN]);
-        log.info(' ID_LOTE: ', [ID_LOTE]);
-        log.info(' IdTemporal: ', [IdTemporal]);
-        /**/
         Jobs.run("JobsValidarEstadoOrden", TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE, T_clientOrderId ,{ 
 		   	in: {
                 minute: 1

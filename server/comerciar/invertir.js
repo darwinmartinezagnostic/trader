@@ -1178,7 +1178,8 @@ Meteor.methods({
                                             "Inversion.SaldoInversion" : CANT_INVER,
                                             "DatosOrden" : Orden,
                                             "Analisis.Id" : AnalisisID,
-                                            "Analisis.Lote" : AnalisisLote
+                                            "Analisis.Lote" : AnalisisLote,
+                                            "Inversion.Saldo" : InversionRealCalc,
                                             }
                                 }, 
                                 {"upsert" : true}

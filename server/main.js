@@ -49,9 +49,9 @@ Meteor.methods({
                         for (COI = 0, TOI = OperacionesImcompletas.length; COI < TOI; COI++){
                             //Meteor.call('sleep', 33);
                             var OperacionIncompleta = OperacionesImcompletas[COI]
-                            log.info('Valor de OperacionesImcompletas: ', ValorModoEjecucion);
+                            //log.info('Valor de OperacionIncompleta: ', OperacionIncompleta);
 
-                            var OrdenGuardada = OperacionIncompleta.OperacionIncompleta
+                            var OrdenGuardada = OperacionIncompleta.DatosOrden
                             var TIPO_CAMBIO = OperacionIncompleta.Operacion.TipoCambio; 
                             var CANT_INVER = OperacionIncompleta.Inversion.SaldoInversion; 
                             var MONEDA_SALDO = OperacionIncompleta.Moneda.Emitida.moneda; 
@@ -62,9 +62,12 @@ Meteor.methods({
                             var MON_C = V_TipoCambio.moneda_cotizacion; 
                             var MONEDA_COMISION = MON_C ;
 
-                            if ( OrdenGuardada === undefined || OperacionIncompleta.DatosOrden.id === undefined ) {
-                                var Orden = {  status : OperacionIncompleta.DatosOrden.Razon , id : '0' }
-                                var InversionRealCalc = OperacionIncompleta.Inversion.SaldoInversion; 
+                            if ( OrdenGuardada.id === undefined || OrdenGuardada.quantity === undefined || OrdenGuardada.clientOrderId === undefined || OrdenGuardada.status === undefined ) {
+                                var Orden = new Object();
+                                Orden.id = '0';
+                                Orden.clientOrderId = OperacionIncompleta.Operacion.ID_LocalAct;
+                                Orden.status = OperacionIncompleta.Operacion.Razon;
+                                var InversionRealCalc = OperacionIncompleta.Inversion.Saldo; 
                             }else{
                                 var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada )
                                 var InversionRealCalc = OrdenGuardada.quantity; 
