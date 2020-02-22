@@ -1204,12 +1204,43 @@ Meteor.methods({
 
         } else {
 
-            if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" || Estado_Orden === "Insufficientfunds" ) {
+            if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
                 
                 log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" || Estado_Orden === "Insufficientfunds")','', AMBITO);
                 log.info(' Valor de Orden 3: ', Orden, AMBITO);                
                 log.info(' Valores a Enviar: ', ["TIPO_CAMBIO: "]+ [TIPO_CAMBIO]+ [" CANT_INVER: "]+ [CANT_INVER]+ [" InversionRealCalc: "]+ [InversionRealCalc]+ [" MON_B: "]+ [MON_B]+ [" MON_C: "]+ [MON_C]+ [" MONEDA_SALDO: "]+ [MONEDA_SALDO]+ [" MONEDA_COMISION: "]+ [MONEDA_COMISION]+ [" Orden: "]+ [Orden]+ [" ID_LOTE: "]+ [ID_LOTE], AMBITO );
                 Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
+
+            }
+
+            if ( Estado_Orden === "Insufficientfunds" ) {
+                
+                log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" || Estado_Orden === "Insufficientfunds")','', AMBITO);
+                log.info(' Valor de Orden 3: ', Orden, AMBITO);                
+                log.info(' Valores a Enviar: ', ["TIPO_CAMBIO: "]+ [TIPO_CAMBIO]+ [" CANT_INVER: "]+ [CANT_INVER]+ [" InversionRealCalc: "]+ [InversionRealCalc]+ [" MON_B: "]+ [MON_B]+ [" MON_C: "]+ [MON_C]+ [" MONEDA_SALDO: "]+ [MONEDA_SALDO]+ [" MONEDA_COMISION: "]+ [MONEDA_COMISION]+ [" Orden: "]+ [Orden]+ [" ID_LOTE: "]+ [ID_LOTE], AMBITO );
+
+
+                if ( Orden.id === undefined || Orden.quantity === undefined || Orden.clientOrderId === undefined || Orden.status === undefined ) {
+                    var OrdenConst = new Object();
+                    OrdenConst.id = '0';
+                    OrdenConst.clientOrderId = OperacionIncompleta.Operacion.ID_LocalAct;
+                    OrdenConst.symbol = TIPO_CAMBIO
+                    OrdenConst.side = TP
+                    OrdenConst.status = Estado_Orden;
+                    OrdenConst.type = "limit"
+                    OrdenConst.timeInForce = "GTC"
+                    OrdenConst.quantity = InversionRealCalc
+                    OrdenConst.price = RecalcIverPrec.MejorPrecCal,
+                    OrdenConst.cumQuantity = 0
+                    OrdenConst.createdAt = fecha._d
+                    OrdenConst.updatedAt = fecha._d
+                    OrdenConst.postOnly = false
+                }else{
+                    var OrdenConst = Meteor.call('ValidarEstadoOrden', OrdenGuardada )
+                }
+
+
+                Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, OrdenConst, ID_LOTE )
 
             }
 

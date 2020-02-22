@@ -103,7 +103,7 @@ Meteor.methods({
     'EstadoOrdenVerificar':function( TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE ) {
     	var AMBITO = 'EstadoOrdenVerificar'; 
         Meteor.call("GuardarLogEjecucionTrader", [' EstadoOrdenVerificar - Valores Recibido: TIPO_CAMBIO"']+[TIPO_CAMBIO]+[' ,CANT_INVER :']+[CANT_INVER]+[', InversionRealCalc : ']+[InversionRealCalc]+[', MON_B :']+[MON_B]+[', MON_C :']+[ MON_C]+[', MONEDA_SALDO :']+[ MONEDA_SALDO]+[', MONEDA_COMISION :']+[MONEDA_COMISION]+[', ORDEN :']+[ORDEN]+[', ID_LOTE :']+[ID_LOTE]);
-    	//log.info(' Valor de ORDEN: ', ORDEN, AMBITO);
+    	log.info(' Valor de ORDEN: ', ORDEN, AMBITO);
     	fecha = moment (new Date());
         var T_clientOrderId = ORDEN.clientOrderId
         var T_status = ORDEN.status
