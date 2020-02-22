@@ -590,8 +590,7 @@ Jobs.register({
     	var instance = this;
     	var AMBITO = "JobsValidarEstadoOrden";
     	try{
-	    	log.info(' Estoy en JobsValidarEstadoOrden','','JobsValidarEstadoOrden');
-    		Meteor.call("GuardarLogEjecucionTrader", [ " Valores recibidos"]+ [" TIPO_CAMBIO: "]+[TIPO_CAMBIO]+[', CANT_INVER :']+[CANT_INVER]+[', InversionRealCalc : ']+[InversionRealCalc]+[', MON_B :']+[MON_B]+[', MON_C :']+[, MON_C] + [', MONEDA_SALDO :']+[MONEDA_SALDO]+[', MONEDA_COMISION :']+[, MONEDA_COMISION] + [', ORDEN :']+[ORDEN]+[', ID_LOTE :']+[, ID_LOTE] + [', clientOrderId :']+[clientOrderId]);
+    		Meteor.call("GuardarLogEjecucionTrader", [ " JobsValidarEstadoOrden - Valores recibidos"]+ [" TIPO_CAMBIO: "]+[TIPO_CAMBIO]+[', CANT_INVER :']+[CANT_INVER]+[', InversionRealCalc : ']+[InversionRealCalc]+[', MON_B :']+[MON_B]+[', MON_C :']+[, MON_C] + [', MONEDA_SALDO :']+[MONEDA_SALDO]+[', MONEDA_COMISION :']+[, MONEDA_COMISION] + [', ORDEN :']+[ORDEN]+[', ID_LOTE :']+[, ID_LOTE] + [', clientOrderId :']+[clientOrderId]);
 	    	// Mantenieminto de la coleccion JObs_data
 	    	JobsInternal.Utilities.collection.remove({ state : 'success' });
 	    	var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );
@@ -601,14 +600,11 @@ Jobs.register({
                 var Resultado = Meteor.call("ValidarEstadoOrdenRobot", ORDEN)
             }
 
-            Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado[0]]);
+            //Meteor.call("GuardarLogEjecucionTrader", [' Valor de Resultado: ']+[Resultado]);
 
-            if ( Resultado === undefined ) {
-            	Estado_Orden = "Insufficientfunds";
-            }else{            	
-	            var ORDEN = Resultado
-	            var Estado_Orden = Resultado.status;
-            }
+            
+            var ORDEN = Resultado
+            var Estado_Orden = Resultado.status;
 
 
 

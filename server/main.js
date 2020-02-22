@@ -66,7 +66,17 @@ Meteor.methods({
                                 var Orden = new Object();
                                 Orden.id = '0';
                                 Orden.clientOrderId = OperacionIncompleta.Operacion.ID_LocalAct;
+                                Orden.symbol = OperacionIncompleta.Operacion.TipoCambio
+                                Orden.side = OperacionIncompleta.Operacion.Tipo
                                 Orden.status = OperacionIncompleta.Operacion.Razon;
+                                Orden.type = "limit"
+                                Orden.timeInForce = "GTC"
+                                Orden.quantity = OperacionIncompleta.Inversion.Saldo
+                                Orden.price = OperacionIncompleta.Operacion.Precio
+                                Orden.cumQuantity = 0
+                                Orden.createdAt = fecha._d
+                                Orden.updatedAt = fecha._d
+                                Orden.postOnly = false
                                 var InversionRealCalc = OperacionIncompleta.Inversion.Saldo; 
                             }else{
                                 var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada )

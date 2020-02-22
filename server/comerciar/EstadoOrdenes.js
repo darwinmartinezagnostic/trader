@@ -35,7 +35,7 @@ Meteor.methods({
 	'ValidarEstadoOrden': function( VAL_ORDEN){
         var CONSTANTES = Meteor.call("Constantes");
         /////////////////////////////////////////////////////
-        //log.info(' "ValidarEstadoOrden" - Recibiendo valores: VAL_ORDEN', VAL_ORDEN);
+        log.info(' "ValidarEstadoOrden" - Recibiendo valores: VAL_ORDEN', VAL_ORDEN);
 
         T_id = VAL_ORDEN.id
         T_clientOrderId = VAL_ORDEN.clientOrderId
@@ -69,31 +69,40 @@ Meteor.methods({
         var transOA = TrnsOA[0];
         const TrnsTP = Meteor.call("ConexionGet", Url_TransTP)
         var transTP = TrnsTP[0];
-
-        if ( transOA === undefined ) {
-            if ( transTP.clientOrderId === T_clientOrderId ) {
-                    var StatusOrden = transTP.status;
-                    var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: StatusOrden, type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
-                } 
-
+        /*
+        log.info('Valor de transOA', transOA)
+        log.info('Valor de transTP', transTP)
+        /**/
+        if (transOA === undefined && transTP === undefined) {
+            var StatusOrden = T_status;
+            var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: StatusOrden, type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
         }else{
-            var IdOdenClient = transOA.clientOrderId
-            if ( IdOdenClient !== T_clientOrderId ) {
+            if ( transOA === undefined ) {
                 if ( transTP.clientOrderId === T_clientOrderId ) {
-                    var StatusOrden = transTP.status;
-                    var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: StatusOrden, type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
-                }           
+                        var StatusOrden = transTP.status;
+                        var Estado_Orden = { id: T_id, T_clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: StatusOrden, type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
+                    } 
+
             }else{
-                var Estado_Orden = transOA
-            }
+                var IdOdenClient = transOA.clientOrderId
+                if ( IdOdenClient !== T_clientOrderId ) {
+                    if ( transTP.clientOrderId === T_clientOrderId ) {
+                        var StatusOrden = transTP.status;
+                        var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: StatusOrden, type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
+                    }           
+                }else{
+                    var Estado_Orden = transOA
+                }
+            }            
         }
+
         //log.info('Valor de Estado_Orden', Estado_Orden)
         return Estado_Orden
     },
 
     'EstadoOrdenVerificar':function( TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ORDEN, ID_LOTE ) {
-        Meteor.call("GuardarLogEjecucionTrader", [' EstadoOrdenVerificar - Valores Recibido: TIPO_CAMBIO"']+[TIPO_CAMBIO]+[' ,CANT_INVER :']+[CANT_INVER]+[', InversionRealCalc : ']+[InversionRealCalc]+[', MON_B :']+[MON_B]+[', MON_C :']+[ MON_C]+[', MONEDA_SALDO :']+[ MONEDA_SALDO]+[', MONEDA_COMISION :']+[MONEDA_COMISION]+[', ORDEN :']+[ORDEN]+[', ID_LOTE :']+[ID_LOTE]);
     	var AMBITO = 'EstadoOrdenVerificar'; 
+        Meteor.call("GuardarLogEjecucionTrader", [' EstadoOrdenVerificar - Valores Recibido: TIPO_CAMBIO"']+[TIPO_CAMBIO]+[' ,CANT_INVER :']+[CANT_INVER]+[', InversionRealCalc : ']+[InversionRealCalc]+[', MON_B :']+[MON_B]+[', MON_C :']+[ MON_C]+[', MONEDA_SALDO :']+[ MONEDA_SALDO]+[', MONEDA_COMISION :']+[MONEDA_COMISION]+[', ORDEN :']+[ORDEN]+[', ID_LOTE :']+[ID_LOTE]);
     	//log.info(' Valor de ORDEN: ', ORDEN, AMBITO);
     	fecha = moment (new Date());
         var T_clientOrderId = ORDEN.clientOrderId
@@ -131,7 +140,7 @@ Meteor.methods({
     	var AMBITO = 'EstadoOrdenFallida';
         var V_IdHitBTC = ORDEN.id
         var IdTransaccionActual = ORDEN.clientOrderId;
-        /*
+
     	log.info(' ORDEN: ', ORDEN);
         log.info(' ID_LOTE: ', ID_LOTE);
         log.info(' MONEDA_SALDO: ', MONEDA_SALDO);

@@ -90,9 +90,9 @@ Meteor.methods({
 
 
         //////////  NO OLIDARSE DE ESTO /////////////////
-        /*
+        
         var OperacionesEnSeguimiento = GananciaPerdida.find({ "Operacion.Status" : "En seguimiento" }).count()
-
+        fecha = moment (new Date());
         if (OperacionesEnSeguimiento === 0 ) {
 
                         log.info(' NO HAY OPERACIONES PENDIENTES DE SEGUIMIENTO');
@@ -101,15 +101,14 @@ Meteor.methods({
                         var OperacionesEnSeguimiento = GananciaPerdida.find({ "Operacion.Status" : "En seguimiento" }).count()
                         log.info(' Se encontraron', OperacionesEnSeguimiento + ' Operaciones Pendientes de seguimiento, se procede a verificar sus status actuales');
                         OperacionesIncompletas = GananciaPerdida.aggregate({ $match : {"Operacion.Status" : "En seguimiento"}});
-                        for (COI = 0, TOI = OperacionesIncompletas.length; COI < TOI; COI++){
-                        //for (COI = 0, TOI = OperacionesIncompletas.length; COI < 1; COI++){
+                        //for (COI = 0, TOI = OperacionesIncompletas.length; COI < TOI; COI++){
+                        for (COI = 0, TOI = OperacionesIncompletas.length; COI < 1; COI++){
                             Meteor.call('sleep', 33);
                             log.info(' OPERACIÓN N°: ', COI + 1 );
                             var OperacionIncompleta = OperacionesIncompletas[COI]
                             var OrdenGuardada = OperacionIncompleta.DatosOrden
                             var TIPO_CAMBIO = OperacionIncompleta.Operacion.TipoCambio; 
                             var CANT_INVER = OperacionIncompleta.Inversion.SaldoInversion; 
-                            var InversionRealCalc = OrdenGuardada.quantity; 
                             var MONEDA_SALDO = OperacionIncompleta.Moneda.Emitida.moneda; 
                             var ID_LOTE = OperacionIncompleta.Operacion.Id_Lote;
 
@@ -133,7 +132,27 @@ Meteor.methods({
                             log.info(' Valor de MONEDA_COMISION: ', MONEDA_COMISION);
 
 
-                            var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada)
+                            
+                            if ( OrdenGuardada.id === undefined || OrdenGuardada.quantity === undefined || OrdenGuardada.clientOrderId === undefined || OrdenGuardada.status === undefined ) {
+                                var Orden = new Object();
+                                Orden.id = '0';
+                                Orden.clientOrderId = OperacionIncompleta.Operacion.ID_LocalAct;
+                                Orden.symbol = OperacionIncompleta.Operacion.TipoCambio
+                                Orden.side = OperacionIncompleta.Operacion.Tipo
+                                Orden.status = OperacionIncompleta.Operacion.Razon;
+                                Orden.type = "limit"
+                                Orden.timeInForce = "GTC"
+                                Orden.quantity = OperacionIncompleta.Inversion.Saldo
+                                Orden.price = OperacionIncompleta.Operacion.Precio
+                                Orden.cumQuantity = 0
+                                Orden.createdAt = fecha._d
+                                Orden.updatedAt = fecha._d
+                                Orden.postOnly = false
+                                var InversionRealCalc = OperacionIncompleta.Inversion.Saldo; 
+                            }else{
+                                var Orden = Meteor.call('ValidarEstadoOrden', OrdenGuardada )
+                                var InversionRealCalc = OrdenGuardada.quantity; 
+                            }
                             log.info(' Valor de Orden: ', Orden);
                             Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, V_TipoCambio.moneda_base, V_TipoCambio.moneda_cotizacion, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
                             log.info('############################################')
@@ -202,11 +221,13 @@ Meteor.methods({
         //var ORDEN = '203709643677'
         //log.info('Voy a cancelar la orden: ', ORDEN );
         //Meteor.call("CancelarOrden", ORDEN);
+        /*
         log.info(' ENVIANDO CORREO'); 
         Meteor.call('sendEmail', 
                     'jarruizjesus@gmail.com', 
                     'en el texto', 
                     'prueba de correo');
+
         //Meteor.call('sendEmail', 'destinatario', 'subject', 'email');
         //Meteor.call('EnviarCorreo', 'jarruizjesus@gmail.com', 'invertminado@gmail.com', 'en el texto', 'prueba de correo');
         //var sal = Meteor.call('CalcularIversion', 'BTXBTC', 'BTC',0.00055);
