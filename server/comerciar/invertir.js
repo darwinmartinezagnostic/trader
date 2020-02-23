@@ -1156,6 +1156,7 @@ Meteor.methods({
         }
 
         var Estado_Orden = Orden.status
+        var V_IdHitBTC = Orden.id
         Meteor.call('GuardarLogEjecucionTrader', [' CrearNuevaOrder: recibi estado: ']+[Estado_Orden]); 
         ContpartiallyFilled = 0;
 
@@ -1169,9 +1170,13 @@ Meteor.methods({
                                     $set: {
                                             "Operacion.ID_LocalAct" : IdTransaccionActual,
                                             "Operacion.Id_Lote": ID_LOTE,
+                                            "Operacion.Id_hitbtc" : V_IdHitBTC,
                                             "Operacion.Tipo" : V_TipoOperaciont,
                                             "Operacion.TipoCambio" : TIPO_CAMBIO,
+                                            "Operacion.Base" : MON_B,
+                                            "Operacion.Cotizacion" : MON_C,
                                             "Operacion.Precio" : RecalcIverPrec.MejorPrecCal,
+                                            "Operacion.Razon" : Estado_Orden,
                                             "Operacion.FechaCreacion" : fecha._d,
                                             "Moneda.Emitida.moneda" : MonedaEmitida,
                                             "Moneda.Adquirida.moneda" : MonedaAdquirida,
@@ -1192,7 +1197,6 @@ Meteor.methods({
                                     {
                                         $set: {
                                                 "Operacion.Status" : 'Fallido',
-                                                "Operacion.Razon" : Estado_Orden,
                                                 "Operacion.FechaActualizacion" : fecha._d
                                     			}
                                     }
@@ -1222,7 +1226,7 @@ Meteor.methods({
 
                 if ( Orden.id === undefined || Orden.quantity === undefined || Orden.clientOrderId === undefined || Orden.status === undefined ) {
                     var OrdenConst = new Object();
-                    OrdenConst.id = '0';
+                    OrdenConst.id = 0;
                     OrdenConst.clientOrderId = OperacionIncompleta.Operacion.ID_LocalAct;
                     OrdenConst.symbol = TIPO_CAMBIO
                     OrdenConst.side = TP
@@ -1230,13 +1234,13 @@ Meteor.methods({
                     OrdenConst.type = "limit"
                     OrdenConst.timeInForce = "GTC"
                     OrdenConst.quantity = InversionRealCalc
-                    OrdenConst.price = RecalcIverPrec.MejorPrecCal,
+                    OrdenConst.price = RecalcIverPrec.MejorPrecCal
                     OrdenConst.cumQuantity = 0
                     OrdenConst.createdAt = fecha._d
                     OrdenConst.updatedAt = fecha._d
                     OrdenConst.postOnly = false
                 }else{
-                    var OrdenConst = Meteor.call('ValidarEstadoOrden', OrdenGuardada )
+                    var OrdenConst = Meteor.call('ValidarEstadoOrden', Orden )
                 }
 
 

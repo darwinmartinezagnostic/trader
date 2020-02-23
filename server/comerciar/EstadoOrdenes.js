@@ -113,9 +113,7 @@ Meteor.methods({
         GananciaPerdida.update( {   "Operacion.ID_LocalAct" : T_clientOrderId, "Operacion.Id_Lote": ID_LOTE }, 
                                 {
                                     $set: {
-                                            "Operacion.Id_hitbtc" : V_IdHitBTC,
                                             "Operacion.Status" : 'En seguimiento',
-                                            "Operacion.Razon" : T_status,
                                             "Operacion.FechaActualizacion" : fecha._d
                                             }
                                 }
@@ -150,9 +148,7 @@ Meteor.methods({
         GananciaPerdida.update( {    "Operacion.ID_LocalAct" : IdTransaccionActual, "Operacion.Id_Lote": ID_LOTE },
                                 {
                                     $set: {
-                                            "Operacion.Id_hitbtc" : V_IdHitBTC,
                                             "Operacion.Status" : 'Fallido',
-                                            "Operacion.Razon" : Estado_Orden,
                                             "Operacion.FechaActualizacion" : fecha._d
                                             }
                                 }

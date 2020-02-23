@@ -64,7 +64,7 @@ Meteor.methods({
 
                             if ( OrdenGuardada.id === undefined || OrdenGuardada.quantity === undefined || OrdenGuardada.clientOrderId === undefined || OrdenGuardada.status === undefined ) {
                                 var Orden = new Object();
-                                Orden.id = '0';
+                                Orden.id = 0;
                                 Orden.clientOrderId = OperacionIncompleta.Operacion.ID_LocalAct;
                                 Orden.symbol = OperacionIncompleta.Operacion.TipoCambio
                                 Orden.side = OperacionIncompleta.Operacion.Tipo
