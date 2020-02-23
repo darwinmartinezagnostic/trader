@@ -1210,7 +1210,7 @@ Meteor.methods({
 
             if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
                 
-                log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" || Estado_Orden === "Insufficientfunds")','', AMBITO);
+                log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ")','', AMBITO);
                 log.info(' Valor de Orden 3: ', Orden, AMBITO);                
                 log.info(' Valores a Enviar: ', ["TIPO_CAMBIO: "]+ [TIPO_CAMBIO]+ [" CANT_INVER: "]+ [CANT_INVER]+ [" InversionRealCalc: "]+ [InversionRealCalc]+ [" MON_B: "]+ [MON_B]+ [" MON_C: "]+ [MON_C]+ [" MONEDA_SALDO: "]+ [MONEDA_SALDO]+ [" MONEDA_COMISION: "]+ [MONEDA_COMISION]+ [" Orden: "]+ [Orden]+ [" ID_LOTE: "]+ [ID_LOTE], AMBITO );
                 Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
@@ -1219,7 +1219,7 @@ Meteor.methods({
 
             if ( Estado_Orden === "Insufficientfunds" ) {
                 
-                log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" || Estado_Orden === "Insufficientfunds")','', AMBITO);
+                log.info(' Estoy en  if (  Estado_Orden === "Insufficientfunds")','', AMBITO);
                 log.info(' Valor de Orden 3: ', Orden, AMBITO);                
                 log.info(' Valores a Enviar: ', ["TIPO_CAMBIO: "]+ [TIPO_CAMBIO]+ [" CANT_INVER: "]+ [CANT_INVER]+ [" InversionRealCalc: "]+ [InversionRealCalc]+ [" MON_B: "]+ [MON_B]+ [" MON_C: "]+ [MON_C]+ [" MONEDA_SALDO: "]+ [MONEDA_SALDO]+ [" MONEDA_COMISION: "]+ [MONEDA_COMISION]+ [" Orden: "]+ [Orden]+ [" ID_LOTE: "]+ [ID_LOTE], AMBITO );
 
@@ -1227,7 +1227,7 @@ Meteor.methods({
                 if ( Orden.id === undefined || Orden.quantity === undefined || Orden.clientOrderId === undefined || Orden.status === undefined ) {
                     var OrdenConst = new Object();
                     OrdenConst.id = 0;
-                    OrdenConst.clientOrderId = OperacionIncompleta.Operacion.ID_LocalAct;
+                    OrdenConst.clientOrderId = IdTransaccionActual;
                     OrdenConst.symbol = TIPO_CAMBIO
                     OrdenConst.side = TP
                     OrdenConst.status = Estado_Orden;
