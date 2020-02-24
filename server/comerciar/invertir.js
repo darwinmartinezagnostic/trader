@@ -1016,8 +1016,13 @@ Meteor.methods({
         var Robot = Parametros.findOne( { dominio : "Prueba", nombre : "robot" } );        
         var ModoCalculo = Parametros.findOne( { dominio : "Comercio", nombre : "TipoCalculoInversion" } );
         var V_ModoCalculo = ModoCalculo.valor;
+        var C_TipoCambio = TiposDeCambios.findOne({ tipo_cambio : TIPO_CAMBIO });
+        var MultiploC_TipoCambio = C_TipoCambio.min_compra
         var TE = Parametros.findOne( { dominio : "Ejecucion", nombre : "TipoEjecucion" } );
         var TipoEjecucion = TE.valor;
+
+
+
         if ( TipoEjecucion === 0 ) {
             var AnalisisID = 0
             var AnalisisLote = 0
@@ -1060,19 +1065,36 @@ Meteor.methods({
             var MonedaAdquirida = MON_B;
         }
 
+        var resto = (parseFloat(CANT_INVER) % parseFloat(MultiploC_TipoCambio)) / 100;
+
+        if ( resto === 0 ) {
+           var NV_CANT_INVER = CANT_INVER;
+        }else {
+            if (resto >= MultiploC_TipoCambio / 2) {
+                var NV_CANT_INVER = Math.ceil(CANT_INVER / MultiploC_TipoCambio) * MultiploC_TipoCambio;
+            }
+            else {
+                var NV_CANT_INVER = Math.floor(CANT_INVER / MultiploC_TipoCambio) * MultiploC_TipoCambio;
+            }
+        }
+
+
+
+
+
 
         switch (V_ModoCalculo){
             case 0:
-                var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+                var RecalcIverPrec = Meteor.call("CalcularIversionPromedio", TIPO_CAMBIO, MONEDA_SALDO, NV_CANT_INVER);
             break;
             case 1:
-                var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+                var RecalcIverPrec = Meteor.call("CalcularIversionXOrden", TIPO_CAMBIO, MONEDA_SALDO, NV_CANT_INVER);
             break;
             case 2:
-                var RecalcIverPrec = Meteor.call("CalcularIversionXOrdenInverso", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+                var RecalcIverPrec = Meteor.call("CalcularIversionXOrdenInverso", TIPO_CAMBIO, MONEDA_SALDO, NV_CANT_INVER);
             break;
             case 3:
-                var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA_SALDO, CANT_INVER);
+                var RecalcIverPrec = Meteor.call("CalcularIversionXVolumen", TIPO_CAMBIO, MONEDA_SALDO, NV_CANT_INVER);
             break;
         }
         var InversionRealCalc = RecalcIverPrec.MontRealIversionCal
@@ -1082,6 +1104,7 @@ Meteor.methods({
         log.info("Valore de V_TipoOperaciont: ", V_TipoOperaciont, AMBITO);
         log.info("Valore de MONEDA_SALDO: ", MONEDA_SALDO, AMBITO);
         log.info("Valore de CANT_INVER: ", CANT_INVER, AMBITO);
+        log.info("Valore de NV_CANT_INVER: ", NV_CANT_INVER, AMBITO);
         log.info("Valore de RecalcIverPrec: ", RecalcIverPrec, AMBITO);
         log.info("Valore de InversionRealCalc: ", InversionRealCalc, AMBITO);
         /**/
@@ -1180,7 +1203,7 @@ Meteor.methods({
                                             "Operacion.FechaCreacion" : fecha._d,
                                             "Moneda.Emitida.moneda" : MonedaEmitida,
                                             "Moneda.Adquirida.moneda" : MonedaAdquirida,
-                                            "Inversion.Real" : CANT_INVER,
+                                            "Inversion.Real" : NV_CANT_INVER,
                                             "Inversion.Calculada" : InversionRealCalc,
                                             "DatosOrden" : Orden,
                                             "Analisis.Id" : AnalisisID,
@@ -1212,8 +1235,8 @@ Meteor.methods({
                 
                 log.info(' Estoy en  if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ")','', AMBITO);
                 log.info(' Valor de Orden 3: ', Orden, AMBITO);                
-                log.info(' Valores a Enviar: ', ["TIPO_CAMBIO: "]+ [TIPO_CAMBIO]+ [" CANT_INVER: "]+ [CANT_INVER]+ [" InversionRealCalc: "]+ [InversionRealCalc]+ [" MON_B: "]+ [MON_B]+ [" MON_C: "]+ [MON_C]+ [" MONEDA_SALDO: "]+ [MONEDA_SALDO]+ [" MONEDA_COMISION: "]+ [MONEDA_COMISION]+ [" Orden: "]+ [Orden]+ [" ID_LOTE: "]+ [ID_LOTE], AMBITO );
-                Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
+                log.info(' Valores a Enviar: ', ["TIPO_CAMBIO: "]+ [TIPO_CAMBIO]+ [" NV_CANT_INVER: "]+ [NV_CANT_INVER]+ [" InversionRealCalc: "]+ [InversionRealCalc]+ [" MON_B: "]+ [MON_B]+ [" MON_C: "]+ [MON_C]+ [" MONEDA_SALDO: "]+ [MONEDA_SALDO]+ [" MONEDA_COMISION: "]+ [MONEDA_COMISION]+ [" Orden: "]+ [Orden]+ [" ID_LOTE: "]+ [ID_LOTE], AMBITO );
+                Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , NV_CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
 
             }
 
@@ -1221,7 +1244,7 @@ Meteor.methods({
                 
                 log.info(' Estoy en  if (  Estado_Orden === "Insufficientfunds")','', AMBITO);
                 log.info(' Valor de Orden 3: ', Orden, AMBITO);                
-                log.info(' Valores a Enviar: ', ["TIPO_CAMBIO: "]+ [TIPO_CAMBIO]+ [" CANT_INVER: "]+ [CANT_INVER]+ [" InversionRealCalc: "]+ [InversionRealCalc]+ [" MON_B: "]+ [MON_B]+ [" MON_C: "]+ [MON_C]+ [" MONEDA_SALDO: "]+ [MONEDA_SALDO]+ [" MONEDA_COMISION: "]+ [MONEDA_COMISION]+ [" Orden: "]+ [Orden]+ [" ID_LOTE: "]+ [ID_LOTE], AMBITO );
+                log.info(' Valores a Enviar: ', ["TIPO_CAMBIO: "]+ [TIPO_CAMBIO]+ [" NV_CANT_INVER: "]+ [NV_CANT_INVER]+ [" InversionRealCalc: "]+ [InversionRealCalc]+ [" MON_B: "]+ [MON_B]+ [" MON_C: "]+ [MON_C]+ [" MONEDA_SALDO: "]+ [MONEDA_SALDO]+ [" MONEDA_COMISION: "]+ [MONEDA_COMISION]+ [" Orden: "]+ [Orden]+ [" ID_LOTE: "]+ [ID_LOTE], AMBITO );
 
 
                 if ( Orden.id === undefined || Orden.quantity === undefined || Orden.clientOrderId === undefined || Orden.status === undefined ) {
@@ -1244,7 +1267,7 @@ Meteor.methods({
                 }
 
 
-                Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, OrdenConst, ID_LOTE )
+                Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , NV_CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, OrdenConst, ID_LOTE )
 
             }
 
@@ -1268,8 +1291,8 @@ Meteor.methods({
                                             });
                 }else if ( Estado_Orden === "DuplicateclientOrderId") {   
                     log.info(' Estoy en if if ( Estado_Orden === "DuplicateclientOrderId")','', AMBITO);
-                    Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',CANT_INVER : ']+[CANT_INVER]+[', MON_B :']+[MON_B]+[', MON_C :']+[, MON_C]);
-                    Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
+                    Meteor.call("GuardarLogEjecucionTrader", [' Orden Fallida, Status Recibido: "']+[Estado_Orden]+['", Reintentando ejecución de Orden ..., con los siguientes datos: TIPO_CAMBIO :']+[TIPO_CAMBIO]+[',NV_CANT_INVER : ']+[NV_CANT_INVER]+[', MON_B :']+[MON_B]+[', MON_C :']+[, MON_C]);
+                    Meteor.call('CrearNuevaOrder', TIPO_CAMBIO,NV_CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE)
                 }else{
                     TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO })
                     Monedas.update({ "moneda": MONEDA_SALDO }, {    
@@ -1298,7 +1321,7 @@ Meteor.methods({
 
 	        if ( Estado_Orden === "filled" ) {
 
-	            Meteor.call('EstadoOrdenCompletada', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
+	            Meteor.call('EstadoOrdenCompletada', TIPO_CAMBIO , NV_CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE );
 
 	        }
         }
