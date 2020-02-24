@@ -18,16 +18,16 @@ Meteor.methods({
         ///////////          VARIABLES             /////////////
 
 
-        /*
         
-        const MON_B='DIM'
-        const MON_C='USD'
+        
+        const MON_B='GNX'
+        const MON_C='BTC'
         var TIPO_CAMBIO = MON_B+MON_C
         var MONEDA_COMISION = MON_C
         //var MONEDA_SALDO = MON_B
         var MONEDA_SALDO = MON_C
         var MONEDASALDO = MONEDA_SALDO
-        var PRECIO = '0.000231058'
+        //var PRECIO = '0.000231058'
         var ID_LOTE = 1373
         if (MONEDA_SALDO === MON_B) {
             var TP = 'sell'
@@ -90,7 +90,7 @@ Meteor.methods({
 
 
         //////////  NO OLIDARSE DE ESTO /////////////////
-        
+        /*
         var OperacionesEnSeguimiento = GananciaPerdida.find({ "Operacion.Status" : "En seguimiento" }).count()
         fecha = moment (new Date());
         if (OperacionesEnSeguimiento === 0 ) {
@@ -308,7 +308,7 @@ Meteor.methods({
                 //Meteor.call("ValidaPropTipoCambiosValidados", MONEDA_SALDO, V_LimiteApDep );
             }
         /* */
-        /*
+        
         
         /*
         Monedas.update({
@@ -341,7 +341,7 @@ Meteor.methods({
         var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')    
         /**/
         //Meteor.call("ConsultaCarterasDeposito");
-            /*
+            
             //log.info("Datos a enviar: MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
             //CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, IdTransaccionLoteActual){
             //Meteor.call("CrearNuevaOrder", 'ETHBTC', 'sell', '0.0166', 'ETH', 'BTC', 'BTC', 'BTC', IdTransaccionLoteActual);
@@ -349,7 +349,8 @@ Meteor.methods({
             var IdTran = Meteor.call("SecuenciasGBL", 'IdGanPerdLocal');
             var IdTransaccionActual = Meteor.call("CompletaConCero", IdTran, 32);
             var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote') 
-            //Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
+            Meteor.call("CrearNuevaOrder", TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MAPLICOMIS, IdTransaccionLoteActual);
+            //'CrearNuevaOrder':function(TIPO_CAMBIO, CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, ID_LOTE){
 
             var datos = new Object();
             datos.clientOrderId=IdTransaccionActual;

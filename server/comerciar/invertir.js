@@ -1180,11 +1180,11 @@ Meteor.methods({
                                             "Operacion.FechaCreacion" : fecha._d,
                                             "Moneda.Emitida.moneda" : MonedaEmitida,
                                             "Moneda.Adquirida.moneda" : MonedaAdquirida,
-                                            "Inversion.SaldoInversion" : CANT_INVER,
+                                            "Inversion.Real" : CANT_INVER,
+                                            "Inversion.Calculada" : InversionRealCalc,
                                             "DatosOrden" : Orden,
                                             "Analisis.Id" : AnalisisID,
                                             "Analisis.Lote" : AnalisisLote,
-                                            "Inversion.Saldo" : InversionRealCalc,
                                             }
                                 }, 
                                 {"upsert" : true}
