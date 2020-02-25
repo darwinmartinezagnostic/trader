@@ -608,7 +608,7 @@ Jobs.register({
 
 
 
-	        if ( Estado_Orden === "new" || Estado_Orden === "partiallyFilled" ) {
+	        if ( Estado_Orden === "new" ) {
 	        	var ValorContador = Meteor.call("SecuenciasTMP", clientOrderId);
 	        	log.info(' Valor de ValorContador: ', ValorContador, AMBITO);
 	        	if ( parseFloat(ValorContador) < 20 ) {
@@ -630,6 +630,14 @@ Jobs.register({
 			            });
 			        }
 	        	}
+	        }
+
+	        if ( Estado_Orden === "partiallyFilled" ) {
+	        	instance.replicate({
+	                in: {
+	                    minutes: 1
+	                }
+	            });
 	        }
 
 	        if ( Estado_Orden === "suspended" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Insufficientfunds" ) {
