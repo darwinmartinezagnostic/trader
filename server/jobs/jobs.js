@@ -643,6 +643,18 @@ Jobs.register({
 	        if ( Estado_Orden === "suspended" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Insufficientfunds" ) {
 	        	log.info(' Estado_Orden === "suspended" || Estado_Orden === "expired" || Estado_Orden === "Fallido" || Estado_Orden === "canceled" || Estado_Orden === "Insufficientfunds"');
 	        	Meteor.call('EstadoOrdenFallida', ORDEN, ID_LOTE, MONEDA_SALDO, Estado_Orden );
+
+	        	if ( Estado_Orden === "Insufficientfunds" ) {
+	        		Meteor.call('GuardarLogEjecucionTrader', [' VERIFICANDO INCONSISTENCIA ENTRE SALDO HITBTC Y VALOR LOCAL']);
+	        		var Diferencia = Meteor.call('ValidarDiferenciasSaldo', MONEDA_SALDO)
+			        if ( Diferencia === 1 ) {
+			        	Meteor.call('GuardarLogEjecucionTrader', [' SE ENCONTRÓ DIFERENCIAS, SINCRONIZANDO SALDOS']);
+			            Meteor.call('ActualizaSaldoActual', MONEDA_SALDO)
+			        }
+	        	}
+
+
+
 	        	SecuenciasTemporales.remove({ _id : clientOrderId});
 	        	
         		Monedas.update({ "moneda": MONEDA_SALDO }, {    

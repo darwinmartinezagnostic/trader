@@ -1065,22 +1065,7 @@ Meteor.methods({
             var MonedaAdquirida = MON_B;
         }
 
-        var resto = (parseFloat(CANT_INVER) % parseFloat(MultiploC_TipoCambio)) / 100;
-
-        if ( resto === 0 ) {
-           var NV_CANT_INVER = CANT_INVER;
-        }else {
-            if (resto >= MultiploC_TipoCambio / 2) {
-                var NV_CANT_INVER = Math.ceil(CANT_INVER / MultiploC_TipoCambio) * MultiploC_TipoCambio;
-            }
-            else {
-                var NV_CANT_INVER = Math.floor(CANT_INVER / MultiploC_TipoCambio) * MultiploC_TipoCambio;
-            }
-        }
-
-
-
-
+        var NV_CANT_INVER = Meteor.call("CalculaMultiplo", CANT_INVER, MultiploC_TipoCambio ) ;
 
 
         switch (V_ModoCalculo){

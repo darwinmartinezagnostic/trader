@@ -130,7 +130,6 @@ Meteor.methods({
                 minute: 1
             }
 		})
-
     },
 
     'EstadoOrdenFallida':function( ORDEN, ID_LOTE, MONEDA_SALDO, Estado_Orden ) {
@@ -179,7 +178,6 @@ Meteor.methods({
                                     }
                                 });
         };
-        
     },
 
 

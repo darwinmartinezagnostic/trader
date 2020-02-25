@@ -1327,7 +1327,6 @@ Meteor.methods({
                                         );
                 }
         }
-    /**/ 
 
         TmpTipCambioXMonedaReord.remove({ "moneda_saldo" : MONEDA_SALDO})
         /*

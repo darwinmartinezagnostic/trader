@@ -418,4 +418,50 @@ Meteor.methods({
         //log.info(" Valor de SaldoTotal ", SaldoTotal[0]);
         return SaldoTotal[0].TotalEquivalente;
     },
+
+    'ValidarDiferenciasSaldo':function(MONEDA){
+        var CONSTANTES = Meteor.call("Constantes");
+        var BlcMonedasTradeo=Meteor.call("ConexionGet", CONSTANTES.blc_tradeo);
+        var c_vect_BlcCuent = 0;
+        var c_vect_BlcTrad = 0;
+
+
+        //log.info('############################################');
+        Meteor.call("GuardarLogEjecucionTrader", ['      VERIFICANDO SALDO MONEDA: ']+[MONEDA] );
+        //log.info('############################################');
+        //log.info('--------------------------------------------');
+
+        for ( cbmt = 0, tam_bmt = BlcMonedasTradeo.length; cbmt < tam_bmt; cbmt++ ) {
+            var v_BlcMonedasTradeo = BlcMonedasTradeo[cbmt];
+            var MonedaSaldoTradear = v_BlcMonedasTradeo.currency;
+            if ( MonedaSaldoTradear == MONEDA ) {
+                log.info('Valor de MonedaSaldoTradear: ', MonedaSaldoTradear, 'trader' );
+
+                var SaldoMonedaTradearHitBTC = Number(v_BlcMonedasTradeo.available);
+
+                try{
+                    var v_moneda_saldo = Monedas.findOne({ moneda : MONEDA });
+                }
+                catch (error){
+                    Meteor.call("ValidaError", error, 2)
+                };
+
+                var RegSaldoLocal = v_moneda_saldo.saldo.tradeo.activo
+
+                log.info(' SALDO REMOTO: ', SaldoMonedaTradearHitBTC.toString())
+                log.info(' SALDO LOCAL: ', RegSaldoLocal.toString())
+
+
+
+                if ( SaldoMonedaTradearHitBTC === RegSaldoLocal ) {
+                    var Diferencia = 0;
+                }else{
+                    var Diferencia = 1;
+                }
+                
+            }
+        }
+
+        return Diferencia
+    },
 });

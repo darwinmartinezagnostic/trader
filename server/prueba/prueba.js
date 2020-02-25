@@ -86,6 +86,14 @@ Meteor.methods({
         Meteor.call('EstadoOrdenVerificar', TIPO_CAMBIO , CANT_INVER, InversionRealCalc, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, Orden, ID_LOTE )
         /**/
 
+        var Diferencia = Meteor.call('ValidarDiferenciasSaldo', MONEDA_SALDO)
+        log.info (' Valor de Diferencia: ', Diferencia)
+        if ( Diferencia === 1 ) {
+            Meteor.call('ActualizaSaldoActual', MONEDA_SALDO)
+        }
+
+        var Diferencia = Meteor.call('ValidarDiferenciasSaldo', MONEDA_SALDO)
+        log.info (' Valor de Diferencia: ', Diferencia)
 
 
 
@@ -341,7 +349,7 @@ Meteor.methods({
         var IdTransaccionLoteActual = Meteor.call("SecuenciasGBL", 'IdGanPerdLote')    
         /**/
         //Meteor.call("ConsultaCarterasDeposito");
-            
+            /*
             //log.info("Datos a enviar: MON_B: ", MON_B, "MON_C: ", MON_C,"TIPO_CAMBIO: ", TIPO_CAMBIO,"MONEDA_SALDO: ", MONEDA_SALDO,"CANT_INVER: ", CANT_INVER,);
             //CrearNuevaOrder':function(TIPO_CAMBIO,T_TRANSACCION,CANT_INVER, MON_B, MON_C, MONEDA_SALDO, MONEDA_COMISION, IdTransaccionLoteActual){
             //Meteor.call("CrearNuevaOrder", 'ETHBTC', 'sell', '0.0166', 'ETH', 'BTC', 'BTC', 'BTC', IdTransaccionLoteActual);
