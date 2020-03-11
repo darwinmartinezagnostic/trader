@@ -174,7 +174,8 @@ Meteor.methods({
                         
             Parametros.update({ "dominio": "limites", "nombre": "CantMaximaDeCompras" }, {
                                     $set: {
-                                                "valor": V_LimiteMaximoDeCompras
+                                                "valor": V_LimiteMaximoDeCompras,
+                                                "fecha_actualizacion" : fecha._d
                                     }
                                 });
         };

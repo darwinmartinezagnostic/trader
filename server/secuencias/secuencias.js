@@ -29,6 +29,7 @@ Meteor.methods({
         }while( SecuenciaDeCarga !== 0 );        
 
         Meteor.call("GuardarLogEjecucionTrader", 'Iniciando las secuencias Secundarías');
+        log.info('Valores a enviar: ', IdDatoAnalisis + ', IdLote: '+ IdLote );
         Meteor.call("SecuenciasSecundarias", IdDatoAnalisis, IdLote );
     },
 
@@ -39,6 +40,7 @@ Meteor.methods({
         var TE = Parametros.findOne( { dominio : "Ejecucion", nombre : "TipoEjecucion" } );
         var TipoEjecucion = TE.valor  
         Meteor.call("GuardarLogEjecucionTrader", '--------  SECUENCIAS SECUNDARIAS  ---------');
+        log.info('Valores recibidos: IdDatoAnalisis', IdDatoAnalisis + ', IdLote: '+ IdLote );
         //log.info(' ');
 
         // VALIDA EL LIMITE TOTAL DE EJECUCIÓN DE LA APLICACION SI ESTE ES IGUAL '9999999999' ENTONCES SE EJECUTARÁ DE FORMA INFINITA
@@ -46,14 +48,13 @@ Meteor.methods({
         var LimiteMaximoEjecucion = Parametros.find({ "dominio": "limites", "nombre": "CantMaximaEjecucion"}).fetch()
         var V_LimiteMaximoEjecucion = LimiteMaximoEjecucion[0].valor
         log.info('Valor de TipoEjecucion: ', TipoEjecucion);
-
         if ( TipoEjecucion === 1 ) {
-            log.info('Valor de IdDatoAnalisis: ', IdDatoAnalisis + ', IdLote: '+ IdLote );
             Meteor.call('GuardarSaldoTotal', 1, IdDatoAnalisis , IdLote );
         }
 
         var contador = 1;
         do{                
+        //log.info(' ***************** ÁCÁ VOY 1 ***********************');
 
             Meteor.call("GuardarLogEjecucionTrader", [' ESTOY INICIANDO SECUENCIA']+[' CONTADOR ACTUAL: ']+[contador]);
 
@@ -94,6 +95,7 @@ Meteor.methods({
 
     'SecuenciaPeriodo1':function(){
         var AMBITO = 'SecuenciaPeriodo1';
+        Meteor.call("GuardarLogEjecucionTrader", '--------  SECUENCIAS PERIODO 1  ---------');
         var TM = 1;
         V_EJEC = 2;
         fecha = moment (new Date());
@@ -217,10 +219,13 @@ Meteor.methods({
                                                                                 _id: 0,
                                                                                 TotalEquivalente: 1
                                                                         }});
+
                                 if ( ExistSaldosPositivos === undefined ) {
+                                    fecha = moment (new Date());
                                     Parametros.update({ "dominio": "limites", "nombre": "CantMaximaDeCompras" }, {
                                         $set: {
-                                                    "valor": 0
+                                                    "valor": 0,
+                                                    "fecha_actualizacion" : fecha._d
                                         }
                                     });
                                 }

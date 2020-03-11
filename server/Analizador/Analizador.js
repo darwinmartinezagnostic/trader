@@ -23,12 +23,15 @@ Meteor.methods({
 
     'GuardarSaldoTotal':function ( TIPO_SALDO, V_ID, V_IdLote ) {
         var SaldoTotal = Meteor.call("ConcultaSaldoTotalMonedas")
+        //log.info(' ***************** ÁCÁ VOY 2 ***********************');
+        var fecha = moment (new Date());
         switch ( TIPO_SALDO ){
             case 1:
                 // TOTAL INICIAL
                 SaldosTotales.update(   { _id : V_ID, IdLote : V_IdLote }, 
                                                     { $set : {
-                                                            'Saldo.Inicial' : parseFloat(SaldoTotal.toFixed(6))
+                                                            'Saldo.Inicial' : parseFloat(SaldoTotal.toFixed(6)),
+                                                            'FechaCreacion' : fecha._d
                                                             }
                                                     },
                                                     { "upsert" : true });
@@ -44,6 +47,7 @@ Meteor.methods({
                 SaldosTotales.update(   { _id : V_ID, IdLote : V_IdLote }, 
                                                     { $set : {
                                                             'Saldo.Final' : parseFloat(SaldoTotal.toFixed(6)),
+                                                            "fechaActualizacion" : fecha._d,
                                                             'PorcentajeDiferencial' : parseFloat(PorcentajeDiferencial.toFixed(2))
                                                             }
                                                     },

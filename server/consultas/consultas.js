@@ -401,6 +401,7 @@ Meteor.methods({
     },
 
     'ConcultaSaldoTotalMonedas':function(){
+        //log.info(' ***************** ÁCÁ VOY 3 ***********************');
         var SaldoTotal = Monedas.aggregate( { $match : {"saldo.tradeo.equivalencia" : { $ne : 0 }}},
                                             { $group: {
                                                         _id: 0,
@@ -415,7 +416,7 @@ Meteor.methods({
                                                     TotalEquivalente: 1
                                             }});
         
-        //log.info(" Valor de SaldoTotal ", SaldoTotal[0]);
+        log.info(" Valor de SaldoTotal ", SaldoTotal[0]);
         return SaldoTotal[0].TotalEquivalente;
     },
 
