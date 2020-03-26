@@ -51,6 +51,7 @@ Meteor.methods({
         T_updatedAt = VAL_ORDEN.updatedAt
         T_postOnly = VAL_ORDEN.postOnly
 
+        
         try{
             var url_tranOA=[CONSTANTES.ordenes]+['?clientOrderId=']+[T_clientOrderId]+['?wait=300']
             //var Url_TransTP=[CONSTANTES.HistOrdenes]+['?symbol=']+[T_symbol]+['&limit=50']
@@ -80,7 +81,7 @@ Meteor.methods({
             if ( transOA === undefined ) {
                 if ( transTP.clientOrderId === T_clientOrderId ) {
                         var StatusOrden = transTP.status;
-                        var Estado_Orden = { id: T_id, T_clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: StatusOrden, type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
+                        var Estado_Orden = { id: T_id, clientOrderId: T_clientOrderId, symbol: T_symbol, side: T_side, status: StatusOrden, type: T_type, timeInForce: T_timeInForce, quantity: T_quantity, price: T_price, cumQuantity: T_cumQuantity, createdAt: T_createdAt,updatedAt: T_updatedAt, postOnly: T_postOnly }
                     } 
 
             }else{
